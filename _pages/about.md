@@ -41,8 +41,7 @@ My research interest includes natural language processing, large language models
 - [Website](https://ipeval.github.io)
 - [Github]()
 - [HuggingFace]()
-<p>**Status: **Under Review</p>
-
+<p><strong>Status: </strong>Under Review</p>
 </div>
 </div>
 
@@ -58,12 +57,9 @@ My research interest includes natural language processing, large language models
 - *2022.11*:  The 14th National College Students' Mathematics Competition ———— *First Prize* at the National level. (Single)
 
 # 📖 Educations
-- *2019.06 - 2022.04 (now)*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2015.09 - 2019.06*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-
-# 💬 Invited Talks
-- *2021.06*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2021.03*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet.  \| [\[video\]](https://github.com/)
+- *2021.09 - 2025.06 (now)*, Undergraduate student majoring in Artificial Intelligence, School of Future Technology, Dalian University of Technology, China.
+  
+# 💬 Academe Service
 
 # 💻 Internships
-- *2019.05 - 2020.02*, [Lorem](https://github.com/), China.
+- *2022.12 - 2025.06 (now)*, studying in DUTIR Lab.
