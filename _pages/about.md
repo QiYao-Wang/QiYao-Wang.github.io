@@ -47,8 +47,15 @@ My research interest includes natural language processing, large language models
 </div>
 
 # 🎖 Honors and Awards
-- *2021.10* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
-- *2021.09* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
+<p><strong>Competition Awards</strong></p>
+
+- *2024.09*: The 12th China TRIZ Cup College Students' Innovation Method Competition ———— *Second Prize* at the National level. (Caption)
+- *2024.08*: 2024 China International College Students Innovation Competition ———— *Gold Prize* in Liaoning Province. (Caption)
+- *2024.07*: The 17th China College Students' Computer Design Competition ———— *Second Prize* at the National level. (Caption)
+- *2024.06*: 2024 University Computer Competition, Internet Technology Challenge ———— *Second Prize* in the Northeast Division. (Caption)
+- *2023.06*: The 18th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Works Competition ———— *Grand Prize* in Liaoning Province. (Main Member)
+- *2023.03*: U.S. National College Mathematics Competition ———— *Honorable Prize* at the National level. (Caption)
+- *2022.11*:  The 14th National College Students' Mathematics Competition ———— *First Prize* at the National level. (Single)
 
 # 📖 Educations
 - *2019.06 - 2022.04 (now)*, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ornare aliquet ipsum, ac tempus justo dapibus sit amet. 
