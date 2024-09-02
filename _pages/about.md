@@ -19,13 +19,11 @@ redirect_from:
 
 I am an undergraduate from Dalian University of Technology (DUT). I am currently pursuing a degree in Artificial Intelligence *(2021-2025)*.
 
-# :label: Research Interests
+# 📌 Research Interests
+<a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>
 - Large Language Models
 - Information Retrieval
 - LLM-based Agent
-
-<a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>.
-
 
 # 🔥 News
 
