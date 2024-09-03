@@ -66,6 +66,7 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 - *2024.09*: 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Caption)
 - *2024.09*: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Caption)
 - *2024.08*: 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Caption)
+- *2024.07*: The 14th "Challenge Cup" National College Students' Entrepreneurship Plan Competition —— Grand Prize in Liaoning Province. (Caption)
 - *2024.07*: The 17th China College Students' Computer Design Competition —— ***Second Prize*** at the National level. (Caption)
 - *2023.06*: The 18th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
 - *2023.03*: U.S. National College Mathematics Competition —— ***Honorable Prize*** at the National level. (Caption)
