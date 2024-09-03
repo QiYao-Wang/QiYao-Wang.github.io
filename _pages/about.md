@@ -46,6 +46,17 @@ I am an undergraduate from Dalian University of Technology (DUT). I am currently
 </div>
 </div>
 
+# 🪡 Intellectual Property
+<p><strong>Patents</strong></p>
+- *2024.06*, A query expansion method based on collaborative enhancement at the term level, CN118246534A, 2024.08.09 (First author & **Licensed**). 
+- *2024.04*, A Technology Integration Opportunity Prediction Method Based on Large Language Models, CN118246534A, 2024.06.25 (First author & Application submitted).
+
+<p><strong>Software Copyrights</strong></p>
+
+- *2024.05*, Software Copyright: Intellectual Property Intelligent Information Service Platform (First author & **Licensed**).
+- *2024.05*, Software Copyright: Multimodal Smart Home System (First author & Application submitted).
+- *2024.04*, Software Copyright: Technology Integration Opportunity Discovery System (First author & **Licensed**).
+
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
 
