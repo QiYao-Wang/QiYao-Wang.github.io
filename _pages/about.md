@@ -54,9 +54,9 @@ I am an undergraduate from Dalian University of Technology (DUT). I am currently
 
 <p><strong>Software Copyrights</strong></p>
 
-- *2024.05*, Software Copyright: Intellectual Property Intelligent Information Service Platform (First author & **Licensed**).
 - *2024.05*, Software Copyright: Multimodal Smart Home System (First author & Application submitted).
-- *2024.04*, Software Copyright: Technology Integration Opportunity Discovery System (First author & **Licensed**).
+- *2024.05*, Software Copyright: Intellectual Property Intelligent Information Service Platform, 2024SR0971263, 2024.07.10 (First author & **Licensed**).
+- *2024.04*, Software Copyright: Technology Integration Opportunity Discovery System, 2024SR0681926, 2024.05.20 (First author & **Licensed**).
 
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
