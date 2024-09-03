@@ -70,7 +70,7 @@ I am an undergraduate from Dalian University of Technology (DUT). I am currently
 - *2022.11*:  The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single)
 
 # 📖 Educations
-- *2021.09 - 2025.06 (now)*, Undergraduate student majoring in AI, School of Future Technology, Dalian University of Technology, China.
+- *2021.09 - 2025.06 (now)*, AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academe Service
 
