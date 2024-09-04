@@ -89,4 +89,4 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
-<p>Updated at September, 2024. Total Visits: <span id="busuanzi_value_site_pv"></span></p>
+<p>Updated at September, 2024. Total Visits: <span id="busuanzi_value_site_pv" style="font-color:blue"></span></p>
