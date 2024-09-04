@@ -82,6 +82,9 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 
 <p></p>
 
-<script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=5XwcXhC_hWtdm6YV_S7mq8GYDOjb0XU67bhcZ5uaJto&cl=ffffff&w=a"></script>
+# Visitors
+<div style="width: 400px">
+  <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=5XwcXhC_hWtdm6YV_S7mq8GYDOjb0XU67bhcZ5uaJto&cl=ffffff&w=a"></script>
+</div>
 
 <p>Updated at September, 2024</p>
