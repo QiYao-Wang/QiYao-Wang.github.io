@@ -87,6 +87,5 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=5XwcXhC_hWtdm6YV_S7mq8GYDOjb0XU67bhcZ5uaJto&cl=ffffff&w=a"></script>
 </div>
 
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+Updated at September, 2024. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
-<p>Updated at September, 2024. Total Visits: <span id="busuanzi_value_site_pv" style="font-color:blue"></span></p>
