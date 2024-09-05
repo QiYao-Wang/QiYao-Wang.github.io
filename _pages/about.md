@@ -51,6 +51,7 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 </div>
 
 <p><strong>2024</strong></p>
+
 - IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review.
 
 # 🔧 Projects
