@@ -32,6 +32,8 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 - *2024.07*: &nbsp;🎉 As the team leader, my team to win the ***Second Prize** at the National level* for the 17th China College Students’ Computer Design Competition.
 
 # 📝 Publications 
+<p><strong>Representative Work</strong></p>
+
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">arxiv</div><img src='images/publications/ipeval.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
@@ -47,6 +49,9 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 <p><strong>Status: </strong>Under Review</p>
 </div>
 </div>
+
+<p><strong>2024</strong></p>
+- IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review.
 
 # 🔧 Projects
 
