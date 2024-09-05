@@ -78,7 +78,7 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 - *2022.11*:  The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
 
 # 📖 Educations
-- *2021.09 - 2025.06 (now)*, AI, School of Future Technology, Dalian University of Technology, China.
+- *2021.09 - 2025.06 (now)*, pursuing a bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academe Service
 
