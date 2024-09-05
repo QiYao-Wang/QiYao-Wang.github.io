@@ -56,7 +56,7 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 
 <p><strong>Software Copyrights</strong></p>
 
-- Multimodal Smart Home System. ***Qiyao Wang**, Yuan Lin et.al.*. Application submitted.
+- Multimodal Smart Home System. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971269. Licensed.
 - Intellectual Property Intelligent Information Service Platform. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971263. 2024.07.10. Licensed.
 - Technology Integration Opportunity Discovery System. ***Qiyao Wang**, Yuan Lin et.al.* 2024SR0681926. 2024.05.20. Licensed.
 
