@@ -51,14 +51,14 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
-- A query expansion method based on collaborative enhancement at the term level, CN118467708A, 2024.08.09 (First author & **Licensed**). 
-- A Technology Integration Opportunity Prediction Method Based on Large Language Models, CN118246534A, 2024.06.25 (First author & **Licensed**).
+- A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. Licensed. 
+- A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. Licensed.
 
 <p><strong>Software Copyrights</strong></p>
 
 - Multimodal Smart Home System (First author & Application submitted).
-- Intellectual Property Intelligent Information Service Platform, 2024SR0971263, 2024.07.10 (First author & **Licensed**).
-- Technology Integration Opportunity Discovery System, 2024SR0681926, 2024.05.20 (First author & **Licensed**).
+- Intellectual Property Intelligent Information Service Platform. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971263. 2024.07.10. Licensed.
+- Technology Integration Opportunity Discovery System. ***Qiyao Wang**, Yuan Lin et.al.* 2024SR0681926. 2024.05.20. Licensed.
 
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
