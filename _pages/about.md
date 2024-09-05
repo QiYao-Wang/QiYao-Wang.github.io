@@ -48,10 +48,10 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 </div>
 </div>
 
-# 🔧Projects
+# 🔧 Projects
 
-- Research on large language models for intellectual property public service. ***Qiyao Wang**, Jianguo Huang, Shule Lu, Huaren Liu*. Supervisor: *Yuan Lin, Kan Xu*. National Level. 2023.09-2025.06 *(now)*. Ongoing.
-- Research and application of technological gene based on representation learning. ***Qiyao Wang**, Jiaxu Wu et.al.*. Supervisor: *Yuan Lin, Kan Xu*. School Level. 2022.12-2024.04. Completed.
+- Research on large language models for intellectual property public service. ***Qiyao Wang**, Jianguo Huang, Shule Lu, Huaren Liu*. Supervisor: *Yuan Lin, Kan Xu*. National Level. 2023.09-2025.06 *(now)*. No Fundings. Ongoing.
+- Research and application of technological gene based on representation learning. ***Qiyao Wang**, Jiaxu Wu et.al.*. Supervisor: *Yuan Lin, Kan Xu*. School Level. 2022.12-2024.04. No Fundings. Completed.
 
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
