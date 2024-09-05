@@ -28,8 +28,8 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 - LLM-based Agent
 
 # 🔥 News
-- *2024.09*: &nbsp;🎉 As the team leader, I led our team to win the Second Prize at the National level for the 12th China TRIZ Cup College Students' Innovation Method Competition.
-- *2024.07*: &nbsp;🎉 As the team leader, I led our team to win the Second Prize at the National level for the 17th China College Students’ Computer Design Competition.
+- *2024.09*: &nbsp;🎉 As the team leader, my team to win the ***Second Prize** at the National level* for the 12th China TRIZ Cup College Students' Innovation Method Competition.
+- *2024.07*: &nbsp;🎉 As the team leader, my team to win the ***Second Prize** at the National level* for the 17th China College Students’ Computer Design Competition.
 
 # 📝 Publications 
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">arxiv</div><img src='images/publications/ipeval.png' alt="sym" width="100%"></div></div>
