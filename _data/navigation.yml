@@ -12,6 +12,9 @@ main:
   - title: "Publications"
     url: "/#-publications"
 
+ - title: "Projects"
+    url: "/#-projects"
+
   - title: "Intellectual Property"
     url: "/#-intellectual-property"
 
