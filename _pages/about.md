@@ -21,6 +21,8 @@ I am an undergraduate from Dalian University of Technology (DUT).
 
 I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025)*.
 
+I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately be supervised by Prof. Min Yang.
+
 # 📌 Research Interests
 <a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>
 - Large Language Models
