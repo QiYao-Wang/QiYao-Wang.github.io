@@ -59,8 +59,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 # 🔧 Projects
 
-- Research on large language models for intellectual property public service. ***Qiyao Wang**, Jianguo Huang, Shule Lu, Huaren Liu*. Supervisor: *Yuan Lin, Kan Xu*. National Level. 2023.09-2025.06 *(now)*. No Fundings. Ongoing.
-- Research and application of technological gene based on representation learning. ***Qiyao Wang**, Jiaxu Wu et.al.*. Supervisor: *Yuan Lin, Kan Xu*. School Level. 2022.12-2024.04. No Fundings. Completed.
+- Research on large language models for intellectual property public service. ***Qiyao Wang**, Jianguo Huang, Shule Lu, Huaren Liu*. Supervisor: *Yuan Lin, Kan Xu*. National Level. 2023.09-2025.06 *(now)*. College Students' Innovative Entrepreneurial Training Plan Program. Ongoing.
+- Research and application of technological gene based on representation learning. ***Qiyao Wang**, Jiaxu Wu et.al.*. Supervisor: *Yuan Lin, Kan Xu*. School Level. 2022.12-2024.04. College Students' Innovative Entrepreneurial Training Plan Program. Completed.
 
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
