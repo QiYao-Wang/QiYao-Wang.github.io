@@ -48,8 +48,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 [**Project**](https://scholar.google.com/citations?view_op=view_citation&hl=zh-CN&user=STze0QgAAAAJ&citation_for_view=STze0QgAAAAJ:u5HHmVD_uO8C) <strong><span class='show_paper_citations' data='STze0QgAAAAJ:u5HHmVD_uO8C'></span></strong>
 - [Website](https://ipeval.github.io)
-- [Github]()
-- [HuggingFace]()
+- [Github](https://github.com/QiYao-Wang/IPEval) [![IPEval](https://img.shields.io/github/stars/QiYao-Wang/IPEval)](https://github.com/QiYao-Wang/IPEval)
+- [HuggingFace](https://huggingface.co/datasets/QiYao-Wang/IPEval)
 <p><strong>Status: </strong>Under Review</p>
 </div>
 </div>
