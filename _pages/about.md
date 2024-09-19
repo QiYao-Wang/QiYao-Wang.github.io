@@ -28,7 +28,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 - Large Language Models
 - Information Retrieval
 - LLM-based Agent
-- LLM for Intellectual Property (mainly for Patents)
+- LLM for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
+
 
 # 🔥 News
 - *2024.09*: &nbsp;🎉 As the team leader, my team to win the ***Second Prize** at the National level* for the 12th China TRIZ Cup College Students' Innovation Method Competition.
