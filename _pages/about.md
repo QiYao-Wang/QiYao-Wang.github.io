@@ -17,7 +17,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-I am an undergraduate from Dalian University of Technology (DUT). 
+Now I am an undergraduate from Dalian University of Technology (DUT). 
 
 I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025)*. During my undergraduate studies, I worked in the DUTIR Lab, fortunately supervised by Prof. [Yuan Lin](http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm) and Prof. [Kan Xu](http://faculty.dlut.edu.cn/2004012069/en/index.htm). I warmly welcome DUT undergraduates to join our research group for exploration. For those interested in collaboration, please do not hesitate to contact me.
 
