@@ -57,7 +57,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <p><strong>2024</strong></p>
 
-- IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review. <a href="javascript:window.location='https://arxiv.org/abs/2406.12386';">![Paper](https://img.shields.io/badge/IPEval-Paper-{red})</a> <a href="javascript:window.location='https://github.com/Mathsion2/IPEval';">![Github](https://img.shields.io/badge/IPEval-Github-{red})</a> [![IPEval](https://img.shields.io/github/stars/QiYao-Wang/IPEval)](https://github.com/QiYao-Wang/IPEval) <a href="javascript:window.location='https://huggingface.co/datasets/Mathsion/IPEval';">![Data](https://img.shields.io/badge/IPEval-Data-{brightgreen})</a>
+- IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review. [[Website](https://ipeval.github.io/)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [![IPEval](https://img.shields.io/github/stars/QiYao-Wang/IPEval)](https://github.com/QiYao-Wang/IPEval) [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
 
 # 🔧 Projects
 
