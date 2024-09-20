@@ -46,7 +46,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 ***Qiyao Wang**, Jianguo Huang, Shule Lu, Yuan Lin, Kan Xu, Liang Yang, Hongfei Lin*
 
-<p><strong>TL;DR: </strong>IPEval is a benchmark for testing Large Language Models' performance in intellectual property law, featuring 2,657 English and Chinese questions. </p>
+<p><strong>TL;DR: </strong>IPEval is the inaugural benchmark for evaluating Large Language Models' (LLMs) intellectual property (IP) law capabilities. It features 2,657 multiple-choice questions in English and Chinese, spanning IP creation, application, protection, and management. Our assessment of various LLMs via zero-shot, 5-few-shot, and Chain of Thought (CoT) methods revealed a language proficiency bias, underscoring the need for specialized IP LLMs. The benchmark emphasizes the critical role of regional and temporal legal knowledge in IP expertise. IPEval is designed to foster the advancement of LLMs with enhanced IP knowledge and reasoning, serving as a critical tool for legal and research communities.</p>
 <p><strong>Status: </strong>Under Review</p>
 </div>
 </div>
