@@ -48,9 +48,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 [**Project**](https://scholar.google.com/citations?view_op=view_citation&hl=zh-CN&user=STze0QgAAAAJ&citation_for_view=STze0QgAAAAJ:u5HHmVD_uO8C) <strong><span class='show_paper_citations' data='STze0QgAAAAJ:u5HHmVD_uO8C'></span></strong>
 - [Website](https://ipeval.github.io)
-- [Github](https://github.com/QiYao-Wang/IPEval)
-
-- [HuggingFace](https://huggingface.co/datasets/QiYao-Wang/IPEval)
+<p><strong>TL;DR: </strong>IPEval is a benchmark for testing Large Language Models' performance in intellectual property law, featuring 2,657 English and Chinese questions. </p>
 <p><strong>Status: </strong>Under Review</p>
 </div>
 </div>
