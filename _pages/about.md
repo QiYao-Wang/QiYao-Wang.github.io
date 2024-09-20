@@ -44,10 +44,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 [IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models
 ](https://arxiv.org/pdf/2406.12386)
 
-**Qiyao Wang**, Jianguo Huang, Shule Lu, Yuan Lin, Kan Xu, Liang Yang, Hongfei Lin
+***Qiyao Wang**, Jianguo Huang, Shule Lu, Yuan Lin, Kan Xu, Liang Yang, Hongfei Lin*
 
-[**Project**](https://scholar.google.com/citations?view_op=view_citation&hl=zh-CN&user=STze0QgAAAAJ&citation_for_view=STze0QgAAAAJ:u5HHmVD_uO8C) <strong><span class='show_paper_citations' data='STze0QgAAAAJ:u5HHmVD_uO8C'></span></strong>
-- [Website](https://ipeval.github.io)
 <p><strong>TL;DR: </strong>IPEval is a benchmark for testing Large Language Models' performance in intellectual property law, featuring 2,657 English and Chinese questions. </p>
 <p><strong>Status: </strong>Under Review</p>
 </div>
