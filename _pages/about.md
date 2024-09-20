@@ -53,7 +53,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <p><strong>2024</strong></p>
 
-- IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review. [[Website](https://ipeval.github.io/)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [![IPEval](https://img.shields.io/github/stars/QiYao-Wang/IPEval)](https://github.com/QiYao-Wang/IPEval) [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
+- IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review. [[Website](https://ipeval.github.io/)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
 
 # 🔧 Projects
 
