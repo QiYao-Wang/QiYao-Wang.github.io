@@ -32,8 +32,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 
 # 🔥 News
-- *2024.09*: &nbsp;🎉 As the team leader, my team to win the ***Second Prize** at the National level* for the 12th China TRIZ Cup College Students' Innovation Method Competition.
-- *2024.07*: &nbsp;🎉 As the team leader, my team to win the ***Second Prize** at the National level* for the 17th China College Students’ Computer Design Competition.
+- *2024.09.20*: &nbsp;🎉 
+- *2024.09*: &nbsp;🎉 As the project leader, our team has successfully qualified for the on-site competition of the 18th iCAN College Students Innovation and Entrepreneurship Competition in the Liaoning regional selection. As a supervisor, another project I guided has also made it to the provincial competition in Liaoning. [[link](https://mp.weixin.qq.com/s/B9ugr_Hc3xRiUkZqj2yu-g)]
 
 # 📝 Publications 
 <p><strong>Representative Work</strong></p>
