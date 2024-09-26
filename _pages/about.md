@@ -88,6 +88,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 - *2022.11*:  The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
 
 # 📖 Educations
+- *2025.09 - (5 years)*, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
 - *2021.09 - 2025.06 (now)*, pursuing a bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academe Service
