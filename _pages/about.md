@@ -53,7 +53,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <p><strong>2024</strong></p>
 
-- ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models。 ***Qiyao Wang**, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin*. CCIR Accepted. Recommended to the Journal of Chinese Information Processing (CCF B), Under Review. [[paper]()][[github](https://github.com/QiYao-Wang/ECPE-Qwen)]
+- ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. ***Qiyao Wang**, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin*. CCIR Accepted. Recommended to the Journal of Chinese Information Processing (CCF B), Under Review. [[paper]()][[github](https://github.com/QiYao-Wang/ECPE-Qwen)]
 - IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review. [[Website](https://ipeval.github.io/)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
 
 # 🔧 Projects
