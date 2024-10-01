@@ -32,6 +32,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 
 # 🔥 News
+- *2024.10.01*：&nbsp;🎉 As the project leader, I successfully led my team to advance to the national competition of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition, in the Belt and Road International Special Track! See you in Xi’an at the end of October!
 - *2024.09.20*: &nbsp;🎉 As the project leader, our team has successfully qualified for the on-site competition of the 18th iCAN College Students Innovation and Entrepreneurship Competition in the Liaoning regional selection. As a supervisor, another project I guided has also made it to the provincial competition in Liaoning. [[link](https://mp.weixin.qq.com/s/B9ugr_Hc3xRiUkZqj2yu-g)]
 - *2024.09.03*: &nbsp;🎉 My paper "ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models" has been fortunately accepted by the CCIR conference. See you in Wuhan in October!
 
