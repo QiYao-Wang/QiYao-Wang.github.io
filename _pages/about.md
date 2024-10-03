@@ -37,7 +37,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 - *2024.09.03*: &nbsp;🎉 My paper "ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models" has been fortunately accepted by the CCIR conference. See you in Wuhan in October!
 
 # 📝 Publications 
-<p><strong>Representative Work</strong></p>
+### Representative Work
 
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">arxiv</div><img src='images/publications/ipeval.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
