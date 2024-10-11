@@ -32,8 +32,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 
 # 🔥 News
-- *2024.10.01*：&nbsp;🎉 As the project leader, I successfully led my team to advance to the national competition of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition, in the Belt and Road International Special Track! See you in Xi’an at the end of October!
-- *2024.09.20*: &nbsp;🎉 As the project leader, our team has successfully qualified for the on-site competition of the 18th iCAN College Students Innovation and Entrepreneurship Competition in the Liaoning regional selection. As a supervisor, another project I guided has also made it to the provincial competition in Liaoning. [[link](https://mp.weixin.qq.com/s/B9ugr_Hc3xRiUkZqj2yu-g)]
+- *2024.10.11*: &nbsp;🎉 The team I led and coached won first and second prizes in the Liaoning Province of the iCAN Innovation Contest, with the former successfully advancing to the national competition. [[link](https://mp.weixin.qq.com/s/zg_uiSsN9scezTxpag0hBg)]
+- *2024.10.01*: &nbsp;🎉 As the project leader, I successfully led my team to advance to the national competition of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition, in the Belt and Road International Special Track! See you in Xi’an at the end of October!
 - *2024.09.03*: &nbsp;🎉 My paper "ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models" has been fortunately accepted by the CCIR conference. See you in Wuhan in October!
 
 # 📝 Publications 
@@ -79,9 +79,11 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
 
-- *2024.09*: 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
+- *2024.10*: The 18th iCAN Innovation Contest —— ***First Prize*** in Liaoning Province. (Leader)
+- *2024.10*: The 18th iCAN Innovation Contest —— ***Second Prize*** in Liaoning Province. (Supervisor)
+- *2024.09*: The 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
 - *2024.09*: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Leader)
-- *2024.08*: 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Leader)
+- *2024.08*: The 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Leader)
 - *2024.07*: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— *Grand Prize* in Liaoning Province. (Leader)
 - *2024.07*: The 17th China College Students' Computer Design Competition —— ***Second Prize*** at the National level. (Leader)
 - *2023.06*: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
