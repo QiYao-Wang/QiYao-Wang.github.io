@@ -79,8 +79,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
 
-- *2024.10*: The 18th iCAN Innovation Contest —— ***First Prize*** in Liaoning Province. (Leader)
-- *2024.10*: The 18th iCAN Innovation Contest —— ***Second Prize*** in Liaoning Province. (Supervisor)
+- *2024.10*: The 18th iCAN Innovation Contest —— First Prize in Liaoning Province. (Leader)
+- *2024.10*: The 18th iCAN Innovation Contest —— Second Prize in Liaoning Province. (Supervisor)
 - *2024.09*: The 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
 - *2024.09*: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Leader)
 - *2024.08*: The 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Leader)
