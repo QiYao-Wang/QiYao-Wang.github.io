@@ -34,7 +34,6 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 🔥 News
 - *2024.10.11*: &nbsp;🎉 The team I led and coached won first and second prizes in the Liaoning Province of the iCAN Innovation Contest, with the former successfully advancing to the national competition. [[link](https://mp.weixin.qq.com/s/zg_uiSsN9scezTxpag0hBg)]
 - *2024.10.01*: &nbsp;🎉 As the project leader, I successfully led my team to advance to the national competition of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition, in the Belt and Road International Special Track! See you in Xi’an at the end of October!
-- *2024.09.03*: &nbsp;🎉 My paper "ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models" has been fortunately accepted by the CCIR conference. See you in Wuhan in October!
 
 # 📝 Publications 
 ### Representative Work
@@ -54,7 +53,6 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <p><strong>2024</strong></p>
 
-- ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. ***Qiyao Wang**, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin*. CCIR Accepted. Recommended to the Journal of Chinese Information Processing (CCF B), Under Review. [[paper]()] [[Github](https://github.com/QiYao-Wang/ECPE-Qwen)]
 - IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Under Review. [[Website](https://ipeval.github.io/)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
 
 # 🔧 Projects
