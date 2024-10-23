@@ -104,5 +104,5 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=5XwcXhC_hWtdm6YV_S7mq8GYDOjb0XU67bhcZ5uaJto&cl=ffffff&w=a"></script>
 </div>
 
-Updated at September, 2024. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
+Updated at October, 2024. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
