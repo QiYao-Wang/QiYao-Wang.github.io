@@ -30,7 +30,6 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 - LLM-based Agent
 - LLM for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
 
-
 # 🔥 News
 - *2024.11.02*: &nbsp;🎉 As the project leader, I successfully led my team to won second prize at the national level of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition.
 - *2024.10.11*: &nbsp;🎉 The team I led and coached won first and second prizes in the Liaoning Province of the iCAN Innovation Contest, with the former successfully advancing to the national competition. [[link](https://mp.weixin.qq.com/s/zg_uiSsN9scezTxpag0hBg)]
@@ -66,14 +65,14 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
-- A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. Licensed. 
-- A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. Licensed.
+- A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. DUT. Licensed. 
+- A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. DUT. Licensed.
 
 <p><strong>Software Copyrights</strong></p>
 
-- Multimodal Smart Home System. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971269. 2024.07.10. Licensed.
-- Intellectual Property Intelligent Information Service Platform. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971263. 2024.07.10. Licensed.
-- Technology Integration Opportunity Discovery System. ***Qiyao Wang**, Yuan Lin et.al.* 2024SR0681926. 2024.05.20. Licensed.
+- Multimodal Smart Home System. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971269. 2024.07.10. DUT. Licensed.
+- Intellectual Property Intelligent Information Service Platform. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971263. 2024.07.10. DUT. Licensed.
+- Technology Integration Opportunity Discovery System. ***Qiyao Wang**, Yuan Lin et.al.* 2024SR0681926. 2024.05.20. DUT. Licensed.
 
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
