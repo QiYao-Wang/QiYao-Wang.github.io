@@ -10,6 +10,7 @@ title                    : "Qiyao Wang | NLPer"
 description              : "25 Ph.D. Student @ CAS-SIAT-NLP"
 repository               : "QiYao-Wang/QiYao-Wang.github.io"
 google_scholar_stats_use_cdn : true
+baseurl                  : "/about"
 
 # google analytics
 google_analytics_id      :  # get google_analytics_id from https://analytics.google.com/analytics/
