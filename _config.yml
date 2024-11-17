@@ -11,7 +11,7 @@ description              : "25 Ph.D. Student @ CAS-SIAT-NLP"
 repository               : "QiYao-Wang/QiYao-Wang.github.io"
 google_scholar_stats_use_cdn : true
 url                      : https://QiYao-Wang.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
-baseurl                  : "/"
+baseurl                  : "/mathsion"
 
 # google analytics
 google_analytics_id      :  # get google_analytics_id from https://analytics.google.com/analytics/
