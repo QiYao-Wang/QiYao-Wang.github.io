@@ -31,7 +31,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 # 🔥 News
 - *2024.11.02*: &nbsp;🎉 As the project leader, I successfully led my team to won second prize at the national level of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition.
-- *2024.10.11*: &nbsp;🎉 The team I led and coached won first and second prizes in the Liaoning Province of the iCAN Innovation Contest, with the former successfully advancing to the national competition. [[link](https://mp.weixin.qq.com/s/zg_uiSsN9scezTxpag0hBg)]
+- *2024.10.11*: &nbsp;🎉 The team I led and coached won first and second prizes in the Liaoning Province of the iCAN Innovation Contest, with the former successfully advancing to the national competition. See you in Zibo on December 7th. [[link](https://mp.weixin.qq.com/s/zg_uiSsN9scezTxpag0hBg)]
 
 # 📝 Publications 
 ### Representative Work
