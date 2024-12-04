@@ -64,6 +64,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <p><strong>College Students' Innovative Entrepreneurial Training Plan Program</strong></p>
 
+- AI Patent Agency for Intellectual Property Services. Xufeng Chen, Yanchao Jian. Supervisor: *Yuan Lin, **Qiyao Wang*** Not Assigned. 2024.12-2025.12 *(now)*. Supervisor. Ongoing.
+- Research on Intellectual Property Examination Based on Large Language Models. Chenxing Li, Shiqiang Wang, Haoran Hu. Supervisor: *Yuan Lin, **Qiyao Wang***. Not Assigned. 2024.12-2025.12 *(now)*. Supervisor. Ongoing.
 - Research on large language models for intellectual property public service. ***Qiyao Wang**, Jianguo Huang, Shule Lu, Huaren Liu*. Supervisor: *Yuan Lin, Kan Xu*. National Level. 2023.09-2025.06 *(now)*. Leader. Ongoing.
 - Research and application of technological gene based on representation learning. ***Qiyao Wang**, Jiaxu Wu et.al.*. Supervisor: *Yuan Lin, Kan Xu*. School Level. 2022.12-2024.04. Leader. Completed.
 
