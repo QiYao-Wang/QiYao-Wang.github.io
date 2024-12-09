@@ -66,12 +66,12 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
-  <li>Policy Navigator: An AI-Powered Intelligent Policy Service Platform. *Hongbo Wang.* Supervisor: *Yuan Lin, **Qiyao Wang***. Not Assigned. 2024.12-2026.06 *(now)*. Supervisor. Ongoing.</li>
-  <li>Wisdom Bridge - Empowering Collaborative Innovation in Government, Legal, and Technological Fields with Intelligent Intellectual Property Services. *Huaren Liu, Minghui Zhu, Boyu Ma, Yuhan Kang, Yueyi Ma.* Supervisor: *Yuan Lin, **Qiyao Wang***. Not Assigned. 2024.12-2026.06 *(now)*. Supervisor. Ongoing.</li>
-  <li>AI Patent Agency for Intellectual Property Services. *Chenxing Li, Shiqiang Wang, Haoran Hu.* Supervisor: *Yuan Lin, **Qiyao Wang***. Not Assigned. 2024.12-2026.06 *(now)*. Supervisor. Ongoing.</li>
-  <li>Research on Intellectual Property Examination Based on Large Language Models. Xufeng Chen, Yanchao Jian. Supervisor: *Yuan Lin, **Qiyao Wang***. Not Assigned. 2024.12-2026.06 *(now)*. Supervisor. Ongoing.</li>
-  <li>Research on large language models for intellectual property public service. ***Qiyao Wang**, Jianguo Huang, Shule Lu, Huaren Liu*. Supervisor: *Yuan Lin, Kan Xu*. National Level. 2023.09-2025.06 *(now)*. Leader. Ongoing.</li>
-  <li>Research and application of technological gene based on representation learning. ***Qiyao Wang**, Jiaxu Wu et.al.*. Supervisor: *Yuan Lin, Kan Xu*. School Level. 2022.12-2024.04. Leader. Completed.</li>
+  <li>Policy Navigator: An AI-Powered Intelligent Policy Service Platform. <i>Hongbo Wang.</i> Supervisor: <i>Yuan Lin, <strong>Qiyao Wang</strong></i>. Not Assigned. 2024.12-2026.06 <i>(now)</i>. Supervisor. Ongoing.</li>
+  <li>Wisdom Bridge - Empowering Collaborative Innovation in Government, Legal, and Technological Fields with Intelligent Intellectual Property Services. <i>Huaren Liu, Minghui Zhu, Boyu Ma, Yuhan Kang, Yueyi Ma.</i> Supervisor: <i>Yuan Lin, <strong>Qiyao Wang</strong></i>. Not Assigned. 2024.12-2026.06 <i>(now)</i>. Supervisor. Ongoing.</li>
+  <li>AI Patent Agency for Intellectual Property Services. <i>Chenxing Li, Shiqiang Wang, Haoran Hu.</i> Supervisor: <i>Yuan Lin, <strong>Qiyao Wang</strong></i>. Not Assigned. 2024.12-2026.06 <i>(now)</i>. Supervisor. Ongoing.</li>
+  <li>Research on Intellectual Property Examination Based on Large Language Models. <i>Xufeng Chen, Yanchao Jian.</i> Supervisor: <i>Yuan Lin, <strong>Qiyao Wang</strong></i>. Not Assigned. 2024.12-2026.06 <i>(now)</i>. Supervisor. Ongoing.</li>
+  <li>Research on large language models for intellectual property public service. <i><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Huaren Liu</i>. Supervisor: <i>Yuan Lin, Kan Xu</i>. National Level. 2023.09-2025.06 <i>(now)</i>. Leader. Ongoing.</li>
+  <li>Research and application of technological gene based on representation learning. <i><strong>Qiyao Wang</strong>, Jiaxu Wu et.al.</i>. Supervisor: <i>Yuan Lin, Kan Xu</i>. School Level. 2022.12-2024.04. Leader. Completed.</li>
 </ul>
 </div>
 
