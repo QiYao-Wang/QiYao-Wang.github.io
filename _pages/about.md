@@ -26,7 +26,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 - Large Language Models
 - Information Retrieval
-- LLMs-based Multi-Agents System
+- LLMs-based Multi-Agent System
 - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
 
 # 🔥 News
