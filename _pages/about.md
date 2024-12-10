@@ -41,7 +41,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 📝 Publications 
 ### Representative Work
 
-<div class='paper-box'><div class='paper-box-image'><div><div class="badge">arxiv</div><img src='images/publications/ipeval.png' alt="sym" width="100%"></div></div>
+<div class='paper-box'><div class='paper-box-image'><div><div class="badge">Arxiv</div><img src='images/publications/ipeval.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
 [IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models
