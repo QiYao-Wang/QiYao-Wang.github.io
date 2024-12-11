@@ -78,6 +78,7 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
+- An Automated Patent Application Drafting Algorithm Based on Multi-Agent Large Language Models. *Shiwen Ni, Min Yang, **Qiyao Wang** et.al.* CAS-SIAT. Pending.
 - A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. DUT. Licensed. 
 - A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. DUT. Licensed.
 
