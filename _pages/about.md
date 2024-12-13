@@ -43,7 +43,7 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 
 ### Representative Work
 
-<div class='paper-box'><div class='paper-box-image'><div><div class="badge">Arxiv</div><img src='images/publications/autopatent.png' alt="sym" width="100%"></div></div>
+<div class='paper-box'><div class='paper-box-image'><div><div class="badge">Under Review</div><img src='images/publications/autopatent.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
 [AutoPatent: A Multi-Agent Framework for Automatic Patent Generation]()
