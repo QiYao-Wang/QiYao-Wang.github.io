@@ -48,7 +48,7 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 
 [AutoPatent: A Multi-Agent Framework for Automatic Patent Generation]()
 
-***Qiyao Wang$^*$**, Shiwen Ni$^*$, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, QIANG QU, Hamid Alinejad-Rokny, Yuan Lin$^†$, Min Yang$^†$*
+<em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, QIANG QU, Hamid Alinejad-Rokny, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
 
 <p><strong>TL;DR: </strong>We introduce Draft2Patent, a novel task for generating full-length patents (~17K tokens) from drafts, and its corresponding D2P dataset. Patents’ complexity, standardized terminology, and length present unique challenges for LLMs. Our AutoPatent framework, leveraging a multi-agent system with planner, writer, and examiner agents, demonstrates superior patent generation performance. Remarkably, AutoPatent with Qwen2.5-7B outperforms larger models like GPT-4o and Qwen2.5-72B in both objective metrics and human evaluations.</p>
 
@@ -74,12 +74,12 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 <ul>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup>
+    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
   </li>
   <li>
     ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
-    <strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin. 
-    CCIR Accepted. Journal of Chinese Information Processing (CCF-B, CAAI-B) Accepted.
+    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup>, Hongfei Lin.</em> 
+    <em>CCIR</em> Accepted. <em>Journal of Chinese Information Processing (CCF-B, CAAI-B)</em> Accepted.
   </li>
   <li>
     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
