@@ -39,7 +39,21 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 </div>
 
 # 📝 Publications 
+<sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
+
 ### Representative Work
+
+<div class='paper-box'><div class='paper-box-image'><div><div class="badge">Arxiv</div><img src='images/publications/autopatent.png' alt="sym" width="100%"></div></div>
+<div class='paper-box-text' markdown="1">
+
+[AutoPatent: A Multi-Agent Framework for Automatic Patent Generation]()
+
+***Qiyao Wang$^*$**, Shiwen Ni$^*$, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, QIANG QU, Hamid Alinejad-Rokny, Yuan Lin$^†$, Min Yang$^†$*
+
+<p><strong>TL;DR: </strong>We introduce Draft2Patent, a novel task for generating full-length patents (~17K tokens) from drafts, and its corresponding D2P dataset. Patents’ complexity, standardized terminology, and length present unique challenges for LLMs. Our AutoPatent framework, leveraging a multi-agent system with planner, writer, and examiner agents, demonstrates superior patent generation performance. Remarkably, AutoPatent with Qwen2.5-7B outperforms larger models like GPT-4o and Qwen2.5-72B in both objective metrics and human evaluations.</p>
+
+</div>
+</div>
 
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">Arxiv</div><img src='images/publications/ipeval.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
@@ -56,6 +70,7 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 
 <p><strong>2024</strong></p>
 
+- AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. ***Qiyao Wang$^*$**, Shiwen Ni$^*$, et.al. and Yuan Lin$^*$, Min Yang$^*$*
 - ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. ***Qiyao Wang**, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin*. *CCIR* Accepted. *Journal of Chinese Information Processing (CCF-B, CAAI-B)* Accepted.
 - IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Arxiv. [[Website](https://Qiyao-Wang.github.io/ipeval)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
 
