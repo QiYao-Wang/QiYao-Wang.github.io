@@ -70,9 +70,27 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 
 <p><strong>2024</strong></p>
 
-- AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. ***Qiyao Wang$^*$**, Shiwen Ni$^*$, et.al. and Yuan Lin$^*$, Min Yang$^*$*
-- ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. ***Qiyao Wang**, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin*. *CCIR* Accepted. *Journal of Chinese Information Processing (CCF-B, CAAI-B)* Accepted.
-- IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. ***Qiyao Wang**, Jianguo Huang, Shule Lu et.al.*. Arxiv. [[Website](https://Qiyao-Wang.github.io/ipeval)] [[Paper](https://arxiv.org/pdf/2406.12386)] [[Github](https://github.com/QiYao-Wang/IPEval)] [[HuggingFace](https://huggingface.co/datasets/Mathsion/IPEval)]
+<div style="max-height: 200px; overflow-y: auto;">
+<ul>
+  <li>
+    AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
+    <strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup>
+  </li>
+  <li>
+    ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
+    <strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin, Hongfei Lin. 
+    CCIR Accepted. Journal of Chinese Information Processing (CCF-B, CAAI-B) Accepted.
+  </li>
+  <li>
+    IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
+    <strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu et.al. Arxiv. 
+    <a href="https://Qiyao-Wang.github.io/ipeval">Website</a> 
+    <a href="https://arxiv.org/pdf/2406.12386">Paper</a> 
+    <a href="https://github.com/QiYao-Wang/IPEval">Github</a> 
+    <a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>
+  </li>
+</ul>
+</div>
 
 
 # 🔧 Projects
