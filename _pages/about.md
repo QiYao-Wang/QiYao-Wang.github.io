@@ -48,7 +48,7 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 
 [AutoPatent: A Multi-Agent Framework for Automatic Patent Generation]()
 
-<em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, QIANG QU, Hamid Alinejad-Rokny, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
+<em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
 
 <p><strong>TL;DR: </strong>We introduce Draft2Patent, a novel task for generating full-length patents (~17K tokens) from drafts, along with the D2P dataset. Our AutoPatent framework, leveraging a multi-agent system, excels in patent generation, with Qwen2.5-7B outperforming larger models like GPT-4o and Qwen2.5-72B in metrics and human evaluations.</p>
 
@@ -74,7 +74,10 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 <ul>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
+    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review.
+    [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
+    [<a href="">Paper</a>]
+    [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] 
   </li>
   <li>
     ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
