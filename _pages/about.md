@@ -50,7 +50,7 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
 
 <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, QIANG QU, Hamid Alinejad-Rokny, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
 
-<p><strong>TL;DR: </strong>We introduce Draft2Patent, a novel task for generating full-length patents (~17K tokens) from drafts, and its corresponding D2P dataset. Patents’ complexity, standardized terminology, and length present unique challenges for LLMs. Our AutoPatent framework, leveraging a multi-agent system with planner, writer, and examiner agents, demonstrates superior patent generation performance. Remarkably, AutoPatent with Qwen2.5-7B outperforms larger models like GPT-4o and Qwen2.5-72B in both objective metrics and human evaluations.</p>
+<p><strong>TL;DR: </strong>We introduce Draft2Patent, a novel task for generating full-length patents (~17K tokens) from drafts, along with the D2P dataset. Our AutoPatent framework, leveraging a multi-agent system, excels in patent generation, with Qwen2.5-7B outperforming larger models like GPT-4o and Qwen2.5-72B in metrics and human evaluations.</p>
 
 </div>
 </div>
