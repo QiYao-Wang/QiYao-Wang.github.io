@@ -83,11 +83,11 @@ I will start my Ph.D. studies at CAS in 2025, fortunately supervised by Prof. Mi
   </li>
   <li>
     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
-    <strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu et.al. Arxiv. 
-    <a href="https://Qiyao-Wang.github.io/ipeval">Website</a> 
-    <a href="https://arxiv.org/pdf/2406.12386">Paper</a> 
-    <a href="https://github.com/QiYao-Wang/IPEval">Github</a> 
-    <a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>
+    <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> Arxiv. 
+    [<a href="https://Qiyao-Wang.github.io/ipeval">Website</a>]
+    [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
+    [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>] 
+    [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
   </li>
 </ul>
 </div>
