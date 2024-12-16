@@ -46,7 +46,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 <div class='paper-box'><div class='paper-box-image'><div><div class="badge">Under Review</div><img src='images/publications/autopatent.png' alt="sym" width="100%"></div></div>
 <div class='paper-box-text' markdown="1">
 
-[AutoPatent: A Multi-Agent Framework for Automatic Patent Generation]()
+[AutoPatent: A Multi-Agent Framework for Automatic Patent Generation](https://arxiv.org/pdf/2412.09796)
 
 <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>
 
@@ -76,7 +76,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
     <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review.
     [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
-    [<a href="">Paper</a>]
+    [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
     [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] 
   </li>
   <li>
