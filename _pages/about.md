@@ -77,7 +77,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
     <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review.
     [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
     [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
-    [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] 
+    [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] [![AutoPatent](https://img.shields.io/github/stars/QiYao-Wang/AutoPatent)](https://github.com/QiYao-Wang/AutoPatent)
   </li>
   <li>
     ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
