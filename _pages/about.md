@@ -34,6 +34,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
+  <li><em>2024.12.20:</em> &nbsp;🎉 Our latest work, AutoPatent, has been reported by Xinzhiyuan and will continue to be expanded and improved in the future.[<a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">News</a>]</li>
   <li><em>2024.12.08:</em> &nbsp;🎉 As the project leader, I successfully led my team to win the Third Prize at the national level in the 18th iCAN Innovation Contest.</li>
   <li><em>2024.11.02:</em> &nbsp;🎉 As the project leader, I successfully led my team to won second prize at the national level of the 14th “Challenge Cup” China College Students’ Entrepreneurship Competition.</li>
 </ul>
