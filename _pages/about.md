@@ -151,7 +151,6 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 💬 Academe Service
 
 # 💻 Internships
-- *2022.12 - 2025.06 (now)*, studying in DUTIR Lab.
 
 # Visitors
 <div style="width: 400px">
