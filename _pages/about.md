@@ -22,8 +22,6 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 
 I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.
 
-<img src="https://github-profile-trophy.vercel.app/?username=QiYao-Wang&theme=flat" alt="logo" height="120" align="center" style="margin: auto; margin-bottom: 20px;" />
-
 # 📌 Research Interests
 
 - Large Language Models
