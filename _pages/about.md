@@ -22,6 +22,8 @@ I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025
 
 I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.
 
+<p>Those who can imagine anything, can create the impossible.<br><span style="float: right;">——Alan·Mathison·Turing</span></p>
+
 # 📌 Research Interests
 
 - Large Language Models
