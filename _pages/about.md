@@ -96,6 +96,9 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
     [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
     [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>] 
     [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
+    <a href="https://github.com/QiYao-Wang/ipeval">
+      <img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval">
+    </a>
   </li>
 </ul>
 </div>
