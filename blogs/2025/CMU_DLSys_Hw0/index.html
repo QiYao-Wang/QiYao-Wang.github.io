@@ -7,6 +7,9 @@ layout: compress
   <head>
     {% include head.html %}
     {% include head/custom.html %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <script>
       html {
             scroll-behavior: smooth; /* 启用平滑滚动 */
@@ -81,7 +84,15 @@ pip install pybind11 numpy numdifftools pytest
                 <img src="mnist-image.jpg" alt="mnist-image">
                 <figcaption>图2：MNIST 训练数据集图片数据格式</figcaption>
               </figure>
-
+              <p>
+                下面展示上述逻辑对应的代码，即读取 MNIST 数据集中的标签和图片，并对图片进行全局归一化和形状修改，最终返回相应的图片和标签。
+              </p>
+<pre>
+<code class="language-python">
+# Loading Label Dataset
+with gzip.open
+</code>
+</pre>
             </div>
 
 
