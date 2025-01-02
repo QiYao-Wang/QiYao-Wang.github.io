@@ -107,6 +107,7 @@ pip install pybind11 numpy numdifftools pytest
             const a = document.createElement('a');
             a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
             a.textContent = header.innerText;
+            a.target="_self";
 
             if (!header.id) {
                 header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
