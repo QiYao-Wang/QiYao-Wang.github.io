@@ -32,7 +32,7 @@ layout: compress
       <div class="sidebar sticky">
         <div id="toc"></div>
       </div>
-      
+
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
@@ -63,8 +63,28 @@ pip install pybind11 numpy numdifftools pytest
                 测试环境配置，需要进入 src/simple_ml.py，将其中的待填写的代码块换为 <code>return x + y</code>，之后在命令行中运行 <code>python -m pytest -k "add"</code>。这其中的基本逻辑是 pytest 会去 tests 文件夹中寻找包含 “add” 的测试函数，在本作业中即为 tests/test_simple_ml.py 中的 test_add 函数，它通过调用 simple_ml.py 中的 add 函数，并通过 assert 来进行正确性的验证。
               </p>
             </div>
-            
-            
+
+            <div>
+              <h2>Question 2: 加载 MNIST 数据</h2>
+              <p>
+                首先需要前往 <a href="http://yann.lecun.com/exdb/mnist/">MNIST</a> 的官方网站下载相应的数据（本作业的仓库中已经给出，在 data 文件夹中）。官方网站同时披露了 MNIST 数据集的相关情况，根据 hw0.ipynb 中的提示，需要使用 gzip 包对数据进行解构和读取，因此需要明晰数据集中 Label 和 Image 的格式。
+              </p>
+              <p>如图1所示，为 MNIST 训练数据集中标签的格式，绿框中的内容为数据的描述性内容，共 8 个字节，在读取时需要先读取描述字段再读取后续的内容。由 src/simple_ml.py 中的代码可以知道，所需的标签格式为 <code>numpy.ndarray[dtype=np.uint8]</code> 。</p>
+              <figure>
+                <img src="mnist-label.png" alt="mnist-label">
+                <figcaption>图1：MNIST 训练数据集标签数据格式</figcaption>
+              </figure>
+              <p>
+                  如图2所示，为 MNIST 训练数据集中图片的格式，绿框中的内容是图片的描述字段，共16个字节，该数据集中的每个图片的大小为 28x28，因此在后续的形状调整中，将图片的像素拉成一行时，其大小为 <code>28x28 = 784</code> 维，其对应的格式为 <code>numpy.ndarray[np.float32]</code> ，并且需要进行全局归一化，即将像素的 0-255 取值放缩到 0-1.0 区间内，最终形成形状为 <code>num_examples x input_dim</code> 的 numpy 数组。
+              </p>
+              <figure>
+                <img src="mnist-image.png" alt="mnist-image">
+                <figcaption>图2：MNIST 训练数据集图片数据格式</figcaption>
+              </figure>
+
+            </div>
+
+
           </section>
         </div>
       </article>
