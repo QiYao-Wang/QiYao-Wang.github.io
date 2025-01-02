@@ -22,11 +22,13 @@ layout: compress
         </nav>
       </div>
     </div>
-  <div class="sidebar sticky">
-    <div id="toc"></div>
-  </div>
   </div>
     <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+      
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
