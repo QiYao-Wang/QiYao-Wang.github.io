@@ -46,12 +46,10 @@ layout: compress
                 但是还是建议去官方仓库中下载 <a href="https://github.com/dlsyscourse/mugrade">mugrade</a>, 避免其中发生不必要的依赖项报错。下载好后
                 在命令行里运行下面的代码，并且下载一些相关的包，其中需要用 pytest 来测试代码。
               </p>
-<pre>
 <code>
 python setup.py install
 pip install pybind11 numpy numdifftools pytest
 </code>
-</pre>
               <p>
                 测试环境配置，需要进入 src/simple_ml.py，将其中的待填写的代码块换为 <code>return x + y</code>，之后在命令行中运行 <code>python -m pytest -k "add"</code>。
                 这其中的基本逻辑是 pytest 会去 tests 文件夹中寻找包含 “add” 的测试函数，在本作业中即为 tests/test_simple_ml.py 中的 test_add 函数，它
