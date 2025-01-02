@@ -108,10 +108,9 @@ with gzip.open(image_filename, "rb") as image:
                 以读标签数据为例，其描述字段为 8 字节，通过 <code>struct.unpack()</code> 方法能够解构该二进制文件，其中参数 ">II" 中的 ">" 表示大端序（高位字节存储在低地址，低位字节存储在高地址），"I" 表示数据类型 int，每个 I 占用 4 个字节，因此占据 8 个字节的描述字段使用 II。<code>read(8)</code> 函数表示读取该二进制文件的前 8 位（由于无前序读取，因此从头开始），下次使用 read 函数时并非从头开始，此次读取会将指针移至第 9 位。因此下一行的 read 函数为从该二进制文件的第 9 位读至文件末尾。同时需要注意的是 <code>np.fromstring()</code> 函数在我当前的 numpy 版本 2.2.1 下已被弃用，应使用 <code>np.frombuffer()</code> 代替，其数据类型为 8 位无符号整数 uint8。
               </p>
 <pre>
-  <code>
-X = X.astype(np.float32) / 255.0
+<code>X = X.astype(np.float32) / 255.0
 return X, y
-  </code>
+</code>
 </pre>
               <p>
                 根据函数描述，图片数据的格式应为 <code>np.float32</code>，并且进行全局归一化，需要与单个图片的归一化进行区分，由于该数据集较为简单，可以使用 min-max 归一化，由于像素值区间为 0-255，因此这里就直接进行 /255.0 的操作。
