@@ -7,6 +7,29 @@ layout: compress
   <head>
     {% include head.html %}
     {% include head/custom.html %}
+
+    <style>
+        #toc {
+            border: 1px solid #ddd;
+            padding: 10px;
+            max-width: 300px;
+        }
+        #toc ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        #toc li {
+            margin: 5px 0;
+        }
+        #toc a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        #toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
   </head>
   <body>
     {% include browser-upgrade.html %}
@@ -21,6 +44,9 @@ layout: compress
         </nav>
       </div>
     </div>
+  <div class="sidebar sticky">
+    <div id="toc"></div>
+  </div>
   </div>
     <div id="main" role="main">
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
@@ -60,5 +86,31 @@ pip install pybind11 numpy numdifftools pytest
       </article>
     </div>
     {% include scripts.html %}
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<h2>Table of Contents</h2>';
+
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+    </script>
   </body>
 </html>
