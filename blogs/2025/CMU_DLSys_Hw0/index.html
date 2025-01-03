@@ -177,7 +177,7 @@ return np.average(result)
                 其中 $\mathbb{I}\{i=y\}$ 为判别函数，当 $i=y$ 即条件满足时为 1，否则为 0。在该公式中，$h_i$ 在 $i \neq y$ 的情况下，$h_y$ 对 $h_i$ 而言为常数，其导数为 0，当 $i=y$ 时，则导数为 1。对括号中第二项则使用链式法则进行求导即可。因此对 $h$ 求导为：
               </p>
                 $$
-                \nabla_h\ell_{ce}(h,y)=z-e_y, \quad\text{where }z=normalize(exp(h)) = softmax(h)
+                \nabla_h\ell_{ce}(h,y)=z-e_y, \quad\text{where }z=normalize(\exp(h)) = softmax(h)
                 $$
               <p>
                 其中 $e_y$ 为独热编码，即该向量仅在 $y$ 对应的索引处元素的值为 1，其余位置元素的值均为 0。作为假设函数，$h$ 是与模型参数相对应的，在上面的式子中均忽略了决定 $h$ 的重要因素，即参数 $\theta$，因此：
