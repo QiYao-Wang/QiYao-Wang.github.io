@@ -122,12 +122,23 @@ return X, y
                 以 ImageNet 的 1000 种图片分类为例，假设使用 AlexNet，在最后一层的卷积层后接入的是两层全连接层，最后一层全连接层的输出维度应与图片的种类相同，即为 1000 维的列向量（此处忽略 batchsize），该列向量可以称为 logits；在大语言模型中，预测下一个 token 时的最后一层也是一个与字典大小相匹配的向量，该向量也称为 logits。但是这样的 logits 向量并非每一类或每一个 token 的概率，其元素之和也并不满足概率的性质，即非负性、总和为1。在真实使用过程中，需要使用激活函数（二分类时通常使用 sigmoid，多分类时通常使用 softmax）来将其映射到概率空间。
               </p>
               <p>
-                Softmax 函数的定义如下：在一个具有 k 类的分类任务中，第 i 类的概率值为 z_i，h 为假设函数（能够预测该 input 对应的 logits）
+                Softmax 函数的定义如下：在一个具有 $k$ 类的分类任务中，第 $i$ 类的概率值为 $z_i$，h 为假设函数（能够预测该 input 对应的 logits）
               </p>
-                
+
                 $$z_i = p(label=i) = \frac{\exp{h_{i}(x)}}{\sum_{j=1}^k \exp{h_{j}(x)}} = normalize(\exp{h(x)}) = softmax(h(x))$$
 
+              <p>
+                其中指数函数能够确保将 logit 映射到非负区间内，通过求和进行归一化，从而满足概率在 0-1 区间内的要求。在分类任务中，真实分布通常是 one-hot（独热编码） 的形式，即假设该样本属于第 $i$ 类，则 $y = \[..., 0, 1_{i-th}, 0, ...\]$。最小化损失，则是希望能够最小化预测的分布与真实分布之间的差值，而对于分类任务而言，则通常使用 softmax 损失，在此上下文中，softmax loss 与 cross-entropy loss（交叉熵损失）是等价的。此处不证明交叉熵相关的内容，需要从熵的定义写起，互联网上已经有很多资料。
+              </p>
+              <p>
+                Softmax 损失（交叉熵损失）的具体定义如下：在一个具有在一个具有 $k$ 类的分类任务中，真实分布为 $y$，预测分布为 $h(x)$
+              </p>
 
+                $$\mathbb{l}_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}}$$
+                
+              <p>记 $z_i = h_i(x)$，则可得到 hw0.ipynb 中的公式：</p>
+                
+                $$\mathbb{l}_{\text{softmax}}(z,y)=\log{\sum_{i}^k\exp{z_i}-z_y}$$
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
