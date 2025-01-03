@@ -163,6 +163,8 @@ return np.average(result)
                 \end{bmatrix}, \quad y = [2, 0, 1, 2], \quad
                 \text{result} = [Z_{0, 2}, Z_{1, 0}, Z_{2, 1}, Z_{3, 2}] = [0.4, 0.3, 0.1, 0.2]
                 $$
+                
+              <p>其中 result 为从 Z 中提取的对应的预测分布中的 logit，需要注意的是这是一个 batch 的数据，在随机梯度下降（SDG）中，通常针对一个 minibatch/batch 进行优化，因此在返回时需要计算 batch 中的平均损失。</p>  
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
