@@ -140,7 +140,211 @@ return X, y
               <p>
                   下面实现 simple_ml.py 中的 <code>softmax_loss()</code> 函数。其中输入 Z 为二维数组，即 batchsize 个样本，和每个样本对应的 logits。真值标签 y 是一个一维数组，有 batchsize 个元素，每个元素的值为标签对应的索引。在本次实现中并未对 softmax 进行缩放，但在实际计算时，如果 $z_j$ 数值过大，指数运算后会过大，可以采取减去 $z$ 的最大值如 $e^{z_j-\max(z)}$ 的方式来进行缩放，在本次实现中并不考虑这个问题。
               </p>
+<pre>---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+      html {
+            scroll-behavior: smooth; /* 启用平滑滚动 */
+        }
+    </script>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead" style="container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1 id="cmu-dlsys-course-homework-0:-implementation-and-reflection">CMU DLSys Course Homework 0: Implementation and Reflection</h1>
+            <p style="color:gray">Jan. 01, 2025 - · Qiyao Wang</p>
+
+            <p>
+              新年新气象，今年的新目标是不只做专利相关的任务，也不只做 Prompt 相关的任务。目前对 MLSys 和 Reasoning 比较感兴趣，从本文开始开一个新坑，从 CMU 的 DLSys 课程开始，学习一些底层的内容，希望未来也能做一些和 LLM 底层相关的工作。欢迎各位大佬指导我的不足！
+            </p>
+
+            <p>1月1日看完了 Lecture 1 和 Lecture 2，本文是对 Homework 0 的实现和思考。由于没有课程账号，所有的实验内容均在我的个人电脑上进行。</p>
+
+            <div>
+              <h2 id="question-1:-编写代码、测试代码和提交代码的基本方式">Question 1: 编写代码、测试代码和提交代码的基本方式</h2>
+              <p>由于不提交，我这里就只进行到测试阶段。</p>
+              <p>
+                首先应该在官方的仓库中下载 <a href="https://github.com/dlsyscourse/hw0">Homework 0</a> 的相关源码，虽然不使用 mugrade 提交到平台上，但是还是建议去官方仓库中下载 <a href="https://github.com/dlsyscourse/mugrade">mugrade</a>, 避免其中发生不必要的依赖项报错。下载好后在命令行里运行下面的代码，并且下载一些相关的包，其中需要用 pytest 来测试代码。
+              </p>
 <pre>
+<code>python setup.py install
+pip install pybind11 numpy numdifftools pytest
+</code>
+</pre>
+              <p>
+                测试环境配置，需要进入 src/simple_ml.py，将其中的待填写的代码块换为 <code>return x + y</code>，之后在命令行中运行 <code>python -m pytest -k "add"</code>。这其中的基本逻辑是 pytest 会去 tests 文件夹中寻找包含 “add” 的测试函数，在本作业中即为 tests/test_simple_ml.py 中的 test_add 函数，它通过调用 simple_ml.py 中的 add 函数，并通过 assert 来进行正确性的验证。
+              </p>
+            </div>
+
+            <div>
+              <h2>Question 2: 加载 MNIST 数据</h2>
+              <p>
+                首先需要前往 <a href="http://yann.lecun.com/exdb/mnist/">MNIST</a> 的官方网站下载相应的数据（本作业的仓库中已经给出，在 data 文件夹中）。官方网站同时披露了 MNIST 数据集的相关情况，根据 hw0.ipynb 中的提示，需要使用 gzip 包对数据进行解构和读取，因此需要明晰数据集中 Label 和 Image 的格式。
+              </p>
+              <p>如图1所示，为 MNIST 训练数据集中标签的格式，绿框中的内容为数据的描述性内容，共 8 个字节，在读取时需要先读取描述字段再读取后续的内容。由 src/simple_ml.py 中的代码可以知道，所需的标签格式为 <code>numpy.ndarray[dtype=np.uint8]</code> 。</p>
+              <figure>
+                <img src="mnist-label.png" alt="mnist-label">
+                <figcaption>图1：MNIST 训练数据集标签数据格式</figcaption>
+              </figure>
+              <p>
+                  如图2所示，为 MNIST 训练数据集中图片的格式，绿框中的内容是图片的描述字段，共16个字节，该数据集中的每个图片的大小为 28x28，因此在后续的形状调整中，将图片的像素拉成一行时，其大小为 <code>28x28 = 784</code> 维，其对应的格式为 <code>numpy.ndarray[np.float32]</code> ，并且需要进行全局归一化，即将像素的 0-255 取值放缩到 0-1.0 区间内，最终形成形状为 <code>num_examples x input_dim</code> 的 numpy 数组。
+              </p>
+              <figure>
+                <img src="mnist-image.jpg" alt="mnist-image">
+                <figcaption>图2：MNIST 训练数据集图片数据格式</figcaption>
+              </figure>
+              <p>
+                下面展示上述逻辑对应的代码，即读取 MNIST 数据集中的标签和图片，并对图片进行全局归一化和形状修改，最终返回相应的图片和标签。
+              </p>
+<pre>
+<code class="language-python"># Loading Label Dataset
+with gzip.open(label_filename, "rb") as label:
+  # Each label’s descriptor field is 8 bytes.
+  magic, n = struct.unpack(">II", label.read(8))
+  # Read to the end.
+  y = np.frombuffer(label.read(), dtype=np.uint8)
+
+# Loading Image Dataset
+with gzip.open(image_filename, "rb") as image:
+  # Each image's description field is 16 bytes.
+  magic, num, rows, cols = struct.unpack(">IIII", image.read(16))
+  # Read to the end.
+  X = np.frombuffer(image.read(), dtype=np.uint8)
+  # Reshape the image matrix set to align with the labels.
+  X = X.reshape(len(y), 784)
+</code>
+</pre>
+              <p>
+                以读标签数据为例，其描述字段为 8 字节，通过 <code>struct.unpack()</code> 方法能够解构该二进制文件，其中参数 ">II" 中的 ">" 表示大端序（高位字节存储在低地址，低位字节存储在高地址），"I" 表示数据类型 int，每个 I 占用 4 个字节，因此占据 8 个字节的描述字段使用 II。<code>read(8)</code> 函数表示读取该二进制文件的前 8 位（由于无前序读取，因此从头开始），下次使用 read 函数时并非从头开始，此次读取会将指针移至第 9 位。因此下一行的 read 函数为从该二进制文件的第 9 位读至文件末尾。同时需要注意的是 <code>np.fromstring()</code> 函数在我当前的 numpy 版本 2.2.1 下已被弃用，应使用 <code>np.frombuffer()</code> 代替，其数据类型为 8 位无符号整数 uint8。
+              </p>
+<pre>
+<code>X = X.astype(np.float32) / 255.0
+return X, y
+</code>
+</pre>
+              <p>
+                根据函数描述，图片数据的格式应为 <code>np.float32</code>，并且进行全局归一化，需要与单个图片的归一化进行区分，由于该数据集较为简单，可以使用 min-max 归一化，由于像素值区间为 0-255，因此这里就直接进行 /255.0 的操作。
+              </p>
+
+              <h2>Question 3: Softmax Loss</h2>
+              <h3>Softmax Loss 原理概述</h3>
+              <p>
+                以 ImageNet 的 1000 种图片分类为例，假设使用 AlexNet，在最后一层的卷积层后接入的是两层全连接层，最后一层全连接层的输出维度应与图片的种类相同，即为 1000 维的列向量（此处忽略 batchsize），该列向量可以称为 logits；在大语言模型中，预测下一个 token 时的最后一层也是一个与字典大小相匹配的向量，该向量也称为 logits。但是这样的 logits 向量并非每一类或每一个 token 的概率，其元素之和也并不满足概率的性质，即非负性、总和为1。在真实使用过程中，需要使用激活函数（二分类时通常使用 sigmoid，多分类时通常使用 softmax）来将其映射到概率空间。
+              </p>
+              <p>
+                Softmax 函数的定义如下：在一个具有 $k$ 类的分类任务中，第 $i$ 类的概率值为 $z_i$，h 为假设函数（能够预测该 input 对应的 logits）
+              </p>
+
+                $$z_i = p(label=i) = \frac{\exp{h_{i}(x)}}{\sum_{j=1}^k \exp{h_{j}(x)}} = normalize(\exp{h(x)}) = softmax(h(x))$$
+
+              <p>
+                其中指数函数能够确保将 logit 映射到非负区间内，通过求和进行归一化，从而满足概率在 0-1 区间内的要求。在分类任务中，真实分布通常是 one-hot（独热编码） 的形式，即假设该样本属于第 $i$ 类，则 $y = [..., 0, 1_{i-th}, 0, ...]$。最小化损失，则是希望能够最小化预测的分布与真实分布之间的差值，而对于分类任务而言，则通常使用 softmax 损失，在此上下文中，softmax loss 与 cross-entropy loss（交叉熵损失）是等价的。此处不证明交叉熵相关的内容，需要从熵的定义写起，互联网上已经有很多资料。
+              </p>
+              <p>
+                Softmax 损失（交叉熵损失）的具体定义如下：在一个具有在一个具有 $k$ 类的分类任务中，真实分布为 $y$，预测分布为 $h(x)$，与 hw0.ipynb 中的形式相对应。
+              </p>
+
+                $$l_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
+              <h3>代码实现</h3>
+              <p>
+                  下面实现 simple_ml.py 中的 <code>softmax_loss()</code> 函数。其中输入 Z 为二维数组，即 batchsize 个样本，和每个样本对应的 logits。真值标签 y 是一个一维数组，有 batchsize 个元素，每个元素的值为标签对应的索引。在本次实现中并未对 softmax 进行缩放，但在实际计算时，如果 $z_j$ 数值过大，指数运算后会过大，可以采取减去 $z$ 的最大值如 $e^{z_j-\max(z)}$ 的方式来进行缩放，在本次实现中并不考虑这个问题。
+              </p>
+<pre>
+<code class="language-python"># Compute  e^x  for each element in  Z .
+exp_Z = np.exp(Z)
+# Create an index array of size equal to the batchsize.
+index_ = range(exp_Z.shape[0]) # list: [0, 1, 2, ..., batchsize-1]
+result = np.log(np.sum(exp_Z, axis=1)) # axis=1 for each sample (row)
+result = result - Z[index_, list(y)] # 1D array
+return np.average(result)
+</code>
+</pre>
+              <p>
+                其中 <code>Z[index_, list(y)]</code> 为多行索引，能够提取对应的内容，下面是一个示例：
+              </p>
+
+                $$
+                Z = \begin{bmatrix}
+                0.1 & 0.5 & 0.4 \\
+                0.3 & 0.2 & 0.5 \\
+                0.9 & 0.1 & 0.0 \\
+                0.4 & 0.4 & 0.2
+                \end{bmatrix}, \quad y = [2, 0, 1, 2], \quad
+                \text{result} = [Z_{0, 2}, Z_{1, 0}, Z_{2, 1}, Z_{3, 2}] = [0.4, 0.3, 0.1, 0.2]
+                $$
+
+              <h1>Reference</h1>
+              <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
+            </div>
+
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+            a.target="_self";
+
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+    </script>
+  </body>
+</html>
 <code># Compute  e^x  for each element in  Z .
 exp_Z = np.exp(Z)
 # Create an index array of size equal to the batchsize.
