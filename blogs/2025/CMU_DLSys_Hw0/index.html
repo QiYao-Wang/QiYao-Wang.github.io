@@ -9,6 +9,7 @@ layout: compress
     {% include head/custom.html %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>hljs.highlightAll();</script>
     <script>
       html {
@@ -117,7 +118,14 @@ return X, y
               </p>
 
               <h2>Question 3: Softmax Loss</h2>
-
+              <p>
+                以 ImageNet 的 1000 种图片分类为例，假设使用 AlexNet，在最后一层的卷积层后接入的是两层全连接层，最后一层全连接层的输出维度应与图片的种类相同，即为 1000 维的列向量（此处忽略 batchsize），该列向量可以称为 logits；在大语言模型中，预测下一个 token 时的最后一层也是一个与字典大小相匹配的向量，该向量也称为 logits。但是这样的 logits 向量并非每一类或每一个 token 的概率，其元素之和也并不满足概率的性质，即非负性、总和为1。在真实使用过程中，需要使用激活函数（二分类时通常使用 sigmoid，多分类时通常使用 softmax）来将其映射到概率空间。
+              </p>
+              <p>
+                Softmax 函数的定义如下：在一个具有 k 类的分类任务中，第 i 类的概率值为 z_i，h 为假设函数（能够预测该 input 对应的 logits）
+              </p>
+                
+                z_i = p(label=i) = \frac{\exp{h_{i}(x)}}{\sum_{j=1}^k \exp{h_{j}(x)}} = normalize(\exp{h(x)}) = softmax(h(x))
 
 
 
