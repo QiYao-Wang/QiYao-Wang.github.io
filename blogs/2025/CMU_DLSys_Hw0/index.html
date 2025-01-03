@@ -126,7 +126,7 @@ return X, y
                 Softmax 函数的定义如下：在一个具有 $k$ 类的分类任务中，第 $i$ 类的概率值为 $z_i$，h 为假设函数（能够预测该 input 对应的 logits）
               </p>
 
-                $$z_i = p(label=i) = \frac{\exp{h_{i}(x)}}{\sum_{j=1}^k \exp{h_{j}(x)}} = normalize(\exp{h(x)}) = softmax(h(x))$$
+                $$z_i = p(label=i) = \frac{\exp{(h_{i}(x))}}{\sum_{j=1}^k \exp{(h_{j}(x))}} = normalize(\exp{(h(x))}) = softmax(h(x))$$
 
               <p>
                 其中指数函数能够确保将 logit 映射到非负区间内，通过求和进行归一化，从而满足概率在 0-1 区间内的要求。在分类任务中，真实分布通常是 one-hot（独热编码） 的形式，即假设该样本属于第 $i$ 类，则 $y = [..., 0, 1_{i-th}, 0, ...]$。最小化损失，则是希望能够最小化预测的分布与真实分布之间的差值，而对于分类任务而言，则通常使用 softmax 损失，在此上下文中，softmax loss 与 cross-entropy loss（交叉熵损失）是等价的。此处不证明交叉熵相关的内容，需要从熵的定义写起，互联网上已经有很多资料。
@@ -135,7 +135,7 @@ return X, y
                 Softmax 损失（交叉熵损失）的具体定义如下：在一个具有在一个具有 $k$ 类的分类任务中，真实分布为 $y$，预测分布为 $h(x)$，与 hw0.ipynb 中的形式相对应。
               </p>
 
-                $$\ell_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
+                $$\ell_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{(h_{j}(x))}} = -z_y + \log{\sum_{i=1}^k\exp{(z_i)}}$$
               <h3>代码实现</h3>
               <p>
                   下面实现 simple_ml.py 中的 <code>softmax_loss()</code> 函数。其中输入 Z 为二维数组，即 batchsize 个样本，和每个样本对应的 logits。真值标签 y 是一个一维数组，有 batchsize 个元素，每个元素的值为标签对应的索引。在本次实现中并未对 softmax 进行缩放，但在实际计算时，如果 $z_j$ 数值过大，指数运算后会过大，可以采取减去 $z$ 的最大值如 $e^{z_j-\max(z)}$ 的方式来进行缩放，在本次实现中并不考虑这个问题。
@@ -171,7 +171,7 @@ return np.average(result)
                 对 Softmax loss function 进行随机梯度下降，最重要的是能够求出该目标函数的梯度。随机梯度下降一般使用一个 minibatch/batch 的样本的平均 loss 进行优化，在讨论多个样本下的梯度前，先推导单个样本时的梯度。对于假设函数 $h$ 和标签真值为 $y$ 的第 $i$ 个样本：
               </p>
                 $$
-                \frac{\partial{\ell_{ce}(h,y)}}{\partial{h_i}}=\frac{\partial}{\partial h_i}(-h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}}) = -\mathbb{I}\{i=y\}+\frac{\exp{h_i}}{\sum_{j=1}^k\exp{h_j}}
+                \frac{\partial{\ell_{ce}(h,y)}}{\partial{h_i}}=\frac{\partial}{\partial h_i}(-h_y(x) + \log{\sum_{j=1}^k\exp{(h_{j}(x))}}) = -\mathbb{I}\{i=y\}+\frac{\exp{(h_i)}}{\sum_{j=1}^k\exp{(h_j)}}
                 $$
               <p>
                 其中 $\mathbb{I}\{i=y\}$ 为判别函数，当 $i=y$ 即条件满足时为 1，否则为 0。在该公式中，$h_i$ 在 $i \neq y$ 的情况下，$h_y$ 对 $h_i$ 而言为常数，其导数为 0，当 $i=y$ 时，则导数为 1。对括号中第二项则使用链式法则进行求导即可。因此对 $h$ 求导为：
@@ -213,7 +213,7 @@ return np.average(result)
                 其中 $X\theta\in\mathbb{B\times k}, (Z-I_y)\in\mathbb{B\times k}$，而 $X\in\mathbb{B\times n}$，对 $\theta$ 的导数的维度为 $n\times k$，因此需要进行调整
               </p>
                 $$
-                \nabla_\theta\ell_{ce}(X\theta,y) \in \mathbb{R}^{n\times k} = X^T\cdot(Z-I_y),\quad Z = normalize(\exp{X\theta}) = softmax(X\theta)
+                \nabla_\theta\ell_{ce}(X\theta,y) \in \mathbb{R}^{n\times k} = X^T\cdot(Z-I_y),\quad Z = normalize(\exp{(X\theta)}) = softmax(X\theta)
                 $$
               <p>
                 其中 $I_y$ 为标签的独热矩阵。在 SGD 时需要求得 minibatch/batch 中 $B$ 个样本的平均损失来进行优化。
