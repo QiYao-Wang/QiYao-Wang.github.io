@@ -170,10 +170,54 @@ return np.average(result)
               <p>
                 对 Softmax loss function 进行随机梯度下降，最重要的是能够求出该目标函数的梯度。随机梯度下降一般使用一个 minibatch/batch 的样本的平均 loss 进行优化，在讨论多个样本下的梯度前，先推导单个样本时的梯度。对于假设函数 $h$ 和标签真值为 $y$ 的第 $i$ 个样本：
               </p>
-
                 $$
-                \frac{\partial{\ell_{ce}(h,y)}}{\partial{h_i}}=\frac{\partial}{\partial h_i}(-h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}}) = -\mathbb{I}\{i=y\}
+                \frac{\partial{\ell_{ce}(h,y)}}{\partial{h_i}}=\frac{\partial}{\partial h_i}(-h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}}) = -\mathbb{I}\{i=y\}+\frac{\exp{h_i}}{\sum_{j=1}^k\exp{h_j}}
                 $$
+              <p>
+                其中 $\mathbb{I}\{i=y\}$ 为判别函数，当 $i=y$ 即条件满足时为 1，否则为 0。在该公式中，$h_i$ 在 $i \neq y$ 的情况下，$h_y$ 对 $h_i$ 而言为常数，其导数为 0，当 $i=y$ 时，则导数为 1。对括号中第二项则使用链式法则进行求导即可。因此对 $h$ 求导为：
+              </p>
+                $$
+                \nabla_h\ell_{ce}(h,y)=z-e_y, \quad\text{where }z=normalize(exp(h)) = softmax(h)
+                $$
+              <p>
+                其中 $e_y$ 为独热编码，即该向量仅在 $y$ 对应的索引处元素的值为 1，其余位置元素的值均为 0。作为假设函数，$h$ 是与模型参数相对应的，在上面的式子中均忽略了决定 $h$ 的重要因素，即参数 $\theta$，因此：
+              </p>
+                $$
+                h_\theta(x)=\theta^Tx
+                $$
+              <p>
+                梯度下降真正的优化目标是模型的参数，通过假设函数 $h_\theta$ 与参数 $\theta$ 建立联系，因此需要推导在<strong>单一样本 $x$ </strong>下，目标函数对于参数的导数，即
+              </p>
+                $$
+                \frac{\partial}{\partial\theta}\ell_{ce}(\theta^Tx,y)=\frac{\partial\ell_{ce}(\theta^Tx,y)}{\partial\theta^Tx}\cdot\frac{\partial\theta^Tx}{\partial\theta}=(z-e_y)x
+                $$
+              <p>
+                其中 $(z-e_y)\in\mathbb{R}^{k\times1}$，$x\in\mathbb{R}^{n\time1}$。由于 假设函数 $h$ 为将 $n$ 维的列向量 $x$ 映射为 $k$ 维的向量（本任务中假设分类类别有 $k$ 种），因此 $\theta^T\in\mathbb{R}^{k\times n}$，即 $\theta\in\mathbb{R}^{n\times k}$，损失函数对于 $\theta$ 导数的维度也是如此。而上式中两个部分相乘并不满足矩阵乘法法则，因此需要进行调整才可能形成 $n\times k$ 维的矩阵。
+              </p>
+                $$
+                \nabla_{\theta}\ell_{ce}(\theta^Tx,y)\in\mathbb{R}^{n\times k}=x(z-e_y)^T
+                $$
+              <p>
+                随机梯度下降一般采用 minibatch/batch 进行优化，即当 minibatch 的 batchsize 为 $B$ 时，输入为 ¥X\in\mathbb{R}^{B\times n}¥，标签为 $y\in\{1,\dots,k\}^B\in\mathbb{R}^{B\times k}$，更新参数时需要使用批次的平均损失来更新，即
+              </p>
+                $$
+                \theta := \theta - \frac{\alpha}{B}\sum_{i=1}^B\nabla_{\theta}\ell(h_\theta(x^{(i)}),y^{(i)})
+                $$
+              <p>
+                其中 $\alpha$ 为学习率（步长），因此与单个样本 $x$ 类似，需要推导在批次样本 $X\in\mathbb{R}^{B\times n}$ 下的损失函数的导数
+              </p>
+                $$
+                \frac{\partial}{\partial\theta}\ell_{ce}(X\theta,y) = \frac{\partial\ell_{ce}(X\theta,y)}{\partial X\theta}\cdot\frac{X\theta}{\theta}=(Z-I_y)\cdot X
+                $$
+              <p>
+                其中 $X\theta\in\mathbb{B\times k}, (Z-I_y)\in\mathbb{B\times k}$，而 $X\in\mathbb{B\times n}$，对 $\theta$ 的导数的维度为 $n\times k$，因此需要进行调整
+              </p>
+                $$
+                \nabla_\theta\ell_{ce}(X\theta,y) \in \mathbb{R}^{n\times k} = X^T\cdot(Z-I_y),\quad Z = normalize(\exp{X\theta}) = softmax(X\theta)
+                $$
+              <p>
+                其中 $I_y$ 为标签的独热矩阵。在 SGD 时需要求得 minibatch/batch 中 $B$ 个样本的平均损失来进行优化。
+              </p>
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
