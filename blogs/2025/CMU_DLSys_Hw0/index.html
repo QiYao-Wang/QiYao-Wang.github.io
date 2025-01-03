@@ -210,7 +210,7 @@ return np.average(result)
                 \frac{\partial}{\partial\theta}\ell_{ce}(X\theta,y) = \frac{\partial\ell_{ce}(X\theta,y)}{\partial X\theta}\cdot\frac{\partial X\theta}{\partial\theta}=(Z-I_y)\cdot X
                 $$
               <p>
-                其中 $X\theta\in\mathbb{B\times k}, (Z-I_y)\in\mathbb{B\times k}$，而 $X\in\mathbb{B\times n}$，对 $\theta$ 的导数的维度为 $n\times k$，因此需要进行调整
+                其中 $X\theta\in\mathbb{R}^{B\times k}, (Z-I_y)\in\mathbb{R}^{B\times k}$，而 $X\in\mathbb{R}^{B\times n}$，对 $\theta$ 的导数的维度为 $n\times k$，因此需要进行调整
               </p>
                 $$
                 \nabla_\theta\ell_{ce}(X\theta,y) \in \mathbb{R}^{n\times k} = X^T\cdot(Z-I_y),\quad Z = normalize(\exp{(X\theta)}) = softmax(X\theta)
