@@ -198,7 +198,7 @@ return np.average(result)
                 \nabla_{\theta}\ell_{ce}(\theta^Tx,y)\in\mathbb{R}^{n\times k}=x(z-e_y)^T
                 $$
               <p>
-                随机梯度下降一般采用 minibatch/batch 进行优化，即当 minibatch 的 batchsize 为 $B$ 时，输入为 ¥X\in\mathbb{R}^{B\times n}¥，标签为 $y\in\{1,\dots,k\}^B\in\mathbb{R}^{B\times k}$，更新参数时需要使用批次的平均损失来更新，即
+                随机梯度下降一般采用 minibatch/batch 进行优化，即当 minibatch 的 batchsize 为 $B$ 时，输入为 $X\in\mathbb{R}^{B\times n}$，标签为 $y\in\{1,\dots,k\}^B\in\mathbb{R}^{B\times k}$，更新参数时需要使用批次的平均损失来更新，即
               </p>
                 $$
                 \theta := \theta - \frac{\alpha}{B}\sum_{i=1}^B\nabla_{\theta}\ell(h_\theta(x^{(i)}),y^{(i)})
