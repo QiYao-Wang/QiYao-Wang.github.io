@@ -134,7 +134,7 @@ return X, y
                 Softmax 损失（交叉熵损失）的具体定义如下：在一个具有在一个具有 $k$ 类的分类任务中，真实分布为 $y$，预测分布为 $h(x)$，与 hw0.ipynb 中的形式相对应
               </p>
 
-                $$\mathbb{l}_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
+                $$l_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
                 
 
               <h1>Reference</h1>
