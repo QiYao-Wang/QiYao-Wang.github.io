@@ -192,7 +192,7 @@ return np.average(result)
                 \frac{\partial}{\partial\theta}\ell_{ce}(\theta^Tx,y)=\frac{\partial\ell_{ce}(\theta^Tx,y)}{\partial\theta^Tx}\cdot\frac{\partial\theta^Tx}{\partial\theta}=(z-e_y)x
                 $$
               <p>
-                其中 $(z-e_y)\in\mathbb{R}^{k\times1}$，$x\in\mathbb{R}^{n\time1}$。由于 假设函数 $h$ 为将 $n$ 维的列向量 $x$ 映射为 $k$ 维的向量（本任务中假设分类类别有 $k$ 种），因此 $\theta^T\in\mathbb{R}^{k\times n}$，即 $\theta\in\mathbb{R}^{n\times k}$，损失函数对于 $\theta$ 导数的维度也是如此。而上式中两个部分相乘并不满足矩阵乘法法则，因此需要进行调整才可能形成 $n\times k$ 维的矩阵。
+                其中 $(z-e_y)\in\mathbb{R}^{k\times1}$，$x\in\mathbb{R}^{n\times1}$。由于 假设函数 $h$ 为将 $n$ 维的列向量 $x$ 映射为 $k$ 维的向量（本任务中假设分类类别有 $k$ 种），因此 $\theta^T\in\mathbb{R}^{k\times n}$，即 $\theta\in\mathbb{R}^{n\times k}$，损失函数对于 $\theta$ 导数的维度也是如此。而上式中两个部分相乘并不满足矩阵乘法法则，因此需要进行调整才可能形成 $n\times k$ 维的矩阵。
               </p>
                 $$
                 \nabla_{\theta}\ell_{ce}(\theta^Tx,y)\in\mathbb{R}^{n\times k}=x(z-e_y)^T
