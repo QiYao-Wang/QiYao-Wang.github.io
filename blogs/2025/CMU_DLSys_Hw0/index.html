@@ -135,7 +135,7 @@ return X, y
                 Softmax 损失（交叉熵损失）的具体定义如下：在一个具有在一个具有 $k$ 类的分类任务中，真实分布为 $y$，预测分布为 $h(x)$，与 hw0.ipynb 中的形式相对应。
               </p>
 
-                $$l_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
+                $$\ell_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
               <h3>代码实现</h3>
               <p>
                   下面实现 simple_ml.py 中的 <code>softmax_loss()</code> 函数。其中输入 Z 为二维数组，即 batchsize 个样本，和每个样本对应的 logits。真值标签 y 是一个一维数组，有 batchsize 个元素，每个元素的值为标签对应的索引。在本次实现中并未对 softmax 进行缩放，但在实际计算时，如果 $z_j$ 数值过大，指数运算后会过大，可以采取减去 $z$ 的最大值如 $e^{z_j-\max(z)}$ 的方式来进行缩放，在本次实现中并不考虑这个问题。
@@ -163,8 +163,17 @@ return np.average(result)
                 \end{bmatrix}, \quad y = [2, 0, 1, 2], \quad
                 \text{result} = [Z_{0, 2}, Z_{1, 0}, Z_{2, 1}, Z_{3, 2}] = [0.4, 0.3, 0.1, 0.2]
                 $$
-                
-              <p>其中 result 为从 Z 中提取的对应的预测分布中的 logit，需要注意的是这是一个 batch 的数据，在随机梯度下降（SDG）中，通常针对一个 minibatch/batch 进行优化，因此在返回时需要计算 batch 中的平均损失。</p>  
+
+              <p>其中 result 为从 Z 中提取的对应的预测分布中的 logit，需要注意的是这是一个 batch 的数据，在随机梯度下降（SDG）中，通常针对一个 minibatch/batch 进行优化，因此在返回时需要计算 batch 中的平均损失。</p>
+
+              <h2>Question 4: Stochastic Gradient Descent for Softmax Regression</h2>
+              <p>
+                对 Softmax loss function 进行随机梯度下降，最重要的是能够求出该目标函数的梯度。随机梯度下降一般使用一个 minibatch/batch 的样本的平均 loss 进行优化，在讨论多个样本下的梯度前，先推导单个样本时的梯度。对于假设函数 $h$ 和标签真值为 $y$ 的第 $i$ 个样本：
+              </p>
+
+                $$
+                \frac{\partial{\ell_{ce}(h,y)}}{\partial{h_i}}=\frac{\partial}{\partial h_i}(-h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}}) = -\mathbb{I}\{i=y\}
+                $$
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
