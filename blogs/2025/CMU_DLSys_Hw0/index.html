@@ -118,6 +118,7 @@ return X, y
               </p>
 
               <h2>Question 3: Softmax Loss</h2>
+              <h3>Softmax Loss 原理概述</h3>
               <p>
                 以 ImageNet 的 1000 种图片分类为例，假设使用 AlexNet，在最后一层的卷积层后接入的是两层全连接层，最后一层全连接层的输出维度应与图片的种类相同，即为 1000 维的列向量（此处忽略 batchsize），该列向量可以称为 logits；在大语言模型中，预测下一个 token 时的最后一层也是一个与字典大小相匹配的向量，该向量也称为 logits。但是这样的 logits 向量并非每一类或每一个 token 的概率，其元素之和也并不满足概率的性质，即非负性、总和为1。在真实使用过程中，需要使用激活函数（二分类时通常使用 sigmoid，多分类时通常使用 softmax）来将其映射到概率空间。
               </p>
@@ -135,7 +136,33 @@ return X, y
               </p>
 
                 $$l_{ce}(h(x), y) = -\log{p(\text{label} = y)} = -h_y(x) + \log{\sum_{j=1}^k\exp{h_{j}(x)}} = -z_y + \log{\sum_{i=1}^k\exp{z_i}}$$
-                
+              <h3>代码实现</h3>
+              <p>
+                  下面实现 simple_ml.py 中的 <code>softmax_loss()</code> 函数。其中输入 Z 为二维数组，即 batchsize 个样本，和每个样本对应的 logits。真值标签 y 是一个一维数组，有 batchsize 个元素，每个元素的值为标签对应的索引。在本次实现中并未对 softmax 进行缩放，但在实际计算时，如果 $z_j$ 数值过大，指数运算后会过大，可以采取减去 $z$ 的最大值如 $e^{z_j-\max(z)}$ 的方式来进行缩放，在本次实现中并不考虑这个问题。
+              </p>
+<pre>
+<code># Compute  e^x  for each element in  Z .
+exp_Z = np.exp(Z)
+# Create an index array of size equal to the batchsize.
+index_ = range(exp_Z.shape[0]) # list: [0, 1, 2, ..., batchsize-1]
+result = np.log(np.sum(exp_Z, axis=1)) # axis=1 for each sample (row)
+result = result - Z[index_, list(y)] # 1D array
+return np.average(result)
+</code>
+</pre>
+              <p>
+                其中 <code>Z[index_, list(y)]</code> 为多行索引，能够提取对应的内容，下面是一个示例：
+              </p>
+
+                $$
+                Z = \begin{bmatrix}
+                0.1 & 0.5 & 0.4 \\
+                0.3 & 0.2 & 0.5 \\
+                0.9 & 0.1 & 0.0 \\
+                0.4 & 0.4 & 0.2
+                \end{bmatrix}, \quad y = [2, 0, 1, 2], \quad
+                \text{result} = [Z_{0, 2}, Z_{1, 0}, Z_{2, 1}, Z_{3, 2}] = [0.4, 0.3, 0.1, 0.2]
+                $$
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
