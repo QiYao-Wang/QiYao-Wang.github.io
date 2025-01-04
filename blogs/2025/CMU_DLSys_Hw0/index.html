@@ -253,13 +253,13 @@ return X, y
                 在上面的内容中均未涉及假设函数的具体类型，与此同时，上面的 softmax 相当于作为输出层的激活函数，在下面使用两层的神经网络来进行实践，中间层中也应使用激活函数来提升相应的效果，假设输入样本 $x\in\mathbb{R}^n$。
               </p>
               $$
-              z = W_2^T\text{ReLU}(W_1^Tx), \quad\text{where }W_1\in\mathcal{R}^{n\times d}, W_2\in\mathbb{R}^{d\times k}
+              z = W_2^T\text{ReLU}(W_1^Tx), \quad\text{where }W_1\in\mathbb{R}^{n\times d}, W_2\in\mathbb{R}^{d\times k}
               $$
               <p>
                 由上面的维度，可以知道参数的维度为 $n\times k$，而输出的维度为 $k\times1$。站在数据集（含 $m$ 个样本）的全局角度
               </p>
               $$
-              Z\in\mathbb{R}^{m\times k} = (W_2^T\text{ReLU}(W_1^TX^T))^T=\text{ReLU}(XW_1)W_2, \quad\text{where }X\in\mathcal{R}^{m\times n}
+              Z\in\mathbb{R}^{m\times k} = (W_2^T\text{ReLU}(W_1^TX^T))^T=\text{ReLU}(XW_1)W_2, \quad\text{where }X\in\mathbb{R}^{m\times n}
               $$
               <p>优化目标对应为</p>
               $$
