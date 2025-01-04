@@ -303,8 +303,7 @@ return X, y
                 代码实现如下，其中 <code>*</code> 号在矩阵之间的运算表示<strong>逐元素乘法</strong>，在计算 $Z$ 及之后的 $Z_1$ 都已变为掩码后的矩阵。
               </p>
 <pre>
-<code>
-def nn_epoch(X, y, W1, W2, lr = 0.1, batch=100):
+<code class="language-python">def nn_epoch(X, y, W1, W2, lr = 0.1, batch=100):
     m = X.shape[0]
     B = batch
     iterations = (m+ (B - 1)) // B
