@@ -88,7 +88,8 @@ pip install pybind11 numpy numdifftools pytest
                 下面展示上述逻辑对应的代码，即读取 MNIST 数据集中的标签和图片，并对图片进行全局归一化和形状修改，最终返回相应的图片和标签。
               </p>
 <pre>
-<code class="language-python"># Loading Label Dataset
+<code class="language-python">
+# Loading Label Dataset
 with gzip.open(label_filename, "rb") as label:
   # Each label’s descriptor field is 8 bytes.
   magic, n = struct.unpack(">II", label.read(8))
@@ -141,13 +142,14 @@ return X, y
                   下面实现 simple_ml.py 中的 <code>softmax_loss()</code> 函数。其中输入 Z 为二维数组，即 batchsize 个样本，和每个样本对应的 logits。真值标签 y 是一个一维数组，有 batchsize 个元素，每个元素的值为标签对应的索引。在本次实现中并未对 softmax 进行缩放，但在实际计算时，如果 $z_j$ 数值过大，指数运算后会过大，可以采取减去 $z$ 的最大值如 $e^{z_j-\max(z)}$ 的方式来进行缩放，在本次实现中并不考虑这个问题。
               </p>
 <pre>
-<code class="language-python"># Compute  e^x  for each element in  Z .
-exp_Z = np.exp(Z)
-# Create an index array of size equal to the batchsize.
-index_ = range(exp_Z.shape[0]) # list: [0, 1, 2, ..., batchsize-1]
-result = np.log(np.sum(exp_Z, axis=1)) # axis=1 for each sample (row)
-result = result - Z[index_, list(y)] # 1D array
-return np.average(result)
+<code class="language-python">def softmax_loss(Z, y):
+    # Compute  e^x  for each element in  Z .
+    exp_Z = np.exp(Z)
+    # Create an index array of size equal to the batchsize.
+    index_ = range(exp_Z.shape[0]) # list: [0, 1, 2, ..., batchsize-1]
+    result = np.log(np.sum(exp_Z, axis=1)) # axis=1 for each sample (row)
+    result = result - Z[index_, list(y)] # 1D array
+    return np.average(result)
 </code>
 </pre>
               <p>
@@ -218,6 +220,36 @@ return np.average(result)
               <p>
                 其中 $I_y$ 为标签的独热矩阵。在 SGD 时需要求得 minibatch/batch 中 $B$ 个样本的平均损失来进行优化。
               </p>
+<pre>
+<code class="language-python">def softmax_regression_epoch(X, y, theta, lr = 0.1, batch=100):
+    # number of all samples: m
+    m = X.shape[0]
+    # the size of minibatch/batch: B
+    B = batch
+    # compute the number of iterations
+    iterations = (m + (B - 1)) // B
+
+    for i in range(iterations):
+        # compute the end index of this iteration step
+        num = min(m, (i + 1) * B)
+        # get the batch of data of this iteration step
+        batch_x = X[i*batch:num, :]
+        batch_y = y[i*batch:num]
+        # compute the differentiation based on the equation
+        h_y = batch_x @ theta
+        Z = np.exp(h_y) / np.sum(np.exp(h_y), axis=1, keepdims=True)
+        # Z - I_y with multi-index
+        Z[range(batch_y.shape[0]), batch_y] -= 1
+        gradient = batch_x.T @ Z
+        # compute the average of loss
+        gradient = gradient / batch_x.shape[0]
+        theta = theta - lr * gradient
+</code>
+</pre>
+              <p>
+                其中迭代次数需要考虑两种情况，能够整除 batch 和不能整除 batch，通过 $\lfloor\frac{m+(B-1)}{B}\rfloor$ 来统一计算，如当 $m=10, B=4$时，迭代次数应为 $3 = \lfloor\frac{10+4-1}{4}\rfloor$次，或引入 math 库 <code>import math</code>，使用 <code>math.ceil()</code> 对 $\frac{m}{B}$ 进行向上取整即可。在每一次迭代过程中，需要计算该迭代步骤中批次的最后一个元素的索引，由于不一定能够整除，因此需要与样本数 $m$ 进行比较。在 numpy 中矩阵乘法可以简单使用 <code>@</code> 符号完成，但需要注意的是维度需要对齐。在 <code>np.sum</code> 函数中，<code>axis=1</code> 是在行上的操作，<code>keepdims=True</code> 能够保证结果数组与输入数组的形状一致，如果不添加该参数，在行聚合后，会形成向量的形状如 <code>[1,2]</code>，而非多维数组如 <code>[[1],[2]]</code>。在减去独热矩阵时，使用多维的索引，与 Question 3 中的例子相同，通过二维索引来操作 Z 中的元素的值。注意在计算平均损失时，不要除 $B$，而应除真实的 batch 数据大小，因为有可能最后一个批次中元素的个数小于 $B$。
+              </p>
+
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
