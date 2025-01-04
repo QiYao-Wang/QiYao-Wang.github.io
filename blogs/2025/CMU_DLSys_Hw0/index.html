@@ -248,7 +248,57 @@ return X, y
               <p>
                 其中迭代次数需要考虑两种情况，能够整除 batch 和不能整除 batch，通过 $\lfloor\frac{m+(B-1)}{B}\rfloor$ 来统一计算，如当 $m=10, B=4$时，迭代次数应为 $3 = \lfloor\frac{10+4-1}{4}\rfloor$次，或引入 math 库 <code>import math</code>，使用 <code>math.ceil()</code> 对 $\frac{m}{B}$ 进行向上取整即可。在每一次迭代过程中，需要计算该迭代步骤中批次的最后一个元素的索引，由于不一定能够整除，因此需要与样本数 $m$ 进行比较。在 numpy 中矩阵乘法可以简单使用 <code>@</code> 符号完成，但需要注意的是维度需要对齐。在 <code>np.sum</code> 函数中，<code>axis=1</code> 是在行上的操作，<code>keepdims=True</code> 能够保证结果数组与输入数组的形状一致，如果不添加该参数，在行聚合后，会形成向量的形状如 <code>[1,2]</code>，而非多维数组如 <code>[[1],[2]]</code>。在减去独热矩阵时，使用多维的索引，与 Question 3 中的例子相同，通过二维索引来操作 Z 中的元素的值。注意在计算平均损失时，不要除 $B$，而应除真实的 batch 数据大小，因为有可能最后一个批次中元素的个数小于 $B$。
               </p>
-
+              <h2>Question 5: SGD for a two-layer NN</h2>
+              <p>
+                在上面的内容中均未涉及假设函数的具体类型，与此同时，上面的 softmax 相当于作为输出层的激活函数，在下面使用两层的神经网络来进行实践，中间层中也应使用激活函数来提升相应的效果，假设输入样本 $x\in\mathbb{R}^n$。
+              </p>
+              $$
+              z = W_2^T\text{ReLU}(W_1^Tx), \quad\text{where }W_1\in\mathcal{R}^{n\times d}, W_2\in\mathbb{R}^{d\times k}
+              $$
+              <p>
+                由上面的维度，可以知道参数的维度为 $n\times k$，而输出的维度为 $k\times1$。站在数据集（含 $m$ 个样本）的全局角度
+              </p>
+              $$
+              Z\in\mathbb{R}^{m\tims k} = (W_2^T\text{ReLU}(W_1^TX^T))^T=\text{ReLU}(XW_1)W_2, \quad\text{where }X\in\mathcal{R}^{m\times n}
+              $$
+              <p>优化目标对应为</p>
+              $$
+              \minimize_{W_1,W_2}\frac{1}{m}\sum_{i=1}^m\ell_{softmax}(\text{ReLU}(XW_1)W_2,y),\quad y\in\mathbb{R}^{m\times k}
+              $$
+              <p>
+                根据上面对 softmax loss 的导数推导，$h = \text{ReLU}(XW_1)W_2$, 记 $Z_1\in\mathbb{R}^{m\times d}=\text{ReLU}(XW_1)$，此处的 $Z$ 其实是假设函数 $h$ 的角色， 则 $Z=Z_1W_2$，分别对 $W_1$ 和 $W_2$ 求偏导，此处不管 loss 导数的平均值，在梯度下降时乘 $\frac{1}{m}$。
+              </p>
+              $$
+              \nabla_{W_2}\ell_{softmax}(Z,y) = \frac{\partial\ell}{\partial Z}\cdot\frac{\partial Z}{\partial W_2} = Z_1^T(Softmax(\exp{(Z)}) - I_y) = Z_1^TG_2, \quad\text{where }G_2 \in\mathbb{R}^{m\times k}=Softmax(\exp{(Z)}) - I_y
+              $$
+              <p>对 $W_1$ 求导也需要使用链式法则</p>
+              $$
+              \nabla_{W_1}\ell_{softmax}(Z,y) = \frac{\partial\ell}{\partial Z}\cdot\frac{\partial Z}{\partial Z_1}\cdot\frac{\partial Z_1}{\partial W_1}=G_2\cdot W_2^T\cdot \frac{\partial Z_1}{\partial W_1}
+              $$
+              <p>
+                由于 $\frac{\partial Z_1}{\partial W_1}$ 仍然是个复合函数，将其单独计算
+              </p>
+              $$
+              \frac{\partial Z_1}{\partial W_1} = \frac{\partial \text{ReLU}}{\partial XW_1}\cdot\frac{\partial XW_1}{\partial W_1}
+              $$
+              $$
+              \text{ReLU}(x) =
+                \begin{cases}
+                x & \text{如果 } x > 0 \\
+                0 & \text{如果 } x \leq 0
+                \end{cases}
+                \quad\text{ReLU}{\prime}(x) =
+                \begin{cases}
+                1 & \text{如果 } x > 0 \\
+                0 & \text{如果 } x \leq 0
+                \end{cases}
+              $$
+              <p>
+                $\text{ReLU}$ 的导数可以看到为一个掩码矩阵，即在 $XW_1 > 0$的元素位置处的值为1，否则为0，此处记为 $\mathbb{I}\{Z_1>0\}$，将上面的链式法则进行整理，记 $G_1\in\mathbb{R}^{m\times d}=\mathbb{I}\{Z_1>0\}\circle(G_2W_2^T)$，则
+              </p>
+              $$
+              \nabla_{W_1}\ell_{softmax}(Z,y)=\frac{\partial Z_1}{\partial W_1}G_1=X^TG_1
+              $$
 
               <h1>Reference</h1>
               <p>[1] xx要努力. (2022, 10). Deep Learning System-Homework0. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/576378167">https://zhuanlan.zhihu.com/p/576378167</a>.</p>
