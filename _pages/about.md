@@ -143,7 +143,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 # 🎖 Honors and Awards
 <p><strong>Competition Awards</strong></p>
 
-<p style="color:gray">Bold text indicates national level.</p>
+<p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
 - *2024.12*: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (leader)
 - *2024.11*: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— ***Second Prize*** at the National level. (Leader)
