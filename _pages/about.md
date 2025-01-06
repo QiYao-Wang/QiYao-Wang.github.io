@@ -116,6 +116,8 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 
 <p><strong>College Students' Innovative Entrepreneurial Training Plan Program</strong></p>
 
+<p style="color:gray">Projects in Dalian University of Technology.</p>
+
 <div style="max-height: 210px; overflow-y: auto;">
 <ul>
   <li>Policy Navigator: An AI-Powered Intelligent Policy Service Platform. <i>Hongbo Wang.</i> Supervisor: <i>Yuan Lin, <strong>Qiyao Wang</strong></i>. Not Assigned. 2024.12-2026.06 <i>(now)</i>. Supervisor. Ongoing.</li>
