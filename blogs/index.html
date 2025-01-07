@@ -3,14 +3,23 @@ layout: compress
 ---
 <!doctype html>
 <html lang="en" class="no-js">
-  
+
   <head>
     {% include head.html %}
     {% include head/custom.html %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+      html {
+            scroll-behavior: smooth; /* 启用平滑滚动 */
+        }
+    </script>
   </head>
   <body>
     {% include browser-upgrade.html %}
-    <div class="masthead" style="container">
+    <div class="masthead">
     <div class="masthead__inner-wrap">
       <div class="masthead__menu">
         <nav id="site-nav" class="greedy-nav">
@@ -26,30 +35,25 @@ layout: compress
 
       <div class="sidebar sticky">
         <div id="toc"></div>
-        <div>
-          <strong>Topics</strong>
-          <p><font color="gray">#ML</font></p>
-          <p><font color="gray">#MLSys</font></p>
-          <p><font color="gray">#Reasoning</font></p>
-        </div>
       </div>
-      
+
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
           <section class="page__content" itemprop="text">
 
-            <h1>📖 Qiyao Wang's Blog</h1>
-            <h2>2025</h2>
-            <ul>              
-              <li><em>Jan. 07, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CoT-Decoding">Chain-of-Thought Reasoning without Prompting</a>. Language: Chinese. <font color="gray">#Reasoning</font></li>
-              <li><em>Jan. 01, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0">CMU DLSys Course Homework 0: Implementation and Reflection</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
-            </ul>
-            <h2>2024</h2>
-            <ul>
-              <li><em>Dec. 28, 2024</em>. <a href="https://mathsion.notion.site/Pattern-Recognition-Machine-Learning-ce6d699ec88744a08dea19e859535ec8?pvs=4">Pattern Recognition and Machine Learning</a>. Language: Chinese. <font color="gray">#ML</font></li> 
-            </ul>
-           
+            <h1 id="cmu-dlsys-course-homework-0:-implementation-and-reflection">Chain-of-Thought Reasoning without Prompting</h1>
+            <p style="color:gray">Jan. 07, 2025 - Jan. XX, 2025 · Qiyao Wang</p>
+
+              <p>大模型的推理最近很火，我个人对于推理的理解是基于线索或前面的推理逻辑不断向后有逻辑地延伸，这或许和自回归的形式很像，Denny Zhou 的这篇论文通过修改贪婪解码（greedy decoding）为基于 CoT-Decoding 的有选择性的 top-k decoding，从无需提示（without prompting）的视角来探索或观察大模型内部的推理。本文将首先详细介绍这篇论文，之后进行代码实现，希望能在一周写完 😁。</p>
+
+
+              <h1>Reference</h1>
+              <p>[1] Xuezhi Wang, and Denny Zhou. 2024. <a href="https://openreview.net/forum?id=4Zt7S0B0Jp">Chain-of-Thought Reasoning Without Prompting</a>. In The Thirty-Eighth Annual Conference on Neural Information Processing Systems (NeurIPS 2024).</p>
+
+              <h1>Contact</h1>
+              <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
+
           </section>
         </div>
       </article>
