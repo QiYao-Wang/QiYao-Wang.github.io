@@ -52,14 +52,13 @@ layout: compress
               <p>在本文之前，大部分的论文聚焦在利用 Prompting 的方式来激发 LLMs 的推理能力，如 ICL 中的 Few-Shot Learning 在测试问题前给定几个与测试问题类似的示例，这些示例中通常包含着对应问题解决方案的推理流程，概括的说即<strong>给定具有中间步骤的少样本提示（Few-Shot）</strong>，或使用零样本（Zero-Shot）提示的方式指导模型给出相应的中间步骤，例如 (Nye et.al, 2021<sup>[2,3]</sup>） 在 LLMs 出现之前就尝试使用 XML 格式来指导模型在给出正确答案之前在 <code>&lt;scratch&gt; computing process &lt;/scratch&gt;</code> 中给出计算过程，之后再给出答案，以及利用显式的思维链提示 <code>Let's think step by step.</code> 激发模型的推理能力，使得大模型在输出最终答案之前能够给出一定的推理过程。</p>
 
               <p>可以看到的是，提示方法的关键是如何在大模型回答最终答案之前给出一定的推理中间过程（intermediate steps），这个中间过程是推理的关键。除提示方法外，也有利用 model training 和 instruction tuning 来提升模型生成中间步骤能力的方法，但是这样的方法与基于 prompt 的方法，都受限于 “instruction/prompt”，有时候需要不断地修缮你精心设计的 prompt 才有可能提升一些性能。本文提出了这样的问题，<strong>在无需精心设计提示的情况下，如何激发LLMs的推理能力？</strong>，以及 <strong>如何更好地理解模型自身的内部推理能力？</strong> 但大模型通常倾向于直接输出最终的问题结果，本文从解码过程出发，提出了<strong>CoT-decoding</strong>，能够不基于提示，激发模型的推理能力（生成中间的推理步骤）。</p>
-            
+
               <h1>代码复现</h1>
 
               <h1>Reference</h1>
-              <p style="color:gray">参考格式未标准化，请见谅</p>
               <p>[1] Wang X, Zhou D. <a href="https://openreview.net/forum?id=4Zt7S0B0Jp">Chain-of-Thought Reasoning Without Prompting</a> [C]. The Thirty-Eighth Annual Conference on Neural Information Processing Systems (NeurIPS 2024).</p>
               <p>[2] Nye M, Andreassen AJ, Gur-Ari G, et al. <a href="https://openreview.net/forum?id=HBlx2idbkbq">Show Your Work: Scratchpads for Intermediate Computation with Language Models</a> [C]. ICLR, Deep Learning for Code Workshop, 2022.</p>
-              <p>[3] <a href="https://leehanchung.github.io/blogs/2024/10/21/reasoning-inference-scaling/">https://leehanchung.github.io/blogs/2024/10/21/reasoning-inference-scaling/</a></p>
+              <p>[3] Blog: <a href="https://leehanchung.github.io/blogs/2024/10/21/reasoning-inference-scaling/">https://leehanchung.github.io/blogs/2024/10/21/reasoning-inference-scaling/</a></p>
               <p>[4] Wei J, Wang X, Schuurmans D, et al. <a href="https://arxiv.org/abs/2201.11903">Chain-of-thought prompting elicits reasoning in large language models</a>[J]. Advances in neural information processing systems, 2022, 35: 24824-24837.</p>
 
               <h1>Contact</h1>
