@@ -56,9 +56,30 @@ layout: compress
             <ul>
               <li>
                 <p><strong>Value</strong> (the most abstract class)</p>
-                <p>Value 类是抽象程度最高的类，其实例化的每一个对象都作为计算图中的一个节点（甚至可直接认为其对象代表一个计算图，因为可通过节点进行轨迹追溯）。其中包含四个重要的部分：<code>op: Optional[Op]</code>，该语句定义了节点 Value 所链接的其他节点进行的操作，如假设 $v_3=v_1+v_2$，则 op 中存储的是 ops_mathematic.py 中定义的 “+”（EWiseAdd 逐元素加法），其中 Optional 代表 op 的数据类型要么是 Op Class，要么是 None；  </p>
+                <p>Value 类是抽象程度最高的类，其实例化的每一个对象都作为计算图中的一个节点（甚至可直接认为其对象代表一个计算图，因为可通过节点进行轨迹追溯）。其中包含四个重要的部分：<code>op: Optional[Op]</code>，该语句定义了节点 Value 所链接的其他节点进行的操作，如假设 $v_3=v_1+v_2$，则 op 中存储的是 ops_mathematic.py 中定义的 “+”（EWiseAdd 逐元素加法），其中 Optional 代表 op 的数据类型要么是 Op Class，要么是 None；<code>inputs: List["Value"]</code>，其中包含了计算图中与当前节点相关的节点，在 $v_3=v_1+v_2$ 的例子中，$v_3$ 的 inputs 则为 $[v_1,v_2]$，通过 op 和 inputs 可以有效地获得对应计算图的完整轨迹；<code>cached_data: NDArray</code>，则是该节点存储的具体的值，在本作业中还是使用 numpy 中的多维数组来简化作业；<code>requires_grad: bool</code>，则是对该节点是否需要求导，当值为 False 时，表示该节点无需求导，无需进行梯度下降的优化。</p>
+              </li>
+              <li>
+                <p><strong>Tensor</strong> (the subclass of value and the interface with user)</p>
+                <p>Tensor 类是 Value 的子类，并且对应一个实际的张量节点（计算图中的一个多维数组），计算图中实际应用 Tensor 类而非 Value 类。</p>
+              </li>
+              <li>
+                <p><strong>Op</strong> (Operations)</p>
+                <p>Op 类用于构建计算图中包含的具体的运算符，每一个运算符需要定义计算的前馈函数 <code>compute()</code> 和该运算符对应的求导过程 <code>gradient()</code>，用于后续的反向传播。</p>
+              </li>
+              <li>
+                <p><strong>TensorOp</strong> (the subclass of Op)</p>
+                <p>TensorOp 类是 Op 的子类，它继承了 Op 中的所有操作符，并且能够返回 Tensor 类型的结果。</p>
               </li>
             </ul>
+            <p>在实际运行 needle 库时，需要使用的是 Tensor 类，而 TensorOp 等类都内置于 Tensor 中，以 $c = a + b$ 为例</p>
+<pre>
+<code class="language-python">import needle as ndl
+a = ndl.Tensor([1], dtype="float32")
+b = ndl.Tensor([2], dtype="float32")
+c = a + b # c: Tensor([3], dtype="float32")
+</code>
+</pre>
+            <p>上述代码的实际运算过程如下：1. <code>Tensor.__add__</code> 调用 Tensor 类中的 "__add__" 方法，由于运算符两侧均为 Tensor，则实际运行的是 Op 中的逐元素加法 <code>EWiseAdd()</code>；2. <code>TensorOp.__call__</code>；3. <code>Tensor.make_from_op(op: Op, inputs: List["Value"])</code> 首先为 c 实例化了一个新的 Tensor 对象，而非在 a/b 上进行修改，将对应的运算符和参与运算的节点传入新创建的对象 c 中进行初始化，其中需要对 <strong>LAZY_MODE</strong> 进行判断，最终返回新的 Tensor 对象 c；4. 在返回之前，经过了 <code>Value.realize_cached_data()</code> 或 <code>Tensor.detach()</code> 的计算，二者区别（及 LAZY_MODE）将在后面详细说明；5. 进入 Op 类的前馈计算函数中 <code>EWiseAdd.compute</code> 才能得到第 3 步中返回的新 Tensor 对象 c。</p>
 
             <h1>Reference</h1>
             <p>[1] xx要努力. (2022, 11). Deep Learning System-Homework1. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/579465666">https://zhuanlan.zhihu.com/p/579465666</a>.</p>
