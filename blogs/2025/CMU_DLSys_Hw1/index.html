@@ -48,7 +48,7 @@ layout: compress
             <p>本周看完了课程的 Lecture 3/4/5，这几节课程是对自动求导（Automatic Differentiation）的讲解，其中反向传播、计算图是重点。本文针对 <a href="https://github.com/dlsyscourse/hw1">Homework 1</a> 进行实践与思考。</p>
 
             <h1>Introduction of Homework 1</h1>
-            <p>通过 Homework 1 自己实践构建一个 needle（Necessary Elements of Deep Learning） 库，其中本文最关键的是自动求导框架的构建，并在 <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0/">Homework 1</a> 中的双层神经网络上进行应用。</p>
+            <p>通过 Homework 1 自己实践构建一个 needle（Necessary Elements of Deep Learning） 库，其中本文最关键的是自动求导框架的构建，并在 <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0/">Homework 0</a> 中的双层神经网络上进行应用。</p>
             <p>本文对于 needle 的构建是建立在 numpy 库和 CPU 基础上的，后续的作业也会实现相应的底层多维数组以及应用到 GPU 节点上。</p>
             <p>Homework 1 的 needle 库包含两个重要的文件，即 autograd.py 和 ops_mathematic.py，其中前者定义了计算图框架以及自动求导框架，后者包含在计算图中会用到的运算符（compute function），及运算符对应的求导函数（gradient function）。</p>
             <h2>Basic Concept of Needle</h2>
@@ -56,7 +56,7 @@ layout: compress
             <ul>
               <li>
                 <p><strong>Value</strong> (the most abstract class)</p>
-                <p>1</p>
+                <p>Value 类是抽象程度最高的类，其实例化的每一个对象都作为计算图中的一个节点（甚至可直接认为其对象代表一个计算图，因为可通过节点进行轨迹追溯）。其中包含四个重要的部分：<code>op: Optional[Op]</code>，该语句定义了节点 Value 所链接的其他节点进行的操作，如假设 $v_3=v_1+v_2$，则 op 中存储的是 ops_mathematic.py 中定义的 “+”（EWiseAdd 逐元素加法），其中 Optional 代表 op 的数据类型要么是 Op Class，要么是 None；  </p>
               </li>
             </ul>
 
