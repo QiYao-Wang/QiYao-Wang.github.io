@@ -80,7 +80,11 @@ c = a + b # c: Tensor([3], dtype="float32")
 </code>
 </pre>
             <p>上述代码的实际运算过程如下：1. <code>Tensor.__add__</code> 调用 Tensor 类中的 "__add__" 方法，由于运算符两侧均为 Tensor，则实际运行的是 Op 中的逐元素加法 <code>EWiseAdd()</code>；2. <code>TensorOp.__call__</code>；3. <code>Tensor.make_from_op(op: Op, inputs: List["Value"])</code> 首先为 c 实例化了一个新的 Tensor 对象，而非在 a/b 上进行修改，将对应的运算符和参与运算的节点传入新创建的对象 c 中进行初始化，其中需要对 <strong>LAZY_MODE</strong> 进行判断，最终返回新的 Tensor 对象 c；4. 在返回之前，经过了 <code>Value.realize_cached_data()</code> 或 <code>Tensor.detach()</code> 的计算，二者区别（及 LAZY_MODE）将在后面详细说明；5. 进入 Op 类的前馈计算函数中 <code>EWiseAdd.compute</code> 才能得到第 3 步中返回的新 Tensor 对象 c。</p>
-
+            
+            <h3>LAZY_MODE and detach function</h3>
+            <p></p>
+            
+            
             <h1>Reference</h1>
             <p>[1] xx要努力. (2022, 11). Deep Learning System-Homework1. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/579465666">https://zhuanlan.zhihu.com/p/579465666</a>.</p>
 
