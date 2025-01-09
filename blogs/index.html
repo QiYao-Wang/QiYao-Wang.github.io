@@ -125,13 +125,25 @@ layout: compress
     topicsContainer.innerHTML = topicsHTML;
 </script>
     <script>
-    // 统计总博客数量
-    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
-    const totalBlogs = blogs.length; // 计算总数
+    document.addEventListener('DOMContentLoaded', () => {
+        // 获取所有年份（h2）以及对应的博客条目（ul > li）
+        const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
+        let totalBlogs = 0;
 
-    // 在 total_blogs 中插入总数信息
-    const totalBlogsContainer = document.getElementById('total_blogs');
-    totalBlogsContainer.innerHTML = `<p><font color="gray">Total Blogs: ${totalBlogs}</font></p>`;
+        // 遍历每个年份部分，计算该年份下博客的数量
+        yearSections.forEach(section => {
+            const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
+            if (blogList && blogList.tagName === 'UL') {
+                totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
+            }
+        });
+
+        // 更新 total_blogs 区域
+        const totalBlogsContainer = document.getElementById('total_blogs');
+        if (totalBlogsContainer) {
+            totalBlogsContainer.innerHTML = `<p><font color="gray">Total Blogs: ${totalBlogs}</font></p>`;
+        }
+    });
 </script>
   </body>
 </html>
