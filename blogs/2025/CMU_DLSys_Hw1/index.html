@@ -190,7 +190,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                   $$
                   \frac{\partial \ell}{\partial v_3}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial z_3}\cdot(\frac{\partial v_3}{\partial v_1}+\frac{\partial v_3}{\partial v_2}) = \text{out_grad}\cdot(v_2^T+v_1^T)
                   $$
-                  <p>这里需要考虑形状，假设 $v_3\in\mathbb{R}^{p\times q}, v_1\in\mathbb{R}^{p\times s}, v_2\in\mathbb{R}^{s\times q}$，out_grad 的形状与 $v_3$ 一致，即 $\mathbb{R}^{p\times q}$，则 $\frac{\partial \ell}{\partial v_1}=v_2^T\in\mathbb{R}^{q\times s}, \frac{\partial \ell}{\partial v_2}=v_1^T\in\mathbb{R}^{s\times p}$，则 <code>dlhs=matmul(out_grad, rhs.T)</code> 形状为 $\mathbb{R}^{q\times s}$ ，<code>drhs=matmul(lhs.T, outgrad)</code> 形状为 \mathbb{R}^{s\times p}，此时符合导数与原函数的维度相同。</p>
+                  <p>这里需要考虑形状，假设 $v_3\in\mathbb{R}^{p\times q}, v_1\in\mathbb{R}^{p\times s}, v_2\in\mathbb{R}^{s\times q}$，out_grad 的形状与 $v_3$ 一致，即 $\mathbb{R}^{p\times q}$，则 $\frac{\partial \ell}{\partial v_1}=v_2^T\in\mathbb{R}^{q\times s}, \frac{\partial \ell}{\partial v_2}=v_1^T\in\mathbb{R}^{s\times p}$，则 <code>dlhs=matmul(out_grad, rhs.T)</code> 形状为 $\mathbb{R}^{q\times s}$ ，<code>drhs=matmul(lhs.T, outgrad)</code> 形状为 $\mathbb{R}^{s\times p}$，此时符合导数与原函数的维度相同。</p>
                   <p>需要注意的是，上述没有考虑在前向传播的过程中使用<strong>广播机制</strong>，dlhs 的维度可能会比 lhs 的维度多一些，为了使维度统一，需要对这些多余的维度进行求和。例如假设 dlhs.shape = (4, 3, 2)，而 lhs.shape = (3, 2)，那么广播机制在最左侧（通过计算动态得知加入的维度位置）加入了一个维度，需要通过 reduce（实际使用下面的 summation）来减少维度使得维度统一。</p>
 <pre>
 <code class="language-python">class MatMul(TensorOp):
