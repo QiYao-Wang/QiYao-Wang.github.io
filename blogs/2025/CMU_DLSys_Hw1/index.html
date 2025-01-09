@@ -114,12 +114,13 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 
             <h1>Question 1 & 2: Implementing forward and backword computation</h1>
             <p>在 needle 中，计算图通过 TensorOp 类下属的各个子类进行实际的张量运算，每一个运算符都具有 compute 成员函数，负责前馈计算，本节的多维数组无需自行构建，而是使用 numpy 的 NDArray 实现，为了后续的移植，以 <code>import numpy as array_api</code> 的形式导入 numpy 包。下面对运算符进行依次实现，在本节的代码中将包含每个运算符类的初始化函数（__init__）、前馈函数（compute）以及求导函数（gradient）。</p>
+            <p>前馈计算直接按照各运算符的定义执行即可，但每个运算符的求导都较为复杂，需要首先明确的是，该求导的对象是损失函数 loss function $\ell$ 对当前节点 $v_i$ 的导数，</p>
             <ul>
               <li>
                 <p><strong>PowerScalar</strong>：对张量进行乘方运算 $X^n$，例如 $X^2=XX^T$，numpy中提供了相应的乘方接口，直接调用即可</p>
                 <p>下面详细推导张量乘方运算的求导函数，假设计算式为 $f=v_2=v_1^n$，则 loss function 对 $v_2$ 的导数可计算为</p>
                 $$
-                \frac{\partial\ell}{\partial v_2}=\frac{\partial\ell}{\partial f}\cdot\frac{\partial f}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out\_grad}\cdot 1\cdot nv_1^{n-1}
+                \frac{\partial\ell}{\partial v_2}=\frac{\partial\ell}{\partial f}\cdot\frac{\partial f}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot 1\cdot nv_1^{n-1}
                 $$
 <pre>
 <code class="language-python">class PowerScalar(TensorOp):
@@ -128,7 +129,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 
   def compute(self, a: NDArray) -> NDArray:
     return array_api.power(a, self.scalar)</code>
-  
+
   def gradient(self, out_grad, node):
     return out_grad * self.scalar * array_api.power(a, self.scalar - 1)
 </pre>
