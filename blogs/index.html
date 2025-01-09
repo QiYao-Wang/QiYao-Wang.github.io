@@ -97,7 +97,7 @@ layout: compress
         // 将统计结果追加到年份标题中
         yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
     });
-      // 自动统计每个 Topic 的博客数量
+      / 自动统计每个 Topic 的博客数量
     const topicCounts = {};
     const blogs = document.querySelectorAll('li'); // 获取所有博客条目
 
@@ -110,13 +110,14 @@ layout: compress
         }
     });
 
-    // 更新边栏的 Topics 部分
+    // 对 Topic 按字母顺序排序，并更新边栏
+    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
     const topicsSection = document.querySelector('.sidebar strong + p'); // 定位到 Topics 区域
     let topicsHTML = '<strong>Topics</strong><br>';
 
-    for (const [topic, count] of Object.entries(topicCounts)) {
+    sortedTopics.forEach(([topic, count]) => {
         topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
-    }
+    });
 
     topicsSection.innerHTML = topicsHTML;
     </script>
