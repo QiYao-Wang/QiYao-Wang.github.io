@@ -112,9 +112,12 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                 <figcaption>图1：detach 函数示例：$y=x+1$</figcaption>
               </figure>
 
-            <h1>Question 1 & 2: Implementing forward and backword computation</h1>
+            <h1>Question 1 & 2: Implementing forward and backward computation</h1>
             <p>在 needle 中，计算图通过 TensorOp 类下属的各个子类进行实际的张量运算，每一个运算符都具有 compute 成员函数，负责前馈计算，本节的多维数组无需自行构建，而是使用 numpy 的 NDArray 实现，为了后续的移植，以 <code>import numpy as array_api</code> 的形式导入 numpy 包。下面对运算符进行依次实现，在本节的代码中将包含每个运算符类的初始化函数（__init__）、前馈函数（compute）以及求导函数（gradient）。</p>
-            <p>前馈计算直接按照各运算符的定义执行即可，但每个运算符的求导都较为复杂，需要首先明确的是，该求导的对象是损失函数 loss function $\ell$ 对当前节点 $v_i$ 的导数，</p>
+            <p>前馈计算直接按照各运算符的定义执行即可，但每个运算符的求导都较为复杂，需要首先明确的是，该求导的对象是损失函数 loss function $\ell$ 对当前节点 $v_i$ 的导数，$v_i$ 是其 inpus 在 对应运算符上的函数，假设 $f=v_i=g(v_{i-1},...v_{i-m})$，即 inputs 为前面的 m 个节点，那么导数为</p>
+              $$
+              \frac{\partial \ell}{\partial v_i}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial z_i}\cdot\sum_{j=1}^m\frac{\partial z_i}{\partial z_{i-j}}=\text{out_grad}\cdot\sum_{j=1}^m\frac{\partial z_i}{\partial z_{i-j}}
+              $$
             <ul>
               <li>
                 <p><strong>PowerScalar</strong>：对张量进行乘方运算 $X^n$，例如 $X^2=XX^T$，numpy中提供了相应的乘方接口，直接调用即可</p>
