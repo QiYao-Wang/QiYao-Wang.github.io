@@ -123,8 +123,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 <pre>
 <code class="language-python">class PowerScalar(TensorOp):
   def __init__(self, scalar:int):
-    def __init__(self, scalar: int):
-      self.scalar = scalar
+    self.scalar = scalar
 
   def compute(self, a: NDArray) -> NDArray:
     return array_api.power(a, self.scalar)
@@ -150,6 +149,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 </code>
 </pre>
               </li>
+                
             </ul>
 
 
