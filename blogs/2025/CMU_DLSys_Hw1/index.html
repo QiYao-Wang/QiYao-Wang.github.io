@@ -89,9 +89,31 @@ c = a + b # c: Tensor([3], dtype="float32")
               </ol>
             </p>
 
-            <h3>LAZY_MODE and detach function</h3>
-            <p></p>
-
+            <h3>LAZY_MODE and Detach Function</h3>
+            <p>如下方的代码块所示，为 Value 类中的成员函数 <code>make_from_op()</code>，其中包含了这两个元素</p>
+<pre>
+<code class="language-python">@classmethod
+def make_from_op(cls, op: Op, inputs: List["Value"]):
+  value = cls.__new__(cls) # create a new object of Value Class
+  value._init(op, inputs) # initialize object
+  if not LAZY_MODE:
+    if not value.requires_grad:
+      return value.detach()
+    value.realize_cached_data()
+  return value
+</code>
+</pre>
+            <p>LAZY_MODE 用来控制计算立即执行还是延迟执行。当设置 <code>ndl.autograd.LAZY_MODE = True</code> 时，运行 $c = a + b$ 时并不会立刻进行 <code>realize_cached_data()</code> 的计算，此时的 <code>c.cached_data is None == True</code>，这样只构建计算图但不进行计算，能够有效地优化内存占用，当需要使用 $c$ 的数值时，可以利用 <code>c.data()</code> 来通过前馈计算图获得该节点的 cache_data 数值。</p>
+            <p>Detach function 用来控制节点是否与计算图链接。如下方的代码所示，虽然看起来简单应该不会占用太多内存，但是由于 Tensor 的计算实质上是对计算图的构建，如图 1 所示，通过这样的遍历，背后其实构建了很多计算图，因此容易内存/显存溢出。</p>
+<pre>
+<code>for i in range(100):
+  sum_loss = sum_loss + x * x
+</code>
+</pre>
+              <figure>
+                <img src="detach.png" alt="detach function">
+                <figcaption>图1：detach 函数示例：$y=x+1$</figcaption>
+              </figure>
 
             <h1>Reference</h1>
             <p>[1] xx要努力. (2022, 11). Deep Learning System-Homework1. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/579465666">https://zhuanlan.zhihu.com/p/579465666</a>.</p>
