@@ -37,6 +37,7 @@ layout: compress
           <section class="page__content" itemprop="text">
 
             <h1>📖 Qiyao Wang's Blog</h1>
+            <div id="total_blogs"></div>
             <h2>2025</h2>
             <ul>              
               <li><em>Jan. 08, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1">CMU DLSys Course Homework 1: Implementation and Reflection</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
@@ -122,6 +123,15 @@ layout: compress
 
     // 替换 Topics 区域内容
     topicsContainer.innerHTML = topicsHTML;
+</script>
+    <script>
+    // 统计总博客数量
+    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
+    const totalBlogs = blogs.length; // 计算总数
+
+    // 在 total_blogs 中插入总数信息
+    const totalBlogsContainer = document.getElementById('total_blogs');
+    totalBlogsContainer.innerHTML = `<p><font color="gray">Total Blogs: ${totalBlogs}</font></p>`;
 </script>
   </body>
 </html>
