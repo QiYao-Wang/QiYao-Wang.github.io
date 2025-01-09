@@ -128,10 +128,10 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
     self.scalar = scalar
 
   def compute(self, a: NDArray) -> NDArray:
-    return array_api.power(a, self.scalar)</code>
+    return array_api.power(a, self.scalar)
 
   def gradient(self, out_grad, node):
-    return out_grad * self.scalar * array_api.power(a, self.scalar - 1)
+    return out_grad * self.scalar * array_api.power(a, self.scalar - 1)</code>
 </pre>
               </li>
               <li>
