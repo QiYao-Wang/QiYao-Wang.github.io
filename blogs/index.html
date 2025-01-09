@@ -37,7 +37,7 @@ layout: compress
           <section class="page__content" itemprop="text">
 
             <h1>📖 Qiyao Wang's Blog</h1>
-            <div id="total_blogs"></div>
+            <p id="total_blogs" style="color: gray">Total Blogs</p>
             <h2>2025</h2>
             <ul>              
               <li><em>Jan. 08, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1">CMU DLSys Course Homework 1: Implementation and Reflection</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
@@ -138,10 +138,10 @@ layout: compress
             }
         });
 
-        // 更新 total_blogs 区域
-        const totalBlogsContainer = document.getElementById('total_blogs');
-        if (totalBlogsContainer) {
-            totalBlogsContainer.innerHTML = `<p><font color="gray">Total Blogs: ${totalBlogs}</font></p>`;
+        // 更新 total_blogs 的文本内容
+        const totalBlogsElement = document.getElementById('total_blogs');
+        if (totalBlogsElement) {
+            totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
         }
     });
 </script>
