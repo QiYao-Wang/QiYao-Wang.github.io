@@ -82,6 +82,21 @@ layout: compress
             li.appendChild(a);
             ul.appendChild(li);
         });
+      // 自动统计每一年的博客数量
+    const years = document.querySelectorAll('h2'); // 找到所有年份标题
+    years.forEach(yearHeader => {
+        const year = yearHeader.innerText.trim(); // 提取年份文本
+        const nextSibling = yearHeader.nextElementSibling; // 获取年份标题下的内容
+        let count = 0;
+
+        // 如果下一个兄弟节点是列表，则统计列表项数量
+        if (nextSibling && nextSibling.tagName === 'UL') {
+            count = nextSibling.querySelectorAll('li').length; // 统计当前年份的博客数量
+        }
+
+        // 将统计结果追加到年份标题中
+        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
+    });
     </script>
   </body>
 </html>
