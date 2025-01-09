@@ -135,6 +135,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
     return array_api.power(a, self.scalar)
 
   def gradient(self, out_grad, node):
+    a = node.inputs
     return out_grad * self.scalar * array_api.power(a, self.scalar - 1)</code>
 </pre>
               </li>
@@ -166,7 +167,10 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 </pre>
               </li>
               <li>
-                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $X/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。</p>
+                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $X/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。由于该运算不涉及其他的节点，导函数为</p>
+                  $$
+                  \frac{\partial \ell}{\partial x}=\frac{\partial\ell}{\partial f}\cdot\frac{\partial f}{\partial x}=\text{out_grad}\cdot\frac{1}{a}
+                  $$
 <pre>
 <code class="language-python">class DivScalar(TensorOp):
   def __init__(self, scalar):
@@ -175,16 +179,38 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
   def compute(self, a):
     if self.scalar == 0:
       raise RuntimeError("The divisor is zero.")
-    return array_api.divide(a, self.scalar)</code>
+    return array_api.divide(a, self.scalar)
+  def gradient(self, out_grad, node):
+    return out_grad / self.scalar</code>
 </pre>
               </li>
               <li>
                   <p><strong>MatMul</strong>：矩阵乘法 $AB$，numpy 在其中的矩阵乘法函数中已经考虑了两个矩阵的形状的约束。</p>
+                  <p>对于该函数的导数，假设 $v_3 = v_1 * v_2$，即 lhs 为 $v_1$，rhs 为 $v_2$，那么</p>
+                  $$
+                  \frac{\partial \ell}{\partial v_3}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial z_3}\cdot(\frac{\partial v_3}{\partial v_1}+\frac{\partial v_3}{\partial v_2}) = \text{out_grad}\cdot(v_2^T+v_1^T)
+                  $$
+                  <p>这里需要考虑形状，假设 $v_3\in\mathbb{R}^{p\times q}, v_1\in\mathbb{R}^{p\times s}, v_2\in\mathbb{R}^{s\times q}$，out_grad 的形状与 $v_3$ 一致，即 $\mathbb{R}^{p\times q}$，则 $\frac{\partial \ell}{\partial v_1}=v_2^T\in\mathbb{R}^{q\times s}, \frac{\partial \ell}{\partial v_2}=v_1^T\in\mathbb{R}^{s\tims p}$，则 <code>dlhs=matmul(out_grad, rhs.T)</code> 形状为 $\mathbb{R}^{q\times s}$ ，<code>drhs=matmul(lhs.T, outgrad)</code> 形状为 \mathbb{R}^{s\tims p}，此时符合导数与原函数的维度相同。</p>
+                  <p>需要注意的是，上述没有考虑在前向传播的过程中使用<strong>广播机制</strong>，dlhs 的维度可能会比 lhs 的维度多一些，为了使维度统一，需要对这些多余的维度进行求和。例如假设 dlhs.shape = (4, 3, 2)，而 lhs.shape = (3, 2)，那么广播机制在最左侧（通过计算动态得知加入的维度位置）加入了一个维度，需要通过 reduce（实际使用下面的 summation）来减少维度使得维度统一。</p>
 <pre>
 <code class="language-python">class MatMul(TensorOp):
   def compute(self, a, b):
-    return array_api.matmul(a, b)</code>
+    return array_api.matmul(a, b)
+
+  def gradient(self, out_grad, node):
+    lhs, rhs = node.inputs
+    dlhs = array_api.matmul(out_grad, rhs.T)
+    drhs = array_api.matmul(lhs.T, out_grad)
+
+    if dlhs.shape != lhs.shape:
+      dlhs = summation(dlhs, tuple(range(len(dlhs.shape) - len(lhs.shape))))
+    if drhs.shape != rhs.shape:
+      drhs = summation(drhs, tuple(range(len(drhs.shape) - len(rhs.shape))))
+    assert (dlhs.shape == lhs.shape)
+    assert (drhs.shape == rhs.shape)
+    return dlhs, drhs</code>
 </pre>
+                <p>其中 <code>tuple(range(len(dlhs.shape) - len(lhs.shape)))</code>  动态确定需要求和的维度索引，适用于各种形状的广播情况。例如上面的例子，len(dlhs.shape) - len(lhs.shape) = 1，则 range(1) 为 [0]，tuple 为 (0, )，表示聚合 dlhs 最左侧的维度。通过这样的计算，可以动态获取聚合的轴，从而使得形状对齐。</p>
               </li>
               <li>
                   <p><strong>Summation</strong>：计算给定轴的和，其中 axes 有多种情况。</p>
