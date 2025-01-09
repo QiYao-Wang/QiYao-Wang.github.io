@@ -26,11 +26,8 @@ layout: compress
 
       <div class="sidebar sticky">
         <div id="toc"></div>
-        <div>
+        <div id="topics">
           <strong>Topics</strong>
-          <p><font color="gray">#ML</font></p>
-          <p><font color="gray">#MLSys</font></p>
-          <p><font color="gray">#Reasoning</font></p>
         </div>
       </div>
       
@@ -98,7 +95,7 @@ layout: compress
         yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
     });
     </script>
-    <script>
+  <script>
     // 自动统计每个 Topic 的博客数量
     const topicCounts = {};
     const blogs = document.querySelectorAll('li'); // 获取所有博客条目
@@ -116,16 +113,15 @@ layout: compress
     const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
 
     // 更新边栏 Topics 部分
-    const topicsContainer = document.querySelector('.sidebar'); // 定位到边栏
-    let topicsHTML = '<strong>Topics</strong>';
+    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
+    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
 
     sortedTopics.forEach(([topic, count]) => {
         topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
     });
 
-    // 清空并插入新的 Topics 内容
-    const topicsSection = topicsContainer.querySelector('div'); // 找到 Topics 区域的父节点
-    topicsSection.innerHTML = topicsHTML;
+    // 替换 Topics 区域内容
+    topicsContainer.innerHTML = topicsHTML;
 </script>
   </body>
 </html>
