@@ -115,11 +115,11 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                 <figcaption>图1：detach 函数示例：$y=x+1$</figcaption>
               </figure>
 
-            <h1>Question 1: Implementing forward computation</h1>
-            <p>在 needle 中，计算图通过 TensorOp 类下属的各个子类进行实际的张量运算，每一个运算符都具有 compute 成员函数，负责前馈计算，本节的多维数组无需自行构建，而是使用 numpy 的 NDArray 实现，为了后续的移植，以 <code>import numpy as array_api</code> 的形式导入 numpy 包。下面对运算符进行依次实现，在本节的代码中将包含每个运算符类的初始化函数（__init__）和前馈函数（compute），在后续的求导中将不再赘述。</p>
+            <h1>Question 1 & 2: Implementing forward and backword computation</h1>
+            <p>在 needle 中，计算图通过 TensorOp 类下属的各个子类进行实际的张量运算，每一个运算符都具有 compute 成员函数，负责前馈计算，本节的多维数组无需自行构建，而是使用 numpy 的 NDArray 实现，为了后续的移植，以 <code>import numpy as array_api</code> 的形式导入 numpy 包。下面对运算符进行依次实现，在本节的代码中将包含每个运算符类的初始化函数（__init__）、前馈函数（compute）以及求导函数（gradient）。</p>
             <ul>
               <li>
-                <p>PowerScalar：对张量进行乘方运算 $X^n$，例如 $X^2=XX^T$，numpy中提供了相应的乘方接口，直接调用即可</p>
+                <p><strong>PowerScalar</strong>：对张量进行乘方运算 $X^n$，例如 $X^2=XX^T$，numpy中提供了相应的乘方接口，直接调用即可</p>
 <pre>
 <code class="language-python">class PowerScalar(TensorOp):
   def __init__(self, scalar:int):
@@ -131,7 +131,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 </pre>
               </li>
               <li>
-                <p>EWiseDiv：EWise 开头的函数均是<strong>逐元素（elementwise）</strong>的运算，该函数是对两个张量进行逐元素运算，即 $A \oslash B$</p>
+                <p><strong>EWiseDiv</strong>：EWise 开头的函数均是<strong>逐元素（elementwise）</strong>的运算，该函数是对两个张量进行逐元素运算，即 $A \oslash B$</p>
                 <p>该函数需要考虑分类讨论三种情况：</p>
                   <ol>
                       <li>张量 $A$ 和张量 $B$ 的形状（维度）不同，逐元素的运算要求两张量形状相同；</li>
@@ -142,14 +142,53 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 <code class="language-python">class EWiseDiv(TensorOp):
   def compute(self, a, b):
     if a.shape != b.shape:
-        raise RuntimeError("The shapes of the two tensors are inconsistent.")
+      raise RuntimeError("The shapes of the two tensors are inconsistent.")
     if b.all() == 0:
-        raise RuntimeError("All elements of the divisor tensor are zero.")
+      raise RuntimeError("All elements of the divisor tensor are zero.")
     return array_api.divide(a, b)
 </code>
 </pre>
               </li>
-                
+              <li>
+                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $X/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。</p>
+<pre>
+<code class="language-python">class DivScalar(TensorOp):
+  def __init__(self, scalar):
+    self.scalar = scalar
+
+  def compute(self, a):
+    if self.scalar == 0:
+      raise RuntimeError("The divisor is zero.")
+    return array_api.divide(a, self.scalar)
+</code>
+</pre>
+              </li>
+              <li>
+                  <p><strong>MatMul</strong>：矩阵乘法 $AB$，numpy 在其中的矩阵乘法函数中已经考虑了两个矩阵的形状的约束。</p>
+<pre>
+<code class="language-python">class MatMul(TensorOp):
+  def compute(self, a, b):
+    return array_api.matmul(a, b)
+</code>
+</pre>
+              </li>
+              <li>
+                  <p><strong>Summation</strong>：计算给定轴的和，其中 axes 有多种情况。</p>
+                  <ol>
+                      <li>axes 为单个整数，即按指定轴求和（0（默认值） 为列，1 为行）；</li>
+                      <li>axes 为元组，如 axes=(0,1)，则沿指定的多个轴求和，在矩阵中此时为求矩阵所有元素的和；</li>
+                      <li>axes 为 None，即求矩阵的所有元素的和</li>
+                  </ol>
+<pre>
+<code class="language-python">class Summation(TensorOp):
+  def __init__(self, axes: Optional[tuple] = None):
+    self.axes = axes
+
+  def compute(self, a):
+    return array_api.sum(a, axes=self.axes)
+</code>
+</pre>
+              </li>
             </ul>
 
 
