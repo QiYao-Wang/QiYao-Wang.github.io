@@ -117,6 +117,10 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
             <ul>
               <li>
                 <p><strong>PowerScalar</strong>：对张量进行乘方运算 $X^n$，例如 $X^2=XX^T$，numpy中提供了相应的乘方接口，直接调用即可</p>
+                <p>下面详细推导张量乘方运算的求导函数，假设计算式为 $f=v_2=v_1^n$，则 loss function 对 $v_2$ 的导数可计算为</p>
+                $$
+                \frac{\partial\ell}{\partial v_2}=\frac{\partial\ell}{\partial f}\cdot\frac{\partial f}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out\_grad}\cdot 1\cdot nv_1^{n-1}
+                $$
 <pre>
 <code class="language-python">class PowerScalar(TensorOp):
   def __init__(self, scalar:int):
@@ -124,6 +128,9 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 
   def compute(self, a: NDArray) -> NDArray:
     return array_api.power(a, self.scalar)</code>
+  
+  def gradient(self, out_grad, node):
+    return out_grad * self.scalar * array_api.power(a, self.scalar - 1)
 </pre>
               </li>
               <li>
