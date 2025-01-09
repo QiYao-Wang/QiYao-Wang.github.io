@@ -148,7 +148,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                   </ol>
                 <p>下面详细推导逐元素除法函数的导函数。由于逐元素，因此可以从单个元素的角度来进行计算，其中会使用类似标量的求导法则，对 $v_3=\frac{v_2}{v_1}$ 如下式所示</p>
                 $$
-                \frac{\partial\ell}{\partial f}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial v_3}\cdot(\frac{\partial v_3}{\partial v_2}+\frac{\partial v_3}{\partial v_1})=\text{out_grad}\circ(1\oslash v_1+v_2 \circ (-1) \oslash (v_1\circ v_1))
+                \frac{\partial\ell}{\partial v_3}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial v_3}\cdot(\frac{\partial v_3}{\partial v_2}+\frac{\partial v_3}{\partial v_1})=\text{out_grad}\circ(1\oslash v_1+v_2 \circ (-1) \oslash (v_1\circ v_1))
                 $$
                 <p>其中 $v_2$ 为 lhs (left hand side)，$v_1$ 为 rhs (right hand side)，在下面的运算中均为逐元素的计算，如 numpy 中 * 为逐元素，@ 为矩阵乘法，分别返回对 lhs 和 rhs 的偏导数</p>
 <pre>
