@@ -97,6 +97,28 @@ layout: compress
         // 将统计结果追加到年份标题中
         yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
     });
+      // 自动统计每个 Topic 的博客数量
+    const topicCounts = {};
+    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
+
+    blogs.forEach(blog => {
+        // 找到博客条目中的 topic（灰色字体）
+        const topicFont = blog.querySelector('font[color="gray"]');
+        if (topicFont) {
+            const topic = topicFont.innerText.trim();
+            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+        }
+    });
+
+    // 更新边栏的 Topics 部分
+    const topicsSection = document.querySelector('.sidebar strong + p'); // 定位到 Topics 区域
+    let topicsHTML = '<strong>Topics</strong><br>';
+
+    for (const [topic, count] of Object.entries(topicCounts)) {
+        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
+    }
+
+    topicsSection.innerHTML = topicsHTML;
     </script>
   </body>
 </html>
