@@ -225,7 +225,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                       <li>axes 为元组，如 axes=(0,1)，则沿指定的多个轴求和，在矩阵中此时为求矩阵所有元素的和；</li>
                       <li>axes 为 None，即求矩阵的所有元素的和</li>
                   </ol>
-                  <p>对于 summation 的导函数，假设输入张量为 $v_i=\mathbb{R}^{n_1\times n_2\times\cdots\times n_k}$，其中对某些维度 axes 进行求和，即 $v_{i+1}=\text{summation}(v_i, \text{axes})$，当 $\text{axes}={d_1,d_2,\cdots,d_m}$时，输出张量的形状应为 $v_{i+1}\text{.shape}=(n_1,n_2,\cdots,n_k)\text{\}(n_{d_1},n_{d_2},\cdots,n_{d_m})$，即</p>
+                  <p>对于 summation 的导函数，假设输入张量为 $v_i=\mathbb{R}^{n_1\times n_2\times\cdots\times n_k}$，其中对某些维度 axes 进行求和，即 $v_{i+1}=\text{summation}(v_i, \text{axes})$，当 $\text{axes}={d_1,d_2,\cdots,d_m}$时，输出张量的形状应为 $(n_1,n_2,\cdots,n_k)\setminus(n_{d_1},n_{d_2},\cdots,n_{d_m})$，即</p>
                   $$
                   v_{i+1} = \sum_{d_1,d_2,\cdots,d_m}v_i[\cdots,d_1,d_2,\cdots,d_m,\cdots]
                   $$
