@@ -114,17 +114,17 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 
             <h1>Question 1 & 2: Implementing forward and backward computation</h1>
             <p>在 needle 中，计算图通过 TensorOp 类下属的各个子类进行实际的张量运算，每一个运算符都具有 compute 成员函数，负责前馈计算，本节的多维数组无需自行构建，而是使用 numpy 的 NDArray 实现，为了后续的移植，以 <code>import numpy as array_api</code> 的形式导入 numpy 包。下面对运算符进行依次实现，在本节的代码中将包含每个运算符类的初始化函数（__init__）、前馈函数（compute）以及求导函数（gradient）。</p>
-            <p>前馈计算直接按照各运算符的定义执行即可，但每个运算符的求导都较为复杂，需要首先明确的是，该求导的对象是损失函数 loss function $\ell$ 对当前节点 $v_i$ 的导数，$v_i$ 是其 inpus 在 对应运算符上的函数，假设 $f=v_i=g(v_{i-1},...v_{i-m})$，即 inputs 为前面的 m 个节点，那么导数为</p>
+            <p>前馈计算直接按照各运算符的定义执行即可，但每个运算符的求导都较为复杂，需要首先明确的是，该求导的对象是损失函数 loss function $\ell$ 对当前节点 $v_{i+1}$ 的输入节点 $v_i$ 的导数（此处假设 $v_{i+1}$ 仅有一个输入，即 $v_i$，当具有多个输入时，分别计算偏导数即可），$v_{i+1}$ 是其 inputs $v_i$ 在 对应运算符上的函数，即 $v_{i+1}=g(v_{i})$，其中 $\text{out_grad} = \frac{\partial \ell}{\partial v_{i+1}}$，那么导数为</p>
               $$
-              \frac{\partial \ell}{\partial v_i}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial z_i}\cdot\sum_{j=1}^m\frac{\partial z_i}{\partial z_{i-j}}=\text{out_grad}\cdot\sum_{j=1}^m\frac{\partial z_i}{\partial z_{i-j}}
+              \frac{\partial \ell}{\partial v_{i}}=\frac{\partial \ell}{\partial v_{i+1}}\cdot\frac{\partial v_{i+1}}{\partial v_i}=\text{out_grad}\cdot\frac{\partial v_{i+1}}{\partial v_{i}}=\text{out_grad}\cdot g'(v_i)
               $$
-            <p>上式是该节点的导数总和，而实际 gradient 返回的是针对每个 inputs 中节点的偏导数，需要注意这一点！</p>
+            <p>gradient function 会返回的是针对 inputs 中每个节点的偏导数元组。</p>
             <ul>
               <li>
                 <p><strong>PowerScalar</strong>：对张量进行乘方运算 $X^n$，例如 $X^2=XX^T$，numpy中提供了相应的乘方接口，直接调用即可</p>
-                <p>下面详细推导张量乘方运算的求导函数，假设计算式为 $f=v_2=v_1^n$，则 loss function 对 $v_2$ 的导数可计算为</p>
+                <p>下面详细推导张量乘方运算的求导函数，假设计算式为 $v_2=v_1^n$，则 loss function 对 $v_2$ 的导数可计算为</p>
                 $$
-                \frac{\partial\ell}{\partial v_2}=\frac{\partial\ell}{\partial f}\cdot\frac{\partial f}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot 1\cdot nv_1^{n-1}
+                \frac{\partial\ell}{\partial v_1}=\frac{\partial\ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot nv_1^{n-1}
                 $$
 <pre>
 <code class="language-python">class PowerScalar(TensorOp):
@@ -149,7 +149,10 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                   </ol>
                 <p>下面详细推导逐元素除法函数的导函数。由于逐元素，因此可以从单个元素的角度来进行计算，其中会使用类似标量的求导法则，对 $v_3=\frac{v_2}{v_1}$ 如下式所示</p>
                 $$
-                \frac{\partial\ell}{\partial v_3}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial v_3}\cdot(\frac{\partial v_3}{\partial v_2}+\frac{\partial v_3}{\partial v_1})=\text{out_grad}\circ(1\oslash v_1+v_2 \circ (-1) \oslash (v_1\circ v_1))
+                \frac{\partial\ell}{\partial v_1}=\frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v_3}{\partial v_2}=\text{out_grad}\circ(v_2 \circ (-1) \oslash (v_1\circ v_1))
+                $$
+                $$
+                \frac{\partial\ell}{\partial v_2}=\frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v_3}{\partial v_2}=\text{out_grad}\circ(1\oslash v_1)
                 $$
                 <p>其中 $v_2$ 为 lhs (left hand side)，$v_1$ 为 rhs (right hand side)，在下面的运算中均为逐元素的计算，如 numpy 中 * 为逐元素，@ 为矩阵乘法，分别返回对 lhs 和 rhs 的偏导数</p>
 <pre>
@@ -167,9 +170,9 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 </pre>
               </li>
               <li>
-                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $X/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。由于该运算不涉及其他的节点，导函数为</p>
+                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $v_2=v1/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。导函数为</p>
                   $$
-                  \frac{\partial \ell}{\partial x}=\frac{\partial\ell}{\partial f}\cdot\frac{\partial f}{\partial x}=\text{out_grad}\cdot\frac{1}{a}
+                  \frac{\partial \ell}{\partial v_1}=\frac{\partial\ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot\frac{1}{a}
                   $$
 <pre>
 <code class="language-python">class DivScalar(TensorOp):
@@ -188,7 +191,10 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                   <p><strong>MatMul</strong>：矩阵乘法 $AB$，numpy 在其中的矩阵乘法函数中已经考虑了两个矩阵的形状的约束。</p>
                   <p>对于该函数的导数，假设 $v_3 = v_1 * v_2$，即 lhs 为 $v_1$，rhs 为 $v_2$，那么</p>
                   $$
-                  \frac{\partial \ell}{\partial v_3}=\frac{\partial \ell}{\partial f}\cdot\frac{\partial f}{\partial z_3}\cdot(\frac{\partial v_3}{\partial v_1}+\frac{\partial v_3}{\partial v_2}) = \text{out_grad}\cdot(v_2^T+v_1^T)
+                  \frac{\partial \ell}{\partial v_1}=\frac{\partial \ell}{\partial v_3}}\cdot\frac{\partial v_3}{\partial v_1} = \text{out_grad}\cdot v_2^T
+                  $$
+                  $$
+                  \frac{\partial \ell}{\partial v_2}=\frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v_3}{\partial v_2} = \text{out_grad}\cdot v_1^T
                   $$
                   <p>这里需要考虑形状，假设 $v_3\in\mathbb{R}^{p\times q}, v_1\in\mathbb{R}^{p\times s}, v_2\in\mathbb{R}^{s\times q}$，out_grad 的形状与 $v_3$ 一致，即 $\mathbb{R}^{p\times q}$，则 $\frac{\partial \ell}{\partial v_1}=v_2^T\in\mathbb{R}^{q\times s}$，$\frac{\partial \ell}{\partial v_2}=v_1^T\in\mathbb{R}^{s\times p}$，则 <code>dlhs=matmul(out_grad, rhs.T)</code> 形状为 $\mathbb{R}^{q\times s}$ ，<code>drhs=matmul(lhs.T, outgrad)</code> 形状为 $\mathbb{R}^{s\times p}$，此时符合导数与原函数的维度相同。</p>
                   <p>需要注意的是，上述没有考虑在前向传播的过程中使用<strong>广播机制</strong>，dlhs 的维度可能会比 lhs 的维度多一些，为了使维度统一，需要对这些多余的维度进行求和。例如假设 dlhs.shape = (4, 3, 2)，而 lhs.shape = (3, 2)，那么广播机制在最左侧（通过计算动态得知加入的维度位置）加入了一个维度，需要通过 reduce（实际使用下面的 summation）来减少维度使得维度统一。</p>
@@ -219,6 +225,14 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                       <li>axes 为元组，如 axes=(0,1)，则沿指定的多个轴求和，在矩阵中此时为求矩阵所有元素的和；</li>
                       <li>axes 为 None，即求矩阵的所有元素的和</li>
                   </ol>
+                  <p>对于 summation 的导函数，假设输入张量为 $z_i=\mathbb{R}^{n_1\times n_2\times\cdots\times n_k}$，其中对某些维度 axes 进行求和，即 $z_{i+1}=\text{summation}(z_i, \text{axes})$，当 $\text{axes}={d_1,d_2,\cdots,d_m}$时，输出张量的形状应为 $z_{i+1}$.shape$=(n_1,n_2,\cdots,n_k)\(n_{d_1},n_{d_2},\cdots,n_{d_m})$，即</p>
+                  $$
+                  z_{i+1} = \sum_{d_1,d_2,\cdots,d_m}z_i[\cdots,d_1,d_2,\cdots,d_m,\cdots]
+                  $$
+                  <p>其中 $d_1,d_2,\cdots,d_m$ 为被求和维度的索引。导函数的目标为求得 $\frac{\partial \ell}{\partial z_i}$，具体推导如下</p>
+                  $$
+                  \frac{\partial}{}
+                  $$
 <pre>
 <code class="language-python">class Summation(TensorOp):
   def __init__(self, axes: Optional[tuple] = None):
