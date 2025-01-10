@@ -229,10 +229,31 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                   $$
                   v_{i+1} = \sum_{d_1,d_2,\cdots,d_m}v_i[\cdots,d_1,d_2,\cdots,d_m,\cdots]
                   $$
-                  <p>其中 $d_1,d_2,\cdots,d_m$ 为被求和维度的索引。导函数的目标为求得 $\frac{\partial \ell}{\partial v_i}$，具体推导如下</p>
+                  <p>其中 $d_1,d_2,\cdots,d_m$ 为被求和维度的索引。导函数的目标为求得 $\frac{\partial \ell}{\partial v_i}$，$v_{i+1}$ 的形状一定在某些轴（$d_1,\cdots,d_m$）处少于 $v_i$，先进行一步形式化推导</p>
                   $$
-                  \frac{\partial\ell}{\partial v_i}=\frac{\partial \ell}{\partial v_{i+1}}\cdot\frac{}{}
+                  \frac{\partial\ell}{\partial v_i}=\frac{\partial \ell}{\partial v_{i+1}}\cdot\frac{\partial v_{i+1}}{\partial v_i}=\text{out_grad}\cdot\frac{\partial v_{i+1}}{\partial v_i}
                   $$
+                  <p>此时的关键在于如何求出 $\frac{\partial v_{i+1}}{\partial v_i}$，由于过于抽象，此处以一个具体的例子进行操作，后续推广</p>
+                  $$
+                  v_i = \begin{bmatrix}x_{11}&x_{12}&x_{13}\\x_{21}&x_{22}&x_{23}\end{bmatrix}\in\mathbb{R}^{2\times3}, v_{i+1}=\text{summation(v_i, \text{axes}=0)}
+                  $$
+                  <p>即按 $v_i$ 的列进行求和，$v_{i+1}$ 为一个 $1\times3$ 的向量，即 $v_{i+1}=[y_1,y_2,y_3]$，其中</p>
+                  $$
+                  y_1=x_{11}+x_{21}, y_2=x_{12}+x_{22}, y_3=x_{13}+x_{23}
+                  $$
+                  <p>偏导数的形状与 $v_i$ 和 $v_{i+1}$ 均有关，即需要分别求 $y_1,y_2,y_3$ 对 $v_i$ 各元素的偏导数，即</p>
+                  $$
+                  \frac{\partial v_{i+1}}{\partial v_i}=\begin{bmatrix}
+\frac{\partial y_1}{\partial x_{11}} & \frac{\partial y_1}{\partial x_{12}} & \frac{\partial y_1}{\partial x_{13}} & \frac{\partial y_1}{\partial x_{21}} & \frac{\partial y_1}{\partial x_{22}} & \frac{\partial y_1}{\partial x_{23}} \\
+\frac{\partial y_2}{\partial x_{11}} & \frac{\partial y_2}{\partial x_{12}} & \frac{\partial y_2}{\partial x_{13}} & \frac{\partial y_2}{\partial x_{21}} & \frac{\partial y_2}{\partial x_{22}} & \frac{\partial y_2}{\partial x_{23}} \\
+\frac{\partial y_3}{\partial x_{11}} & \frac{\partial y_3}{\partial x_{12}} & \frac{\partial y_3}{\partial x_{13}} & \frac{\partial y_3}{\partial x_{21}} & \frac{\partial y_3}{\partial x_{22}} & \frac{\partial y_3}{\partial x_{23}}
+\end{bmatrix}=\begin{bmatrix}
+1 & 0 & 0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 & 0 & 1
+\end{bmatrix}\in\mathbb{3\times 6}
+                  $$
+                  <p>$\text{out_grad}$ 的维度与 $v_{i+1}$ 相同，为 $\mathbb{R}^{1\times3}$，观察 $\frac{v_{i+1}}{v_{i}}$，从分块矩阵的角度来看，是两个单位阵，即 $\frac{\partial v_{i+1}}{\partial v_i}=[I,I]$，因此需要将 $\text{out_grad}$ 广播至形状为 $\mathbb{R}^{2\times3}$，由此可知，求和运算符 summation 的导数为对 $\text{out_grad}$ 进行广播操作。</p>
 <pre>
 <code class="language-python">class Summation(TensorOp):
   def __init__(self, axes: Optional[tuple] = None):
