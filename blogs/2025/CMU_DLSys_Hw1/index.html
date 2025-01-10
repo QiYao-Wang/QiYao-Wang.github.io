@@ -309,7 +309,7 @@ x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
                 $$
                 <p>$\frac{\partial v_2}{\partial v_1}$ 的形状与 $v_1$ 相同，因此在乘积时需要首先进行 summation 将形状聚合成与 $v_1$ 相同，此时再进行求导，形状相同时 $v_2=v_1$，所有元素的导数为 1，因此导数可以等价为对 out_grad 的对应维度进行聚合。</p>
 <pre>
-<code>class BroadcastTo(TensorOp):
+<code class="language-python">class BroadcastTo(TensorOp):
   def __init__(self, shape):
     self.shape = shape
 
@@ -329,6 +329,54 @@ x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
 </pre>
                   <p>第一个循环用于消去因为 $v_2$ 维度数量大于 $v_1$ 时的额外的维度，第二个循环则是由于在广播过程中，为 1 的维度会被广播，需要将其进行聚合恢复，最后将梯度重塑为 $v_1$ 的形状完成求导。</p>
               </li>
+              <li>
+                  <p><strong>Reshape</strong>：该函数较为简单，其实从上面的 broadcast 和 summation 两个函数可以发现，其实前馈和求导两个部分在这种对张量形状进行操作的运算符而言是对称的，广播的导数是聚合，而聚合的导数是广播。本运算符可以直接使用 numpy 中的 reshape 函数完成，而求导过程则是将 out_grad 恢复为 inputs 节点的形状。</p>
+<pre>
+<code class="language-python">class Reshape(TensorOp):
+  def __init__(self, shape):
+    self.shape = shape
+
+  def compute(self, a):
+    return array_api.reshape(a, self.shape)
+
+  def gradient(self, out_grad, node):
+    input_shape = node.inputs[0].shape
+    return array_api.reshape(out_grad, input_shape)</code>
+</pre>
+              </li>
+                <li>
+                    <p><strong>Negate</strong>：本运算符十分简单，即 $v_2=-1*v_1$，导数为 $\text{out_grad} * (-1)$，不再赘述公式。</p>
+<pre>
+<code class="language-python">class Negate(TensorOp):
+  def compute(self, a):
+    return array_api.negative(a)
+
+  def gradient(self, out_grad, node):
+    return out_grad * (-1)</code>
+</pre>
+                </li>
+                <li>
+                    <p><strong>Transpose</strong>：转置操作 $v_2=v_1^T$，前馈运算需要考虑若未指定两个交换的轴，则默认为交换最后两个维度。求导运算则是对 out_grad 进行同样的转置运算从而恢复为输入节点的形状。</p>
+<pre>
+<code class="language-python">class Transpose(TensorOp):
+  def __init__(self, axes: Optional[tuple] = None):
+    self.axes = axes
+
+  def compute(self, a):
+    self.temp = array_api.arange(a.dim)
+    if self.axes is None:
+      self.temp[-1], self.temp[-2] = self.temp[-2], self.temp[-1]
+    else:
+      self.temp[self.axes[0]], self.temp[self.axes[1]] = self.axes[1], self.axes[0]
+    return array_api.transpose(a, self.temp)
+
+  def gradient(self, out_grad, node):
+    return transpose(out_grad, axes=self.axes)</code>
+</pre>
+                </li>
+                <li>
+                    <p><strong></strong></p>
+                </li>
             </ul>
 
 
