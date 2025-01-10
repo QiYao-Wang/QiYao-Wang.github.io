@@ -260,8 +260,24 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
     self.axes = axes
 
   def compute(self, a):
-    return array_api.sum(a, axes=self.axes)</code>
+    return array_api.sum(a, axes=self.axes)
+
+  def gradient(self, out_grad, node):
+    input_shape = node.inputs[0].shape
+    shape = list(input_shape)
+    if self.axes is not None:
+      if isinstance(self.axes, int):
+        shape[self.axes] = 1
+      else:
+        for index in self.axes:
+          shape[index] = 1
+    else:
+      shape = [1 for _ in range(len(shape))]
+
+    out_grad = array_api.reshape(out_grad, shape)
+    return out_grad * array_api.ones(input_shape, dtype=array_api.float32)</code>
 </pre>
+                <p>其中先根据 axes 的类型进行分类讨论，其中对于单个轴，直接设置 shape 中对应元素为 1，对于元组，需要进行遍历。当 axes 为 None 时，则将 shape 设置为全 1。获取输入节点 node 前馈后的形状（即 $v_{i+1}$ 的形状），先将 out_grad reshape 到该形状，之后再将 out_grad 广播至与 input node 相同的形状，即 $v_{i}$ 的形状，完成求导过程。</p>
               </li>
             </ul>
 
