@@ -170,7 +170,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 </pre>
               </li>
               <li>
-                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $v_2=v1/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。导函数为</p>
+                  <p><strong>DivScalar</strong>：张量逐元素除标量，如 $v_2=v_1/a$，同样需要判断除数是否为 0。numpy 的 divide 函数会自动判别除数的类型，其实在除以标量时，实际上是将标量广播（broadcast）为复制为与被除张量相应维度的矩阵进行逐元素的除法。导函数为</p>
                   $$
                   \frac{\partial \ell}{\partial v_1}=\frac{\partial\ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot\frac{1}{a}
                   $$
@@ -191,7 +191,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                   <p><strong>MatMul</strong>：矩阵乘法 $AB$，numpy 在其中的矩阵乘法函数中已经考虑了两个矩阵的形状的约束。</p>
                   <p>对于该函数的导数，假设 $v_3 = v_1 * v_2$，即 lhs 为 $v_1$，rhs 为 $v_2$，那么</p>
                   $$
-                  \frac{\partial \ell}{\partial v_1}=\frac{\partial \ell}{\partial v_3}}\cdot\frac{\partial v_3}{\partial v_1} = \text{out_grad}\cdot v_2^T
+                  \frac{\partial \ell}{\partial v_1}=\frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v_3}{\partial v_1} = \text{out_grad}\cdot v_2^T
                   $$
                   $$
                   \frac{\partial \ell}{\partial v_2}=\frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v_3}{\partial v_2} = \text{out_grad}\cdot v_1^T
@@ -225,13 +225,13 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
                       <li>axes 为元组，如 axes=(0,1)，则沿指定的多个轴求和，在矩阵中此时为求矩阵所有元素的和；</li>
                       <li>axes 为 None，即求矩阵的所有元素的和</li>
                   </ol>
-                  <p>对于 summation 的导函数，假设输入张量为 $z_i=\mathbb{R}^{n_1\times n_2\times\cdots\times n_k}$，其中对某些维度 axes 进行求和，即 $z_{i+1}=\text{summation}(z_i, \text{axes})$，当 $\text{axes}={d_1,d_2,\cdots,d_m}$时，输出张量的形状应为 $z_{i+1}$.shape$=(n_1,n_2,\cdots,n_k)\(n_{d_1},n_{d_2},\cdots,n_{d_m})$，即</p>
+                  <p>对于 summation 的导函数，假设输入张量为 $v_i=\mathbb{R}^{n_1\times n_2\times\cdots\times n_k}$，其中对某些维度 axes 进行求和，即 $v_{i+1}=\text{summation}(v_i, \text{axes})$，当 $\text{axes}={d_1,d_2,\cdots,d_m}$时，输出张量的形状应为 $v_{i+1}$.shape$=(n_1,n_2,\cdots,n_k)\(n_{d_1},n_{d_2},\cdots,n_{d_m})$，即</p>
                   $$
-                  z_{i+1} = \sum_{d_1,d_2,\cdots,d_m}z_i[\cdots,d_1,d_2,\cdots,d_m,\cdots]
+                  v_{i+1} = \sum_{d_1,d_2,\cdots,d_m}v_i[\cdots,d_1,d_2,\cdots,d_m,\cdots]
                   $$
-                  <p>其中 $d_1,d_2,\cdots,d_m$ 为被求和维度的索引。导函数的目标为求得 $\frac{\partial \ell}{\partial z_i}$，具体推导如下</p>
+                  <p>其中 $d_1,d_2,\cdots,d_m$ 为被求和维度的索引。导函数的目标为求得 $\frac{\partial \ell}{\partial v_i}$，具体推导如下</p>
                   $$
-                  \frac{\partial}{}
+                  \frac{\partial\ell}{\partial v_i}=\frac{\partial \ell}{\partial v_{i+1}}
                   $$
 <pre>
 <code class="language-python">class Summation(TensorOp):
