@@ -82,7 +82,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 <p><strong>2024</strong></p>
 
-<div style="max-height: 200px; overflow-y: auto;">
+<div>
 <ul>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
