@@ -253,7 +253,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 0 & 0 & 1 & 0 & 0 & 1
 \end{bmatrix}\in\mathbb{R}^{3\times 6}
                   $$
-                  <p>$\text{out_grad}$ 的维度与 $v_{i+1}$ 相同，为 $\mathbb{R}^{1\times3}$，观察 $\frac{v_{i+1}}{v_{i}}$，从分块矩阵的角度来看，是两个单位阵，即 $\frac{\partial v_{i+1}}{\partial v_i}=[I,I]$，因此需要将 $\text{out_grad}$ 广播至形状为 $\mathbb{R}^{2\times3}$，由此可知，求和运算符 summation 的导数为对 $\text{out_grad}$ 进行广播操作。</p>
+                  <p>$\text{out_grad}$ 的维度与 $v_{i+1}$ 相同，为 $\mathbb{R}^{1\times3}$，观察 $\frac{\partial v_{i+1}}{\partial v_{i}}$，从分块矩阵的角度来看，是两个单位阵，即 $\frac{\partial v_{i+1}}{\partial v_i}=[I,I]$，因此需要将 $\text{out_grad}$ 广播至形状为 $\mathbb{R}^{2\times3}$，由此可知，求和运算符 summation 的导数为对 $\text{out_grad}$ 进行广播操作。</p>
 <pre>
 <code class="language-python">class Summation(TensorOp):
   def __init__(self, axes: Optional[tuple] = None):
