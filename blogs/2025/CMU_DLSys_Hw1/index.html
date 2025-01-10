@@ -297,13 +297,17 @@ x_{12} & x_{12} & x_{12} & x_{12} & x_{12} \\
 x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
 \end{bmatrix}
                 $$
-                <p>将该过程抽象为 $v_2 = \text{broadcastTo}(v_1) = f(v_1)$，其中 $v_1$ 形状为 $(n_1,n_2,\cdots,n_k)$，$v_2$ 形状为 (m_1,m_2,\cdots,m_s)，这两个形状需满足下面情况才可进行广播</p>
+                <p>将该过程抽象为 $v_2 = \text{broadcastTo}(v_1) = f(v_1)$，其中 $v_1$ 形状为 $(n_1,n_2,\cdots,n_k)$，$v_2$ 形状为 $(m_1,m_2,\cdots,m_s)$，这两个形状需满足下面情况才可进行广播</p>
                   <ol>
                       <li>当两张量维度的数量不同时，需要在低维张量前面添加长度为 1 的维度，直到两张量维度数量相同，例如 $X$ 形状为 (3,1)，$Y$ 的形状为 (4,3,5)，那么需要将 $X$ 先扩展为 (1,3,1) 才可进行广播；</li>
                       <li>两个张量的维度应 $\forall i$ 使得 $n_i=m_i$ 或 $n_i=1$，才可进行广播，如 (4,2,5) 就无法广播为 (4,3,5)。</li>
                   </ol>
                 <p>即，在广播之前，应对 $v_2$ 和 $v_1$ 的形状进行调整，使得 $k=s$，并且 $\forall i$ 使得 $m_i=n_i$ 或 $n_i=1$，此时的广播过程可概括为：每当 $n_i=1$ 时，则对应维度上的值被复制 $m_i$ 次，否则 $n_i=m_i$ 应该成立。前馈函数中，本节无需考虑具体实现，使用 numpy 中对应函数即可。</p>
                 <p>下面详细推导广播机制的导数，目标为求得 $\frac{\partial \ell}{\partial v_1}$，直观理解上，广播过程是对小形状张量的扩展，那么梯度传播时需要逆操作，需要对对应维度进行聚合，把它们对应于同一原始形状的梯度加起来。从数学推导角度</p>
+                $$
+                \frac{\partial \ell}{\partial v_1}=\frac{\partial\ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot\frac{\partial v_2}{\partial v_1},\quad \text{out_grad}\in\mathbb{R}^{m_1,m_2,\cdots,m_s}
+                $$
+
               </li>
             </ul>
 
