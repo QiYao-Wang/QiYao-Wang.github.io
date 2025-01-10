@@ -279,6 +279,31 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
 </pre>
                 <p>其中先根据 axes 的类型进行分类讨论，其中对于单个轴，直接设置 shape 中对应元素为 1，对于元组，需要进行遍历。当 axes 为 None 时，则将 shape 设置为全 1。获取输入节点 node 前馈后的形状（即 $v_{i+1}$ 的形状），先将 out_grad reshape 到该形状，之后再将 out_grad 广播至与 input node 相同的形状，即 $v_{i}$ 的形状，完成求导过程。</p>
               </li>
+              <li>
+                <p><strong>BroadcastTo</strong>：广播机制，将一个较小形状的张量扩展到较大形状的张量。如假设 $X=\begin{bmatrix}x_1&x_2&x_3\end{bmatrix}\in\mathbb{R}^{1\times 3}$，而期望的形状为 $\mathbb{R}^{2\times 3}$，那么可以将其在 axes=0 的方向复制两次，广播为 $\tilde{X}=\begin{bmatrix}x_1&x_2&x_3\\x_1&x_2&x_3\end{bmatrix}$；又例如，$X=[[x_1],[x_2],[x_3]]}$ 形状为 (1,3,1)，将其形状广播为 (4,3,5)，那么将在 axes=0 上复制 4 次，在 axes=2 上复制 5 次，形成如下结果</p>
+                $$
+                \tilde{X} = \begin{bmatrix}
+\begin{bmatrix} x_{11} & x_{11} & x_{11} & x_{11} & x_{11} \\
+x_{12} & x_{12} & x_{12} & x_{12} & x_{12} \\
+x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix},
+\begin{bmatrix} x_{11} & x_{11} & x_{11} & x_{11} & x_{11} \\
+x_{12} & x_{12} & x_{12} & x_{12} & x_{12} \\
+x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix},
+\begin{bmatrix} x_{11} & x_{11} & x_{11} & x_{11} & x_{11} \\
+x_{12} & x_{12} & x_{12} & x_{12} & x_{12} \\
+x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix},
+\begin{bmatrix} x_{11} & x_{11} & x_{11} & x_{11} & x_{11} \\
+x_{12} & x_{12} & x_{12} & x_{12} & x_{12} \\
+x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
+\end{bmatrix}
+                $$
+                <p>将该过程抽象为 $v_2 = \text{broadcastTo}(v_1) = f(v_1)$，其中 $v_1$ 形状为 $(n_1,n_2,\cdots,n_k)$，$v_2$ 形状为 (m_1,m_2,\cdots,m_s)，这两个形状需满足下面情况才可进行广播</p>
+                  <ol>
+                      <li>当两张量维度的数量不同时，需要在低维张量前面添加长度为 1 的维度，直到两张量维度数量相同，例如 $X$ 形状为 (3,1)，$Y$ 的形状为 (4,3,5)，那么需要将 $X$ 先扩展为 (1,3,1) 才可进行广播；</li>
+                      <li>两个张量的维度应 $\exist i$ 使得 $n_i=m_i$ 或 $\exist i$ 使得 $n_i=1$，才可进行广播；</li>
+                  </ol>
+                <p>即，在广播之前，应对 $v_2$ 和 $v_1$ 的形状进行调整，使得 $k=s$，并且 $\exist i$ 使得 $m_i=n_i$ 或 $n_i=1$。前馈函数中，本节无需考虑具体实现，使用 numpy 中对应函数即可。</p>
+              </li>
             </ul>
 
 
