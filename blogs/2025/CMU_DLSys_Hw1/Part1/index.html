@@ -42,10 +42,10 @@ layout: compress
         <div class="page__inner-wrap">
           <section class="page__content" itemprop="text">
 
-            <h1 id="cmu-dlsys-course-homework-0:-implementation-and-reflection">CMU DLSys Course Homework 1: Implementation and Reflection</h1>
+            <h1 id="cmu-dlsys-course-homework-0:-implementation-and-reflection">CMU DLSys Course Homework 1: Implementation and Reflection (Part1)</h1>
             <p style="color:gray">Jan. 08, 2025 - Jan. XX, 2025 · Qiyao Wang · Topic #MLSys</p>
 
-            <p>本周看完了课程的 Lecture 3/4/5，这几节课程是对自动求导（Automatic Differentiation）的讲解，其中反向传播、计算图是重点。本文针对 <a href="https://github.com/dlsyscourse/hw1">Homework 1</a> 进行实践与思考。</p>
+            <p>本周看完了课程的 Lecture 3/4/5，这几节课程是对自动求导（Automatic Differentiation）的讲解，其中反向传播、计算图是重点。本文针对 <a href="https://github.com/dlsyscourse/hw1">Homework 1</a> 进行实践与思考，其中 Part 1 中包含了 needle 的基本信息和 Question 1 和 Question 2 的内容。</p>
 
             <h1>Introduction of Homework 1</h1>
             <p>通过 Homework 1 自己实践构建一个 needle（Necessary Elements of Deep Learning） 库，其中本文最关键的是自动求导框架的构建，并在 <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0/">Homework 0</a> 中的双层神经网络上进行应用。</p>
@@ -135,7 +135,7 @@ def make_from_op(cls, op: Op, inputs: List["Value"]):
     return array_api.power(a, self.scalar)
 
   def gradient(self, out_grad, node):
-    a = node.inputs
+    a = node.inputs[0]
     return out_grad * self.scalar * array_api.power(a, self.scalar - 1)</code>
 </pre>
               </li>
@@ -375,9 +375,60 @@ x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
 </pre>
                 </li>
                 <li>
-                    <p><strong></strong></p>
+                    <p><strong>Log</strong>：对数函数，假设 $v_2=\log{v_1}$，则求导为</p>
+                    $$
+                    \frac{\partial\ell}{\partial v_1} = \frac{\partial \ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\oslash v_1
+                    $$
+<pre>
+<code class="language-python">class Log(TensorOp):
+  def compute(self, a):
+    return array_api.log(a)
+
+  def gradient(self, out_grad, node):
+    a = node.inputs[0]
+    return divide(out_grad, a)</code>
+</pre>
+                </li>
+                <li>
+                  <p><strong>Exp</strong>：指数函数，即 $v_2 = e^v_1$，指数函数的导数还是指数函数自身，不再赘述公式。</p>
+<pre>
+<code class="language-python">class Exp(TensorOp):
+  def compute(self, a):
+    return array_api.exp(a)
+
+  def gradient(self, out_grad, node):
+    a = node.inputs[0]
+    return multiply(out_grad, exp(a))</code>
+</pre>
+                </li>
+                <li>
+                    <p><strong>EWisePow</strong>：逐元素乘方，即 $v_3=v_1^{v_2}$，其中 $v_2$ 的元素必须全是整数。前馈函数直接使用 numpy 中的接口即可。下面详细推导求导函数，下面的运算均为逐元素运算</p>
+                    $$
+                    \frac{\partial \ell}{\partial v_1} = \frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v_3}{\partial v_1}=\text{out_grad}\circ v_2 \circ v_1^{v_2-1}
+                    $$
+                    $$
+                    \frac{\partial \ell}{\partial v_2} = \frac{\partial \ell}{\partial v_3}\cdot\frac{\partial v3}{\partial v_2}=\text{out_grad}\circ v_1^{v_2}\circ \ln{v_1}, \text{Where }v_1>0
+                    $$
+                    <p>在对 $v_2$ 求导时需要注意边缘情况即 $v_1$ 的小于等于 0 的元素，此时无意义。</p>
+<pre>
+<code class="language-python">class EWisePow(TensorOp):
+  def compute(self, a: NDArray, b: NDArray):
+    return array_api.power(a, b)
+
+  def gradient(self, out_grad, node):
+    # a^b
+    a, b = node.inputs
+    if b.dtype.is_integer:
+      raise TypeError("dtype should be int!")
+    grad_a = out_grad * b * power(a, add(b, -1))
+    grad_b = out_grad * power(a, b) * log(a)
+    grad_b = array_api.where(a>0, grad_b, 0.0)
+    return grad_a, grad_b
+</code>
+</pre>
                 </li>
             </ul>
+            <p>本节实现了基本的运算符中的前馈逻辑和求导逻辑，即 Question 1 和 Question 2，其中可能会存在一定的错误，如果您发现了请联系我！谢谢！</p>
 
 
             <h1>Reference</h1>
