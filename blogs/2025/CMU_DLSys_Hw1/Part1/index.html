@@ -309,7 +309,7 @@ x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
                 <p>即，在广播之前，应对 $v_2$ 和 $v_1$ 的形状进行调整，使得 $k=s$，并且 $\forall i$ 使得 $m_i=n_i$ 或 $n_i=1$，此时的广播过程可概括为：每当 $n_i=1$ 时，则对应维度上的值被复制 $m_i$ 次，否则 $n_i=m_i$ 应该成立。前馈函数中，本节无需考虑具体实现，使用 numpy 中对应函数即可。</p>
                 <p>下面详细推导广播机制的导数，目标为求得 $\frac{\partial \ell}{\partial v_1}$，直观理解上，广播过程是对小形状张量的扩展，那么梯度传播时需要逆操作，需要对对应维度进行聚合，把它们对应于同一原始形状的梯度加起来。从数学推导角度</p>
                 $$
-                \frac{\partial \ell}{\partial v_1}=\frac{\partial\ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot\frac{\partial v_2}{\partial v_1},\quad \text{out_grad}\in\mathbb{R}^{m_1,m_2,\cdots,m_k}
+                \frac{\partial \ell}{\partial v_1}=\frac{\partial\ell}{\partial v_2}\cdot\frac{\partial v_2}{\partial v_1}=\text{out_grad}\cdot\frac{\partial v_2}{\partial v_1},\quad \text{out_grad}\in\mathbb{R}^{m_1\times m_2\times\cdots\times m_k}
                 $$
                 <p>$\frac{\partial v_2}{\partial v_1}$ 的形状与 $v_1$ 相同，因此在乘积时需要首先进行 summation 将形状聚合成与 $v_1$ 相同，此时再进行求导，形状相同时 $v_2=v_1$，所有元素的导数为 1，因此导数可以等价为对 out_grad 的对应维度进行聚合。</p>
 <pre>
@@ -437,6 +437,7 @@ x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
 
             <h1>Reference</h1>
             <p>[1] xx要努力. (2022, 11). Deep Learning System-Homework1. <i>知乎专栏</i>. <a href="https://zhuanlan.zhihu.com/p/579465666">https://zhuanlan.zhihu.com/p/579465666</a>.</p>
+            <p>[2] Some parts of the code or math were consulted from ChatGPT and KimiChat.</p>
 
             <h1>Contact</h1>
             <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
