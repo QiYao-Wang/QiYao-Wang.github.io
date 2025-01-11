@@ -53,6 +53,23 @@ layout: compress
 
               <p>提示方法的关键是如何在大模型回答最终答案之前给出一定的推理中间过程（intermediate steps），这个中间过程是推理的关键。除提示方法外，也有利用 model training 和 instruction tuning 来提升模型生成中间步骤能力的方法，但是这样的方法与基于 prompt 的方法，都受限于 “instruction/prompt”，有时候需要不断地修缮你精心设计的 prompt 才有可能提升一些性能。本文提出了这样的问题，<strong>在无需精心设计提示的情况下，如何激发LLMs的推理能力？</strong>，以及 <strong>如何更好地理解模型自身的内部推理能力？</strong> 但大模型通常倾向于直接输出最终的问题结果，本文从解码过程出发，提出了<strong>CoT-decoding</strong>，能够不基于提示，激发模型的推理能力（生成中间的推理步骤）。</p>
 
+              <h2>CoT-Decoding Methodology</h2>
+              <p>为了在无需 prompting 的前提下激发模型的推理能力，本文从 decoding 阶段出发，先不考虑包含 top-k、top-p 及 temperature 在内的采样方法，大语言模型可以通过 greedy decoding 的方式来采样，即每次选择出现概率最大的 Token。本文的基本思路是，在第一个解码步（first decoding step）时，不仅只采样 greedy decoding 对应的 Token，而是引入超参数 k，选择第一个解码步中 top-k 个 Tokens，在后续的解码步中，分别对该 k 个 Token 进行贪婪解码，如图 1 所示。</p>
+              <figure>
+                <img src="Illustration_of_CoT-decoding.jpg" alt="Illustration_of_CoT-decoding-image">
+                <figcaption>图1：CoT-Decoding 解释</figcaption>
+              </figure>
+              <p>在获得第一个解码步的 k 个 Tokens 对应的 CoT-Path 后，一个很自然的问题是：<strong>如何选择正确的/恰当的 CoT-Path？</strong>在 Self-Consistency<sup>[5]</sup> 中通过聚合采样后的答案，选出其中投票次数（出现最多）的答案作为最终的结果，这是从一致性角度看来十分自然的。本文的 CoT-Decoding 为每条 CoT-Path 引入了置信度（confidence），其中关注每个解码步骤，对于 第 $k$ 个 CoT-Path 的置信度计算如下</p>
+              $$
+              \delta_{k,\text{answer}} = \frac{1}{|\text{answer}|}\sum_{x_t\in\text{answer}}p(x_t^1|x_{< t})-p(x_t^2|x_{< t})
+              $$
+
+              <p>即，在给定前 $t-1$ 个 Tokens 解码第 $t$ 步时，第 $t$ 步中概率最大的两个 Token $x_t^1$ 和 $x_t^2$ 的差值，从该 CoT-Path 的第一个 Token 到结尾 Token 的该差值之和的归一化即为置信度。这样的定义能够得到所有解码步中采样该 Token 的平均置信度，但是我认为（作者在结论中也有提到）这种置信度计算方法似乎不太准确，因为并不是所有步的置信度都是同等重要。通过该置信度的计算方式，所有的 $k$ 个解码路径都能够被对应的 $\Delta$ 值进行标记。图 1 中右下角的图例可以看到颜色越深则代表该 CoT-Path 的 confidence $\Delta$ 越大，甚至这样的指标在该问题示例上与结果的正确性有一定的相关性，即在正确答案上的置信度大于错误答案；与 greedy decoding 这种没有 CoT-Path 的采样结果相比，CoT-Path 具有更大的 $\Delta$。同时作者阐明，在 $k=10$ 的 top-10 解码路径中抽取最大置信度的路径的实验中，88% 的数据都存在 CoT-Path。如图 2 所示，为 PaLM-2 模型在 GSM8K 和 Year Parity 数据集上的示例，其中括号中的蓝色数字即表示对应 CoT-Path 的置信度。</p>
+              <figure>
+                <img src="example-palm.jpg" alt="example-palm-image">
+                <figcaption>图2：PaLM 模型在 GSM8K 和 Year Parity 数据集上的示例</figcaption>
+              </figure>
+
               <h1>代码复现</h1>
 
               <h1>Reference</h1>
@@ -60,6 +77,7 @@ layout: compress
               <p>[2] Nye M, Andreassen AJ, Gur-Ari G, et al. <a href="https://openreview.net/forum?id=HBlx2idbkbq">Show Your Work: Scratchpads for Intermediate Computation with Language Models</a> [C]. ICLR, Deep Learning for Code Workshop, 2022.</p>
               <p>[3] Blog: <a href="https://leehanchung.github.io/blogs/2024/10/21/reasoning-inference-scaling/">https://leehanchung.github.io/blogs/2024/10/21/reasoning-inference-scaling/</a></p>
               <p>[4] Wei J, Wang X, Schuurmans D, et al. <a href="https://arxiv.org/abs/2201.11903">Chain-of-thought prompting elicits reasoning in large language models</a>[J]. Advances in neural information processing systems, 2022, 35: 24824-24837.</p>
+              <p>[5] Wang X, Wei J, Schuurmans D, et al. Self-Consistency Improves Chain of Thought Reasoning in Language Models[C]. The Eleventh International Conference on Learning Representations.</p>
 
               <h1>Contact</h1>
               <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
