@@ -61,7 +61,7 @@ layout: compress
               </figure>
               <p>在获得第一个解码步的 k 个 Tokens 对应的 CoT-Path 后，一个很自然的问题是：<strong>如何选择正确的/恰当的 CoT-Path？</strong>在 Self-Consistency<sup>[5]</sup> 中通过聚合采样后的答案，选出其中投票次数（出现最多）的答案作为最终的结果，这是从一致性角度看来十分自然的。本文的 CoT-Decoding 为每条 CoT-Path 引入了置信度（confidence），其中关注每个解码步骤，对于 第 $k$ 个 CoT-Path 的置信度计算如下</p>
               $$
-              \delta_{k,\text{answer}} = \frac{1}{|\text{answer}|}\sum_{x_t\in\text{answer}}p(x_t^1|x_{< t})-p(x_t^2|x_{< t})
+              \Delta_{k,\text{answer}} = \frac{1}{|\text{answer}|}\sum_{x_t\in\text{answer}}p(x_t^1|x_{< t})-p(x_t^2|x_{< t})
               $$
 
               <p>即，在给定前 $t-1$ 个 Tokens 解码第 $t$ 步时，第 $t$ 步中概率最大的两个 Token $x_t^1$ 和 $x_t^2$ 的差值，从该 CoT-Path 的第一个 Token 到结尾 Token 的该差值之和的归一化即为置信度。这样的定义能够得到所有解码步中采样该 Token 的平均置信度，但是我认为（作者在结论中也有提到）这种置信度计算方法似乎不太准确，因为并不是所有步的置信度都是同等重要。通过该置信度的计算方式，所有的 $k$ 个解码路径都能够被对应的 $\Delta$ 值进行标记。图 1 中右下角的图例可以看到颜色越深则代表该 CoT-Path 的 confidence $\Delta$ 越大，甚至这样的指标在该问题示例上与结果的正确性有一定的相关性，即在正确答案上的置信度大于错误答案；与 greedy decoding 这种没有 CoT-Path 的采样结果相比，CoT-Path 具有更大的 $\Delta$。同时作者阐明，在 $k=10$ 的 top-10 解码路径中抽取最大置信度的路径的实验中，88% 的数据都存在 CoT-Path。如图 2 所示，为 PaLM-2 模型在 GSM8K 和 Year Parity 数据集上的示例，其中括号中的蓝色数字即表示对应 CoT-Path 的置信度。</p>
