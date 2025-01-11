@@ -49,9 +49,9 @@ layout: compress
 
               <h1>论文精读与思考</h1>
               <h2>The Introduction of Research Question</h2>
-              <p>在本文之前，大部分的论文聚焦在利用 Prompting 的方式来激发 LLMs 的推理能力，如 ICL 中的 Few-Shot Learning 在测试问题前给定几个与测试问题类似的示例，这些示例中通常包含着对应问题解决方案的推理流程，概括的说即<strong>给定具有中间步骤的少样本提示（Few-Shot）</strong>，或使用零样本（Zero-Shot）提示的方式指导模型给出相应的中间步骤，例如 (Nye et.al, 2021<sup>[2,3]</sup>） 在 LLMs 出现之前就尝试使用 XML 格式来指导模型在给出正确答案之前在 <code>&lt;scratch&gt; computing process &lt;/scratch&gt;</code> 中给出计算过程，之后再给出答案，以及利用显式的思维链提示<sup>[4]</sup> <code>Let's think step by step.</code> 激发模型的推理能力，使得大模型在输出最终答案之前能够给出一定的推理过程。</p>
+              <p>在本文之前，大部分的论文聚焦在利用 Prompting 的方式来激发 LLMs 的推理能力，如 ICL 中的 Few-Shot Learning 在测试问题前给定几个与测试问题类似的示例，这些示例中通常包含着对应问题解决方案的推理流程，概括的说即<strong>给定具有中间步骤的少样本提示（Few-Shot）</strong>，或使用零样本（Zero-Shot）提示的方式指导模型给出相应的中间步骤，例如 (Nye et.al, 2021<sup>[2,3]</sup>） 在 LLMs 出现之前就尝试使用 XML 格式来指导模型在给出正确答案之前在 <code>&lt;scratch&gt; computing process &lt;/scratch&gt;</code> 中给出计算过程，之后再给出答案，以及利用显式的思维链提示<sup>[4]</sup> <code>Let's think step by step.</code> 激发模型的推理能力，使得大模型在输出最终答案之前能够给出一定的推理过程。除 prompting 方法外，还可以通过 model training 或 instruction tuning 来激发模型的推理能力，但这样的方式通常会使得模型在通用能力上产生灾难性遗忘的效果，在数据层面，基于参数训练的方法还需要构造大量的 CoT 的推理数据，成本较高。</p>
 
-              <p>可以看到的是，提示方法的关键是如何在大模型回答最终答案之前给出一定的推理中间过程（intermediate steps），这个中间过程是推理的关键。除提示方法外，也有利用 model training 和 instruction tuning 来提升模型生成中间步骤能力的方法，但是这样的方法与基于 prompt 的方法，都受限于 “instruction/prompt”，有时候需要不断地修缮你精心设计的 prompt 才有可能提升一些性能。本文提出了这样的问题，<strong>在无需精心设计提示的情况下，如何激发LLMs的推理能力？</strong>，以及 <strong>如何更好地理解模型自身的内部推理能力？</strong> 但大模型通常倾向于直接输出最终的问题结果，本文从解码过程出发，提出了<strong>CoT-decoding</strong>，能够不基于提示，激发模型的推理能力（生成中间的推理步骤）。</p>
+              <p>提示方法的关键是如何在大模型回答最终答案之前给出一定的推理中间过程（intermediate steps），这个中间过程是推理的关键。除提示方法外，也有利用 model training 和 instruction tuning 来提升模型生成中间步骤能力的方法，但是这样的方法与基于 prompt 的方法，都受限于 “instruction/prompt”，有时候需要不断地修缮你精心设计的 prompt 才有可能提升一些性能。本文提出了这样的问题，<strong>在无需精心设计提示的情况下，如何激发LLMs的推理能力？</strong>，以及 <strong>如何更好地理解模型自身的内部推理能力？</strong> 但大模型通常倾向于直接输出最终的问题结果，本文从解码过程出发，提出了<strong>CoT-decoding</strong>，能够不基于提示，激发模型的推理能力（生成中间的推理步骤）。</p>
 
               <h1>代码复现</h1>
 
