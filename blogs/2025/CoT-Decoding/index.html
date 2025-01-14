@@ -104,7 +104,7 @@ layout: compress
                   <p><strong>Aggregation of the decoding paths can enhance the stability of the results.</strong></p>
                   <p>借鉴 Self-Consistency 的思想，可以想到如果将 top-k 个 CoT-Path 中答案相同的路径聚合，为每个可能的答案提供一个权重，最后选择权重最大的答案。如下式所示</p>
                   $$
-                  \tilde{\Delta_a}=\sum_k\Delta_{k,a}
+                  \tilde{\Delta}_a=\sum_k\Delta_{k,a}
                   $$
                   <p>其中 $\Delta_{k,a}$ 表示第 $k$ 条解码路径，答案为 $a$。如图 6 所示，聚合路径的方式在有无 prompt 的情况下，均达到了最优的性能。</p>
                   <figure>
