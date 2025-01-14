@@ -145,6 +145,10 @@ layout: compress
                     <figcaption>图10：预训练模型与指令微调模型对比</figcaption>
                   </figure>
                   <p>通过选择不同的 $k$，如图 11 所示，可以看到随着 $k$ 的增加，准确率也随之上升，但是在指令微调模型上在一定的 $k$ 值后达到稳定，在更难的 Multi-step Arith 任务上，指令微调模型也显示出更为靠前的 $k$ 的稳定值，这可能表明，指令微调可以帮助模型将推理步骤带到更为靠前的解码步骤上。</p>
+                  <figure>
+                    <img src="diff_k.png" alt="diff_k">
+                    <figcaption>图11：不同 $k$ 值下的情况</figcaption>
+                  </figure>
                 </li>
               </ol>
 
