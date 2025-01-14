@@ -118,14 +118,33 @@ layout: compress
                   <ul>
                     <li>
                       <p>Comparison with different methods.</p>
+                      <p>与其他的采样方法相比：Top-k sampling、Top-p sampling、Beam search、Temperature sample。将最基础的贪婪解码作为模型是否推理的 board line，可以看到，这些采样方法都无法激活模型的推理能力，甚至会有所损失，而 CoT-Decoding 能够达到 25.1% 的性能，相对贪婪解码而言大幅度提升。</p>
+                      <figure>
+                        <img src="7.png" alt="7">
+                      </figure>
                     </li>
                     <li>
                       <p>CoT-decoding effectively elicits reasoning across language models and model scales.</p>
+                      <p>该部分讨论了 CoT-Decoding 的泛化能力与 Scale up 的能力，如图 8 所示，在不同的模型上，CoT-Decoding 相较于 Greedy decoding 而言均展现了更好的性能，同时如图 9 所示，CoT-Decoding 能够在不同参数量的模型上 Scale up，随着模型参数量的增加模型的性能也提升，而在 Year Parity 任务上，CoT-Decoding 同样能进行 Scale up，但是贪婪解码却无法 Scale up，甚至在更大的模型上的性能更差。</p>
+                      <figure>
+                        <img src="across-models.png" alt="across-models">
+                        <figcaption>图8：CoT-Decoding 在不同模型上的性能。</figcaption>
+                      </figure>
+                      <figure>
+                        <img src="across-size.png" alt="across-size">
+                        <figcaption>图9：CoT-Decoding 在不同参数量模型上的性能。</figcaption>
+                      </figure>
                     </li>
                   </ul>
                 </li>
                 <li>
                   <p><strong>CoT-Decoding partially closes the reasoning gap between pre-trained and instruction-tuned models.</strong></p>
+                  <p>上面的实验均是在预训练模型上进行的，指令微调模型具有更好的指令遵循能力以及在训练过程中的一些监督数据就包含了推理过程，这为模型的推理提供了一些基础。如图 10 所示，可以看到 CoT-Decoding 为预训练模型和指令微调模型均能带来相应的收益，但指令微调的收益小于 CoT-Decoding，这或许说明存在一定的推理能力瓶颈。</p>
+                  <figure>
+                    <img src="10.png" alt="10">
+                    <figcaption>图10：预训练模型与指令微调模型对比</figcaption>
+                  </figure>
+                  <p>通过选择不同的 $k$，如图 11 所示，可以看到随着 $k$ 的增加，准确率也随之上升，但是在指令微调模型上在一定的 $k$ 值后达到稳定，在更难的 Multi-step Arith 任务上，指令微调模型也显示出更为靠前的 $k$ 的稳定值，这可能表明，指令微调可以帮助模型将推理步骤带到更为靠前的解码步骤上。</p>
                 </li>
               </ol>
 
