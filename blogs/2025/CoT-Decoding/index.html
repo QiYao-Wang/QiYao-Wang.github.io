@@ -69,8 +69,16 @@ layout: compress
                 <img src="example-palm.jpg" alt="example-palm-image">
                 <figcaption>图2：PaLM 模型在 GSM8K 和 Year Parity 数据集上的示例</figcaption>
               </figure>
+
+              <p>从上述内容可以看到，预训练语言模型可以通过考虑多个可能的 first step token 来获得关键的中间步骤，这些中间步骤能够提升对应的答案的置信度，而只考虑 greedy decoding 时，其中大多不包含相应的中间步骤，而是直接输出答案，这也造成对应的 greedy decoding path 的置信度相对较低。</p>
+
               <h2>Findings</h2>
               <p>本文不过多阐释具体的实验内容及数据集等，而是以作者报告的相关发现为脉络对实验结果进行展示与分析。</p>
+              <ol>
+                <li>
+                  <p><strong>CoT-Decoding can extract CoT-Paths more reliably than other extraction methods.</strong></p>
+                </li>
+              </ol>
 
               <h1>代码复现</h1>
 
