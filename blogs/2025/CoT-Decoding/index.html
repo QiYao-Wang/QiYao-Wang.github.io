@@ -92,6 +92,27 @@ layout: compress
                     <figcaption>图4：CoT-Decoding and self-consistency without prompts on GSM8K.</figcaption>
                   </figure>
                 </li>
+                <li>
+                  <p><strong>Branching at other decoding steps.</strong></p>
+                  <p>本文 CoT-Decoding 在 first step tokens 中进行分支，即图 5 中的 Step 0，如图 5 所示，其中讨论了两个问题在不同的解码步骤均进行分支，first step 的分支可以有效地提升 CoT-Path 的多样性，由于这样一种自回归解码的方式，后续的分支会受到前序解码步骤的影响，如果前序分支中存在错误会严重地影响后续解码的正确性个。分支的深度对于不同的任务而言，适合的深度也不同。</p>
+                  <figure>
+                    <img src="branch.png" alt="branch">
+                    <figcaption>图5：不同分支深度的讨论。</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <p><strong>Aggregation of the decoding paths can enhance the stability of the results.</strong></p>
+                  <p>借鉴 Self-Consistency 的思想，可以想到如果将 top-k 个 CoT-Path 中答案相同的路径聚合，为每个可能的答案提供一个权重，最后选择权重最大的答案。如下式所示</p>
+                  $$
+                  \tilde{\Delta_a}=\sum_k\Delta_{k,a}
+                  $$
+                  <p>其中 $\Delta_{k,a}$ 表示第 $k$ 条解码路径，答案为 $a$。如图 6 所示，聚合路径的方式在有无 prompt 的情况下，均达到了最优的性能。</p>
+                  <figure>
+                    <img src="result-combining-cot-decoding-with-cot-prompting.png" alt="result-combining-cot-decoding-with-cot-prompting">
+                    <figcaption>图6：将 CoT-Decoding 和 CoT-Prompting 结合。</figcaption>
+                  </figure>
+                  <p>同时可以看出，将 CoT-Prompting 和 CoT-Decoding 结合，能够达到更好的效果，同时在有无 prompt 的情况下，性能优于 Self-Consistency。</p>
+                </li>
               </ol>
 
               <h1>代码复现</h1>
