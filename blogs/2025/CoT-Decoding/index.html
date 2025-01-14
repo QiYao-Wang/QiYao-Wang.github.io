@@ -71,12 +71,26 @@ layout: compress
               </figure>
 
               <p>从上述内容可以看到，预训练语言模型可以通过考虑多个可能的 first step token 来获得关键的中间步骤，这些中间步骤能够提升对应的答案的置信度，而只考虑 greedy decoding 时，其中大多不包含相应的中间步骤，而是直接输出答案，这也造成对应的 greedy decoding path 的置信度相对较低。</p>
+              <p>在 CoT-Decoding 的置信度计算方法中，如果计算上文所说的在全句视野上计算相应的分数可能会引入一些不必要的 token，因此识别相应的答案区间是十分重要的，如图 2 中最好的置信度计算区间是 “60” 的两个 token “6” 和 “0”，可以通过引入 prompt <code>So the answer is</code> 来指导模型输出结果，但这可能与本文 “without prompt” 相悖，会不会使得模型更倾向于直接输出答案？文中并未进行实验，是一个可以思考的点。</p>
 
               <h2>Findings</h2>
               <p>本文不过多阐释具体的实验内容及数据集等，而是以作者报告的相关发现为脉络对实验结果进行展示与分析。</p>
               <ol>
                 <li>
                   <p><strong>CoT-Decoding can extract CoT-Paths more reliably than other extraction methods.</strong></p>
+                  <p>下面的实验通过修改不同的解码方式和对解码路径的排序方式来说明 CoT-Decoding 的置信度方法在 CoT-Path 路径的选择上的优势。图 3 中第一行贪婪解码 Greedy decoding，只选择 first step tokens 中概率最大的 token 进行后续的一系列解码步骤（同样是贪婪解码）；图 3 中后三行均代表采取选择多个（此处固定 $k=10$） first step token 的 CoT-Path，其中 CoT-Path 的最终选择方式分别为：对数概率最大的，长度正则化后对数概率最大的以及本文的置信度方式。可以看到的是，CoT-Decoding 的置信度方法在 GSM8K 和 Year Parity 两个数据集上的性能提升十分显著。</p>
+                  <figure>
+                    <img src="CoT-Path_extraction_method.png" alt="CoT-Path_extraction_method">
+                    <figcaption>图3：PaLM-2 L 模型上对不同的 CoT-Path 抽取方法的实验结果。</figcaption>
+                  </figure>
+                </li>
+                <li>
+                  <p><strong>CoT-Decoding can extract CoT-Paths more usefully than other approaches.</strong></p>
+                  <p>上文也提到了 Self-Consistency<sup>[5]</sup> 以采样多次投票的方式选出更可靠的 CoT-Path，本文对比了在没有 CoT-Prompt（Let's think step by step）的情况下 Self-Consistency 和 CoT-Decoding 的效果，可以发现，在没有 CoT-Prompt 的情况下，CoT-Decoding 在 GSM8K 上的性能能够显著优于贪婪解码和 Self-Consistency，CoT-Decoding 通过能够选择多个 first step token 来引入 CoT-Path 的多样性。</p>
+                  <figure>
+                    <img src="without_prompt.png" alt="without_prompt">
+                    <figcaption>图4：CoT-Decoding and self-consistency without prompts on GSM8K.</figcaption>
+                  </figure>
                 </li>
               </ol>
 
