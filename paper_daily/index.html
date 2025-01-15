@@ -38,7 +38,6 @@ layout: compress
           <section class="page__content" itemprop="text">
 
             <h1>Paper Daily</h1>
-            <p id="total_blogs" style="color: gray">Total Blogs</p>
             <h2>2025</h2>
             <ul>              
             </ul>
@@ -87,7 +86,7 @@ layout: compress
         }
 
         // 将统计结果追加到年份标题中
-        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
+        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} papers)</span>`;
     });
     </script>
   <script>
@@ -112,7 +111,7 @@ layout: compress
     let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
 
     sortedTopics.forEach(([topic, count]) => {
-        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
+        topicsHTML += `<p><font color="gray">${topic} (${count} papers)</font></p>`;
     });
 
     // 替换 Topics 区域内容
