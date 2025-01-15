@@ -1,1 +1,122 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead" style="container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
 
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+        <div id="topics">
+          <strong>Topics</strong>
+        </div>
+      </div>
+      
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1>Paper Daily</h1>
+            <p id="total_blogs" style="color: gray">Total Blogs</p>
+            <h2>2025</h2>
+            <ul>              
+            </ul>
+           
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+            a.target="_self";
+
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+      // 自动统计每一年的博客数量
+    const years = document.querySelectorAll('h2'); // 找到所有年份标题
+    years.forEach(yearHeader => {
+        const year = yearHeader.innerText.trim(); // 提取年份文本
+        const nextSibling = yearHeader.nextElementSibling; // 获取年份标题下的内容
+        let count = 0;
+
+        // 如果下一个兄弟节点是列表，则统计列表项数量
+        if (nextSibling && nextSibling.tagName === 'UL') {
+            count = nextSibling.querySelectorAll('li').length; // 统计当前年份的博客数量
+        }
+
+        // 将统计结果追加到年份标题中
+        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
+    });
+    </script>
+  <script>
+    // 自动统计每个 Topic 的博客数量
+    const topicCounts = {};
+    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
+
+    blogs.forEach(blog => {
+        // 找到博客条目中的 topic（灰色字体）
+        const topicFont = blog.querySelector('font[color="gray"]');
+        if (topicFont) {
+            const topic = topicFont.innerText.trim();
+            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+        }
+    });
+
+    // 对 Topic 按字母顺序排序
+    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
+
+    // 更新边栏 Topics 部分
+    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
+    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
+
+    sortedTopics.forEach(([topic, count]) => {
+        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
+    });
+
+    // 替换 Topics 区域内容
+    topicsContainer.innerHTML = topicsHTML;
+</script>
+  </body>
+</html>
