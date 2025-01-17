@@ -35,7 +35,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 - Large Language Models
   - LLMs-based Multi-Agent System
-  - Inference-Time Self-Improvement
+  - Reasoning
 - Information Retrieval
 - AI for Science (Mathematics, etc.) and Social Science (Politics, Law, etc.)
   - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
