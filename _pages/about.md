@@ -39,6 +39,7 @@ If you are interested in my research, feel free to collaborate with me!
 - Information Retrieval
 - AI for Science (Mathematics, etc.) and Social Science (Politics, Law, etc.)
   - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
+  - LLMs for Law
 
 # 🔥 News
 
