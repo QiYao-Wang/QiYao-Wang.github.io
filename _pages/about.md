@@ -16,7 +16,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Now I am an undergraduate from Dalian University of Technology (DUT). 
+Now I am an undergraduate from Dalian University of Technology (DUT). <a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>
 
 I am currently pursuing a bachelor degree in Artificial Intelligence *(2021-2025)*. During my undergraduate studies, I worked in the Dalian University of Technology *Information Retrieval Laboratory* and *Public Service Science and Engineering Laboratory*, fortunately supervised by Prof. [Yuan Lin](http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm) and Prof. [Kan Xu](http://faculty.dlut.edu.cn/2004012069/en/index.htm). I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. For more details, please visit our [website](https://dut-ipai.github.io/). For those interested in collaboration, please do not hesitate to contact me.
 
