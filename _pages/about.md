@@ -110,6 +110,7 @@ If you are interested in my research, feel free to collaborate with me!
     <a href="https://github.com/QiYao-Wang/ipeval">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval">
     </a>
+    <span class='show_paper_citations' data='STze0QgAAAAJ:u5HHmVD_uO8C'></span>
   </li>
 </ul>
 </div>
