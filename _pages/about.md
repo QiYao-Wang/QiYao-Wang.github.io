@@ -94,6 +94,7 @@ If you are interested in my research, feel free to collaborate with me!
     <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent">
     </a>
+    <span class='show_paper_citations' data='STze0QgAAAAJ:u-x6o8ySG0sC'></span>
   </li>
   <li>
     ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
