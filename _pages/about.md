@@ -65,8 +65,6 @@ If you are interested in my research, feel free to collaborate with me!
 
 <p><strong>TL;DR: </strong>We introduce Draft2Patent, a novel task for generating full-length patents (~17K tokens) from drafts, along with the D2P benchmark Our AutoPatent framework, leveraging a multi-agent system, excels in patent generation, with Qwen2.5-7B outperforming larger models like GPT-4o and Qwen2.5-72B in metrics and human evaluations.</p>
 
-<span class='paper_citations' data='STze0QgAAAAJ:u5HHmVD_uO8C'></span>
-
 </div>
 </div>
 
