@@ -38,7 +38,7 @@ If you are interested in my research, feel free to collaborate with me!
   - Reasoning
 - Information Retrieval
 - AI for Science (Mathematics, etc.) and Social Science (Politics, Law, etc.)
-  - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/Github-stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
+  - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
 
   - LLMs for Law
 
@@ -93,7 +93,7 @@ If you are interested in my research, feel free to collaborate with me!
     [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
     [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] 
     <a href="https://github.com/QiYao-Wang/AutoPatent">
-      <img src="https://img.shields.io/github/Github-stars/QiYao-Wang/AutoPatent" alt="AutoPatent">
+      <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent">
     </a>
     <span class='show_paper_citations' data='STze0QgAAAAJ:u-x6o8ySG0sC'></span>
   </li>
@@ -110,7 +110,7 @@ If you are interested in my research, feel free to collaborate with me!
     [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>] 
     [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
     <a href="https://github.com/QiYao-Wang/ipeval">
-      <img src="https://img.shields.io/github/Github-stars/QiYao-Wang/ipeval" alt="IPEval">
+      <img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval">
     </a>
     <span class='show_paper_citations' data='STze0QgAAAAJ:u5HHmVD_uO8C'></span>
   </li>
