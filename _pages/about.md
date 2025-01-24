@@ -87,14 +87,14 @@ If you are interested in my research, feel free to collaborate with me!
 <ul>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review.
+    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. 
+    <strong> | <span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span></strong>
     [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
     [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
     [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] 
     <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent">
     </a>
-    <strong><span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span></strong>
   </li>
   <li>
     ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
@@ -104,6 +104,7 @@ If you are interested in my research, feel free to collaborate with me!
   <li>
     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
     <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> Arxiv. 
+    <strong> | <span id="IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"></span></strong>
     [<a href="https://Qiyao-Wang.github.io/ipeval">Website</a>]
     [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
     [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>] 
@@ -111,7 +112,6 @@ If you are interested in my research, feel free to collaborate with me!
     <a href="https://github.com/QiYao-Wang/ipeval">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval">
     </a>
-    <strong><span id="IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"></span></strong>
   </li>
 </ul>
 </div>
