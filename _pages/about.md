@@ -94,6 +94,7 @@ If you are interested in my research, feel free to collaborate with me!
     <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent">
     </a>
+    <strong><span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span></strong>
   </li>
   <li>
     ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
@@ -110,6 +111,7 @@ If you are interested in my research, feel free to collaborate with me!
     <a href="https://github.com/QiYao-Wang/ipeval">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval">
     </a>
+    <strong><span id="IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"></span></strong>
   </li>
 </ul>
 </div>
