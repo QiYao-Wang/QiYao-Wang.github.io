@@ -72,7 +72,7 @@ If you are interested in my research, feel free to collaborate with me!
 <div class='paper-box-text' markdown="1">
 
 [IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models
-](https://arxiv.org/pdf/2406.12386)
+](https://arxiv.org/pdf/2406.12386)<strong><span class='show_paper_citations' data='4FA6C0AAAAAJ:qjMakFHDy7sC'></span></strong>
 
 <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin</em>
 
