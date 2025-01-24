@@ -177,3 +177,36 @@ If you are interested in my research, feel free to collaborate with me!
 
 Updated at January, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
+
+<script>
+        // URL of the JSON file in the 'google-scholar-stats' branch
+        const jsonUrl = "https://raw.githubusercontent.com/QiYao-Wang/QiYao-Wang.github.io/refs/heads/google-scholar-stats/gs_data.json";
+
+        // Fetch JSON data and dynamically update the citation count
+        fetch(jsonUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Locate the publication data from JSON
+                const publications = data.publications;
+
+                // Find all span elements with dynamic ids and update their content
+                const spans = document.querySelectorAll("span[id]"); // Select all span elements with an id attribute
+
+                spans.forEach(span => {
+                    const spanId = span.id; // Get the id of the span element
+
+                    // Iterate over publications to find a match with the id
+                    for (const key in publications) {
+                        const publication = publications[key];
+                        if (publication.bib.title === spanId) { // Match title with the span id
+                            const citationCount = publication.num_citations || 0;
+                            span.textContent = `Citation: ${citationCount}`;
+                            break;
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error loading JSON:", error);
+            });
+    </script>
