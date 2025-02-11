@@ -8,6 +8,24 @@
           {% for link in site.data.navigation.main %}
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
+          <li>
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                My Research
+              </a>
+              <div class="navbar-dropdown">
+                <a style="color: black;user-select: none;padding-left: 5px;"><strong>Benchmark</strong></a>
+                <a class="navbar-item" href="https://Qiyao-Wang.github.io/ipeval/">
+                  IPEval
+                </a>
+                <a style="color: black;user-select: none;padding-left: 5px;"><strong>Patent</strong></a>
+                <a class="navbar-item" href="https://Qiyao-Wang.github.io/AutoPatent/">
+                  AutoPatent
+                </a>
+              </div>
+            </div>
+          </div>
+          </li>
         </ul>
         <ul class="hidden-links hidden"></ul>
       </nav>
