@@ -22,5 +22,5 @@ main:
   - title: "Educations"
     url: "/#-educations"
 
-  - title: "Academe Service"
-    url: "/#-academe-service"
+  #- title: "Academe Service"
+  #  url: "/#-academe-service"
