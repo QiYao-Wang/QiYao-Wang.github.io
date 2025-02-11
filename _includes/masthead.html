@@ -1,19 +1,23 @@
 <style>
   .dropdown-content {
-  display: none; /* 默认隐藏 */
-  position: absolute;
+  display: block; /* 让菜单项垂直排列 */
   background-color: white;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  min-width: 200px; /* 确保菜单有合理宽度 */
+  max-width: 300px; /* 避免过长 */
+  white-space: normal; /* 允许文本换行 */
+  word-wrap: break-word; /* 让长单词换行 */
+  overflow-wrap: break-word;
   padding: 10px;
-  z-index: 1000;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   border: 1px solid #ddd;
   border-radius: 5px;
 }
 
-/* 添加一个类名 `show`，用于 JavaScript 控制显隐 */
-.dropdown-content.show {
-  display: block;
+.dropdown-content li, 
+.dropdown-content a {
+  display: block; /* 让每个链接单独一行 */
+  padding: 5px;
+  text-decoration: none;
 }
 </style>
 <div class="masthead">
