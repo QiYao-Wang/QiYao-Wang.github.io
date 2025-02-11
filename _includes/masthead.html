@@ -1,3 +1,21 @@
+<style>
+  .dropdown-content {
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+/* 添加一个类名 `show`，用于 JavaScript 控制显隐 */
+.dropdown-content.show {
+  display: block;
+}
+</style>
 <div class="masthead">
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
@@ -9,8 +27,8 @@
             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
           <li class="masthead__menu-item dropdown">
-            <a class="navbar-item">My Research</a>
-            <ul class="dropdown-content">
+            <a class="navbar-item" id="dropdown-toggle">My Research</a>
+            <ul class="dropdown-content" id="dropdown-menu">
               <li><strong>Benchmark</strong></li>
               <li><a href="https://Qiyao-Wang.github.io/ipeval/">IPEval</a></li>
               <li><strong>Patent</strong></li>
@@ -23,3 +41,22 @@
     </div>
   </div>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("dropdown-toggle");
+  const dropdownMenu = document.getElementById("dropdown-menu");
+
+  // 切换菜单显示/隐藏
+  toggleButton.addEventListener("click", function (event) {
+    event.stopPropagation(); // 阻止事件冒泡，防止触发 document 的点击事件
+    dropdownMenu.classList.toggle("show");
+  });
+
+  // 点击页面其他地方，隐藏下拉菜单
+  document.addEventListener("click", function (event) {
+    if (!dropdownMenu.contains(event.target) && !toggleButton.contains(event.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
+});
+</script>
