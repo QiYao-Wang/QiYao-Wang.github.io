@@ -1,17 +1,32 @@
 <style>
-  .dropdown-content {
-  display: block; /* 默认隐藏 */
+/* 默认情况下隐藏下拉菜单 */
+.dropdown-content {
+  display: none; /* 隐藏菜单 */
   position: absolute;
   background-color: white;
   min-width: 160px;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   padding: 10px;
-  z-index: 1000;
-  border: 1px solid #ddd;
+  z-index: 1;
   border-radius: 5px;
+  list-style-type: none;
 }
 
-/* 添加一个类名 `show`，用于 JavaScript 控制显隐 */
+.dropdown-content li {
+  padding: 8px;
+}
+
+.dropdown-content a {
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-content strong {
+  font-weight: bold;
+  color: black;
+}
+
+/* 展开时显示菜单 */
 .dropdown-content.show {
   display: block;
 }
@@ -30,10 +45,10 @@
           <li class="masthead__menu-item dropdown">
             <a class="navbar-item" id="dropdown-toggle">My Research</a>
             <ul class="dropdown-content" id="dropdown-menu">
-              <li><p><strong>Benchmark</strong></p></li>
-              <li><p><a href="https://Qiyao-Wang.github.io/ipeval/">IPEval</a></p></li>
-              <li><p><strong>Patent</strong></p></li>
-              <li><p><a href="https://Qiyao-Wang.github.io/AutoPatent/">AutoPatent</a></p></li>
+              <li><strong>Benchmark</strong></li>
+              <li><a href="https://Qiyao-Wang.github.io/ipeval/">IPEval</a></li>
+              <li><strong>Patent</strong></li>
+              <li><a href="https://Qiyao-Wang.github.io/AutoPatent/">AutoPatent</a></li>
             </ul>
           </li>
         </ul>
@@ -43,17 +58,17 @@
   </div>
 </div>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   const toggleButton = document.getElementById("dropdown-toggle");
   const dropdownMenu = document.getElementById("dropdown-menu");
 
-  // 切换菜单显示/隐藏
+  // 切换下拉菜单的显示/隐藏
   toggleButton.addEventListener("click", function (event) {
-    event.stopPropagation(); // 阻止事件冒泡，防止触发 document 的点击事件
+    event.stopPropagation(); // 阻止事件冒泡，避免触发 document 的点击事件
     dropdownMenu.classList.toggle("show");
   });
 
-  // 点击页面其他地方，隐藏下拉菜单
+  // 点击页面其他地方时，隐藏下拉菜单
   document.addEventListener("click", function (event) {
     if (!dropdownMenu.contains(event.target) && !toggleButton.contains(event.target)) {
       dropdownMenu.classList.remove("show");
