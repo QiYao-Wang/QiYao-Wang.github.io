@@ -87,7 +87,7 @@ If you are interested in my research, feel free to collaborate with me!
 <ul>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. 
+    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. SIAT & DUT.
     <strong> | <span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span> | </strong>
     [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
     [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
@@ -103,7 +103,7 @@ If you are interested in my research, feel free to collaborate with me!
   </li>
   <li>
     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
-    <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> Arxiv. 
+    <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> Arxiv. DUT.
     <strong> | <span id="IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"></span> | </strong>
     [<a href="https://Qiyao-Wang.github.io/ipeval">Website</a>]
     [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
@@ -177,7 +177,7 @@ If you are interested in my research, feel free to collaborate with me!
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=5XwcXhC_hWtdm6YV_S7mq8GYDOjb0XU67bhcZ5uaJto&cl=ffffff&w=a"></script>
 </div>
 
-Updated at January, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
+Updated at February, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
 
 <script>
