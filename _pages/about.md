@@ -85,17 +85,17 @@ If you are interested in my research, feel free to collaborate with me!
 
 <div>
 <ul>
-<!--   <li>
-    Comming within days.
-    <em>..., <strong>Qiyao Wang</strong>(Core Contribution), et al.</em>. Arxiv. M-A-P.
+  <li>
+    SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.
+    <em>M-A-P Team, <strong>Qiyao Wang</strong>(Core Contribution), et al.</em>. Arxiv. M-A-P.
     <strong> | <span id="placeholder"></span> | </strong>
     [<a href="https://supergpqa.github.io">Website</a>]
-    [<a href="">Paper</a>]
+    [<a href="https://arxiv.org/abs/2502.14739">Paper</a>]
     [<a href="https://github.com/SuperGPQA/SuperGPQA">Github</a>]
     <a href="https://github.com/SuperGPQA/SuperGPQA">
       <img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA">
     </a>
-  </li> -->
+  </li>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
     <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. CAS-SIAT and DUT.
