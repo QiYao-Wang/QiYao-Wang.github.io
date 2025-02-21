@@ -85,9 +85,20 @@ If you are interested in my research, feel free to collaborate with me!
 
 <div>
 <ul>
+<!--   <li>
+    Comming within days.
+    <em>..., <strong>Qiyao Wang</strong>(Core Contribution), et al.</em>. Arxiv. M-A-P.
+    <strong> | <span id="placeholder"></span> | </strong>
+    [<a href="https://supergpqa.github.io">Website</a>]
+    [<a href="">Paper</a>]
+    [<a href="https://github.com/SuperGPQA/SuperGPQA">Github</a>]
+    <a href="https://github.com/SuperGPQA/SuperGPQA">
+      <img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA">
+    </a>
+  </li> -->
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et.al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. CAS-SIAT & DUT.
+    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. CAS-SIAT and DUT.
     <strong> | <span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span> | </strong>
     [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
     [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
