@@ -25,7 +25,7 @@ I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Pro
 If you are interested in my research, feel free to collaborate with me!
 
 <p><strong>
-  More Things About Me: <a href="/blogs">Click here</a>
+  My Blog: <a href="/blogs">Click here</a>
 </strong></p>
 
 <hr>
