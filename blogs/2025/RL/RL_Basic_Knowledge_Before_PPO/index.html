@@ -124,7 +124,7 @@ layout: compress
                 P_\pi(s,s')=\sum_{a\in\mathcal A}\pi(a|s)\cdot P(s'|s,a)
                 $$
               </li>
-              <li>奖励向量 $\bm{r}_\pi\in\mathbb{R}^{|\mathcal{S}|\times1}$：表示在状态 $s$ 下，按照策略 $\pi$ 选择动作，经过状态转移得到的即时奖励的期望值
+              <li>奖励向量 $\mathbf{r}_\pi\in\mathbb{R}^{|\mathcal{S}|\times1}$：表示在状态 $s$ 下，按照策略 $\pi$ 选择动作，经过状态转移得到的即时奖励的期望值
                 $$
                 R_\pi(s) = \sum_{a\in\mathcal A}\sum_{s'\in\mathcal{S}}\pi(a|s)P(s'|s,a)R(s,a,s')
                 $$
@@ -132,9 +132,9 @@ layout: compress
             </ul>
             <p>因此，矩阵形式为</p>
             $$
-            \bm{v}_\pi=\bm{r}_\pi+\gamma P_\pi\bm{v}_\pi
+            \mathbf{v}_\pi=\mathbf{r}_\pi+\gamma P_\pi\mathbf{v}_\pi
             $$
-            <p>经过矩阵运算，当 $I-\gamma P_\pi$ 可逆时，$\bm{v}_\pi=(I-\gamma P_\pi)^{-1}\bm{r}_\pi$ 为 Bellman Equation 的唯一解。</p>
+            <p>经过矩阵运算，当 $I-\gamma P_\pi$ 可逆时，$\mathbf{v}_\pi=(I-\gamma P_\pi)^{-1}\mathbf{r}_\pi$ 为 Bellman Equation 的唯一解。</p>
 
               <h1>Reference</h1>
 
