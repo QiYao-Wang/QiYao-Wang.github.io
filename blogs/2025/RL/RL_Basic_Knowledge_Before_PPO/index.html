@@ -101,8 +101,22 @@ layout: compress
             Q_\pi(s,a) = \sum_{s'\in\mathcal S}P(s'|s,a)[R(s,a,s')+\gamma V_\pi(s')]
             $$
             <p>其中，State $s$ 和 该状态下的 Action $a$ 固定，而后续的 State 不确定，会从 State Space $\mathcal{S}$ 中进行采样，因此对于 State $s$ 采取 Action $a$ 后的下一个状态 $s'$ 需要结合<strong>状态转移函数</strong> $P(s'|s,a)$ 进行计算。$R(s,a,s')$ 则为从 State $s$, Action $a$ 转移为 State $s'$ 后环境给予的 Reward 值，$V_\pi(s')$ 则表示在 State $s'$ 条件下，未来的累积折扣期望值。</p>
-            
-            
+
+            <h3>Bellman Equation</h3>
+            <p>Bellman Equation 与上述从 $V_\pi$ 得到 $Q_\pi$ 的公式较为类似，以一种动态规划/递归的形式，将在当前状态下的 expected return 拆解为 当前立即得到的 Reward 与对未来（下一状态）的 expected return 的估计。</p>
+            <p><strong>Bellman Equation of the state-value function</strong></p>
+            $$
+            V_\pi(s)=\mathbb{E}_\pi[R_{t+1}+\gamma*V_\pi(S_{t+1})|S_t=s]
+            $$
+            <p><strong>Bellman Equation of the action-value function</strong></p>
+            $$
+            Q_\pi(s,a)=\mathbb{E}_\pi[R_{t+1}+\gamma*Q_{\pi}(S_{t+1},A_{t+1})|S_t=s,A_t=a]
+            $$
+            <h4>Closed-form Solution</h4>
+            <p>上述方程，无论是对于 $V$ 还是 $Q$ Function 的思想都是一致的，Bellman Equation 为这两类 Value Function 提供了简化计算的方法。将 $V$ 与 $Q$ 关系中的式子融合，可以得到</p>
+            $$
+            V_\pi(s)
+            $$
 
               <h1>Reference</h1>
 
