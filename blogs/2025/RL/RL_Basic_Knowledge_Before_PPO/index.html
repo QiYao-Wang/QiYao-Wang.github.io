@@ -155,6 +155,21 @@ layout: compress
 
             <p><strong style="color: darkred">第一次了解 Bellman Equation，此部分逻辑不清，需梳理。</strong></p>
 
+            <h2>Monte Carlo & TD Learning</h2>
+            <h3>Monte Carlo</h3>
+            <p>使用蒙特卡罗算法进行 value function 的参数更新时，对于累积折扣回报 $G_t$ 的计算，<strong>一直到整个 episode 结束</strong>，这样的估计会使得 Agent 能力较为精准，但是数据的方差大，训练不稳定。</p>
+            $$
+            V(S_t)\leftarrow V(S_t)+\alpha[G_t-V(S_t)]
+            $$
+
+            <h3>Temporal Difference Learning</h3>
+            <p>使用 TD Learning 来进行 value function 的参数更新，在每一步都进行，而不关注 $G_t$，关注当前步的即时奖励 $R_{t+1}$ 和下一状态的 value。这也称为 bootstrapping，因为 TD Learning 基于现有 value function 估计 $V(S_{t+1})$，而不是整个 episode 的累积奖励 $G_t$。</p>
+            $$
+            V(S_t)\leftarrow V(S_t)+\alpha[R_{t+1}+\gamma V(S_{t+1})-V(S_t)]
+            $$
+            <p>其中 $R_{t+1}+\gamma V(S_{t+1})$ 称为 TD Target。对于 action-value function，将上述公式的 $V$ function 换为 $Q$ function 即可。</p>
+            
+            
               <h1>Reference</h1>
 
               <h1>Contact</h1>
