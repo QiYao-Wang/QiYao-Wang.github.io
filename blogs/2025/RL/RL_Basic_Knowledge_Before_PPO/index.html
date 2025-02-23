@@ -137,6 +137,24 @@ layout: compress
             <p>经过矩阵运算，当 $I-\gamma P_\pi$ 可逆时，$\mathbf{v}_\pi=(I-\gamma P_\pi)^{-1}\mathbf{r}_\pi$ 为 Bellman Equation 的唯一解。</p>
             <p>基于 <a href="https://newfacade.github.io/notes-on-reinforcement-learning/04-bellman.html">Gershgorin circle theorem</a> 可以证明 $I-\gamma P_\pi$ 可逆，此处略，因此 Bellman Equation 具有唯一的闭合解，这为之后的基于对 Bellman Equation 优化的方法提供了基础。</p>
 
+            <h4>Optimal action-value</h4>
+            <p>基于贝尔曼最优方程 (<a href="https://newfacade.github.io/notes-on-reinforcement-learning/05-bellman-optimal.html">The Bellman Optimality Equation, BOE</a>)，能够推导出最优的价值函数的形式解，推导最优的 policy model $\pi^*$，也就是说，BOE 的解，对应了最优的 state-value $V^*$ 和 policy $\pi^*$，基于这两者能够得到最优的 action-value $Q^*$。</p>
+            $$
+            \begin{aligned}
+            V^*(s)&=\max_aQ^*(s,a)\\
+            &=\max_a\sum_{s'\in\mathcal{S}}P(s'|s,a)[R(s,a,s')+\gamma V^*(s')]
+            \end{aligned}
+            $$
+
+            $$
+            \begin{aligned}
+            Q^*(s)&=\sum_{s'\in\mathcal{S}}P(s'|s,a)[R(s,a,s')+\gamma V^*(s')]\\
+            &=\sum_{s'\in\mathcal{S}}P(s'|s,a)[R(s,a,s')+\gamma \max_aQ^*(s,a)]
+            \end{aligned}
+            $$
+
+            <p><strong style="color: darkred">第一次了解 Bellman Equation，此部分逻辑不清，需梳理。</strong></p>
+
               <h1>Reference</h1>
 
               <h1>Contact</h1>
