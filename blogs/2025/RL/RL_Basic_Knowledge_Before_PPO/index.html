@@ -119,7 +119,7 @@ layout: compress
             $$
             <p>将上面的公式转化为矩阵形式，可以先看一下每个元素的含义，其中 $P(s'|s,a)$ 为状态转移的概率，$R(s,a,s')$ 为当前状态下的 reward，那么下面将这些元素矩阵化，将有以下内容</p>
             <ul>
-              <li>转移概率矩阵 $P_\pi\in\mathbb{R}^{|\mathcal{S}|\times|\mathcal{S}|}$： $\mathbf{P}_\pi$ 代表在给定策略 $\pi$ 下，从状态 $s$ 到状态 $s'$ 的转移概率。它是通过对所有可能的动作 $a$ 进行加权求和得到的。
+              <li>转移概率矩阵 $P_\pi\in\mathbb{R}^{|\mathcal{S}|\times|\mathcal{S}|}$： ${P}_\pi$ 代表在给定策略 $\pi$ 下，从状态 $s$ 到状态 $s'$ 的转移概率。它是通过对所有可能的动作 $a$ 进行加权求和得到的。
                 $$
                 P_\pi(s,s')=\sum_{a\in\mathcal A}\pi(a|s)\cdot P(s'|s,a)
                 $$
@@ -135,6 +135,7 @@ layout: compress
             \mathbf{v}_\pi=\mathbf{r}_\pi+\gamma P_\pi\mathbf{v}_\pi
             $$
             <p>经过矩阵运算，当 $I-\gamma P_\pi$ 可逆时，$\mathbf{v}_\pi=(I-\gamma P_\pi)^{-1}\mathbf{r}_\pi$ 为 Bellman Equation 的唯一解。</p>
+            <p>基于 <a href="https://newfacade.github.io/notes-on-reinforcement-learning/04-bellman.html">Gershgorin circle theorem</a> 可以证明 $I-\gamma P_\pi$ 可逆，此处略，因此 Bellman Equation 具有唯一的闭合解，这为之后的基于对 Bellman Equation 优化的方法提供了基础。</p>
 
               <h1>Reference</h1>
 
