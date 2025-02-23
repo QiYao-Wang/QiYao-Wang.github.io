@@ -59,7 +59,37 @@ layout: compress
                 <li>Observation $o$: is a <strong>partial</strong> description of the state. 部分信息。</li>
               </ul>
 
-              
+              <h2><strong>Two main approaches for solving RL problems</strong></h2>
+              <p>RL 的目标是得到一个好的 Agent，即得到一个最优的 Policy Model $\pi^*$，能够根据当前的环境的 State 做出良好的决策。Policy Model $\pi$ 的优化目标是最大化期望回报（expected return）。</p>
+              <p>训练 Agent 得到最优 policy $\pi^*$ 的方法有两种：</p>
+              <ul>
+                <li>Policy-Based Methods: 直接地训练模型在给定 State 的情况下，选择适合的 Action。</li>
+                <li>Value-Based Methods: 训练模型能够判断更有价值的 State，并且采取适合的 Action，来达到更有价值的 State。</li>
+              </ul>
+
+              <h3>Policy-Based Methods</h3>
+              <p>对于 Policy-Based Methods，其目标是直接学一个 policy function。对于<strong> Action 是离散的，</strong> policy model $\pi$ 给定 State 返回适合的 Action</p>
+              $$
+              a_t = \pi(s_t)
+              $$
+              <p>对于<strong> Action 是连续的</strong> policy model $\pi$ 实际上返回的是一个 Action distribution，适合的 Action 应该能够从该分布中被采样出来</p>
+              $$
+              a_t\sim\pi(\cdot|s_t)
+              $$
+
+              <h3>Value-Based Methods</h3>
+              <p>对于 Value-Based Methods，其目标是能够预测在某一 State $s$ 下的 accumulated expected return （state-value function $V_{\pi}(s)$）或某一 State $s$ 下采取 Action $a$ 后的 accumulated expected return (action-value function $Q_{\pi}(s,a)$)。</p>
+              <h4>The state-value function</h4>
+              $$
+              V_{\pi}(s) = \mathbb{E}_{\pi}[G_t|S_t=s]
+              $$
+              <p>state-value function 的含义是估计在 State $s$ 的条件下，累积折扣回报 $G_t=\sum_{k=0}^∞\gamma^kR_{t+k+1}$ 的期望值大小。</p>
+
+              <h4>The action-value function</h4>
+              $$
+              Q_{\pi}(s,a) = \mathbb{E}_{\pi}[G_t|S_t=s,A_t=a]
+              $$
+              <p>action-value function 实际上是 state-action-value function，即在给定 State $s$ 和 Action $a$ 的条件下，累积折扣回报 $G_t$ 的期望值大小。由此可见，Value-Based Method 的估计目标都是：$G_t$，即累积折扣回报的期望值大小。</p>
 
               <h1>Reference</h1>
 
