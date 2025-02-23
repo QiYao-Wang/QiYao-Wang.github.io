@@ -91,6 +91,19 @@ layout: compress
               $$
               <p>action-value function 实际上是 state-action-value function，即在给定 State $s$ 和 Action $a$ 的条件下，累积折扣回报 $G_t$ 的期望值大小。由此可见，Value-Based Method 的估计目标都是：$G_t$，即累积折扣回报的期望值大小。</p>
 
+            <h3>Relation between V and Q Function</h3>
+            <p>从定义看，$V_\pi$ 和 $Q_\pi$ 都是对累积折扣回报 $G_t$ 的期望值估计，但是二者所站角度不同。$Q_\pi$ 相较于 $V_\pi$ 而言，要考虑 Action $a$ 条件的影响，而 $V_\pi$ 则不关心 Action，从 $Q_\pi$ 得到 $V_\pi$ 的公式如下</p>
+            $$
+            V_{\pi}(s)=\sum_{a\in\mathcal A}\pi(a|s)Q_\pi(s,a)
+            $$
+            <p>即，对 $Q_\pi$ 中的 Action 进行期望的计算，排除其中选择某一 Action 的影响，而是在 Action Space 下的期望值。而 $Q_\pi(s,a)$ 中的 $a$ 其实也仅考虑了一步 State $s$ 下的 Action，对于之后的 State 并不强制其 Action，可借此与 $V_\pi$ 关联</p>
+            $$
+            Q_\pi(s,a) = \sum_{s'\in\mathcal S}P(s'|s,a)[R(s,a,s')+\gamma V_\pi(s')]
+            $$
+            <p>其中，State $s$ 和 该状态下的 Action $a$ 固定，而后续的 State 不确定，会从 State Space $\mathcal{S}$ 中进行采样，因此对于 State $s$ 采取 Action $a$ 后的下一个状态 $s'$ 需要结合<strong>状态转移函数</strong> $P(s'|s,a)$ 进行计算。$R(s,a,s')$ 则为从 State $s$, Action $a$ 转移为 State $s'$ 后环境给予的 Reward 值，$V_\pi(s')$ 则表示在 State $s'$ 条件下，未来的累积折扣期望值。</p>
+            
+            
+
               <h1>Reference</h1>
 
               <h1>Contact</h1>
