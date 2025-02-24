@@ -44,7 +44,7 @@ layout: compress
           <section class="page__content" itemprop="text">
 
             <h1 id="RL_Basic_Knowledge_Before_PPO">Basic Knowledge of Reinforcement Learning before PPO</h1>
-            <p style="color:gray">Feb. 23, 2025 -  · Qiyao Wang · Topic #RL</p>
+            <p style="color:gray">Feb. 23, 2025 - Feb. 24, 2025 · Qiyao Wang · Topic #RL</p>
               <p>Claim：本文参考 <a href="https://newfacade.github.io/notes-on-reinforcement-learning/03-approach.html">notes on Reinforcement Learning</a> 和 <a href="https://www.youtube.com/playlist?list=PLJV_el3uVTsODxQFgzMzPLa16h6B8kWM_">Hung-yi Lee</a> 总结记录学习，记录难点和分析，最基础的内容不赘述。</p>
 
               <h2>Basic Concept</h2>
@@ -225,13 +225,13 @@ layout: compress
             $$
 
             $$
-            \hat{R}_t=(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1})
+            \hat{R}_t=\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1})
             $$
 
             <p>通常会在 $\hat{R}_t$ 中增加一项 baseline $b(s_t)$ 来使得奖励有正有负，便于优化。</p>
 
             $$
-            \hat{R}_t=(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1}-b(s_t))
+            \hat{R}_t=\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1}-b(s_t))
             $$
 
             <h3>Advantages and Disadvantages of policy-gradient methods</h3>
@@ -249,6 +249,36 @@ layout: compress
             </ul>
 
             <h2>Actor-Critic Methods</h2>
+            <p>Actor-Critic Method 融合了 value-based 和 policy-based methods，通过减少方差帮助模型训练更稳定。其中 Actor 其实就是 Agent，或者说是 Policy-Based Method 中的 $\pi_\theta$；而 Critic 相当于是 Value-Based Method 中的 Q Function，来衡量 action 的好坏。</p>
+            <h3>Advantage Actor-Critic (A2C)</h3>
+            <p>A2C 中的学习目标：A policy model $\pi_\theta(s)$；A value function $\hat{q}_w(s,a)$。具体的优化过程如下：</p>
+            <ul>
+              <li>在每一步 timestep $t$，从环境中得到当前的状态 $S_t$</li>
+              <li>Actor Model 将 $S_t$ 作为输入，输出一个合适的 Action $A_t$</li>
+              <li>Critic Model 将 $S_t, A_t$ 共同作为输入，输出在该状态下采取该行动将得到的 Q-value 的估计</li>
+              <li>在环境中执行 $A_t$ 将会进行状态转移，得到一个 Reward $R_{t+1}$，环境的状态也会转移至 $S_{t+1}$</li>
+              <li>Actor Model 使用 Critic Model 给出的 Q-value 值进行参数的更新
+                $$
+                \Delta \theta = \alpha\nabla_\theta(\log \pi_\theta(s,a))\hat{q}_w(s,a)
+                $$
+              </li>
+              <li>Actor Model 经历过参数更新后，会根据新状态 $S_{t+1}$ 给出对应的合适的 Action $A_{t+1}$</li>
+              <li>Critic Model 则利用 Q-Learning 的呃方式，更新其参数
+                $$
+                \Delta w=\beta(r_{t+1}+\gamma\hat{q}_w(s_{t+1},a_{t+1})-\hat{q}_w(s_t,a_t))\nabla_w \hat{q}_w(s_t,a_t)
+                $$
+              </li>
+            </ul>
+            <p>进一步地，将 Q-Function 改为 Advantage Function 来稳定模型的训练</p>
+            $$
+            \begin{aligned}
+            A(s,a)&=Q(s,a)-V(s)\\
+            &=r+\gamma V(s')-V(s)
+            \end{aligned}
+            $$
+            <p>这样只需要估计具有更小方差的 state value 就可以进行 Critic Model 的优化，可以将 $\Delta w$ 中的 $r_{t+1}+\gamma\hat{q}_w(s_{t+1},a_{t+1})-\hat{q}_w(s_t,a_t)$ 替换为 $A(s,a)$。</p>
+
+            <p>End. 后续将从 PPO 的前身 TRPO 开启 PPO。</p>
 
               <h1>Reference</h1>
 
@@ -260,56 +290,32 @@ layout: compress
       </article>
     </div>
     {% include scripts.html %}
-   <script>
-    // 动态生成目录
-    const toc = document.getElementById('toc');
-    toc.innerHTML = '<strong>Table of Contents</strong>';
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
 
-    const ul = document.createElement('ul');
-    toc.appendChild(ul);
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
 
-    // 获取所有标题
-    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headers.forEach(header => {
-        // 忽略 h1，不添加到目录中
-        if (header.tagName === 'H1') return;
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
 
-        const li = document.createElement('li');
-        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+            a.target="_self";
 
-        const a = document.createElement('a');
-        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
-        a.textContent = header.innerText;
-        a.target = "_self";
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
 
-        // 如果是 h2，使用黑色实心点
-        if (header.tagName === 'H2') {
-            li.style.listStyleType = 'disc';  // 黑色实心圆点
-            a.style.color = 'black';  // h2 为黑色
-        }
-        // 如果是 h3，使用空心圆点
-        else if (header.tagName === 'H3') {
-            li.style.listStyleType = 'circle';  // 空心圆点
-            a.style.color = 'gray';  // h3 为灰色
-        }
-        // 如果是 h4，使用方块
-        else if (header.tagName === 'H4') {
-            li.style.listStyleType = 'square';  // 方块
-            a.style.color = 'gray';  // h4 为灰色
-        }
-        // 如果是 h5 和 h6，使用方块
-        else {
-            li.style.listStyleType = 'square';  // 方块
-            a.style.color = 'gray';  // h5 和 h6 为灰色
-        }
-
-        if (!header.id) {
-            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
-        }
-
-        li.appendChild(a);
-        ul.appendChild(li);
-    });
-</script>
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+    </script>
   </body>
 </html>
