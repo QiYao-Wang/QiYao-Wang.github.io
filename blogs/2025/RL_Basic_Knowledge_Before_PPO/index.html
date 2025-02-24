@@ -208,10 +208,30 @@ layout: compress
             &=\sum_\tau\nabla_\theta P(\tau;\theta)R(\tau)\\
             &=\sum_\tau P(\tau;\theta)\frac{\nabla_\theta P(\tau;\theta)}{P(\tau;\theta)}R(\tau)\\
             &\xlongequal{\nabla \log f(x) = \frac{\nabla f(x)}{f(x)}}\sum_\tau P(\tau;\theta)\nabla_\theta\log P(\tau;\theta)R(\tau)\\
-            &=\sum_\tau P(\tau;\theta)\nabla_\theta\{\log \mu(s_0) + \sum_{t=0}^H [ \log P(s_{t+1} \mid s_t, a_t) + \log \pi_\theta(a_t \mid s_t)\}R(\tau)\\
+            &=\sum_\tau P(\tau;\theta)\nabla_\theta\{\log \mu(s_0) + \sum_{t=0}^H [ \log P(s_{t+1} \mid s_t, a_t) + \log \pi_\theta(a_t \mid s_t)]\}R(\tau)\\
             &=\sum_\tau P(\tau;\theta)\{\nabla_\theta \log \mu(s_0) + \sum_{t=0}^H[\nabla_\theta \log P(s_{t+1} \mid s_t, a_t) + \nabla_\theta \log \pi_\theta(a_t \mid s_t)]\}R(\tau)\\
-            &= \sum_\tau P(\tau;\theta) \sum_{t=0}^H \nabla_\theta \log \pi_\theta(a_t \mid s_t)
+            &= \sum_\tau P(\tau;\theta) \sum_{t=0}^H \nabla_\theta \log \pi_\theta(a_t \mid s_t)R(\tau)\\
+            &=\mathbb{E}_{\pi_\theta}[\nabla_\theta\log \pi_\theta(a_t \mid s_t)R(\tau)]
             \end{aligned}
+            $$
+
+            <p>上述的优化目标 $J(\theta)$ 最终就不再受环境影响。则在 Monte Carlo Reinforce 中，在一个训练循环中，首先利用 policy model $\pi_\theta$ 收集一个 batch（大小为 $m$） 的 episodes/trajectories，之后利用这个 batch 的数据来计算 gradient 优化 $\pi_\theta$，由于为 Monte Carlo，利用的是一个完整的 episode。</p>
+            $$
+            \nabla_\theta J(\theta)\approx \frac{1}{m}\sum_{i=1}^m\sum_{t=0}\nabla_\theta\log \pi_\theta(a_t^{(i)}\mid s_t^{(i)})R(\tau^{(i)})
+            $$
+            <p>进一步优化，一个直观的想法：Action 只对它之后的状态产生影响。因此可以去除当前步之前的奖励，即不使用一整个 episode 的 reward $R(\tau)$，而是 step $t$ 之后的累积回报。</p>
+            $$
+            \nabla_\theta J(\theta)=\mathbb{E}_{\tau\sim\theta}[\sum_{t=0}^T\nabla_\theta\log\pi_\theta(a_t\mid s_t)\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1})]
+            $$
+
+            $$
+            \hat{R}_t(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1})
+            $$
+
+            <p>通常会在 $\hat{R}_t$ 中增加一项 baseline $b(s_t)$ 来使得奖励有正有负，便于优化。</p>
+
+            $$
+            \hat{R}_t(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1}-b(s_t))
             $$
 
             <h3>Advantages and Disadvantages of policy-gradient methods</h3>
@@ -228,7 +248,7 @@ layout: compress
               <li>Have <strong>high variance</strong>.</li>
             </ul>
 
-            <p></p>
+            <h2>Actor-Critic Methods</h2>
 
               <h1>Reference</h1>
 
