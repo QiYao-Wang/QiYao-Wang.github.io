@@ -43,10 +43,15 @@ layout: compress
         <div class="page__inner-wrap">
           <section class="page__content" itemprop="text">
 
-            <h1 id="">Proximal Policy Optimization (PPO) and RLHF</h1>
+            <h1 id="PPO_and_RLHF">Proximal Policy Optimization (PPO) and RLHF</h1>
             <p style="color:gray">Feb. 24, 2025 - , 2025 · Qiyao Wang · Topic #RL</p>
 
-
+            <h2>TRPO</h2>
+            <p>TRPO: Trust Region Policy Optimization。在 $J(\theta)$ 更新参数时，对新旧策略之间的分布差异进行特殊的约束，<a href="https://newfacade.github.io/notes-on-reinforcement-learning/14-trpo.html">具体推导</a></p>
+            $$
+            J_{TRPO}^{\theta'}(\theta)=\mathbb{E}_{(s_t,a_t)\sim\pi_{\theta'}}[\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}(a_t\mid s_t)}A^{\theta'}(s_t,a_t)]\\
+            KL(\theta,\theta')<\delta
+            $$
 
             <h1>Reference</h1>
 
