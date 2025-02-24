@@ -64,7 +64,7 @@ layout: compress
             $$
             <p>在 Off-Policy 中，将从 $\theta'=\theta_{old}$ 里面 sample 大量的数据用于 policy model 的训练，但有一个问题是，$\theta_{old}$ 的分布与 $theta$ 存在差异，这会导致 training 和 testing 的分布不一致吗？上式中其实包含了 Importance Sampling，通过一个系数的变化，来解决这样的分布差异。</p>
             $$
-            \mathcal{E}_{x\sim p}[f(x)]=\mathcal{E}_{x\sim q}[f(x)\frac{p(x)}{q(x)}]
+            \mathbb{E}_{x\sim p}[f(x)]=\mathbb{E}_{x\sim q}[f(x)\frac{p(x)}{q(x)}]
             $$
 
             <h3>PPO-Clip</h3>
