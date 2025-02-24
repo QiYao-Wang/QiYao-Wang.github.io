@@ -55,7 +55,7 @@ layout: compress
 
             <h2>PPO</h2>
             <p>PPO: Proximal Policy Optimization</p>
-            <h3>From on-policy to off-policy。PPO 和 TRPO 的思想一致，也需要对新旧 policy 分布之间的距离进行约束。需要注意的是，这里指的距离不是 policy model 的参数之间的距离，而是 policy model 的 behavior 之间的距离。</h3>
+            <p>PPO 和 TRPO 的思想一致，也需要对新旧 policy 分布之间的距离进行约束。需要注意的是，这里指的距离不是 policy model 的参数之间的距离，而是 policy model 的 behavior 之间的距离。</p>
             $$
             \begin{aligned}
             J_{PPO}^{\theta'}(\theta)&=J^{\theta'}(\theta-\beta KL(\theta,\theta'))\\
