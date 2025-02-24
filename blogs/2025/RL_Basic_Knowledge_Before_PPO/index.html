@@ -260,7 +260,7 @@ layout: compress
       </article>
     </div>
     {% include scripts.html %}
-    <script>
+   <script>
     // 动态生成目录
     const toc = document.getElementById('toc');
     toc.innerHTML = '<strong>Table of Contents</strong>';
@@ -279,9 +279,11 @@ layout: compress
         a.textContent = header.innerText;
         a.target = "_self";
 
-        // 给 h2 以下的标题添加灰色样式
-        if (parseInt(header.tagName[1]) > 2) {
-            a.style.color = 'gray';
+        // 根据标题级别改变颜色，逐渐变浅
+        const level = parseInt(header.tagName[1]);
+        if (level > 2) {
+            const opacity = 0.5 + (6 - level) * 0.1; // opacity 从 0.5 到 1
+            a.style.color = `rgba(169, 169, 169, ${opacity})`;  // gray, opacity 逐渐变浅
         }
 
         if (!header.id) {
