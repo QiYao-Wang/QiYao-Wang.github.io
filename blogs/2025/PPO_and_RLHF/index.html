@@ -44,7 +44,7 @@ layout: compress
           <section class="page__content" itemprop="text">
 
             <h1 id="PPO_and_RLHF">Proximal Policy Optimization (PPO) and RLHF</h1>
-            <p style="color:gray">Feb. 24, 2025 - , 2025 · Qiyao Wang · Topic #RL</p>
+            <p style="color:gray">Feb. 24, 2025 · Qiyao Wang · Topic #RL</p>
 
             <h2>TRPO</h2>
             <p>TRPO: Trust Region Policy Optimization。在 $J(\theta)$ 更新参数时，对新旧策略之间的分布差异进行特殊的约束，<a href="https://newfacade.github.io/notes-on-reinforcement-learning/14-trpo.html">具体推导</a></p>
@@ -75,6 +75,14 @@ layout: compress
             <figure>
                 <img src="ppo-clip.jpeg" alt="ppo-clip-image">
                 <figcaption>图1：PPO-CLIP 示意图，当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}>1+\varepsilon$ 时，将其裁剪为 $1+\varepsilon$；当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}<1-\varepsilon$ 时，会被裁剪为 $1-\varepsilon$。</figcaption>
+            </figure>
+
+            <h3>RLHF</h3>
+            <p>基于 trl 库对 LLM 进行 PPO 训练的实战，<a href="https://newfacade.github.io/notes-on-reinforcement-learning/17-ppo-trl.html">详细内容</a>。</p>
+            <p>下图为各模块之间的联系和整体的过程。</p>
+            <figure>
+                <img src="ppo-train.png" alt="ppo-train-image">
+                <figcaption>图2：PPO 训练 LM 的基本模式。</figcaption>
             </figure>
 
             <h1>Reference</h1>
