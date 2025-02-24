@@ -287,10 +287,20 @@ layout: compress
             li.style.listStyleType = 'disc';  // 黑色实心圆点
             a.style.color = 'black';  // h2 为黑色
         }
-        // 如果是 h3 及以下，使用空心圆点
-        else if (parseInt(header.tagName[1]) >= 3) {
+        // 如果是 h3，使用空心圆点
+        else if (header.tagName === 'H3') {
             li.style.listStyleType = 'circle';  // 空心圆点
-            a.style.color = 'gray';  // h3及以下为灰色
+            a.style.color = 'gray';  // h3 为灰色
+        }
+        // 如果是 h4，使用方块
+        else if (header.tagName === 'H4') {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h4 为灰色
+        }
+        // 如果是 h5 和 h6，使用方块
+        else {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h5 和 h6 为灰色
         }
 
         if (!header.id) {
