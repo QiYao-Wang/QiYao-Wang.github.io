@@ -261,31 +261,36 @@ layout: compress
     </div>
     {% include scripts.html %}
     <script>
-        // 动态生成目录
-        const toc = document.getElementById('toc');
-        toc.innerHTML = '<strong>Table of Contents</strong>';
+    // 动态生成目录
+    const toc = document.getElementById('toc');
+    toc.innerHTML = '<strong>Table of Contents</strong>';
 
-        const ul = document.createElement('ul');
-        toc.appendChild(ul);
+    const ul = document.createElement('ul');
+    toc.appendChild(ul);
 
-        // 获取所有标题
-        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        headers.forEach(header => {
-            const li = document.createElement('li');
-            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+    // 获取所有标题
+    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headers.forEach(header => {
+        const li = document.createElement('li');
+        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
 
-            const a = document.createElement('a');
-            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
-            a.textContent = header.innerText;
-            a.target="_self";
+        const a = document.createElement('a');
+        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+        a.textContent = header.innerText;
+        a.target = "_self";
 
-            if (!header.id) {
-                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
-            }
+        // 给 h2 以下的标题添加灰色样式
+        if (parseInt(header.tagName[1]) > 2) {
+            a.style.color = 'gray';
+        }
 
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
-    </script>
+        if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+        }
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
+</script>
   </body>
 </html>
