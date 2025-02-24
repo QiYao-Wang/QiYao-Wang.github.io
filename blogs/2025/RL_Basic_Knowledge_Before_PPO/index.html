@@ -182,7 +182,51 @@ layout: compress
             <p>当 behavior policy 与 target policy 一致时，即生成训练数据与训练模型是同一个模型进行时，则称为 on-policy 的算法；当生成数据与被训练模型不同时，则为 off-policy，此时先通过 behavior policy 与环境进行大量交互，生成大批的训练数据后，再对 target policy 进行训练。</p>
 
             <h2>Policy Gradient</h2>
+            <p>对于 Policy-Based Method 而言，更希望以一种无需学习 value function 的方式来直接优化 policy，得到最优的 policy model $\pi^*$。其中 policy model $\pi_\theta$ 以 State $s_t$ 作为输入，输出则为 actions 的概率分布。与有监督学习的梯度下降类似的是，可以使用 Policy-Gradient 来优化 policy model。</p>
+            <p>优化目标：使用 gradient ascent（梯度上升）maximize 参数化 policy model $\pi_\theta$ 的参数 $\theta$，来获得更大的期望累积回报 expected cumulative reward $J(\theta)$。</p>
 
+            $$
+            \begin{aligned}
+            J(\theta)&=\mathbb{E}_{\tau\sim\pi}[R(\tau)]\\
+            &=\sum_{\tau}P(\tau;\theta)R(\tau)
+            \end{aligned}
+            $$
+
+            $$
+            P(\tau;\theta)=\prod_{t=0}P(s_{t+1}|s_t,a_t)\pi_\theta(a_t|s_t)
+            $$
+
+            $$
+            \theta\leftarrow\theta+\alpha * \nabla J(\theta)
+            $$
+
+            <h3>The Policy Gradient Theorem</h3>
+            <p>优化 $J(\theta)$ 存在一些问题。第一，无法计算所有策略，依据大数定理利用采样的策略进行估计的优化；第二，其中与状态转移概率相关，此概率由环境决定，难以微分。可以使用 Policy Gradient Theorem 来重新表述。</p>
+            $$
+            \begin{aligned}
+            \nabla_\theta J(\theta)&=\nabla_\theta\sum_{\tau}P(\tau;\theta)R(\tau)\\
+            &=\sum_\tau\nabla_\theta P(\tau;\theta)R(\tau)\\
+            &=\sum_\tau P(\tau;\theta)\frac{\nabla_\theta P(\tau;\theta)}{P(\tau;\theta)}R(\tau)\\
+            &\xlongequal{\nabla \log f(x) = \frac{\nabla f(x)}{f(x)}}\sum_\tau P(\tau;\theta)\nabla_\theta\log P(\tau;\theta)R(\tau)
+            &=\sum_\tau P(\tau;\theta)\nabla_\theta\{\log \mu(s_0) + \sum_{t=0}^H [ \log P(s_{t+1} \mid s_t, a_t) + \log \pi_\theta(a_t \mid s_t)\}R(\tau)
+            &=\sum_\tau P(\tau;\theta)\{\nabla_\theta \log \mu(s_0) + \sum_{t=0}^H[\nabla_\theta \log P(s_{t+1} \mid s_t, a_t) + \nabla_\theta \log \pi_\theta(a_t \mid s_t)]\}R(\tau)
+            &= \sum_\tau P(\tau;\theta) \sum_{t=0}^H \nabla_\theta \log \pi_\theta(a_t \mid s_t) 
+            \end{aligned}
+            $$
+
+            <h3>Advantages and Disadvantages of policy-gradient methods</h3>
+            <p><strong>Advantages over value-based methods</strong></p>
+            <ul>
+              <li>Policy-gradient methods <strong>can learn a stochastic policy</strong> while value functions can’t.</li>
+              <li>Policy-gradient methods are <strong>more effective</strong> in high-dimensional action spaces and continuous actions spaces.</li>
+              <li>Policy-gradient methods have <strong>better convergence properties</strong>.</li>
+            </ul>
+            <p><strong>Disadvantages</strong></p>
+            <ul>
+              <li>Frequently, it converges to a <strong>local maximum</strong> instead of a global optimum.</li>
+              <li>Training goes slower, step by step which needs longer time.</li>
+              <li>Have <strong>high variance</strong>.</li>
+            </ul>
 
             <p></p>
 
