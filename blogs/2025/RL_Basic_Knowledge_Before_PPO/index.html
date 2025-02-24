@@ -225,13 +225,13 @@ layout: compress
             $$
 
             $$
-            \hat{R}_t(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1})
+            \hat{R}_t=(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1})
             $$
 
             <p>通常会在 $\hat{R}_t$ 中增加一项 baseline $b(s_t)$ 来使得奖励有正有负，便于优化。</p>
 
             $$
-            \hat{R}_t(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1}-b(s_t))
+            \hat{R}_t=(\sum_{t'=t}^T R(s_{t'},a_{t'},s_{t'+1}-b(s_t))
             $$
 
             <h3>Advantages and Disadvantages of policy-gradient methods</h3>
