@@ -268,9 +268,9 @@ layout: compress
     const ul = document.createElement('ul');
     toc.appendChild(ul);
 
-    // 获取所有标题
-    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headers.forEach(header => {
+    // 获取所有标题，排除 h1
+    const headers = document.querySelectorAll('h2, h3, h4, h5, h6');
+    headers.forEach((header, index) => {
         const li = document.createElement('li');
         li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
 
@@ -279,11 +279,13 @@ layout: compress
         a.textContent = header.innerText;
         a.target = "_self";
 
-        // 根据标题级别改变颜色，逐渐变浅
-        const level = parseInt(header.tagName[1]);
-        if (level > 2) {
-            const opacity = 0.5 + (6 - level) * 0.1; // opacity 从 0.5 到 1
-            a.style.color = `rgba(169, 169, 169, ${opacity})`;  // gray, opacity 逐渐变浅
+        // 设置 h2 为黑色，h3 及以下依次变浅
+        if (parseInt(header.tagName[1]) === 2) {
+            a.style.color = 'black';  // h2 设置为黑色
+        } else {
+            // 依次变浅的灰色
+            const grayShade = 0.3 + (index * 0.1);  // 从 0.3 到 1，逐步变浅
+            a.style.color = `rgba(0, 0, 0, ${grayShade})`; 
         }
 
         if (!header.id) {
