@@ -53,6 +53,30 @@ layout: compress
             KL(\theta,\theta')<\delta
             $$
 
+            <h2>PPO</h2>
+            <p>PPO: Proximal Policy Optimization</p>
+            <h3>From on-policy to off-policy。PPO 和 TRPO 的思想一致，也需要对新旧 policy 分布之间的距离进行约束。需要注意的是，这里指的距离不是 policy model 的参数之间的距离，而是 policy model 的 behavior 之间的距离。</h3>
+            $$
+            \begin{aligned}
+            J_{PPO}^{\theta'}(\theta)&=J^{\theta'}(\theta-\beta KL(\theta,\theta'))\\
+            &=\mathbb{E}_{(s_t,a_t)\sim\pi_{\theta'}}[\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}(a_t\mid s_t)}A^{\theta'}(s_t,a_t)]
+            \end{aligned}
+            $$
+            <p>在 Off-Policy 中，将从 $\theta'=\theta_{old}$ 里面 sample 大量的数据用于 policy model 的训练，但有一个问题是，$\theta_{old}$ 的分布与 $theta$ 存在差异，这会导致 training 和 testing 的分布不一致吗？上式中其实包含了 Importance Sampling，通过一个系数的变化，来解决这样的分布差异。</p>
+            $$
+            \mathcal{E}_{x\sim p}[f(x)]=\mathcal{E}_{x\sim q}[f(x)\frac{p(x)}{q(x)}]
+            $$
+
+            <h3>PPO-Clip</h3>
+            <p>对 PPO 算法进行改进，将 Importance Sampling 中的权重视为两分布差异的估计，利用剪枝的方法来进行分布之间的约束。</p>
+            $$
+            J_{PPO-CLIP}^{\theta'}(\theta)=\sum_{(s_t,a_t)}\min(\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}(a_t\mid s_t)}A^{\theta'}A^{\theta'}(s_t,a_t),{\rm clip}(\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}(a_t\mid s_t)}A^{\theta'},1-\varepsilon,1+\varepsilon)A^{\theta'}(s_t,a_t))
+            $$
+            <figure>
+                <img src="ppo-clip.jpeg" alt="ppo-clip-image">
+                <figcaption>图1：PPO-CLIP 示意图，当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}>1+\varepsilon$ 时，将其裁剪为 $1+\varepsilon$；当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}<1-\varepsilon$ 时，会被裁剪为 $1-\varepsilon$。</figcaption>
+            </figure>
+
             <h1>Reference</h1>
 
             <h1>Contact</h1>
