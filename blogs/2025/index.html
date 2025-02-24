@@ -1,0 +1,113 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+      html {
+            scroll-behavior: smooth; /* 启用平滑滚动 */
+        }
+    </script>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1 id="">Proximal Policy Optimization (PPO) and RLHF</h1>
+            <p style="color:gray">Feb. 24, 2025 - , 2025 · Qiyao Wang · Topic #RL</p>
+
+
+
+            <h1>Reference</h1>
+
+            <h1>Contact</h1>
+            <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+    // 动态生成目录
+    const toc = document.getElementById('toc');
+    toc.innerHTML = '<strong>Table of Contents</strong>';
+
+    const ul = document.createElement('ul');
+    toc.appendChild(ul);
+
+    // 获取所有标题
+    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headers.forEach(header => {
+        // 忽略 h1，不添加到目录中
+        if (header.tagName === 'H1') return;
+
+        const li = document.createElement('li');
+        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+        const a = document.createElement('a');
+        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+        a.textContent = header.innerText;
+        a.target = "_self";
+
+        // 如果是 h2，使用黑色实心点
+        if (header.tagName === 'H2') {
+            li.style.listStyleType = 'disc';  // 黑色实心圆点
+            a.style.color = 'black';  // h2 为黑色
+        }
+        // 如果是 h3，使用空心圆点
+        else if (header.tagName === 'H3') {
+            li.style.listStyleType = 'circle';  // 空心圆点
+            a.style.color = 'gray';  // h3 为灰色
+        }
+        // 如果是 h4，使用方块
+        else if (header.tagName === 'H4') {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h4 为灰色
+        }
+        // 如果是 h5 和 h6，使用方块
+        else {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h5 和 h6 为灰色
+        }
+
+        if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+        }
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
+</script>
+  </body>
+</html>
