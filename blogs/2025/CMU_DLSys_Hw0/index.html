@@ -349,31 +349,55 @@ return X, y
     </div>
     {% include scripts.html %}
     <script>
-        // 动态生成目录
-        const toc = document.getElementById('toc');
-        toc.innerHTML = '<strong>Table of Contents</strong>';
+    // 动态生成目录
+    const toc = document.getElementById('toc');
+    toc.innerHTML = '<strong>Table of Contents</strong>';
 
-        const ul = document.createElement('ul');
-        toc.appendChild(ul);
+    const ul = document.createElement('ul');
+    toc.appendChild(ul);
 
-        // 获取所有标题
-        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        headers.forEach(header => {
-            const li = document.createElement('li');
-            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+    // 获取所有标题
+    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headers.forEach(header => {
+        // 忽略 h1，不添加到目录中
+        if (header.tagName === 'H1') return;
 
-            const a = document.createElement('a');
-            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
-            a.textContent = header.innerText;
-            a.target="_self";
+        const li = document.createElement('li');
+        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
 
-            if (!header.id) {
-                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
-            }
+        const a = document.createElement('a');
+        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+        a.textContent = header.innerText;
+        a.target = "_self";
 
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
-    </script>
+        // 如果是 h2，使用黑色实心点
+        if (header.tagName === 'H2') {
+            li.style.listStyleType = 'disc';  // 黑色实心圆点
+            a.style.color = 'black';  // h2 为黑色
+        }
+        // 如果是 h3，使用空心圆点
+        else if (header.tagName === 'H3') {
+            li.style.listStyleType = 'circle';  // 空心圆点
+            a.style.color = 'gray';  // h3 为灰色
+        }
+        // 如果是 h4，使用方块
+        else if (header.tagName === 'H4') {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h4 为灰色
+        }
+        // 如果是 h5 和 h6，使用方块
+        else {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h5 和 h6 为灰色
+        }
+
+        if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+        }
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
+</script>
   </body>
 </html>
