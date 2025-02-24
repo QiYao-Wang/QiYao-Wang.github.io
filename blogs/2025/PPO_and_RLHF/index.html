@@ -76,7 +76,7 @@ layout: compress
                 <img src="ppo-clip.jpeg" alt="ppo-clip-image">
                 <figcaption>图1：PPO-CLIP 示意图。</figcaption>
             </figure>
-            <p>当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}>1+\varepsilon$ 时，将其裁剪为 $1+\varepsilon$；当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}}<1-\varepsilon$ 时，会被裁剪为 $1-\varepsilon$。</p>
+            <p>当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}}>1+\varepsilon$ 时，将其裁剪为 $1+\varepsilon$；当比值 $\frac{p_\theta(a_t\mid s_t)}{p_{\theta'}}<1-\varepsilon$ 时，会被裁剪为 $1-\varepsilon$。</p>
             <h3>RLHF</h3>
             <p>基于 trl 库对 LLM 进行 PPO 训练的实战，<a href="https://newfacade.github.io/notes-on-reinforcement-learning/17-ppo-trl.html">详细内容</a>。</p>
             <p>下图为各模块之间的联系和整体的过程。</p>
