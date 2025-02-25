@@ -45,7 +45,6 @@ layout: compress
 
             <h1 id="Autoregressive_Decoding">Autoregressive Decoding: Basic Manner of Decoder-Only LLMs</h1>
             <p style="color:gray">Feb. 25, 2025 · Qiyao Wang · Topic #Decoding</p>
-
             <p>Transformers 架构的语言模型主要包含两大类，即以 BERT 为代表的 Encoder-Only 的 LM 和以 GPT 为代表的 Decoder-Only 的 LM。当前的 LLM 以 Decoder-Only 架构作为其骨架，在此基础上，以自回归（Autoregressive）的方式以 Next Token Prediction 任务在大规模语料上进行预训练。</p>
             <p>自回归机制简单来说，即模型无法看到当前时间步 timestep 之后的数据内容，而是需要以预测的形式向后延伸。在自回归解码中，大模型的最后一层 Transformer 层的 MLP 的维度与词表大小 $|V|$ 相一致，该层 MLP 则用来表征最后的预测词表分布，此时的 MLP 的原始输出被称为 logits。在 logits 的基础上，应用 softmax 函数，得到词表中各个词语的离散概率分布。解码策略此时会起作用，通过从词表的离散概率分布中进行采样，选择最后输出的下一个 token。</p>
             <p>给定序列 $\mathbf{x} = (x_1,x_2,\dots,x_T)$，在时间步 timestep $t$ 时，模型仅可见 $x_1,x_2,...,x_{t-1}$ 这些 token，而 $x_{t},...,x_T$ 不可见，通过 attention mask 进行掩码。以公式的形式表示自回归模型的计算方式，如下式所示</p>
@@ -56,7 +55,12 @@ layout: compress
             \end{aligned}
             $$
 
-            <h2></h2>
+            <h2>deco repository</h2>
+            <p>Note: All codes will be uploaded at <a href="https://github.com/QiYao-Wang/deco">deco</a>.</p>
+
+            <p>所有的代码将基于 torch 和 transformers 进行实现，其中 python 版本为 3.10，可以通过 `pip install vllm==0.7.3` 来快速构建相关依赖。</p>
+            
+            <h2>Code</h2>
 
             <h1>Reference</h1>
 
