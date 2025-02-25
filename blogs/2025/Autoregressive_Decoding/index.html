@@ -61,6 +61,80 @@ layout: compress
             <p>所有的代码将基于 torch 和 transformers 进行实现，其中 python 版本为 3.10，可以通过 <code>pip install vllm==0.7.3</code> 来快速构建相关依赖。</p>
 
             <h2>Code</h2>
+            <p>由于自回归解码其实是大模型运行机制的一个基础，还未涉及真正的解码的选择策略，本代码只包含对下一个 token 的预测。需要注意的是，并未细节的写入 model 的推理过程，如对输入序列的掩码操作等。</p>
+<pre>
+<code class="language-python">import torch
+import plotly.graph_objects as go
+from transformers import AutoTokenizer,AutoModelForCausalLM
+
+class Sampler:
+    def __init__(self, model_name: str="Qwen2.5-0.5B") -> None:
+        self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name).to(self.device)
+
+    def encode(self, text: str):
+        return self.tokenizer.encode(text, return_tensors="pt").to(self.device)
+
+    def decode(self, ids: torch.Tensor):
+        return self.tokenizer.decode(ids)
+
+    def get_next_token_prob(self, input_ids:torch.Tensor):
+        # 禁止计算图中梯度的计算
+        with torch.no_grad():
+            logits = self.model(input_ids=input_ids).logits
+        # 在此之前，logits 形状为 torch.Size([1, 1, 151936])
+        # 获得 Tensor 的最后一维度 torch.Size([151936])
+        logits = logits[0, -1, :]
+        probs = torch.softmax(logits, dim=-1)
+        return probs
+
+    def plot_scores(self, scores, title, k):
+        """
+        :param scores: 排序对象
+        :param title: 图片标题
+        :param k: 展示的数量
+        :return: None
+        """
+        top_indices = torch.argsort(scores, descending=True)[:k]
+        tokens = [self.decode(idx) for idx in top_indices]
+
+        if self.device == "cpu":
+            top_probs = scores[top_indices].numpy()
+        else:
+            top_probs = scores[top_indices].cpu().numpy()
+
+        colors = ['#E95B68', '#C4C956', '#58BB7B', '#CAC1C5', '#87601F', '#F7311B',
+                  '#C53D39', '#38658F', '#242ABC', '#9DA52F', '#329018', '#D415C5',
+                  '#6DCE59', '#ADF212', '#9CF042']
+
+        colors = colors[0: len(top_indices)]
+
+        fig = go.Figure(
+            data=[
+                go.Bar(x=tokens, y=top_probs, marker_color=colors, textposition="inside")
+            ]
+        )
+        fig.update_layout(title=title)
+        fig.show()
+
+    def inference(self, text: str):
+        input_ids = self.encode(text)
+        next_token_prob=self.get_next_token_prob(input_ids)
+        self.plot_scores(next_token_prob, text, k=10)</code>
+</pre>
+            <p>输入："the color of sky is" 来预测下一个单词</p>
+<pre>
+<code class="language-python">sampler = Sampler("Your model path")
+text = "The color of sky is"
+sampler.inference(text)
+</code>
+</pre>
+            <p>如图1所示，其中 token 分布的第一个为 "always"，其概率为0.0693。</p>
+              <figure>
+                    <img src="probs.png" alt="probs">
+                    <figcaption>图1：the color of sky is 的下一个 token 的概率分布</figcaption>
+              </figure>
 
             <h1>Reference</h1>
 
