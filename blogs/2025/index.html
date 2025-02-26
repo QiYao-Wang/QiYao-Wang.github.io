@@ -1,0 +1,212 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+      html {
+            scroll-behavior: smooth; /* 启用平滑滚动 */
+        }
+    </script>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1 id="Greedy_and_Beam">Greedy Search and Beam Search</h1>
+            <p style="color:gray">Feb. 26, 2025 · Qiyao Wang · Topic #Decoding</p>
+            <h2>Greedy Search</h2>
+            <p>贪婪解码，每一步从词汇表中选择具有最高条件概率的 token 作为 next token，直到遇到结束 token 或达到最大的上下文长度。</p>
+            <p>在撰写贪婪解码的代码前，我对自回归解码中撰写的 Sampler 基类进行了完善，为了提高代码的复用性，在其中提供了 get_next_token 接口。</p>
+<pre>
+<code class="language-python">class Sampler:
+    def __init__(self, model_name: str="Qwen2.5-0.5B") -> None:
+        self.device = 'cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu'
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name).to(self.device)
+
+    def encode(self, text: str):
+        return self.tokenizer.encode(text, return_tensors="pt").to(self.device)
+
+    def decode(self, ids: torch.Tensor):
+        return self.tokenizer.decode(ids)
+
+    def get_next_token_prob(self, input_ids:torch.Tensor):
+        # 禁止计算图中梯度的计算
+        with torch.no_grad():
+            logits = self.model(input_ids=input_ids).logits
+        # 在此之前，logits 形状为 torch.Size([1, 1, 151936])
+        # 获得 Tensor 的最后一维度 torch.Size([151936])
+        logits = logits[0, -1, :]
+        probs = torch.softmax(logits, dim=-1)
+        return probs
+
+    def plot_scores(self, scores, title, k):
+        """
+        :param scores: 排序对象
+        :param title: 图片标题
+        :param k: 展示的数量
+        :return: None
+        """
+        top_indices = torch.argsort(scores, descending=True)[:k]
+        tokens = [self.decode(idx) for idx in top_indices]
+
+        if self.device == "cpu":
+            top_probs = scores[top_indices].numpy()
+        else:
+            top_probs = scores[top_indices].cpu().numpy()
+
+        colors = ['#E95B68', '#C4C956', '#58BB7B', '#CAC1C5', '#87601F', '#F7311B',
+                  '#C53D39', '#38658F', '#242ABC', '#9DA52F', '#329018', '#D415C5',
+                  '#6DCE59', '#ADF212', '#9CF042']
+
+        colors = colors[0: len(top_indices)]
+
+        fig = go.Figure(
+            data=[
+                go.Bar(x=tokens, y=top_probs, marker_color=colors, textposition="inside")
+            ]
+        )
+        fig.update_layout(title=title)
+        fig.show()
+
+    def get_next_token(self, text: str, k: int):
+        input_ids = self.encode(text)
+        next_token_probs = self.get_next_token_prob(input_ids)
+        top_indices = torch.argsort(next_token_probs, descending=True)[:k]
+        tokens = [self.decode(idx) for idx in top_indices]
+        return {
+            "token": tokens,
+            "next_token_probs": next_token_probs,
+            "ids": top_indices
+        }
+
+    def get_next_token_plot_pipeline(self, text: str, k: int=10):
+        input_ids = self.encode(text)
+        next_token_prob=self.get_next_token_prob(input_ids)
+        self.plot_scores(next_token_prob, text, k=k)
+</code>
+</pre>
+            <p>基于 Sampler 基类，构建 GreedySampler，该类以 Sampler 类为父类，继承其中的方法。</p>
+<pre>
+<code class="language-python">class GreedySampler(Sampler):
+    def __call__(self, prompt, max_new_tokens=10):
+        predictions = []
+        result = prompt
+        # generate tokens until the max_new_tokens
+        for i in range(max_new_tokens):
+            # greedy search => k=1
+            next_token_dict =  self.get_next_token(result, k=1)
+            next_token = next_token_dict['token'][0]
+            result += next_token
+            next_token_probs = next_token_dict['next_token_probs']
+            ids = next_token_dict['ids']
+            predictions.append(next_token_probs[ids].item())
+
+            # 判断是否生成结束 token
+            if next_token == self.tokenizer.eos_token_id:
+                break
+
+        return result</code>
+</pre>
+              <p>基于 Qwen2.5-0.5B-Instruct 进行实验，输入 prompt 为 "the color of sky is"，其返回结果为："The color of sky is always changing. The sky is blue when the sun is up, and it is white when the sun"。</p>
+              <p>Greedy Search 本质是一种贪心算法，虽然在解码策略上它较为简单和高效，所需的计算资源较其他解码策略来说较为简单，仍存在一些缺点：</p>
+              <ul>
+                  <li>多样性且无长远考虑：短视、贪心地每次输出概率最大的 token，忽略了多样性层面、长远的考虑。</li>
+                  <li>重复性：由于选择最可能的词，导致实验的可重复性高，但是结果容易被预测。</li>
+                  <li>错误放大：贪心算法无法纠正错误，一旦前序解码中存在一定的错误，之后的选择都会受到影响。</li>
+              </ul>
+
+            <h1>Reference</h1>
+
+            <h1>Contact</h1>
+            <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+    // 动态生成目录
+    const toc = document.getElementById('toc');
+    toc.innerHTML = '<strong>Table of Contents</strong>';
+
+    const ul = document.createElement('ul');
+    toc.appendChild(ul);
+
+    // 获取所有标题
+    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headers.forEach(header => {
+        // 忽略 h1，不添加到目录中
+        if (header.tagName === 'H1') return;
+
+        const li = document.createElement('li');
+        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+        const a = document.createElement('a');
+        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+        a.textContent = header.innerText;
+        a.target = "_self";
+
+        // 如果是 h2，使用黑色实心点
+        if (header.tagName === 'H2') {
+            li.style.listStyleType = 'disc';  // 黑色实心圆点
+            a.style.color = 'black';  // h2 为黑色
+        }
+        // 如果是 h3，使用空心圆点
+        else if (header.tagName === 'H3') {
+            li.style.listStyleType = 'circle';  // 空心圆点
+            a.style.color = 'gray';  // h3 为灰色
+        }
+        // 如果是 h4，使用方块
+        else if (header.tagName === 'H4') {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h4 为灰色
+        }
+        // 如果是 h5 和 h6，使用方块
+        else {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h5 和 h6 为灰色
+        }
+
+        if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+        }
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
+</script>
+  </body>
+</html>
