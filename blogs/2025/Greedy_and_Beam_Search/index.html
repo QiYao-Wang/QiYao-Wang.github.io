@@ -147,6 +147,100 @@ layout: compress
                   <li>错误放大：贪心算法无法纠正错误，一旦前序解码中存在一定的错误，之后的选择都会受到影响。</li>
               </ul>
 
+              <h2>Beam Search</h2>
+              <p>束搜索相较于 Greedy Search 而言，不是只考虑每一步的最优情况，而是在束宽度 $k$ 参数下同时跟踪多个潜在序列。</p>
+              <p>在每个阶段，选择 top-$k$ 个序列，不只考虑即时的高概率词，同时关注整体序列的概率。针对束搜索解码中可能包含重复的相同词序列的问题，使用 n-gram 惩罚的概念，即如果一个 n-gram 序列被生成放入序列中，而该 n-gram 已经在序列中存在，则设置其概率为 0。</p>
+<pre>
+<code class="language-python">class Beam:
+    def __init__(self, device, size, input_ids, socre, output=None):
+        self.device = device
+        self.size = size # num_beam => k
+        self.input_ids = input_ids.to(self.device)
+        self.socre = socre
+        self.output = output.to(self.device) if output is not None else None
+
+    # get input_ids
+    def get_current_state(self):
+        return self.input_ids
+
+    # get probs of the sentence
+    def get_score(self):
+        return self.socre
+
+    # create a new instance of Beam class after the top-k selection
+    def extend(self, token_id, score):
+        # the input_ids of new sentence
+        new_input_ids = torch.cat([self.input_ids, token_id.unsqueeze(0)], dim=-1)
+        # the probs score of new sentence
+        new_score = self.socre * score
+        new_output = torch.cat([self.output, token_id.unsqueeze(0)], dim=-1) if self.output is not None else new_input_ids
+        # 递归
+        return Beam(self.device, self.size, new_input_ids, new_score, new_output)</code>
+</pre>
+<pre>
+<code class="language-python">class BeamSampler(Sampler):
+    def beam_decode(self, ids):
+        return self.tokenizer.decode(ids.squeeze().tolist())
+
+    # Get the top-k id with the greatest probs
+    # 静态方法不能访问类的属性或实例的属性，它只与输入参数有关
+    @staticmethod
+    def get_topk(prob, k=1):
+        scores, token_ids = torch.topk(prob, k=k, dim=-1)
+        return scores, token_ids
+
+    def __call__(self, prompt, max_new_tokens=10, num_beam=1):
+        input_ids = self.encode(prompt)
+
+        # 初始化 Beam，只有最初的节点 A1
+        beams = [Beam(self.device, num_beam, input_ids, 1) for _ in range(num_beam)]
+
+        for i in range(max_new_tokens):
+            # Each timestep
+            all_next_token_prob = []
+            # 对每一束进行操作，实时计算每一束的整个序列的 prob
+            for beam in beams:
+                # 对每一束进行预测后续的内容
+                # 假设 k=3，A1 -> B2,C2,D2（每一个还是一个概率分布）
+                next_token_probs = self.get_next_token_prob(input_ids=beam.get_current_state())
+                all_next_token_prob.append(next_token_probs)
+
+            # 对于每一 timestep，不同束的所有概率一起来看
+            all_topk_scores = []
+            all_topk_token_ids = []
+
+            for prob in all_next_token_prob:
+                # 对于 B2,C2,D2 概率分布进行处理，分别选择自己的 topk
+                socres, token_ids = self.get_topk(prob, k=num_beam)
+                all_topk_scores.append(socres)
+                all_topk_token_ids.append(token_ids)
+
+            all_topk_scores = torch.stack(all_topk_scores)
+            all_topk_token_ids = torch.stack(all_topk_token_ids)
+
+            # 进行新 beam 的选择，超过 num_beam 的就不选了
+            new_beams = []
+            for j, beam in enumerate(beams):
+                for k in range(num_beam):
+                    score = all_topk_scores[j][k].item()
+                    token_id = all_topk_token_ids[j][k].unsqueeze(0)
+                    new_beam = beam.extend(token_id, score)
+                    new_beams.append(new_beam)
+
+            # 对已添加新 token 的所有 beam 根据整个序列的 prob 排序
+            beams = sorted(new_beams, key=lambda b: b.get_score(), reverse=True)[:num_beam]
+
+        generated_text = self.beam_decode(beams[0].output[:, len(input_ids[0]):])
+        # [:,len(input_ids[0]):] 表示排除输入部分
+
+        return prompt + generated_text</code>
+</pre>
+            <p>Beam Search 的代码较为复杂，之后可以提供一个可视化的图来更直观的表述。其中每个序列的 probs score 计算方法仍是基于条件概率</p>
+              $$
+              p(\mathbf{x})=\prod_{t=1}^Tp(x_1)\cdot p(x_2\mid x_1)\cdots p(x_T\mid x_{T-1},x_{T-2},...,x_{1})
+              $$
+            <p>每一个 Beam 增加了新 token 后，会直接计算其代表的整个序列的分数，最后 Beams 列表中分数最大的路径则为应该选择的路径。从全局视角看也是贪婪解码，因为选择了分数最大的 beam，而从局部视野看，增加了可选择路径的宽度。相较于 Greedy Search 而言需要更多计算资源，需要在每一步维护和计算 $k$ 个序列的概率；也无法保证找到最可能的序列，尤其是在 $k \ll |V|$ 时。</p>
+
             <h1>Reference</h1>
 
             <h1>Contact</h1>
