@@ -1,0 +1,170 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script>
+      html {
+            scroll-behavior: smooth; /* 启用平滑滚动 */
+        }
+    </script>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1 id="Temperature_TopK_TopP">Three Sampling Methods: Temperature, Top K and Top P</h1>
+            <p style="color:gray">Feb. 27, 2025 · Qiyao Wang · Topic #Decoding</p>
+            <h2>Temperature Sampling</h2>
+            <p>通过调整 temperature 能够改变选择某些 token 的概率分布，放大或减少其中的采样的随机性。一般其取值范围在 [0, +∞] 之间，当温度接近 1 时，保留原始的采样分布；当温度接近 0 时，会逐渐变成单峰分布，即与 Greedy Search 类似；而当温度越大，如 $>1$，极端情况趋于 ∞ 时，采样分布会逐渐趋于均匀分布。</p>
+            <p>对于序列 $\mathbf(x)=(x_1,x_2,...,x_m)$，利用温度参数 $T$ 进行放缩 $\frac{x_i}{T}$，之后进行 Softmax 计算</p>
+            $$
+            p(x_i)=\frac{e^{\frac{x_i}{T}}}{\sum_j e^{\frac{x_j}{T}}}
+            $$
+              <p>修改基类 Sampler 中函数</p>
+<pre>
+<code class="language-python">def get_next_token_prob_logits(self, input_ids:torch.Tensor):
+    # 禁止计算图中梯度的计算
+    with torch.no_grad():
+    logits = self.model(input_ids=input_ids).logits
+    # 在此之前，logits 形状为 torch.Size([1, 1, 151936])
+    # 获得 Tensor 的最后一维度 torch.Size([151936])
+    logits = logits[0, -1, :]
+    probs = torch.softmax(logits, dim=-1)
+    return probs, logits</code>
+</pre>
+              <p>Temperature的相关代码和事例</p>
+<pre>
+<code class="language-python">class RandomTempSampler(Sampler):
+    def __call__(self, prompt, max_new_tokens=10, temp: float=0.5):
+        predictions = []
+        result = prompt
+        # generate until max_len
+        for i in range(max_new_tokens):
+            input_ids = self.encode(result)
+            next_token_logits = self.get_next_token_prob_logits(input_ids)[1]
+            next_token_logits /= temp
+            probs = torch.softmax(next_token_logits, dim=-1)
+            # 根据概率分布随机采样
+            ids = torch.multinomial(probs, num_samples=1).item()
+            result += self.decode(ids)
+            predictions.append(probs[ids].item)
+        return result
+
+    def sample_plot(self, prompt, temp: float=0.5):
+        input_ids = self.encode(prompt)
+
+        nex_token_probs = self.get_next_token_prob_logits(input_ids)[1]
+        nex_token_probs /= temp
+        probs = torch.softmax(nex_token_probs, dim=-1)
+
+        self.plot_scores(probs, title=f"Temperature: {temp}", k=10)</code>
+</pre>
+              <p>对于 "the color of sky is" 进行不同温度的采样，如下面三幅图所示，可以看到，随着 temperature 的变大，分布逐渐均匀。</p>
+              <figure>
+                    <img src="temp-0.1.png" alt="probs">
+                    <figcaption>图1：Temperature 0.1，结果为 'The color of sky is blue. The color of the sky is a ( ) of the color of the'</figcaption>
+              </figure>
+
+              <figure>
+                    <img src="temp-0.9.png" alt="probs">
+                    <figcaption>图2：Temperature 0.9，结果为 'The color of sky is dark gray, whose density is a positive integer. Now, choose a random sample'</figcaption>
+              </figure>
+
+              <figure>
+                    <img src="temp-100.png" alt="probs">
+                    <figcaption>图3：Temperature 100，结果为 (真的是乱码，随机性太大了) 'The color of sky is слишком 사람들𝗱Lights\'].\'" @[coverslandırılerase⛷趕🏁 containing BecStrokeGU'，几乎已经为均匀分布</figcaption>
+              </figure>
+            <h1>Reference</h1>
+
+            <h1>Contact</h1>
+            <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+    // 动态生成目录
+    const toc = document.getElementById('toc');
+    toc.innerHTML = '<strong>Table of Contents</strong>';
+
+    const ul = document.createElement('ul');
+    toc.appendChild(ul);
+
+    // 获取所有标题
+    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headers.forEach(header => {
+        // 忽略 h1，不添加到目录中
+        if (header.tagName === 'H1') return;
+
+        const li = document.createElement('li');
+        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+        const a = document.createElement('a');
+        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+        a.textContent = header.innerText;
+        a.target = "_self";
+
+        // 如果是 h2，使用黑色实心点
+        if (header.tagName === 'H2') {
+            li.style.listStyleType = 'disc';  // 黑色实心圆点
+            a.style.color = 'black';  // h2 为黑色
+        }
+        // 如果是 h3，使用空心圆点
+        else if (header.tagName === 'H3') {
+            li.style.listStyleType = 'circle';  // 空心圆点
+            a.style.color = 'gray';  // h3 为灰色
+        }
+        // 如果是 h4，使用方块
+        else if (header.tagName === 'H4') {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h4 为灰色
+        }
+        // 如果是 h5 和 h6，使用方块
+        else {
+            li.style.listStyleType = 'square';  // 方块
+            a.style.color = 'gray';  // h5 和 h6 为灰色
+        }
+
+        if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+        }
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
+</script>
+  </body>
+</html>
