@@ -105,6 +105,55 @@ layout: compress
                     <img src="temp-100.png" alt="probs">
                     <figcaption>图3：Temperature 100，结果为 (真的是乱码，随机性太大了) 'The color of sky is слишком 사람들𝗱Lights\'].\'" @[coverslandırılerase⛷趕🏁 containing BecStrokeGU'，几乎已经为均匀分布</figcaption>
               </figure>
+
+              <h2>Top K Sampling</h2>
+              <p>Top K 采样在每一次选择 next token 时，只确保最有可能的 $K$ 个 token 能够被选择。当 $k=1$ 时，退化为 Greedy Search；当 $k=|V|$ 时，退化为纯采样。Top K 和 Temperature 可以结合使用，调整 Top K 中的随机性。</p>
+              <p>K 的确定需要特别注意。K 较小时可能会导致文本多样性下降，K 大时会导致包含不合适的词的候选。</p>
+<pre>
+<code class="language-python">class TOPKSampler(Sampler):
+    def __call__(self, prompt, max_new_tokens=10, top_k=1, temp: float=0.5):
+        predictions = []
+        result = prompt
+        # generate until max_len
+        for i in range(max_new_tokens):
+            input_ids = self.encode(result)
+            nex_token_logits = self.get_next_token_prob_logits(input_ids)[1]
+            nex_token_logits = nex_token_logits / temp
+            # 类似于 mask，将概率小的logits 换成 -inf
+            indices_to_remove = nex_token_logits < torch.topk(nex_token_logits,top_k)[0][...,-1, None]
+            new_logits = torch.clone(nex_token_logits)
+            new_logits[indices_to_remove] = float('-inf')
+
+            probs = torch.softmax(new_logits, dim=-1)
+            ids = torch.multinomial(probs, num_samples=1).item()
+            result += self.decode(ids)
+            predictions.append(probs[ids].item)
+        return result
+
+    def sample_plot(self, prompt,top_k=5, temp: float=0.5):
+        input_ids = self.encode(prompt)
+        next_token_logtis = self.get_next_token_prob_logits(input_ids)[1]
+        next_token_logtis = next_token_logtis / temp
+
+        indices_to_remove = next_token_logtis < torch.topk(next_token_logtis,top_k)[0][...,-1, None]
+        new_logits = torch.clone(next_token_logtis)
+        new_logits[indices_to_remove] = float('-inf')
+
+        probs = torch.softmax(new_logits, dim=-1)
+        self.plot_scores(probs, title=f"Temperature: {temp} Top K:{top_k}", k= top_k + int(math.sqrt(top_k)))</code>
+</pre>
+              <p>对于 "the color of sky is" 进行带有温度的 TopK 采样，其中 $K=10,T=0.5$ 时的结果为 "The color of sky is blue. If you want to make the sky appear blue, you can use a certain amount of blue paint. If you want to make the sky appear yellow,"。</p>
+              <p>调整不同的温度，如图4和图5所示</p>
+              <figure>
+                    <img src="topk-10-0.1.png" alt="probs">
+                    <figcaption>图4：Temperature: 0.1, TopK: 10</figcaption>
+              </figure>
+              <figure>
+                    <img src="topk-10-0.9.png" alt="probs">
+                    <figcaption>图5：Temperature: 0.9, TopK: 10</figcaption>
+              </figure>
+
+
             <h1>Reference</h1>
 
             <h1>Contact</h1>
