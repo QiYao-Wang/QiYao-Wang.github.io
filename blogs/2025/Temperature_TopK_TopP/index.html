@@ -152,7 +152,66 @@ layout: compress
                     <img src="topk-10-0.9.png" alt="probs">
                     <figcaption>图5：Temperature: 0.9, TopK: 10</figcaption>
               </figure>
+            <h2>Top P Sampling</h2>
+              <p>Top P Sampling 又称为核采样，其与 Top K Sampling 类似，通过对可选择的词集进行某种限制，来选择最小的词集。Top P Sampling 通过限制最小词集中所有词的概率和小于 $p$ 来实现动态调整候选词。</p>
+<pre>
+<code class="language-python">class NucleusSampler(Sampler):
+    def __call__(self, prompt, max_new_tokens=10, p: float=0.7):
+        predictions = []
+        result = prompt
+        # generate until max_len
+        for i in range(max_new_tokens):
+            input_ids = self.encode(result)
+            next_token_logits = self.get_next_token_prob_logits(input_ids)[1]
+            sorted_logits, sorted_indices = torch.sort(next_token_logits, descending=True)
+            cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
 
+            sorted_indices_to_remove = cumulative_probs > p
+
+            # 这句话需要斟酌
+            sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+            sorted_indices_to_remove[..., 0] = 0
+
+            indices_to_remove = sorted_indices[sorted_indices_to_remove]
+            new_logits = torch.clone(next_token_logits)
+            new_logits[indices_to_remove] = float('-inf')
+
+            scores = torch.softmax(new_logits, dim=-1)
+            ids = torch.multinomial(scores, num_samples=1).item()
+
+            result += self.decode(ids)
+
+            predictions.append(scores[ids].item)
+
+        return result
+
+    def sample_plot(self, prompt,p: float=0.7):
+        input_ids = self.encode(prompt)
+        next_token_logits = self.get_next_token_prob_logits(input_ids)[1]
+        sorted_logits, sorted_indices = torch.sort(next_token_logits, descending=True)
+        cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
+
+        sorted_indices_to_remove = cumulative_probs > p
+        sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+        sorted_indices_to_remove[..., 0] = 0
+
+        indices_to_remove = sorted_indices[sorted_indices_to_remove]
+        new_logits = torch.clone(sorted_logits)
+        new_logits[indices_to_remove] = float('-inf')
+
+        probs = torch.softmax(new_logits, dim=-1)
+        self.plot_scores(probs, title=f"P: {p}", k=10)</code>
+</pre>
+              <p>对于 "the color of sky is" 在 $p=0.8$ 时的输出结果为 "The color of sky is blue. This belongs to\nA. The subject of cognition\nB. The"</p>
+              <p>其中在不同的 $p$ 值下的采样情况如图6和图7所示</p>
+              <figure>
+                    <img src="topp-0.8.png" alt="probs">
+                    <figcaption>图6：P: 0.8</figcaption>
+              </figure>
+              <figure>
+                    <img src="topp-0.1.png" alt="probs">
+                    <figcaption>图7：P: 0.1</figcaption>
+              </figure>
 
             <h1>Reference</h1>
 
