@@ -43,7 +43,7 @@ If you are interested in my research, feel free to collaborate with me!
  
 # 🔥 News
 
-<div style="max-height: 200px; overflow-y: hidden;">
+<div style="max-height: 200px; overflow-y: auto;">
 <ul>
   <li><em>2024.03.03:</em> &nbsp;🎉 As the leader of the Taibao-ip team, we provided DeepSeek model deployment services to the School of Public Administration at Dalian University of Technology, which was featured in reports by Guangming Daily and the school itself. <p>[<a href="https://app2.gmdaily.cn/as/opened/n/88779004361149b8afb610ce04c162f6">News 1</a>] [<a href="https://mp.weixin.qq.com/s/yokeA5uiy1SxsbwmvCfiVQ">News 2</a>]</p></li>
   <li><em>2024.12.20:</em> &nbsp;🎉 Our latest work, AutoPatent, has been reported by Xinzhiyuan and will continue to be expanded and improved in the future.[<a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">News</a>]</li>
