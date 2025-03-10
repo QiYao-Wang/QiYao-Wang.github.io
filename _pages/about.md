@@ -31,13 +31,13 @@ If you are interested in my research, feel free to collaborate with me!
 <hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
 
-# 📌 Research Interests
+# 📌 Research Interests  
 
 - Large Language Models
   - LLMs-based Multi-Agent System
   - Reasoning
 - Information Retrieval
-- AI for Science (Mathematics, etc.) and Social Science (Politics, Law, etc.)
+- AI for Science and Social Science
   - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
   - LLMs for Law
  
