@@ -117,11 +117,6 @@ If you are interested in my research, feel free to collaborate with me!
     </a>
   </li>
   <li>
-    ECPE-Qwen: Zero-Shot Emotion-Cause Pair Extraction with Fine-Tuning Large Language Models. 
-    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup>, Hongfei Lin.</em> 
-    <em>CCIR</em> Accepted. <em>Journal of Chinese Information Processing (CCF-B, CAAI-B)</em> Accepted. DUT.
-  </li>
-  <li>
     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
     <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> Arxiv. DUT.
     <strong> | <span id="IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"></span> | </strong>
