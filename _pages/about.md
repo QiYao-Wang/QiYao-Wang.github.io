@@ -137,7 +137,7 @@ If you are interested in my research, feel free to collaborate with me!
 <ul>
   <li>
     <span style="font-family: sans-serif;">ECPE-Qwen：微调大语言模型进行零样本情绪原因对抽取.</span> 
-    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin. 2024 CCIR Accept. 中文信息学报 Accept. DUT.
+    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024 CCIR Accept. 中文信息学报 Accept. DUT.
   </li>
 </ul>
 </div>
