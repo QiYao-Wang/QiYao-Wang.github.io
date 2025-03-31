@@ -89,7 +89,7 @@ If you are interested in my research, feel free to collaborate with me!
 <ul>
   <li>
     SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.
-    <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. Arxiv. M-A-P.
+    <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. Preprint. M-A-P.
     <strong> | <span id="SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines"></span> | </strong>
     [<a href="https://supergpqa.github.io">Website</a>]
     [<a href="https://arxiv.org/abs/2502.14739">Paper</a>]
@@ -107,7 +107,7 @@ If you are interested in my research, feel free to collaborate with me!
 <ul>
   <li>
     AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, et al. and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Under Review. CAS-SIAT and DUT.
+    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Preprint. CAS-SIAT and DUT.
     <strong> | <span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span> | </strong>
     [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
     [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
