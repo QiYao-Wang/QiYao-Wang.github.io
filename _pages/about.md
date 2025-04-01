@@ -39,7 +39,7 @@ If you are interested in my research, feel free to collaborate with me!
   - Reasoning
 - Information Retrieval
 - AI for Science and Social Science
-  - LLMs for Intellectual Property (mainly for Patents) [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
+  - LLMs for Intellectual Property (mainly for Patents) [[Topic Homepage](https://wangqiyao.me/LLM4Patent/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
   - LLMs for Law
  
 # 🔥 News
