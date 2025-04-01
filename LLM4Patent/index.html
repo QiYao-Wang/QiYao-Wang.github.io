@@ -1,0 +1,156 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead" style="container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+        <div id="topics">
+          <strong>Topics</strong>
+        </div>
+      </div>
+      
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1>📖 Qiyao Wang's Blog</h1>
+            <p id="total_blogs" style="color: gray">Total Blogs</p>
+            <h2>2025</h2>
+            <ul>      
+              <li><em>Feb. 27, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/Temperature_TopK_TopP">Three Sampling Methods: Temperature, Top K and Top P</a>. Language: Chinese. <font color="gray">#Decoding</font></li>
+              <li><em>Feb. 26, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/Greedy_and_Beam_Search">Greedy Search and Beam Search</a>. Language: Chinese. <font color="gray">#Decoding</font></li>
+              <li><em>Feb. 25, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/Autoregressive_Decoding">Autoregressive Decoding: Basic Manner of Decoder-Only LLMs</a>. Language: Chinese. <font color="gray">#Decoding</font></li>
+              <li><em>Feb. 24, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/PPO_and_RLHF">Proximal Policy Optimization (PPO) and RLHF</a>. Language: Chinese. <font color="gray">#RL</font></li>
+              <li><em>Feb. 23, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/RL_Basic_Knowledge_Before_PPO">Basic Knowledge of Reinforcement Learning before PPO</a>. Language: Chinese. <font color="gray">#RL</font></li>
+<!--               <li><em>Jan. 10, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1/Part2">CMU DLSys Course Homework 1: Implementation and Reflection (Part2)</a>. Language: Chinese. <font color="gray">#MLSys</font></li> -->
+              <li><em>Jan. 08, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1/Part1">CMU DLSys Course Homework 1: Implementation and Reflection (Part1)</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
+              <li><em>Jan. 07, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CoT-Decoding">Chain-of-Thought Reasoning without Prompting</a>. Language: Chinese. <font color="gray">#Reasoning</font></li>
+              <li><em>Jan. 01, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0">CMU DLSys Course Homework 0: Implementation and Reflection</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
+            </ul>
+            <h2>2024</h2>
+            <ul>
+              <li><em>Dec. 28, 2024</em>. <a href="https://mathsion.notion.site/Pattern-Recognition-Machine-Learning-ce6d699ec88744a08dea19e859535ec8?pvs=4">Pattern Recognition and Machine Learning</a>. Language: Chinese. <font color="gray">#ML</font></li> 
+            </ul>
+           
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+            a.target="_self";
+
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+      // 自动统计每一年的博客数量
+    const years = document.querySelectorAll('h2'); // 找到所有年份标题
+    years.forEach(yearHeader => {
+        const year = yearHeader.innerText.trim(); // 提取年份文本
+        const nextSibling = yearHeader.nextElementSibling; // 获取年份标题下的内容
+        let count = 0;
+
+        // 如果下一个兄弟节点是列表，则统计列表项数量
+        if (nextSibling && nextSibling.tagName === 'UL') {
+            count = nextSibling.querySelectorAll('li').length; // 统计当前年份的博客数量
+        }
+
+        // 将统计结果追加到年份标题中
+        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
+    });
+    </script>
+  <script>
+    // 自动统计每个 Topic 的博客数量
+    const topicCounts = {};
+    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
+
+    blogs.forEach(blog => {
+        // 找到博客条目中的 topic（灰色字体）
+        const topicFont = blog.querySelector('font[color="gray"]');
+        if (topicFont) {
+            const topic = topicFont.innerText.trim();
+            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+        }
+    });
+
+    // 对 Topic 按字母顺序排序
+    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
+
+    // 更新边栏 Topics 部分
+    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
+    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
+
+    sortedTopics.forEach(([topic, count]) => {
+        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
+    });
+
+    // 替换 Topics 区域内容
+    topicsContainer.innerHTML = topicsHTML;
+</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 获取所有年份（h2）以及对应的博客条目（ul > li）
+        const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
+        let totalBlogs = 0;
+
+        // 遍历每个年份部分，计算该年份下博客的数量
+        yearSections.forEach(section => {
+            const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
+            if (blogList && blogList.tagName === 'UL') {
+                totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
+            }
+        });
+
+        // 更新 total_blogs 的文本内容
+        const totalBlogsElement = document.getElementById('total_blogs');
+        if (totalBlogsElement) {
+            totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
+        }
+    });
+</script>
+  </body>
+</html>
