@@ -27,9 +27,6 @@ layout: compress
 
       <div class="sidebar sticky">
         <div id="toc"></div>
-        <div id="topics">
-          <strong>Topics</strong>
-        </div>
       </div>
       
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
@@ -38,7 +35,7 @@ layout: compress
           <section class="page__content" itemprop="text">
 
             <h1>Large Language Models for Patent</h1>
-            <p><strong>Team</strong>: Shenzhen Institute of Advanced Technology, Chinese Academy of Sciences, Dalian University of Technology</p>
+            <p><strong>Team</strong>: Shenzhen Institute of Advanced Technology, Chinese Academy of Sciences; Dalian University of Technology</p>
             <p><strong>Student Member</strong>: <a href="https://wangqiyao.me/">Qiyao Wang</a></p>
             <h2>News</h2>
 
@@ -100,70 +97,6 @@ layout: compress
             li.appendChild(a);
             ul.appendChild(li);
         });
-      // 自动统计每一年的博客数量
-    const years = document.querySelectorAll('h2'); // 找到所有年份标题
-    years.forEach(yearHeader => {
-        const year = yearHeader.innerText.trim(); // 提取年份文本
-        const nextSibling = yearHeader.nextElementSibling; // 获取年份标题下的内容
-        let count = 0;
-
-        // 如果下一个兄弟节点是列表，则统计列表项数量
-        if (nextSibling && nextSibling.tagName === 'UL') {
-            count = nextSibling.querySelectorAll('li').length; // 统计当前年份的博客数量
-        }
-
-        // 将统计结果追加到年份标题中
-        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
-    });
     </script>
-  <script>
-    // 自动统计每个 Topic 的博客数量
-    const topicCounts = {};
-    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
-
-    blogs.forEach(blog => {
-        // 找到博客条目中的 topic（灰色字体）
-        const topicFont = blog.querySelector('font[color="gray"]');
-        if (topicFont) {
-            const topic = topicFont.innerText.trim();
-            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
-        }
-    });
-
-    // 对 Topic 按字母顺序排序
-    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
-
-    // 更新边栏 Topics 部分
-    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
-    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
-
-    sortedTopics.forEach(([topic, count]) => {
-        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
-    });
-
-    // 替换 Topics 区域内容
-    topicsContainer.innerHTML = topicsHTML;
-</script>
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 获取所有年份（h2）以及对应的博客条目（ul > li）
-        const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
-        let totalBlogs = 0;
-
-        // 遍历每个年份部分，计算该年份下博客的数量
-        yearSections.forEach(section => {
-            const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
-            if (blogList && blogList.tagName === 'UL') {
-                totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
-            }
-        });
-
-        // 更新 total_blogs 的文本内容
-        const totalBlogsElement = document.getElementById('total_blogs');
-        if (totalBlogsElement) {
-            totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
-        }
-    });
-</script>
   </body>
 </html>
