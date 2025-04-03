@@ -135,7 +135,6 @@ If you are interested in my research, feel free to collaborate with me!
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
-- An Automated Patent Application Drafting Algorithm Based on Multi-Agent Large Language Models. *Shiwen Ni, Min Yang, **Qiyao Wang** et.al.* CAS-SIAT. Pending.
 - A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. DUT. Licensed. 
 - A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. DUT. Licensed.
 
@@ -150,21 +149,21 @@ If you are interested in my research, feel free to collaborate with me!
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
-- *2024.12*: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (leader)
-- *2024.11*: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— ***Second Prize*** at the National level. (Leader)
-- *2024.10*: The 18th iCAN Innovation Contest —— *Second Prize* in Liaoning Province. (Supervisor)
-- *2024.09*: The 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
-- *2024.09*: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Leader)
-- *2024.08*: The 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Leader)
-- *2024.07*: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— *Grand Prize* in Liaoning Province. (Leader)
-- *2024.07*: The 17th China College Students' Computer Design Competition —— ***Second Prize*** at the National level. (Leader)
-- *2023.06*: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
-- *2023.03*: U.S. National College Mathematics Competition —— ***Honorable Prize*** at the National level. (Leader)
-- *2022.11*:  The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
+- ***2024.12***: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (leader)
+- ***2024.11***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— ***Second Prize*** at the National level. (Leader)
+- ***2024.10***: The 18th iCAN Innovation Contest —— *Second Prize* in Liaoning Province. (Supervisor)
+- ***2024.09***: The 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
+- ***2024.09***: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Leader)
+- ***2024.08***: The 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Leader)
+- ***2024.07***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— *Grand Prize* in Liaoning Province. (Leader)
+- ***2024.07***: The 17th China College Students' Computer Design Competition —— ***Second Prize*** at the National level. (Leader)
+- ***2023.06***: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
+- ***2023.03***: U.S. National College Mathematics Competition —— ***Honorable Prize*** at the National level. (Leader)
+- ***2022.11***:  The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
 
 # 📖 Educations
-- *2025.09 - (5 years)*, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
-- *2021.09 - 2025.06 (now)*, pursuing a bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
+- ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
+- ***2021.09 - 2025.06 (now)***, pursuing a bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academe Service
 
@@ -175,7 +174,7 @@ If you are interested in my research, feel free to collaborate with me!
   <script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=5XwcXhC_hWtdm6YV_S7mq8GYDOjb0XU67bhcZ5uaJto&cl=ffffff&w=a"></script>
 </div>
 
-Updated at March, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
+Updated at April, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
 
 <script>
