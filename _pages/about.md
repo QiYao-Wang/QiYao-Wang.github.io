@@ -135,6 +135,7 @@ If you are interested in my research, feel free to collaborate with me!
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
+- Method, Apparatus, Electronic Device, and Storage Medium for Generating a Patent Application Document。 *Shiwen Ni, Min Yang and  **Qiyao Wang***. SIAT. Pending.
 - A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. DUT. Licensed. 
 - A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. DUT. Licensed.
 
