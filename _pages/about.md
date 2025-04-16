@@ -63,7 +63,7 @@ If you are interested in my research, feel free to collaborate with me!
   <li>
     SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.
     <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. Preprint. M-A-P.
-    <strong> | <span id="SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines"></span> | </strong>
+    <strong> | <span id="Supergpqa: Scaling llm evaluation across 285 graduate disciplines"></span> | </strong>
     [<a href="https://supergpqa.github.io">Website</a>]
     [<a href="https://arxiv.org/abs/2502.14739">Paper</a>]
     [<a href="https://github.com/SuperGPQA/SuperGPQA">Github</a>]
