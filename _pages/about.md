@@ -61,6 +61,18 @@ If you are interested in my research, feel free to collaborate with me!
 <div>
 <ul>
   <li>
+    IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property.
+    <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Hongfei Lin, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Preprint. SIAT & DUT.
+    <strong> | <span id=""></span> | </strong>
+    [<a href="https://IPBench.github.io">Website</a>]
+    [<a href="">Paper</a>]
+    [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
+    [<a href="https://github.com/IPBench/IPBench">Github</a>]
+    <a href="https://github.com/IPBench/IPBench">
+      <img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench">
+    </a>
+  </li>
+  <li>
     SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.
     <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. Preprint. M-A-P.
     <strong> | <span id="Supergpqa: Scaling llm evaluation across 285 graduate disciplines"></span> | </strong>
