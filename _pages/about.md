@@ -65,7 +65,7 @@ If you are interested in my research, feel free to collaborate with me!
     <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Hongfei Lin, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Preprint. SIAT and DUT.
     <strong> | <span id=""></span> | </strong>
     [<a href="https://IPBench.github.io">Website</a>]
-    [<a href="">Paper</a>]
+    [<a href="https://arxiv.org/abs/2504.15524">Paper</a>]
     [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
     [<a href="https://github.com/IPBench/IPBench">Github</a>]
     <a href="https://github.com/IPBench/IPBench">
