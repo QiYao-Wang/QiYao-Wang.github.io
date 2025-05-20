@@ -124,6 +124,10 @@ If you are interested in my research, feel free to collaborate with me!
     <span>ECPE-Qwen</span><span style="font-family: sans-serif;">: 微调大语言模型进行零样本情绪原因对抽取.</span> 
     <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR Accept. 中文信息学报 (CCF-B) Accept. DUT.
   </li>
+  <li>
+    <span style="font-family: sans-serif;">大语言模型赋能知识产权信息服务模型构建及应用</span> 
+    <em>Yuan Lin, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. 图书馆理论与实践 (CSSCI) Accept. DUT.
+  </li>
 </ul>
 </div>
 
@@ -165,6 +169,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
+- ***2025.05***: The 18th China College Students' Computer Design Competition —— *First Prize* in Liaoning Province. (Supervisor)
 - ***2024.12***: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (leader)
 - ***2024.11***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— ***Second Prize*** at the National level. (Leader)
 - ***2024.10***: The 18th iCAN Innovation Contest —— *Second Prize* in Liaoning Province. (Supervisor)
@@ -175,7 +180,7 @@ If you are interested in my research, feel free to collaborate with me!
 - ***2024.07***: The 17th China College Students' Computer Design Competition —— ***Second Prize*** at the National level. (Leader)
 - ***2023.06***: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
 - ***2023.03***: U.S. National College Mathematics Competition —— ***Honorable Prize*** at the National level. (Leader)
-- ***2022.11***:  The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
+- ***2022.11***: The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
 
 # 📖 Educations
 - ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
