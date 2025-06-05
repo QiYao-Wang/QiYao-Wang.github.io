@@ -184,7 +184,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 # 📖 Educations
 - ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
-- ***2021.09 - 2025.06 (now)***, pursuing a bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
+- ***2021.09 - 2025.06***, pursuing a bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academe Service
 
