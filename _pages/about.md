@@ -171,7 +171,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 - ***2025.05***: The 18th China College Students' Computer Design Competition —— *First Prize* in Liaoning Province. (Supervisor)
 - ***2024.12***: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (leader)
-- ***2024.11***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— ***Second Prize*** at the National level. (Leader)
+- ***2024.11***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <span style="color:darkred">***Second Prize***</span> at the National level. (Leader)
 - ***2024.10***: The 18th iCAN Innovation Contest —— *Second Prize* in Liaoning Province. (Supervisor)
 - ***2024.09***: The 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
 - ***2024.09***: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Leader)
