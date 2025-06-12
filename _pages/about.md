@@ -166,6 +166,10 @@ If you are interested in my research, feel free to collaborate with me!
 - Technology Integration Opportunity Discovery System. ***Qiyao Wang**, Yuan Lin et.al.* 2024SR0681926. 2024.05.20. DUT. Licensed.
 
 # 🎖 Honors and Awards
+<p><strong>Academic Awards</strong></p>
+
+- ***2025.06***: Undergraduate thesis titled "Research and Application of Large Language Models in the Intellectual Property Field" —— ***Outstanding Thesis*** (<span style="color:darkred">***Top 4.39%***</span>)
+
 <p><strong>Competition Awards</strong></p>
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
