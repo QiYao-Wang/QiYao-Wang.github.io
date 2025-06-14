@@ -50,7 +50,7 @@ If you are interested in my research, feel free to collaborate with me!
     <em><strong>2025.06.14:</strong></em> &nbsp;🧠 My work <em>AutoPatent</em> was presented as a poster at the 
     <strong>Young Scholars Symposium on Natural Language Processing (YSSNLP) 2025, Dalian</strong>. Many thanks to the organizers for the opportunity!
   </li>
-  <li><em><strong>2025.06.12:</strong></em> &nbsp;🎉 My undergraduate thesis titled "Research and Application of Large Language Models in the Intellectual Property Field" was awarded as an Outstanding Thesis (<strong style="color:darkred;">Top 4.39%</strong>).</li>
+  <li><em><strong>2025.06.12:</strong></em> &nbsp;🎉 My undergraduate thesis titled "Research and Application of Large Language Models in the Intellectual Property Field" was awarded as an Outstanding Thesis (校本科优秀毕业论文) (<strong style="color:darkred;">Top 4.39%</strong>).</li>
   <li><em><strong>2025.03.03:</strong></em> &nbsp;🎉 As the leader of the Taibao-ip team, we provided DeepSeek model deployment services to the School of Public Administration at Dalian University of Technology, which was featured in reports by Guangming Daily and the school itself. <p>[<a href="https://app2.gmdaily.cn/as/opened/n/88779004361149b8afb610ce04c162f6">News 1</a>] [<a href="https://mp.weixin.qq.com/s/yokeA5uiy1SxsbwmvCfiVQ">News 2</a>]</p></li>
   <li><em><strong>2024.12.20:</strong></em> &nbsp;🎉 Our latest work, AutoPatent, has been reported by Xinzhiyuan and will continue to be expanded and improved in the future.[<a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">News</a>]</li>
   <li><em><strong>2024.12.08:</strong></em> &nbsp;🎉 As the project leader, I successfully led my team to win the Third Prize at the national level in the 18th iCAN Innovation Contest.</li>
@@ -172,7 +172,7 @@ If you are interested in my research, feel free to collaborate with me!
 # 🎖 Honors and Awards
 <p><strong>Academic Awards</strong></p>
 
-- ***2025.06***: Undergraduate thesis "Research and Application of Large Language Models in the Intellectual Property Field" —— ***Outstanding Thesis*** (<span style="color:darkred">***Top 4.39%***</span>)
+- ***2025.06***: Undergraduate thesis "Research and Application of Large Language Models in the Intellectual Property Field" —— ***Outstanding Thesis (校本科优秀毕业论文)*** (<span style="color:darkred">***Top 4.39%***</span>)
 
 <p><strong>Competition Awards</strong></p>
 
