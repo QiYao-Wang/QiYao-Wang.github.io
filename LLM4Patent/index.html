@@ -8,6 +8,47 @@ layout: compress
     {% include head.html %}
     {% include head/custom.html %}
     <title>LLM4Patent</title>
+
+    <style>
+.dropdown-content {
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 2px;
+  z-index: 1;
+  border-radius: 5px;
+  list-style-type: none;
+}
+
+/* 确保下拉菜单是 **竖直排列** */
+.dropdown-content li {
+  display: block;  /* 让每个 <li> 独占一行 */
+  padding: 2px;
+  text-align: left; /* 让文本左对齐 */
+  margin-left: 5px;
+}
+
+/* 确保 <a> 标签也独占一行 */
+.dropdown-content a {
+  display: block;  /* 让 <a> 也单独一行 */
+  text-decoration: none;
+  color: gray;
+}
+
+/* 加粗的标题样式 */
+.dropdown-content strong {
+  font-weight: bold;
+  color: black;
+}
+
+/* 显示菜单 */
+.dropdown-content.show {
+  display: block;
+}
+</style>
+    
   </head>
   <body>
     {% include browser-upgrade.html %}
