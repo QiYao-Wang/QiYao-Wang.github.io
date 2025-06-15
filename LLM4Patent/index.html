@@ -195,5 +195,24 @@ layout: compress
             ul.appendChild(li);
         });
     </script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("dropdown-toggle");
+  const dropdownMenu = document.getElementById("dropdown-menu");
+
+  // 切换下拉菜单的显示/隐藏
+  toggleButton.addEventListener("click", function (event) {
+    event.stopPropagation(); // 阻止事件冒泡，避免触发 document 的点击事件
+    dropdownMenu.classList.toggle("show");
+  });
+
+  // 点击页面其他地方时，隐藏下拉菜单
+  document.addEventListener("click", function (event) {
+    if (!dropdownMenu.contains(event.target) && !toggleButton.contains(event.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
+});
+</script>
   </body>
 </html>
