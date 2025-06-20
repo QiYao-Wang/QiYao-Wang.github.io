@@ -179,7 +179,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
-- ***2025.06***: 2025 University Computer Competition, Internet Technology Challenge **(Two)** —— *Third Prize* in Northeast Regional. (Supervisor)
+- ***2025.06***: 2025 University Computer Competition, Internet Technology Challenge **($\times 2$)** —— *Third Prize* in Northeast Regional. (Supervisor)
 - ***2025.06***: The 12th College Students Innovation and Entrepreneurship Annual Meeting —— *Second Prize* in Liaoning Province. (Leader)
 - ***2025.05***: The 18th China College Students' Computer Design Competition —— *First Prize* in Liaoning Province. (Supervisor)
 - ***2024.12***: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (Leader)
