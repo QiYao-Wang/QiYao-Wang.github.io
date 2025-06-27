@@ -34,11 +34,9 @@ If you are interested in my research, feel free to collaborate with me!
 
 # 📌 Research Interests  
 
-- Large Language Models
-  - LLMs-based Multi-Agent System
-  - Reasoning
-- Information Retrieval
-- AI for Science and Social Science
+- ***General LLMs and MLLMs***: Exploring the underlying mechanisms of LLMs and MLLMs, and researching improved fine-tuning methods to enhance their understanding, reasoning, and generation capabilities.
+- ***Information Retrieval (IR)***: Exploring improved *generative IR (GenIR)* approaches to enhance the capabilities of LLMs, and leveraging LLMs to improve IR performance.
+- ***AI for Science and Social Science***: Developing more impactful domain-specific applications using LLMs and MLLMs to empower research in the sciences and social sciences.
   - LLMs for Intellectual Property (mainly for Patents) [[Topic Homepage](https://wangqiyao.me/LLM4Patent/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
   - LLMs for Law
  
