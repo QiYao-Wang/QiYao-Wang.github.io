@@ -125,11 +125,11 @@ If you are interested in my research, feel free to collaborate with me!
 <ul>
   <li>
     <span style="font-family: sans-serif;">大语言模型赋能知识产权信息服务模型构建及应用.</span> 
-    <em>Yuan Lin, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. 图书馆理论与实践 (CSSCI) Accept. DUT.
+    <em>Yuan Lin, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI)</strong> Accept. DUT.
   </li>
   <li>
     <span>ECPE-Qwen</span><span style="font-family: sans-serif;">: 微调大语言模型进行零样本情绪原因对抽取.</span> 
-    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024 Accept. 中文信息学报 (CCF-B) Accept. DUT.
+    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024 Accept. <strong>中文信息学报 (CCF-B)</strong> Accept. DUT.
   </li>
 </ul>
 </div>
