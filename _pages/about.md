@@ -124,6 +124,14 @@ If you are interested in my research, feel free to collaborate with me!
 <div>
 <ul>
   <li>
+    <span style="font-family: sans-serif;">CAGE: 基于协作增强相关性反馈的查询扩展方法.</span> 
+    <em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025 Accept. DUT.
+  </li>
+  <li>
+    <span style="font-family: sans-serif;">多智能体驱动的高校采购评审专家推荐研究.</span> 
+    <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong>Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025 Accept. DUT.
+  </li>
+  <li>
     <span style="font-family: sans-serif;">大语言模型赋能知识产权信息服务模型构建及应用.</span> 
     <em>Yuan Lin, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI)</strong> Accept. DUT.
   </li>
