@@ -124,7 +124,7 @@ If you are interested in my research, feel free to collaborate with me!
 <div>
 <ul>
   <li>
-    <span>CAGE</span><span style="font-family: sans-serif;">: 基于协作增强相关性反馈的查询扩展方法.</span> 
+    <span>CAGE</span><span style="font-family: sans-serif;">: 基于协同增强相关性反馈的查询扩展方法.</span> 
     <em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025 Accept. DUT.
   </li>
   <li>
