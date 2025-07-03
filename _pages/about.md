@@ -169,6 +169,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 <p><strong>Software Copyrights</strong></p>
 
+- IntelliPatent: Chinese Patent Document Generation System. *Chenxing Li, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Shiqiang Wang, Haoran Hu, Hongbo Wang, Kan Xu, Yuan Lin*. 2025SR1158561. 2025.07.03. DUT. Licensed. (Supervisor)
 - IntelliCode Document Assistant System. *Haoran Hu, **Qiyao Wang**, Hongbo Wang, Zhifei Qin, Huaren Liu, Shiqiang Wang, Chenxing Li, Kan Xu and Yuan Lin.* 2025SR0724402. 2025.05.06. DUT. Licensed. (Supervisor)
 - Automated Patent Drafting System. *Rong Cao, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Boyu Ma, Jingru Sun, Hongbo Wang, Kan Xu and Yuan Lin.* 2025SR0675652. 2025.04.24. DUT. Licensed. (Supervisor)
 - Smart Technology Contract Generation System. *Shiqiang Wang, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Hongbo Wang, Haoran Hu, Chenxing Li, Kan Xu and Yuan Lin*. 2025SR0674957. 2025.04.24. DUT. Licensed. (Supervisor)
