@@ -18,9 +18,9 @@ redirect_from:
 
 Now, I am an incoming Ph.D. student at the University of Chinese Academy of Sciences (UCAS), starting in Fall 2025. <a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>
 
-I obtained a Bachelor’s degree in Artificial Intelligence from Dalian University of Technology (2021–2025). During my undergraduate studies, I worked in the Dalian University of Technology *Information Retrieval Laboratory* and *Public Service Science and Engineering Laboratory*, fortunately supervised by Prof. [Yuan Lin](http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm) and Prof. [Kan Xu](http://faculty.dlut.edu.cn/2004012069/en/index.htm). I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. For those interested in collaboration, please do not hesitate to contact me.
-
 I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.
+
+I obtained a Bachelor’s degree in Artificial Intelligence from Dalian University of Technology (2021–2025). During my undergraduate studies, I worked in the Dalian University of Technology *Information Retrieval Laboratory* and *Public Service Science and Engineering Laboratory*, fortunately supervised by Prof. [Yuan Lin](http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm) and Prof. [Kan Xu](http://faculty.dlut.edu.cn/2004012069/en/index.htm). I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. For those interested in collaboration, please do not hesitate to contact me.
 
 If you are interested in my research, feel free to collaborate with me!
 
