@@ -129,7 +129,7 @@ If you are interested in my research, feel free to collaborate with me!
   </li>
   <li>
     <span style="font-family: sans-serif;">多智能体驱动的高校采购评审专家推荐研究.</span> 
-    <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong>Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025 Accept. <strong>计算机工程与应用 (北大核心, IF=2.372)</strong> Accept. DUT.
+    <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong>Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025 Accept. <strong>计算机工程与应用 (CCF-C, 北大核心, IF=2.372)</strong> Accept. DUT.
   </li>
   <li>
     <span style="font-family: sans-serif;">大语言模型赋能知识产权信息服务模型构建及应用.</span> 
