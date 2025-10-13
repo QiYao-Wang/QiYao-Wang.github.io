@@ -384,7 +384,7 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
 <div>
   <ul>
     <li>
-     A Survey on Large Language Model Benchmarks. <em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong style="color:darkred">Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em>. Preprint.
+     A Survey on Large Language Model Benchmarks. <em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong style="color:darkred">Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em>.
      [<a href="https://arxiv.org/abs/2508.15361">Paper</a>]
      [<a href="https://huggingface.co/papers/2508.15361">HuggingFace Paper</a>]
     </li>
