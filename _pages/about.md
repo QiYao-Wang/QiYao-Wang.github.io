@@ -287,7 +287,6 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 As the project leader and supervisor, guided the entire undergraduate team to achieve 9 national-level awards (including the National Silver Award of the Challenge Cup) and 11 provincial-level awards. 作为项目负责人和指导者，指导整个本科团队获得 9 项国家级奖项（包括挑战杯国家银奖）和 11 项省级奖项。
 </p>
 
-
 <hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
 <p style="font-family: 'Times New Roman', sans-serif;">而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。<br><span style="font-style: italic; float: right;">—— 游褒禅山记 · 临川先生</span></p>
@@ -334,7 +333,7 @@ hspace="10" wspace="20" src="../images/publications/ipbench.png">
 <hr>
 
 <dl>
-  <dt><img align="left" width="100"
+<dt><img align="left" width="100"
 hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <span class="conference-label">Arxiv</span>
 </dt>
@@ -355,7 +354,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <dl>
   <dt><img align="left" width="100"
 hspace="10" wspace="20" src="../images/publications/supergpqa.png">
-<span class="conference-label">Neurips 2025</span>
+<span class="conference-label">NeurIPS 2025</span>
 </dt>
   <dd><strong>SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines</strong></dd>
 <dd><em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. M-A-P.</dd>
