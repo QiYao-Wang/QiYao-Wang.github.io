@@ -324,98 +324,80 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 hspace="10" wspace="20" src="../images/publications/ipbench.png">
 <span class="conference-label">Arxiv</span>
 </dt>
-  <dd><strong>IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property</strong></a></dd>
+  <dd><strong>IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property</strong></dd>
 <dd><em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Hongfei Lin, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Preprint. CAS-SIAT and DUT.</dd>
 <!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
-<dd><a href="https://IPBench.github.io">Website</a> | <a href="https://arxiv.org/abs/2504.15524">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/IPBench/IPBench">Github</a></dd>
+<dd><a href="https://ipbench.wangqiyao.me">Website</a> | <a href="https://arxiv.org/abs/2504.15524">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/IPBench/IPBench">Github</a></dd>
 <dd><a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a></dd>
 </dl>
+
+<hr>
+
+<dl>
+  <dt><img align="left" width="100"
+hspace="10" wspace="20" src="../images/publications/ipbench.png">
+<span class="conference-label">Arxiv</span>
+</dt>
+  <dd><strong>AutoPatent: A Multi-Agent Framework for Automatic Patent Generation</strong></dd>
+<dd> <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT.</dd>
+<!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
+<dd><a href="https://autopatent.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2412.09796">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/AutoPatent">Github</a></dd>
+<dd><a href="https://github.com/QiYao-Wang/AutoPatent"><img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></dd>
+</dl>
+
 
 # Publications 
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
 
 <p><strong>2025</strong></p>
 
-<div>
-<ul>
-  <li>
-    IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property.
-    <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Hongfei Lin, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Preprint. CAS-SIAT and DUT.
-    <strong> | <span id="IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property"></span> | </strong>
-    [<a href="https://IPBench.github.io">Website</a>]
-    [<a href="https://arxiv.org/abs/2504.15524">Paper</a>]
-    [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
-    [<a href="https://github.com/IPBench/IPBench">Github</a>]
-    <a href="https://github.com/IPBench/IPBench">
-      <img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench">
-    </a>
-  </li>
-  <li>
-    SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.
-    <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. Preprint. M-A-P.
-    <strong> | <span id="Supergpqa: Scaling llm evaluation across 285 graduate disciplines"></span> | </strong>
-    [<a href="https://supergpqa.github.io">Website</a>]
-    [<a href="https://arxiv.org/abs/2502.14739">Paper</a>]
-    [<a href="https://github.com/SuperGPQA/SuperGPQA">Github</a>]
-    <a href="https://github.com/SuperGPQA/SuperGPQA">
-      <img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA">
-    </a>
-  </li>
-</ul>
-</div>
+<dl>
+  <dt><img align="left" width="100"
+hspace="10" wspace="20" src="../images/publications/supergpqa.png">
+<span class="conference-label">Neurips 2025</span>
+</dt>
+  <dd><strong>SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines</strong></dd>
+<dd><em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. M-A-P.</dd>
+<!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
+<dd><a href="https://supergpqa.github.io">Website</a> | <a href="https://arxiv.org/abs/2502.14739">Paper</a> | <a href="https://huggingface.co/datasets/m-a-p/SuperGPQA">HuggingFace</a> | <a href="https://github.com/SuperGPQA/SuperGPQA">Github</a></dd>
+<dd><a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></dd>
+</dl>
 
 <p><strong>2024</strong></p>
 
-<div>
-<ul>
-  <li>
-    AutoPatent: A Multi-Agent Framework for Automatic Patent Generation. 
-    <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. Preprint. CAS-SIAT and DUT.
-    <strong> | <span id="AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"></span> | </strong>
-    [<a href="https://qiyao-wang.github.io/AutoPatent/">Website</a>]
-    [<a href="https://arxiv.org/pdf/2412.09796">Paper</a>]
-    [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>] 
-    <a href="https://github.com/QiYao-Wang/AutoPatent">
-      <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent">
-    </a>
-  </li>
-  <li>
-    IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. 
-    <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> Arxiv. DUT.
-    <strong> | <span id="IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"></span> | </strong>
-    [<a href="https://Qiyao-Wang.github.io/ipeval">Website</a>]
-    [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
-    [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>] 
-    [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
-    <a href="https://github.com/QiYao-Wang/ipeval">
-      <img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval">
-    </a>
-  </li>
-</ul>
-</div>
+<dl>
+<dt><img align="left" width="100"
+hspace="10" wspace="20" src="../images/publications/ipeval.png">
+</dt>
+  <dd><strong>IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. </strong></dd>
+<dd><em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> DUT.</dd>
+<!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
+<dd><a href="https://ipeval.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2406.12386">Paper</a> | <a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/IPEval">Github</a></dd>
+<dd><a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></dd>
+</dl>
 
 <p><strong>Chinese Papers</strong></p>
 
 <div>
-<ul>
-  <li>
-    <span>CAGE</span><span style="font-family: sans-serif;">: 基于协同增强相关反馈的查询扩展方法.</span> 
-    <em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025 Accept. <strong>中文信息学报 (CCF-B, 北大核心, IF=1.263)</strong> Accept. DUT.
-  </li>
-  <li>
-    <span style="font-family: sans-serif;">多智能体驱动的高校采购评审专家推荐研究.</span> 
-    <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong>Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025 Accept. <strong>计算机工程与应用 (CCF-C, 北大核心, IF=2.372)</strong> Accept. DUT.
-  </li>
-  <li>
-    <span style="font-family: sans-serif;">大语言模型赋能知识产权信息服务模型构建及应用.</span> 
-    <em>Yuan Lin, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版, IF=2.166)</strong> Accept. DUT.
-  </li>
-  <li>
-    <span>ECPE-Qwen</span><span style="font-family: sans-serif;">: 微调大语言模型进行零样本情绪原因对抽取.</span> 
-    <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024 Accept. <strong>中文信息学报 (CCF-B, 北大核心, IF=1.263)</strong> Accept. DUT.
-  </li>
-</ul>
-</div>
+  <ul>
+    <li>
+      <span style="font-family: sans-serif;">CAGE: 基于协同增强相关反馈的查询扩展方法.</span>
+      <em><strong style="color:darkred">Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.
+    </li>
+    <li>
+      <span style="font-family: sans-serif;">多智能体驱动的高校采购评审专家推荐研究.</span>
+      <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong style="color:darkred">Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025. <strong>计算机工程与应用 (CCF-T2, CCF-C, 北大核心)</strong>. DUT.
+    </li>
+    <li>
+      <span style="font-family: sans-serif;">大语言模型赋能知识产权信息服务模型构建及应用.</span>
+      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong style="color:darkred">Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版)</strong>. DUT.
+    </li>
+    <li>
+      <span>ECPE-Qwen</span><span style="font-family: sans-serif;">: 微调大语言模型进行零样本情绪原因对抽取.</span>
+      <em><strong style="color:darkred">Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.
+    </li>
+  </ul>
+  </div>
 
 # 🔧 Projects
 
