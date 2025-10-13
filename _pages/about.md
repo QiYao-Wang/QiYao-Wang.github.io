@@ -386,15 +386,15 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
 <div>
   <ul>
     <li>
-      <span">CAGE: 基于协同增强相关反馈的查询扩展方法.</span>
+      <span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span>
       <em><strong style="color:darkred">Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.
     </li>
     <li>
-      <span">多智能体驱动的高校采购评审专家推荐研究.</span>
+      <span>多智能体驱动的高校采购评审专家推荐研究.</span>
       <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong style="color:darkred">Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025. <strong>计算机工程与应用 (CCF-T2, CCF-C, 北大核心)</strong>. DUT.
     </li>
     <li>
-      <span">大语言模型赋能知识产权信息服务模型构建及应用.</span>
+      <span>大语言模型赋能知识产权信息服务模型构建及应用.</span>
       <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong style="color:darkred">Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版)</strong>. DUT.
     </li>
     <li>
