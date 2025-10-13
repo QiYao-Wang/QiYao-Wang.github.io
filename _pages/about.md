@@ -391,6 +391,8 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
   </ul>
 </div>
 
+<hr>
+
 <p><strong>Chinese Papers</strong></p>
 
 <div>
