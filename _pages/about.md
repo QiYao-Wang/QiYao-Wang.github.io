@@ -335,7 +335,7 @@ hspace="10" wspace="20" src="../images/publications/ipbench.png">
 
 <dl>
   <dt><img align="left" width="100"
-hspace="10" wspace="20" src="../images/publications/ipbench.png">
+hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <span class="conference-label">Arxiv</span>
 </dt>
   <dd><strong>AutoPatent: A Multi-Agent Framework for Automatic Patent Generation</strong></dd>
