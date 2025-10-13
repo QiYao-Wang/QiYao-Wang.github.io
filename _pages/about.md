@@ -321,7 +321,7 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 # Manuscripts
 <dl>
   <dt><img align="left" width="100"
-hspace="10" wspace="20" src="../images/ipbench.png">
+hspace="10" wspace="20" src="../images/publications/ipbench.png">
 <span class="conference-label">Arxiv</span>
 </dt>
   <dd><strong>IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property</strong></a></dd>
