@@ -398,7 +398,7 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
       <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong style="color:darkred">Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版)</strong>. DUT.
     </li>
     <li>
-      <span>ECPE-Qwen</span><span">: 微调大语言模型进行零样本情绪原因对抽取.</span>
+      <span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span>
       <em><strong style="color:darkred">Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.
     </li>
   </ul>
