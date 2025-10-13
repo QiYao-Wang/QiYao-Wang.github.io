@@ -475,6 +475,7 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
 # 💬 Academe Service
 
 # 💻 Internships
+- ***2025.10 - (now)*** Alibaba, Beijing
 
 Updated at October, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
