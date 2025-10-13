@@ -364,7 +364,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 <dd><a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></dd>
 </dl>
 
-<br>
+<hr>
 
 <p><strong>2024</strong></p>
 
@@ -379,7 +379,7 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
 <dd><a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></dd>
 </dl>
 
-<br>
+<hr>
 
 <p><strong>Chinese Papers</strong></p>
 
