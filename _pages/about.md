@@ -16,17 +16,21 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Now, I am an incoming Ph.D. student at the University of Chinese Academy of Sciences (UCAS), starting in Fall 2025. <a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>
+Hello, my name is Qiyao Wang (王琪尧)<a href='https://scholar.google.com/citations?user=STze0QgAAAAJ'><img src="https://img.shields.io/endpoint?url={{ url | url_encode }}&logo=Google%20Scholar&labelColor=f6f6f6&color=9cf&style=flat&label=citations"></a>. I am a first year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), starting in Fall 2025, supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.<br>
+I obtained my Bachelor's degree in Artificial Intelligence from Dalian University of Technology (2021-2025).
+During my undergraduate studies, I worked in the Dalian University of Technology <em>Information Retrieval Laboratory</em>
+and <em>Public Service Science and Engineering Laboratory</em>, supervised by Prof. <a href="http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm">Yuan Lin</a>,
+Prof. <a href="http://faculty.dlut.edu.cn/2004012069/en/index.htm">Kan Xu</a>
+and Prof. <a href="https://faculty.dlut.edu.cn/linhongfei/zh_CN/index/789935/list/index.htm">Hongfei Lin</a>.
 
-I will start my Ph.D. studies at CAS-SIAT in 2025, fortunately supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.
+<p>
+I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. <br> Please go thorough [<a href="https://wangqiyao.me/lab">Lab Group Homepage</a>]. <br>
+And if you are interested in my research, <strong style="color: darkred">feel free to collaborate with me</strong>!
+</p>
+<p>
+As the project leader and supervisor, guided the entire undergraduate team to achieve 9 national-level awards (including the National Silver Award of the Challenge Cup) and 11 provincial-level awards. 作为项目负责人和指导者，指导整个本科团队获得 9 项国家级奖项（包括挑战杯国家银奖）和 11 项省级奖项。
+</p>
 
-I obtained a Bachelor’s degree in Artificial Intelligence from Dalian University of Technology (2021–2025). During my undergraduate studies, I worked in the Dalian University of Technology *Information Retrieval Laboratory* and *Public Service Science and Engineering Laboratory*, fortunately supervised by Prof. [Yuan Lin](http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm) and Prof. [Kan Xu](http://faculty.dlut.edu.cn/2004012069/en/index.htm). I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. For those interested in collaboration, please do not hesitate to contact me.
-
-If you are interested in my research, feel free to collaborate with me!
-
-<p><strong>
-  My Blog: <a href="/blogs">Click here</a>
-</strong></p>
 
 <hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
@@ -35,8 +39,9 @@ If you are interested in my research, feel free to collaborate with me!
 # 📌 Research Interests  
 
 - ***General LLMs and MLLMs***: Exploring the underlying mechanisms of LLMs and MLLMs, and researching improved fine-tuning methods to enhance their understanding, reasoning, and generation capabilities.
-- ***Information Retrieval (IR)***: Exploring improved *generative IR (GenIR)* approaches to enhance the capabilities of LLMs, and leveraging LLMs to improve IR performance.
-- ***AI for Science and Social Science***: Developing more impactful domain-specific applications using LLMs and MLLMs to empower research in the sciences and social sciences.
+- ***Information Retrieval (IR)***: Exploring improved <em>generative IR (GenIR)</em> approaches to enhance the capabilities of LLMs, and leveraging LLMs to improve IR performance.
+- ***Agentic AI***: Agentic Coding.
+- ***AI for Science and Social Science***: Developing domain-specific applications using LLMs and MLLMs to empower research in sciences and social sciences.
   - LLMs for Intellectual Property (mainly for Patents) [[Topic Homepage](https://wangqiyao.me/LLM4Patent/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
   - LLMs for Law
  
@@ -44,6 +49,7 @@ If you are interested in my research, feel free to collaborate with me!
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
+  <li><em><strong>2025.07.30:</strong></em> &nbsp;🎉 As the Team Supervisor, I successfully guided my team to win the Third Prize at the national level in the 18th China College Students' Computer Design Competition.</li>
   <li>
     <em><strong>2025.06.14:</strong></em> &nbsp;🧠 My work <em>AutoPatent</em> was presented as a poster at the 
     <strong>Young Scholars Symposium on Natural Language Processing (YSSNLP) 2025, Dalian</strong>. Many thanks to the organizers for the opportunity!
