@@ -345,6 +345,7 @@ hspace="10" wspace="20" src="../images/publications/ipbench.png">
 <dd><a href="https://github.com/QiYao-Wang/AutoPatent"><img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></dd>
 </dl>
 
+<br>
 
 # Publications 
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
@@ -363,6 +364,8 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 <dd><a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></dd>
 </dl>
 
+<br>
+
 <p><strong>2024</strong></p>
 
 <dl>
@@ -375,6 +378,8 @@ hspace="10" wspace="20" src="../images/publications/ipeval.png">
 <dd><a href="https://ipeval.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2406.12386">Paper</a> | <a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/IPEval">Github</a></dd>
 <dd><a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></dd>
 </dl>
+
+<br>
 
 <p><strong>Chinese Papers</strong></p>
 
