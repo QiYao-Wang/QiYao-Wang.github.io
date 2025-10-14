@@ -367,16 +367,18 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 
 <p><strong>2024</strong></p>
 
-<dl>
-<dt><img align="left" width="100"
-hspace="10" wspace="20" src="../images/publications/ipeval.png">
-</dt>
-  <dd><strong>IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. </strong></dd>
-<dd><em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> DUT.</dd>
-<!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
-<dd><a href="https://ipeval.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2406.12386">Paper</a> | <a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/IPEval">Github</a></dd>
-<dd><a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></dd>
-</dl>
+<div>
+  <ul>
+    <li>
+     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> DUT.
+     [<a href="https://ipeval.wangqiyao.me/">Website</a>]
+     [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
+     [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
+     [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>]
+     <a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a>
+    </li>
+  </ul>
+</div>
 
 <hr>
 
