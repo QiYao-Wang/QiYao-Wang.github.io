@@ -370,7 +370,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 <div>
   <ul>
     <li>
-     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. <em><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> DUT.
+     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> DUT.
      [<a href="https://ipeval.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
      [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
