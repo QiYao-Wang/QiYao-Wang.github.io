@@ -5,7 +5,7 @@ layout: compress
 <html lang="en" class="no-js">
   
   <head>
-   {% include head.html %}
+    {% include head.html %}
     {% include head/custom.html %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -19,19 +19,25 @@ layout: compress
   </head>
   <body>
     {% include browser-upgrade.html %}
-    <div class="masthead" style="container">
+    <div class="masthead">
     <div class="masthead__inner-wrap">
       <div class="masthead__menu">
         <nav id="site-nav" class="greedy-nav">
           <ul class="visible-links">
             <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
-<!--             <li class="masthead__menu-item"><a href="{{ domain }}{{ link.url }}">{{ link.title }}</a></li> -->
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
           </ul>
         </nav>
       </div>
     </div>
   </div>
     <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
