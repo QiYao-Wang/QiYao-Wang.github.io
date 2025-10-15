@@ -493,6 +493,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 
 # 💻 Internships
 - ***2025.10 - (now)***: Alibaba, Beijing
+- ***2022.12 - 2025.09***: DUTIR, Dalian
 
 Updated at October, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
