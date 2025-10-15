@@ -1,0 +1,192 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <title>Lab Group</title>
+
+    <style>
+.dropdown-content {
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 2px;
+  z-index: 1;
+  border-radius: 5px;
+  list-style-type: none;
+}
+
+/* 确保下拉菜单是 **竖直排列** */
+.dropdown-content li {
+  display: block;  /* 让每个 <li> 独占一行 */
+  padding: 2px;
+  text-align: left; /* 让文本左对齐 */
+  margin-left: 5px;
+}
+
+/* 确保 <a> 标签也独占一行 */
+.dropdown-content a {
+  display: block;  /* 让 <a> 也单独一行 */
+  text-decoration: none;
+  color: gray;
+}
+
+/* 加粗的标题样式 */
+.dropdown-content strong {
+  font-weight: bold;
+  color: black;
+}
+
+/* 显示菜单 */
+.dropdown-content.show {
+  display: block;
+}
+</style>
+    
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead" style="container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+      
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1>AI for IP Lab Group</h1>
+
+            <h2>Introduction</h2>
+            <div>
+              <p>
+              组内大的研究方向为大语言模型（含多模态）、信息检索及智能体等，包含知识产权、法律和生物信息等多种垂域相关研究，依托大连理工大学信息检索实验室（指导老师：<a href="https://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm">林原副教授</a>，<a href="https://faculty.dlut.edu.cn/xukan/zh_CN/">许侃高级工程师</a>）与中国科学院深圳先进技术研究院（指导老师：<a href="https://wangqiyao.me/">博士生王琪尧</a>）主要针对大连理工大学的<strong>本科生</strong>进行自然语言处理领域的科研指导（其他学校学生同样欢迎联系）。
+            具有较为丰富的计算资源，指导学生推免至中国科学院大学、上海交通大学、浙江大学、北京航空航天大学及大连理工大学等。欢迎任何年级、任何专业、任何学校的同学随时通过邮件联系三位老师，一起在人工智能+、自然语言处理等领域做出有趣的研究。
+              </p>
+              <h3>本科生亮点成果</h3>
+            <ul>
+                <li><em>论文：</em>2024年以来，已有本科生发表包含领域中文期刊会议，中文信息学报、计算机学报、图书理论与实践、计算机工程与应用、CCIR等相关论文；同时目前已有本科生投稿领域英文顶会，NeurIPS、ICLR、ACL、EMNLP、AAAI及ICASSP等。</li>
+                <li><em>知识产权：</em>指导本科生授权及申请专利 4 项，授权软件著作权 7 项。</li>
+                <li><em>竞赛：</em>指导本科生获得 <strong>9</strong> 项国家级奖项和 <strong>11</strong> 项省级奖项，包含挑战杯大学生课外学术和技术作品竞赛全国银奖、中国大学生计算机设计大赛全国二等奖、中国TRIZ杯大学生创新方法竞赛全国二等奖等。</li>
+                <li><em>荣誉：</em>国家奖学金、校优秀本科毕业论文、大连理工大学各类命名/专项/单项奖学金、国家级大创、CCIR2025最佳论文候选等。</li>
+                <li><em>升学去向：</em>中国科学院计算所，深圳先进技术研究院等院所、上海交通大学、复旦大学、浙江大学、北京航空航天大学、大连理工大学等。</li>
+            </ul>
+            </div>
+
+            <h2>Training</h2>
+            <div>
+            <h3>Target</h3>
+            <p>面向本科生科研，针对自然语言处理、大语言模型、信息检索及知识产权、法律等垂域应用，将收获：</p>
+            <ul>
+                <li>熟悉人工智能研究领域基础、前沿知识，通过至少<strong>每周一次</strong>的组会与老师、学长交流，提升科研能力</li>
+                <li>掌握人工智能领域科研的基本流程，学会阅读、理解、表达文献，熟练运用各类科研工具和文献撰写工具及技巧</li>
+                <li>面向上述前沿研究领域，探索新颖科研想法，在人工智能中文、英文的顶级期刊及会议上发表论文，参与国内外学术会议交流学习，申请专利与软著</li>
+                <li>参与相关科研项目，提前了解人工智能领域的项目流程，转化国家级大创，参与各类国家级创新创业竞赛</li>
+            </ul>
+            <h3>Content</h3>
+            <p>入门培训目标：掌握基本的科研能力，学会制作PPT、撰写LaTex等基础工具，学会文献检索、阅读等，学习大模型之前的机器学习、深度学习、自然语言处理的相关知识。</p>
+            <ol>
+                <li><p>大语言模型前的基础知识</p>
+                    <ul>
+                        <li><strong>编程基础</strong>：熟悉Python语言（建议 Learning while Doing，特别是编程语言），基础语法、面向对象编程，有问题问GPT。会使用PyCharm等IDE、熟练配置编译（会ssh远程连接与上传文件【服务器所需】等</li>
+                        <li><strong>机器学习、深度学习基础</strong><br>
+                            学习参考：台大李宏毅（<a href="https://speech.ee.ntu.edu.tw/~hylee/index.php">homepage</a>）的课程（17、18年等课程) <br>
+                            机器学习学习路线：基本概念（训练集测试集验证集、指标、损失等）、监督学习、无监督学习、半监督学习相关算法 <br>
+                            深度学习学习路线：基本概念（梯度下降、反向传播、交叉熵损失、激活函数等）、全连接层、CNN、RNN、LSTM、GRU、Transformer等<br></li>
+                        <li><strong>NLP基础</strong><br>
+                            学习参考：CS336、大规模语言模型（复旦NLP撰写）等
+                            统计自然语言处理：宗成庆，主要理解NLP的任务（分词、词性标注等）、语料库，以及例如n-gram等重要概念<br>
+                            基于深度学习的自然语言处理：理解不同架构的Language Model，Encoder-Only（BERT系列等）、Encoder-Decoder（T5等）、Decoder-Only（GPT2、GPT3等）<br>
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+            </div>  
+
+            <h2>Assessment</h2>
+            <div>
+            <p>Waiting...</p>
+            </div>
+
+            <h2>Member</h2>
+            <div>
+              <ul>
+                <li><em>指导老师：</em>林原副教授、许侃高级工程师、博士生王琪尧（中科院深先院）</li>
+                <li><em>在组学生：</em>王宏波（计算机）、刘华仁（经管）、康涵禹（数学）、曹荣（未来）、王世强（未来）、胡浩然（未来）、陈欣宜（计算机）、陈旭峰（计算机）、李晨星（未来）、秦知非（公管）、祝铭徽（公管）</li>
+                <li><em>毕业学生：</em>吴鑫卓（浙江大学，工程硕博）、黄建国（上海交通大学，直博）、卢树乐（北京航空航天大学，硕士）、李林蔚（复旦大学）等</li>
+              </ul>
+            </div>
+            
+           
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+            a.target="_self";
+
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("dropdown-toggle");
+  const dropdownMenu = document.getElementById("dropdown-menu");
+
+  // 切换下拉菜单的显示/隐藏
+  toggleButton.addEventListener("click", function (event) {
+    event.stopPropagation(); // 阻止事件冒泡，避免触发 document 的点击事件
+    dropdownMenu.classList.toggle("show");
+  });
+
+  // 点击页面其他地方时，隐藏下拉菜单
+  document.addEventListener("click", function (event) {
+    if (!dropdownMenu.contains(event.target) && !toggleButton.contains(event.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
+});
+</script>
+  </body>
+</html>
