@@ -352,6 +352,8 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <p><strong>Spotlight Models</strong></p>
 - Taibao(太保): Intellectual Property Service Large Language Model, published by <a href="https://spap.dlut.edu.cn/info/1123/4095.htm">School of Public Administration and Policy, DUT</a>, <a href="https://ir.dlut.edu.cn/">DUTIR Lab</a> and <a href="https://www.dlcipf.cn/">CNIPA-CIPF</a> (Leader)
 
+<hr>
+
 <p><strong>2025</strong></p>
 
 <dl>
