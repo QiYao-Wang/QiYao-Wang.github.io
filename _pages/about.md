@@ -470,7 +470,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
-- ***2025.08***：The 17th “Challenge Cup” Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province
+- ***2025.08***：The 17th “Challenge Cup” Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province. (Supervisor)
 - ***2025.08***：The 13th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Supervisor)
 - ***2025.08***：The 2025 China International College Students Innovation Competition **($\times 2$)** —— *Silver Prize* in Liaoning Province. (Supervisor)
 - ***2025.07***：The 18th China College Students' Computer Design Competition —— ***Third Prize*** at the National level. (Supervisor)
