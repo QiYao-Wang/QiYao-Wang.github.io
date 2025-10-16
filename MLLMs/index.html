@@ -77,9 +77,9 @@ layout: compress
             <h1>Multi-Modal Large Language Models</h1>
             <div>
               <strong>Collections</strong>: 
-              <a href="https://huggingface.co/collections/QiYao-Wang/agentic-coding-68ef5b3c19f4dd602c8c9b09" target="_blank">
+              <!-- <a href="https://huggingface.co/collections/QiYao-Wang/agentic-coding-68ef5b3c19f4dd602c8c9b09" target="_blank">
                 <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Agentic Coding" alt="Hugging Face Badge">
-              </a>
+              </a> -->
             </div>
 
             <hr>
@@ -92,10 +92,9 @@ layout: compress
             <hr>
             <h2>Paper Reading</h2>
             <ul>
-              <li><em>2025.10.16</em>: VILA-U: a Unified Foundation Model Integrating Visual Understanding and Generation <a href="https://arxiv.org/abs/2409.04429">paper</a> | <a href="https://github.com/mit-han-lab/vila-u">github</a></li>
+              <li><em>2025.10.16</em>: VILA-U: a Unified Foundation Model Integrating Visual Understanding and Generation <a href="https://arxiv.org/abs/2409.04429">paper</a> | <a href="https://github.com/mit-han-lab/vila-u">github</a> <font color="gray">#Tokenizer</font> <font color="gray">#Unified-Model</font></li>
             </ul>
             
-           
           </section>
         </div>
       </article>
@@ -146,6 +145,55 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+</script>
+<script>
+    // 自动统计每个 Topic 的博客数量
+    const topicCounts = {};
+    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
+
+    blogs.forEach(blog => {
+        // 找到博客条目中的 topic（灰色字体）
+        const topicFont = blog.querySelector('font[color="gray"]');
+        if (topicFont) {
+            const topic = topicFont.innerText.trim();
+            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+        }
+    });
+
+    // 对 Topic 按字母顺序排序
+    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
+
+    // 更新边栏 Topics 部分
+    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
+    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
+
+    sortedTopics.forEach(([topic, count]) => {
+        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
+    });
+
+    // 替换 Topics 区域内容
+    topicsContainer.innerHTML = topicsHTML;
+</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 获取所有年份（h2）以及对应的博客条目（ul > li）
+        const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
+        let totalBlogs = 0;
+
+        // 遍历每个年份部分，计算该年份下博客的数量
+        yearSections.forEach(section => {
+            const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
+            if (blogList && blogList.tagName === 'UL') {
+                totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
+            }
+        });
+
+        // 更新 total_blogs 的文本内容
+        const totalBlogsElement = document.getElementById('total_blogs');
+        if (totalBlogsElement) {
+            totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
+        }
+    });
 </script>
   </body>
 </html>
