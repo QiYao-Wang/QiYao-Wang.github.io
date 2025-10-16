@@ -1,0 +1,151 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <title>Agentic Coding</title>
+
+    <style>
+.dropdown-content {
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 2px;
+  z-index: 1;
+  border-radius: 5px;
+  list-style-type: none;
+}
+
+/* 确保下拉菜单是 **竖直排列** */
+.dropdown-content li {
+  display: block;  /* 让每个 <li> 独占一行 */
+  padding: 2px;
+  text-align: left; /* 让文本左对齐 */
+  margin-left: 5px;
+}
+
+/* 确保 <a> 标签也独占一行 */
+.dropdown-content a {
+  display: block;  /* 让 <a> 也单独一行 */
+  text-decoration: none;
+  color: gray;
+}
+
+/* 加粗的标题样式 */
+.dropdown-content strong {
+  font-weight: bold;
+  color: black;
+}
+
+/* 显示菜单 */
+.dropdown-content.show {
+  display: block;
+}
+</style>
+    
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead" style="container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+      
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <h1>Multi-Modal Large Language Models</h1>
+            <div>
+              <strong>Collections</strong>: 
+              <a href="https://huggingface.co/collections/QiYao-Wang/agentic-coding-68ef5b3c19f4dd602c8c9b09" target="_blank">
+                <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Agentic Coding" alt="Hugging Face Badge">
+              </a>
+            </div>
+
+            <hr>
+
+            <h2>Our Work</h2>
+            <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
+            <hr>
+            <div>Currently none.</div>
+
+            <hr>
+            <h2>Paper Reading</h2>
+            <ul>
+              <li><em>2025.10.16</em>: VILA-U: a Unified Foundation Model Integrating Visual Understanding and Generation <a href="https://arxiv.org/abs/2409.04429">paper</a> | <a href="https://github.com/mit-han-lab/vila-u">github</a></li>
+            </ul>
+            
+           
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+        // 动态生成目录
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        // 获取所有标题
+        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        headers.forEach(header => {
+            const li = document.createElement('li');
+            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
+
+            const a = document.createElement('a');
+            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+            a.textContent = header.innerText;
+            a.target="_self";
+
+            if (!header.id) {
+                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+            }
+
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleButton = document.getElementById("dropdown-toggle");
+  const dropdownMenu = document.getElementById("dropdown-menu");
+
+  // 切换下拉菜单的显示/隐藏
+  toggleButton.addEventListener("click", function (event) {
+    event.stopPropagation(); // 阻止事件冒泡，避免触发 document 的点击事件
+    dropdownMenu.classList.toggle("show");
+  });
+
+  // 点击页面其他地方时，隐藏下拉菜单
+  document.addEventListener("click", function (event) {
+    if (!dropdownMenu.contains(event.target) && !toggleButton.contains(event.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
+});
+</script>
+  </body>
+</html>
