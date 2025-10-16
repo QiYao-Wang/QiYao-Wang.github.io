@@ -92,11 +92,11 @@ layout: compress
             <hr>
             <h2>Paper Reading</h2>
             <ul>
-              <li><em>2025.10.16</em>: AutoCodeRover: Autonomous Program Improvement <a href="https://arxiv.org/abs/2404.05427">paper</a> | <a href="https://github.com/AutoCodeRoverSG/auto-code-rover">github</a></li>
-              <li><em>2025.10.15</em>: Alibaba LingmaAgent: Improving Automated Issue Resolution via Comprehensive Repository Exploration. <a href="https://arxiv.org/abs/2406.01422">paper</a> | <a href="https://github.com/LingmaTongyi/RepoUnderstanding">github</a></li>
-              <li><em>2025.10.09</em>: Lingma SWE-GPT: An Open Development-Process-Centric Language Model for Automated Software Improvement. <a href="https://arxiv.org/abs/2411.00622">paper</a> | <a href="https://github.com/LingmaTongyi/Lingma-SWE-GPT">github</a></li>
-              <li><em>2025.09.28</em>: SWE-bench: Can Language Models Resolve Real-World GitHub Issues? <a href="https://arxiv.org/abs/2310.06770">paper</a> | <a href="https://github.com/SWE-bench/SWE-bench">github</a></li>
-              <li><em>2025.09.26</em>: Vibe Coding vs. Agentic Coding: Fundamentals and Practical Implications of Agentic AI. <a href="https://arxiv.org/abs/2505.19443">paper</a></li>
+              <li><em>2025.10.16</em>: AutoCodeRover: Autonomous Program Improvement <a href="https://arxiv.org/abs/2404.05427">paper</a> | <a href="https://github.com/AutoCodeRoverSG/auto-code-rover">github</a> <font color="gray">#Agent</font></li>
+              <li><em>2025.10.15</em>: Alibaba LingmaAgent: Improving Automated Issue Resolution via Comprehensive Repository Exploration. <a href="https://arxiv.org/abs/2406.01422">paper</a> | <a href="https://github.com/LingmaTongyi/RepoUnderstanding">github</a> <font color="gray">#Agent</font></li>
+              <li><em>2025.10.09</em>: Lingma SWE-GPT: An Open Development-Process-Centric Language Model for Automated Software Improvement. <a href="https://arxiv.org/abs/2411.00622">paper</a> | <a href="https://github.com/LingmaTongyi/Lingma-SWE-GPT">github</a> <font color="gray">#Model</font></li>
+              <li><em>2025.09.28</em>: SWE-bench: Can Language Models Resolve Real-World GitHub Issues? <a href="https://arxiv.org/abs/2310.06770">paper</a> | <a href="https://github.com/SWE-bench/SWE-bench">github</a> <font color="gray">#Benchmark</font></li>
+              <li><em>2025.09.26</em>: Vibe Coding vs. Agentic Coding: Fundamentals and Practical Implications of Agentic AI. <a href="https://arxiv.org/abs/2505.19443">paper</a> <font color="gray">#Survey</font></li>
             </ul>
             
            
@@ -151,5 +151,53 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+<script>
+    // 自动统计每个 Topic 的博客数量
+    const topicCounts = {};
+    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
+
+    blogs.forEach(blog => {
+        // 找到博客条目中的 topic（灰色字体）
+        const topicFont = blog.querySelector('font[color="gray"]');
+        if (topicFont) {
+            const topic = topicFont.innerText.trim();
+            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+        }
+    });
+
+    // 对 Topic 按字母顺序排序
+    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
+
+    // 更新边栏 Topics 部分
+    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
+    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
+
+    sortedTopics.forEach(([topic, count]) => {
+        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
+    });
+
+    // 替换 Topics 区域内容
+    topicsContainer.innerHTML = topicsHTML;
+  </script>
+      <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          // 获取所有年份（h2）以及对应的博客条目（ul > li）
+          const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
+          let totalBlogs = 0;
+  
+          // 遍历每个年份部分，计算该年份下博客的数量
+          yearSections.forEach(section => {
+              const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
+              if (blogList && blogList.tagName === 'UL') {
+                  totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
+              }
+          });
+          // 更新 total_blogs 的文本内容
+          const totalBlogsElement = document.getElementById('total_blogs');
+          if (totalBlogsElement) {
+              totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
+          }
+      });
+  </script>
   </body>
 </html>
