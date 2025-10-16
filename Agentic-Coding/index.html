@@ -179,25 +179,5 @@ document.addEventListener("DOMContentLoaded", function () {
     // 替换 Topics 区域内容
     topicsContainer.innerHTML = topicsHTML;
   </script>
-      <script>
-      document.addEventListener('DOMContentLoaded', () => {
-          // 获取所有年份（h2）以及对应的博客条目（ul > li）
-          const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
-          let totalBlogs = 0;
-  
-          // 遍历每个年份部分，计算该年份下博客的数量
-          yearSections.forEach(section => {
-              const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
-              if (blogList && blogList.tagName === 'UL') {
-                  totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
-              }
-          });
-          // 更新 total_blogs 的文本内容
-          const totalBlogsElement = document.getElementById('total_blogs');
-          if (totalBlogsElement) {
-              totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
-          }
-      });
-  </script>
   </body>
 </html>
