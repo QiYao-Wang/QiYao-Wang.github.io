@@ -300,8 +300,8 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 - ***Information Retrieval (IR)***: Exploring improved <em>generative IR (GenIR)</em> approaches to enhance the capabilities of LLMs, and leveraging LLMs to improve IR performance.
 - ***Agentic AI***: Agentic Coding. [[Topic Homepage](https://wangqiyao.me/Agentic-Coding/)]
 - ***AI for Science and Social Science***: Developing domain-specific applications using LLMs and MLLMs to empower research in sciences and social sciences.
-  - LLMs for Intellectual Property (mainly for Patents) [[Topic Homepage](https://wangqiyao.me/LLM4Patent/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
-  - LLMs for Law
+  - ***IP Intelligence***: LLMs for Intellectual Property (mainly for Patents) [[Topic Homepage](https://wangqiyao.me/LLM4Patent/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)  [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-blue?label=Collection-LLMs4Patent)](https://huggingface.co/collections/QiYao-Wang/llms-for-patent-678e6dbc8af7a3998738cc57)
+  - ***Law Intelligence***: LLMs for Law (there are some excellent works of SIAT-NLP, such as <a href="https://github.com/siat-nlp/HanFei">HanFei</a> and <a href="https://arxiv.org/abs/2408.08089">AgentCourt</a>)
  
 # 🔥 News
 
