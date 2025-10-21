@@ -467,7 +467,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 # 🎖 Honors and Awards
 <p><strong>Academic Awards</strong></p>
 
-- ***2025.06***: Undergraduate thesis "Research and Application of Large Language Models in the Intellectual Property Field" —— ***Outstanding Thesis (校优秀本科毕业论文)*** (<span style="color:darkred">***Top 4.39%***</span>)
+- ***2025.06***: Undergraduate thesis *Research and Application of Large Language Models in the Intellectual Property Field* —— ***Outstanding Thesis (校优秀本科毕业论文)*** (<span style="color:darkred">***Top 4.39%***</span>)
 
 <p><strong>Competition Awards</strong></p>
 
