@@ -298,7 +298,9 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 - ***General LLMs and MLLMs***: Exploring the underlying mechanisms of LLMs and MLLMs, and researching improved fine-tuning methods to enhance their understanding, reasoning, and generation capabilities. [[MLLMs Topic Homepage](https://wangqiyao.me/MLLMs/)]
   - ***Reinforcement Learning***: RL for LLMs Reasoning, Reward Modeling. [[Topic Homepage](https://wangqiyao.me/RL/)]
 - ***Information Retrieval (IR)***: Exploring improved <em>generative IR (GenIR)</em> approaches to enhance the capabilities of LLMs, and leveraging LLMs to improve IR performance.
-- ***Agentic AI***: Agentic Coding. [[Topic Homepage](https://wangqiyao.me/Agentic-Coding/)]
+- ***Agentic AI***: Developing general-purpose and code-oriented Agentic AI models through the synthesis of large-scale agentic datasets and the application of agentic reinforcement learning.
+  - ***General Agentic AI***: [[Topic Homepage](https://wangqiyao.me/General-Agentic-AI/)]
+  - ***Agentic Coding***: [[Topic Homepage](https://wangqiyao.me/Agentic-Coding/)]
 - ***AI for Science and Social Science***: Developing domain-specific applications using LLMs and MLLMs to empower research in sciences and social sciences.
   - ***IP Intelligence***: Research on AI for IP service and IP of AI [[Topic Homepage](https://wangqiyao.me/IPIntelligence/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
   - ***Law Intelligence***: LLMs for Law (there are some excellent works of SIAT-NLP, such as <a href="https://github.com/siat-nlp/HanFei">HanFei</a> and <a href="https://arxiv.org/abs/2408.08089">AgentCourt</a>)
