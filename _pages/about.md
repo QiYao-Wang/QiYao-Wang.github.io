@@ -421,7 +421,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
     </li>
     <li>
       <span>大语言模型赋能知识产权信息服务模型构建及应用.</span>
-      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版)</strong>. DUT.
+      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版, 北大核心)</strong>. DUT.
     </li>
     <li>
       <span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span>
