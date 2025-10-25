@@ -413,7 +413,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
   <ul>
     <li>
       <span>大语言模型驱动知识产权服务智能体研究.</span>
-      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em> 2025. <strong>图书情报工作 (CSSCI, 北大核心)</strong>. DUT.
+      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em> 2025. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT.
     </li>
     <li>
       <span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span>
