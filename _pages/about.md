@@ -310,7 +310,7 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
-  <li><em>2025.10.19:</em> &nbsp;🎉 As the Team Supervisor, we have advanced to the on-site national finals of the 2025 Challenge Cup. See you in Nanjing on November 1st!</li>
+  <li><em><strong>2025.10.19:</strong></em> &nbsp;🎉 As the Team Supervisor, we have advanced to the on-site national finals of the 2025 Challenge Cup. See you in Nanjing on November 1st!</li>
   <li><em><strong>2025.07.30:</strong></em> &nbsp;🎉 As the Team Supervisor, I successfully guided my team to win the Third Prize at the national level in the 18th China College Students' Computer Design Competition.</li>
   <li>
     <em><strong>2025.06.14:</strong></em> &nbsp;🧠 My work <em>AutoPatent</em> was presented as a poster at the 
