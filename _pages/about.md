@@ -280,7 +280,7 @@ Prof. <a href="http://faculty.dlut.edu.cn/2004012069/en/index.htm">Kan Xu</a>
 and Prof. <a href="https://faculty.dlut.edu.cn/linhongfei/zh_CN/index/789935/list/index.htm">Hongfei Lin</a>.
 
 <p>
-I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. <br> Please go thorough <a href="https://wangqiyao.me/lab">Lab Group Homepage</a>. <br>
+I warmly welcome undergraduates (any major) from DUT to join our research group for collaborative exploration. Please go thorough <a href="https://wangqiyao.me/lab">Lab Group Homepage</a>. 
 And if you are interested in my research, <strong style="color: darkred">feel free to collaborate with me</strong>!
 </p>
 <p>
