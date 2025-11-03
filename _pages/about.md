@@ -284,7 +284,7 @@ I warmly welcome undergraduates (any major) from DUT to join our research group 
 And if you are interested in my research, <strong style="color: darkred">feel free to collaborate with me</strong>!
 </p>
 <p>
-As the project leader and supervisor, guided the entire undergraduate team to achieve 9 national-level awards (including the National Silver Award of the Challenge Cup) and 12 provincial-level awards. 作为项目负责人和指导者，指导整个本科团队获得 9 项国家级奖项（包括挑战杯国家银奖）和 12 项省级奖项。
+As the project leader and supervisor, guided the entire undergraduate team to achieve 10 national-level awards and 12 provincial-level awards. 作为项目负责人和指导者，指导整个本科团队获得 10 项国家级奖项（包括2024年挑战杯国家银奖和2025年挑战杯国家级一等奖）和 12 项省级奖项。
 </p>
 
 <p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn or wangqiyao@mail.dlut.edu.cn</p>
@@ -480,6 +480,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
+- ***2025.11***: The 19th “Challenge Cup” National College Students’ Extracurricular Academic Science and Technology Competition —— <span style="color:darkred">***Second Prize***</span> at the National level. (Supervisor)
 - ***2025.10***：The 11th Liaoning Province TRIZ Cup College Student Innovation Method Competition —— *First Prize* in Liaoning Province. (Supervisor)
 - ***2025.08***：The 17th “Challenge Cup” Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province. (Supervisor)
 - ***2025.08***：The 13th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Supervisor)
