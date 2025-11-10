@@ -507,6 +507,9 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 - ***2021.09 - 2025.06***, Bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academe Service
+<p><strong>Talks</strong></p>
+
+- ***2024.12.09***: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a>
 
 # 💻 Internships
 - ***2025.10 - (now)***: Tongyi Lab, Alibaba, Beijing
