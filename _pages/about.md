@@ -430,7 +430,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
     </li>
     <li>
       <span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span>
-      <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT. <a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a>
+      <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT. [<a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a>]
     </li>
   </ul>
   </div>
