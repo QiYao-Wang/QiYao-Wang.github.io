@@ -437,6 +437,15 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 
 # 🔧 Projects
 
+<p><strong>Research Projects</strong></p>
+<div>
+  <ul>
+    <li>大语言模型技术对知识产权数据开放和使用的影响研究：以专利为例. 国家知识产权战略实施研究基地专项研究. ZX250602. (Student Member)</li>
+    <li>融合多源信息的学术推荐研究. 国家自然科学基金面上项目. 61976036. (Student Member)</li>
+    <li>基于专利图谱和企业画像的专利推荐技术研究. 全国哲学社会科学工作办公室国家社科基金一般项目. 20BTQ074. (Student Member)</li>
+  </ul>
+</div>
+
 <p><strong>College Students' Innovative Entrepreneurial Training Plan Program</strong></p>
 
 <p style="color:gray">Projects in Dalian University of Technology.</p>
