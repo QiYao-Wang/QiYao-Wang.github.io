@@ -525,7 +525,11 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 - ***2025.10 - (now)***: Tongyi Lab, Alibaba, Beijing
 - ***2022.12 - 2025.09***: DUTIR, Dalian
 
-<script type="text/javascript" id="clustrmaps" src="//clustrmaps.com/map_v2.js?d=1J0Kg5XE2qpaBmH0VRGPD-8rXYQu5zUhIvPZUdSitXg&cl=ffffff&w=a"></script>
+<div style="width: 300px; height: auto;">
+  <script type="text/javascript" id="clustrmaps" 
+    src="//clustrmaps.com/map_v2.js?d=1J0Kg5XE2qpaBmH0VRGPD-8rXYQu5zUhIvPZUdSitXg&cl=ffffff&w=a">
+  </script>
+</div>
 
 Updated at November, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
