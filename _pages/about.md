@@ -329,7 +329,7 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 <dl>
   <dt><img align="left" width="100"
 hspace="10" wspace="20" src="../images/publications/ipbench.png">
-<span class="conference-label">Arxiv</span>
+<span class="conference-label">Preprint</span>
 </dt>
   <dd><strong>IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property</strong></dd>
 <dd><em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Hongfei Lin, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT.</dd>
@@ -343,7 +343,7 @@ hspace="10" wspace="20" src="../images/publications/ipbench.png">
 <dl>
 <dt><img align="left" width="100"
 hspace="10" wspace="20" src="../images/publications/autopatent.png">
-<span class="conference-label">Arxiv</span>
+<span class="conference-label">Preprint</span>
 </dt>
   <dd><strong>AutoPatent: A Multi-Agent Framework for Automatic Patent Generation</strong></dd>
 <dd> <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT.</dd>
