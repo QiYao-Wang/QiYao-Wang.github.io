@@ -519,8 +519,8 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 # 💬 Academe Service
 <p><strong>Talks</strong></p>
 
-- ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 - ***2024.12.09***: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a>
+- ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 
 # 💻 Internships
 - ***2025.10 - (now)***: Tongyi Lab, Alibaba, Beijing
