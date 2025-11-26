@@ -362,7 +362,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 
 <hr>
 
-<p><strong>2025</strong></p>
+<p><strong>2025 and Earlier</strong></p>
 
 <dl>
   <dt><img align="left" width="100"
@@ -375,10 +375,6 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 <dd><a href="https://supergpqa.github.io">Website</a> | <a href="https://arxiv.org/abs/2502.14739">Paper</a> | <a href="https://huggingface.co/datasets/m-a-p/SuperGPQA">HuggingFace</a> | <a href="https://github.com/SuperGPQA/SuperGPQA">Github</a></dd>
 <dd><a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></dd>
 </dl>
-
-<hr>
-
-<p><strong>2024</strong></p>
 
 <div>
   <ul>
