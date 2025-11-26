@@ -376,6 +376,8 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 <dd><a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></dd>
 </dl>
 
+<br>
+
 <div>
   <ul>
     <li>
