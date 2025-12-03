@@ -285,6 +285,8 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 </p>
 <p>
 As the project leader and supervisor, guided the entire undergraduate team to achieve 10 national-level awards and 12 provincial-level awards. 作为项目负责人和指导者，指导整个本科团队获得 10 项国家级奖项（包括2024年挑战杯国家银奖和2025年挑战杯国家级一等奖）和 12 项省级奖项。
+
+本科期间，发表《中文信息学报》(CCF-T1) 一作两篇，CSSCI期刊论文两篇（《图书情报工作》、《图书馆理论与实践》）; 当前博士在读期间，发表 NeurIPS (CCF-A) 一篇.
 </p>
 
 <p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn or wangqiyao@mail.dlut.edu.cn</p>
