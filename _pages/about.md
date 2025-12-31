@@ -289,7 +289,7 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 
 <p>博士生在读，发表 NeurIPS (CCF-A) 一篇.</p>
 
-<p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn or wangqiyao@mail.dlut.edu.cn</p>
+<p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn</p>
 
 <hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
