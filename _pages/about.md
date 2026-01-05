@@ -352,7 +352,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
   <dd><strong>AutoPatent: A Multi-Agent Framework for Automatic Patent Generation</strong></dd>
 <dd> <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT.</dd>
 <!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
-<dd><a href="https://autopatent.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2412.09796">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/AutoPatent">Github</a></dd>
+<dd><a href="https://autopatent.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2412.09796">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/AutoPatent">Github</a> | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元>xa></dd>
 <dd><a href="https://github.com/QiYao-Wang/AutoPatent"><img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></dd>
 </dl>
 
