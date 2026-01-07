@@ -489,6 +489,11 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 - ***2025.08***: Outstanding Paper at the 2nd Annual Conference on Information Resource Management —— *Third Prize*. Yuan Lin, Chenxi Xu, Ya Zhang, ***Qiyao Wang***.
 - ***2025.06***: Undergraduate thesis *Research and Application of Large Language Models in the Intellectual Property Field* —— ***Outstanding Thesis (校优秀本科毕业论文)*** (<span style="color:darkred">***Top 4.39%***</span>)
 
+<p><strong>Media Coverage</strong></p>
+
+- ***2025.03.01***: Taibao-IP Team provided DeepSeek model deployment services for the School of Public Administration at DUT, which reported by <a href="https://app2.gmdaily.cn/as/opened/n/88779004361149b8afb610ce04c162f6">光明日报<a>.
+- ***2024.12.12***: AutoPatent was reported by <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>.
+
 <p><strong>Competition Awards</strong></p>
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
