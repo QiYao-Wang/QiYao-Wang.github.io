@@ -491,6 +491,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
 
 <p><strong>Media Coverage</strong></p>
 
+- ***2025.09.28***: IPBench was reported by <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理>sa>.
 - ***2025.03.01***: Taibao-IP Team provided DeepSeek model deployment services for the School of Public Administration at DUT, which reported by <a href="https://app2.gmdaily.cn/as/opened/n/88779004361149b8afb610ce04c162f6">光明日报<a>.
 - ***2024.12.12***: AutoPatent was reported by <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>.
 
