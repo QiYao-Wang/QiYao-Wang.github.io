@@ -540,7 +540,7 @@ hspace="10" wspace="20" src="../images/publications/supergpqa.png">
   </script>
 </div>
 
-Updated at November, 2025. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
+Updated at January, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
 
 <script>
