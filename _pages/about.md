@@ -368,8 +368,6 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 
 <p><strong>2025 and Earlier</strong></p>
 
-<br>
-
 <div>
   <ul>
     <li>
