@@ -293,7 +293,6 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 
 <hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
-<p style="font-family: 'Times New Roman', sans-serif;">而世之奇伟、瑰怪，非常之观，常在于险远，而人之所罕至焉，故非有志者不能至也。<br><span style="font-style: italic; float: right;">—— 游褒禅山记 · 临川先生</span></p>
 
 # 📌 Research Interests  
 
