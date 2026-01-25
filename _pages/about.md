@@ -361,7 +361,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
 
 <p><strong>Spotlight Models</strong></p>
-- Taibao(太保): Intellectual Property Service Large Language Model, published by <a href="https://spap.dlut.edu.cn/info/1123/4095.htm">School of Public Administration and Policy, DUT</a>, <a href="https://ir.dlut.edu.cn/">DUTIR Lab</a> and <a href="https://www.dlcipf.cn/">CNIPA-CIPF</a> (Leader)
+- Taibao(太保): Intellectual Property Service Large Language Model, published by <a href="https://spap.dlut.edu.cn/info/1123/4095.htm">School of Public Administration and Policy, DUT</a>, <a href="https://ir.dlut.edu.cn/">DUTIR Lab</a> and <a href="https://www.dlcipf.cn/">CNIPA-CIPF</a> (Leader) <a href="https://github.com/QiYao-Wang/Taibao"><img src="https://img.shields.io/github/stars/QiYao-Wang/Taibao" alt="Taibao"></a>
 
 <hr>
 
