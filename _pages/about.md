@@ -370,7 +370,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <div>
   <ul>
     <li>
-     Learning Ordinal Probabilistic Reward from Preferences <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. M-A-P. <strong>ICLR 2026</strong>.
+     Learning Ordinal Probabilistic Reward from Preferences <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. CAS-SIAT. <strong>ICLR 2026</strong>.
      [<a href="https://openreview.net/forum?id=0Vf5trUAVF">Paper</a>]
     </li>
     <li>
