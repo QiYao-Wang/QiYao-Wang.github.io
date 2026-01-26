@@ -365,7 +365,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 
 <hr>
 
-<p><strong>2025 and Earlier</strong></p>
+<p><strong>2026 and Earlier</strong></p>
 
 <div>
   <ul>
