@@ -160,8 +160,102 @@ layout: compress
     </tr>
   </tbody>
 </table>
-        <li><strong>rearrange</strong>: 可以重新排列张量的维度。</li>
-          </ul>
+        <li><strong>rearrange</strong>: 可以重新排列、连接和拆分张量的维度。</li>
+        <table border="1" cellspacing="0" cellpadding="6">
+  <thead>
+    <tr>
+      <th>操作类型</th>
+      <th>rearrange 表达式示例</th>
+      <th>输入形状示例</th>
+      <th>输出形状</th>
+      <th>等价常见操作</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>转置 / 维度重排</td>
+      <td><code>rearrange(x, "b c h w -> b h w c")</code></td>
+      <td>(b, c, h, w)</td>
+      <td>(b, h, w, c)</td>
+      <td><code>permute</code></td>
+      <td>仅改变维度顺序，不改数值</td>
+    </tr>
+    <tr>
+      <td>合并维度（merge）</td>
+      <td><code>rearrange(x, "b t d -> b (t d)")</code></td>
+      <td>(b, t, d)</td>
+      <td>(b, t·d)</td>
+      <td><code>reshape</code></td>
+      <td>将多个维度合并成一个</td>
+    </tr>
+    <tr>
+      <td>拆分维度（split）</td>
+      <td><code>rearrange(x, "b (h d) -> b h d", h=8)</code></td>
+      <td>(b, h·d)</td>
+      <td>(b, h, d)</td>
+      <td><code>view</code></td>
+      <td>需要显式指定拆分尺寸</td>
+    </tr>
+    <tr>
+      <td>Flatten</td>
+      <td><code>rearrange(x, "b c h w -> b (c h w)")</code></td>
+      <td>(b, c, h, w)</td>
+      <td>(b, c·h·w)</td>
+      <td><code>flatten</code></td>
+      <td>常用于 CNN → Transformer</td>
+    </tr>
+    <tr>
+      <td>Unflatten</td>
+      <td><code>rearrange(x, "b (h w) c -> b c h w", h=32)</code></td>
+      <td>(b, h·w, c)</td>
+      <td>(b, c, h, w)</td>
+      <td><code>view</code></td>
+      <td>恢复空间结构</td>
+    </tr>
+    <tr>
+      <td>Patch 划分（ViT）</td>
+      <td><code>rearrange(x, "b c (h p1) (w p2) -> b (h w) (c p1 p2)", p1=16, p2=16)</code></td>
+      <td>(b, c, H, W)</td>
+      <td>(b, num_patches, patch_dim)</td>
+      <td>手写切块</td>
+      <td>Vision Transformer 核心操作</td>
+    </tr>
+    <tr>
+      <td>多头拆分（Heads）</td>
+      <td><code>rearrange(x, "b t (h d) -> b h t d", h=8)</code></td>
+      <td>(b, t, h·d)</td>
+      <td>(b, h, t, d)</td>
+      <td>reshape + permute</td>
+      <td>Attention 预处理</td>
+    </tr>
+    <tr>
+      <td>多头合并</td>
+      <td><code>rearrange(x, "b h t d -> b t (h d)")</code></td>
+      <td>(b, h, t, d)</td>
+      <td>(b, t, h·d)</td>
+      <td>reshape</td>
+      <td>Attention 输出恢复</td>
+    </tr>
+    <tr>
+      <td>Batch / Token 混合</td>
+      <td><code>rearrange(x, "b t d -> (b t) d")</code></td>
+      <td>(b, t, d)</td>
+      <td>(b·t, d)</td>
+      <td>view</td>
+      <td>常用于共享线性层</td>
+    </tr>
+    <tr>
+      <td>保持不变（Identity）</td>
+      <td><code>rearrange(x, "b t d -> b t d")</code></td>
+      <td>(b, t, d)</td>
+      <td>(b, t, d)</td>
+      <td>无</td>
+      <td>用于代码可读性 / 占位</td>
+    </tr>
+  </tbody>
+</table>    
+      </ul>
         </p>
 
 
