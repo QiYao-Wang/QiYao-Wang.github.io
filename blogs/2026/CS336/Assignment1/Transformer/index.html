@@ -50,7 +50,7 @@ layout: compress
         <h2 id="transformer-basics">Transformer Basics</h2>
         <p>语言模型的输入是经过 tokenizer 分词后的整数 token IDs 序列 (batch化)，形状为 <code>(batch_size, sequence_length)</code>，输出为正则化的词典中 token 的概率分布，形状为<code>(batch_size, sequence_length, vocab_size)</code>。训练语言模型时，计算输出概率分布和实际标签分布之间的交叉熵损失（cross-entropy loss）。在推理阶段，则使用当前时间步的下一个 token 的分布来采样解码得到预测 token，之后该 token 又会加入输入序列中继续预测下一时间步的 token。</p>
 
-        <p>基于Transformer架构的语言模型主要包括以下几个组件和步骤（见图<a href="#fig1-and-2">1</a>）：给定 token IDs 序列，经过 <strong>Embedding Layer</strong> 将整数的 token ID 映射成稠密的向量，之后传入 <code>num_layers</code> 层的 Transformer blocks，取最后一层 Transformer block 的输出，通过一个 FFN（一般称为 LM head）来产生词典级别的输出 token 概率分布，之后进行解码采样得到预测的 token。</p>
+        <p>基于Transformer架构的语言模型主要包括以下几个组件和步骤（见图<a href="#fig1-and-2" target="_self">1</a>）：给定 token IDs 序列，经过 <strong>Embedding Layer</strong> 将整数的 token ID 映射成稠密的向量，之后传入 <code>num_layers</code> 层的 Transformer blocks，取最后一层 Transformer block 的输出，通过一个 FFN（一般称为 LM head）来产生词典级别的输出 token 概率分布，之后进行解码采样得到预测的 token。</p>
 
         <figure id="fig1-and-2">
           <img src="/blogs/2026/CS336/Assignment1/figure1-and-2.png" alt="Transformer">
