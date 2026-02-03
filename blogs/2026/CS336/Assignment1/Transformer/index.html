@@ -42,348 +42,251 @@ layout: compress
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
           <section class="page__content" itemprop="text">
-
-            <h1>CS336 Assignment 1: BPE Tokenizer's Detailed Implementation</h1>
-            <p>Aug. 01, 2025 - Sep. 29, 2025 · Qiyao Wang</p>
+            <h1>CS336 Assignment 1: Transformers Language Model Architecture</h1>
+            <p>Feb. 03, 2026 · Qiyao Wang</p>
             
             <div class="blog-content">
+        
+        <h2 id="transformer-basics">Transformer Basics</h2>
+        <p>语言模型的输入是经过 tokenizer 分词后的整数 token IDs 序列 (batch化)，形状为 <code>(batch_size, sequence_length)</code>，输出为正则化的词典中 token 的概率分布，形状为<code>(batch_size, sequence_length, vocab_size)</code>。训练语言模型时，计算输出概率分布和实际标签分布之间的交叉熵损失（cross-entropy loss）。在推理阶段，则使用当前时间步的下一个 token 的分布来采样解码得到预测 token，之后该 token 又会加入输入序列中继续预测下一时间步的 token。</p>
 
-        <h2 id="BPE-Tokenizer">BPE Tokenizer</h2>
-        <h3 id="BPE-Training-Example">BPE Training Example (inefficient yet valid logic for understanding)</h3>
-        <p>Assignment 1 给了一个用于理解 BPE 流程的简单的处理过程，我将其形成了相应的代码，但是相对低效，BPE 的训练流程及代码如下：( 所处理的文本见代码 )</p>
-        <ol>
-          <li><strong>Vocabulary Initialization</strong>: 初始化一个 256+1 大小的字典，前 256 为 0-255 每个字节的表示 第 257 个 token 为 特殊 token <code><|endoftext|></code>；</li>
-          <li><strong>Pre-Tokenization</strong>: 将文本进行预分词，避免导致类似 "dog!" 和 "dog." 语义相近，但分词结果完全不同的情况，此处使用直接的 <code>split</code> 函数，一般而言可以使用正则的手段进行（后续）；</li>
-          <li><strong>Merges</strong>: 每一轮，计算每个元组中相邻元素组成的新 pair 的频率，选择频率最大的（相同频率时，选择字典序大的）pair 进行合并，作为引入的新 token，经过 $N$ 次迭代（超参数，此处使用 $N=6$）</li>
-        </ol>
-<pre>
-<code class="language-python">from typing import Dict
-from collections import Counter
+        <p>基于Transformer架构的语言模型主要包括以下几个组件和步骤（见图<a href="#fig1-and-2" target="_self">1</a>）：给定 token IDs 序列，经过 <strong>Embedding Layer</strong> 将整数的 token ID 映射成稠密的向量，之后传入 <code>num_layers</code> 层的 Transformer blocks，取最后一层 Transformer block 的输出，通过一个 FFN（一般称为 LM head）来产生词典级别的输出 token 概率分布，之后进行解码采样得到预测的 token。</p>
 
-text = """low low low low low
-lower lower widest widest widest
-newest newest newest newest newest newest
-"""
-
-def init_vocab() -> Dict[str, int]:
-    """256 byte + <|endoftext|>"""
-    vocab = dict()
-    for i in range(256):
-        item = {
-            f"{chr(i)}": i
-        }
-        vocab.update(item)
-
-    eot = {
-        "<|endoftext|>": 256
-    }
-    vocab.update(eot)
-    return vocab
-
-def pre_tokenization(text):
-    text_split = text.split()
-    text_counter = Counter(text_split)
-    return dict(text_counter)
-
-def pair_count(cand_list):
-    status = Counter()
-    for cand in cand_list:
-        cand_key = list(cand.keys())[0]
-        cand_value = list(cand.values())[0]
-        for i in range(len(cand_key) - 1):
-            # i: [0,1,2] i+1: [1,2,3] ❌
-            # i: [0,1] i+1: [1,2] ✅
-            pair = (cand_key[i], cand_key[i + 1])
-            status[pair] += cand_value
-    return dict(status)
-
-def merge(pair_counted, cand_list):
-
-    # 频率相同时，选择字典序大的
-    max_freq = max(pair_counted.values())
-    max_pairs = [pair for pair, freq in pair_counted.items() if freq == max_freq]
-    max_cnt_pair = max(max_pairs)
-
-    new_cand_list = []
-    for cand in cand_list:
-        cand_key = list(cand.keys())[0]
-        cand_value = list(cand.values())[0]
-        # 判断 (a, b) slice 是否在 x1,x2,...xn 中，保持邻近顺序
-        is_in = any(cand_key[i:i+len(max_cnt_pair)] == max_cnt_pair for i in range(len(cand_key) - 1))
-        if is_in:
-            new_key = []
-            i = 0
-            while i < len(cand_key):
-                if cand_key[i:i + len(max_cnt_pair)] == max_cnt_pair:
-                    new_key.append("".join(max_cnt_pair))
-                    i += len(max_cnt_pair)
-                else:
-                    new_key.append(cand_key[i])
-                    i += 1
-
-            new_key = tuple(new_key)
-            new_cand_list.append({new_key: cand_value})
-        else:
-            new_cand_list.append({cand_key: cand_value})
-    return new_cand_list, max_cnt_pair
-
-if __name__ == '__main__':
-    num_merges = 6
-
-    vocab = init_vocab()
-    pre_tokenized = pre_tokenization(text)
-
-    merges = []
-
-    for word, count in pre_tokenized.items():
-        item_key = tuple(list(word))
-        merges.append({
-            item_key: count
-        })
-
-    new_tokens = []
-
-    for _ in range(num_merges):
-        pair_cnt = pair_count(merges)
-        merges, new_token = merge(pair_cnt, merges)
-        new_tokens.append(new_token)
-        print(merges)
-    print(new_tokens)
-    new_tokens = ["".join(item) for item in new_tokens]
-    print(new_tokens)
-    for token in new_tokens:
-        vocab_size = len(vocab)
-        vocab[token] = vocab_size
-    print(vocab)</code>
-</pre>
-        <p>如下图 1 所示为相应的运行结果，其中代码中有步骤级的打印结果</p>
-        <figure>
-          <img src="/blogs/2025/CS336/Assignment1/bpe-training-example.png" alt="bpe-training-example">
-          <figcaption>图1：BPE Training Example 运行结果</figcaption>
+        <figure id="fig1-and-2">
+          <img src="/blogs/2026/CS336/Assignment1/figure1-and-2.png" alt="Transformer">
+          <figcaption>图1：(Figure 1) Transformer 架构图; (Figure 2) Pre-norm Transformer Block.</figcaption>
         </figure>
 
-        <h3 id="BPE-Tokenizer-Training">BPE Tokenizer Training (More Efficient Manner)</h3>
-          <p>对于"Problem (train_bpe): BPE Tokenizer Training (15 points)"，在<code>adapter.py</code>中<code>run_bpe_tokenizer()</code>中引入<code>bpe_tokenizer.py</code>中的相关函数，具体实现如下</p>
-<pre><code class="language-python">import regex as re
-import os
-from multiprocessing import Pool # 多线程
-from typing import BinaryIO
-from collections import defaultdict
-import time
-
-"""对大规模文本进行分块处理，寻找块边界，方便后续的并行处理"""
-def find_chunk_boundaries(
-    file: BinaryIO,
-    desired_num_chunks: int,
-    split_special_token: bytes,
-) -> list[int]:
-    """
-    Chunk the file into parts that can be counted independently.
-    May return fewer chunks if the boundaries end up overlapping.
-    """
-    assert isinstance(split_special_token, bytes), "Must represent special token as a bytestring"
-
-    # Get total file size in bytes
-    file.seek(0, os.SEEK_END)
-    file_size = file.tell()
-    file.seek(0)
-
-    chunk_size = file_size // desired_num_chunks
-
-    # Initial guesses for chunk boundary locations, uniformly spaced
-    # Chunks start on previous index, don't include last index
-    chunk_boundaries = [i * chunk_size for i in range(desired_num_chunks + 1)]
-    chunk_boundaries[-1] = file_size
-
-    mini_chunk_size = 4096  # Read ahead by 4k bytes at a time
-
-    for bi in range(1, len(chunk_boundaries) - 1):
-        initial_position = chunk_boundaries[bi]
-        file.seek(initial_position)  # Start at boundary guess
-        while True:
-            mini_chunk = file.read(mini_chunk_size)  # Read a mini chunk
-
-            # If EOF, this boundary should be at the end of the file
-            if mini_chunk == b"":
-                chunk_boundaries[bi] = file_size
-                break
-
-            # Find the special token in the mini chunk
-            found_at = mini_chunk.find(split_special_token)
-            if found_at != -1:
-                chunk_boundaries[bi] = initial_position + found_at
-                break
-            initial_position += mini_chunk_size
-
-    # Make sure all boundaries are unique, but might be fewer than desired_num_chunks
-    return sorted(set(chunk_boundaries))
-
-"""对每个chunk在tokenizer之前进行预处理、预分词、统计相应的字节对频率"""
-def process_chunk(args: tuple[str, int, int, list[str]]) -> list[list[bytes]]:
-    input_path, start, end, special_tokens = args
-    """
-    Processing a chunk of the input file
-    returns byte pair frequency counts
-
-    Args:
-        input_path (str): the path of input file
-        start (int): the start byte offset of the chunk
-        end (int): the end byte offset of the chunk
-        special_tokens (list[bytes]): the list of special tokens that should not be merged
-
-    Returns:
-        pre_token_bytes (list[list[bytes]])
-            list of tokens, each token is a list of bytes
-    """
-
-    with open(input_path, "rb") as file:
-        file.seek(start)
-        chunk = file.read(end - start).decode("utf-8", errors="ignore")
-
-    """1. Remove special tokens
-    Construct Regrex Pattern
-    | means or
-    re.escape(tok) escape each special character
-    """
-    pattern = "|".join(re.escape(tok) for tok in special_tokens)
-    documents = re.split(pattern, chunk)
-
-    """2. Pre-Tokenize and count byte pair frequencies"""
-    pre_tokens_bytes: list[list[bytes]] = []
-    PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-    for doc in documents:
-        tokens = [match.group(0).encode("utf-8") for match in re.finditer(PAT, doc)]
-        for token in tokens:
-            token_bytes = [bytes([b]) for b in token]
-            pre_tokens_bytes.append(token_bytes)
-
-    return pre_tokens_bytes
-
-def train_bpe(
-        input_path: str,
-        vocab_size: int,
-        special_tokens: list[str],
-        num_processes: int = 16
-) -> tuple[dict[int, bytes], list[tuple[bytes, bytes]]]:
-    """
-    Training a BPE Tokenizer on the given corpus.
-    :param input_path: str, training corpus path
-    :param vocab_size: int, size of the final vocabulary
-    :param special_tokens: list[str], list of special tokens
-        e.g. ["<|endoftext|>", "<pad>"] which directly added into vocabulary, not participate in merge process
-    :param num_processes: int, optional (default=8)
-    :return:
-        vocab: a dictionary mapping token IDs to token values
-            dict[int, bytes] {0: "0", ...}
-        merges: list of merged tokens, where each tuple represents two byte-level tokens
-            list[tuple[bytes, bytes]]
-    """
-    start_time = time.time()
-    # print("Tokenizing corpus...")
-    # 1. Initialize Vocabulary
-    vocab = {
-        i: bytes([i]) for i in range(256)
-    }
-    for token in special_tokens:
-        """After add each special token into vocab, its length +1"""
-        vocab[len(vocab)] = token.encode("utf-8")
-
-    # 2. Pre-tokenization
-    """find_chunk_boundaries(file, desired_num_chunks, split_special_token)"""
-    with open(input_path, "rb") as f:
-        boundaries = find_chunk_boundaries(f, num_processes, "<|endoftext|>".encode("utf-8"))
-    """Construct Multi-thread task"""
-    """[0 : len(boundaries) - 2], [1 : len(boundaries) - 1]"""
-    task_args = [(input_path, start, end, special_tokens) for start, end in zip(boundaries[:-1], boundaries[1:])]
-    with Pool(processes=num_processes) as pool:
-        chunk_results = pool.map(process_chunk, task_args)
-
-
-    # 3. Compute BPE merges
-    merges: list[tuple[bytes, bytes]] = []
-    pre_tokens_bytes: list[list[bytes]] = [token for chunk in chunk_results for token in chunk]
-    counts = defaultdict(int)
-    pair_to_indices = defaultdict(set) # 有点类似倒排索引表
-    for idx, token in enumerate(pre_tokens_bytes):
-        for i in range(len(token) - 1): # Token is a list of bytes
-            pair = (token[i], token[i + 1])
-            counts[pair] += 1
-            pair_to_indices[pair].add(idx)
-
-    idx = len(vocab)
-    while idx < vocab_size:
-        if not counts:
-            break
-
-        max_pair: tuple[bytes, bytes] = None
-        max_cnt = -1
-        for pair, cnt in counts.items():
-            if cnt > max_cnt:
-                max_pair = pair
-                max_cnt = cnt
-            elif cnt == max_cnt:
-                if max_pair is None or pair > max_pair:
-                    max_pair = pair
-                    # pair > max_pair select the one which is lexicographically larger
-
-        merges.append(max_pair)
-        a, b = max_pair
-        new_token = a + b
-        vocab[idx] = new_token
-        idx += 1
-
-        # process affected indices: find max_pair in which token
-        affected_indices = pair_to_indices[max_pair].copy() # ! Note this copy
-        for j in affected_indices:
-            token = pre_tokens_bytes[j] # find the token which contains the max_pair
-            for i in range(len(token) - 1): # change the consists of current token
-                old_pair = (token[i], token[i + 1])
-                pair_to_indices[old_pair].discard(j)
-                # 去除倒排索引表中的docid
-                counts[old_pair] -= 1
-                # 合并后，token中其他的pair也要变化
-                if counts[old_pair] == 0:
-                    counts.pop(old_pair)
-                    pair_to_indices.pop(old_pair, None)
-
-            merged = [] # 合并后
-            i = 0
-            while i < len(token):
-                if i < len(token) - 1 and token[i] == a and token[i+1] == b: # Location a+b
-                    merged.append(new_token)
-                    i += 2
-                else:
-                    merged.append(token[i])
-                    i += 1
-
-            pre_tokens_bytes[j] = merged
-
-            token = pre_tokens_bytes[j]
-            for i in range(len(token) - 1):
-                pair = (token[i], token[i + 1])
-                counts[pair] += 1
-                pair_to_indices[pair].add(j)
-    end_time = time.time()
-    print(f"BPE training finished in {end_time - start_time:.2f} seconds")
-    return vocab, merges</code>
-</pre>
-          <p>上述代码，处理<code>TinyStories</code>数据集耗时3小时 (11480.69s)，应进行优化；对于owt数据集则需要更长的时间，如何加速？</p>
-
-          <h3>TODO List</h3>
-          <ul>
-              <li>分析BPE Tokenizer速度慢的原因，各环节耗时</li>
-              <li>设计方式加速BPE Tokenizer</li>
+        <h3 id="efficient-computation">Efficient Computation</h3>
+        <p>Transformer 架构中一般进行 batch-level 的并行计算。在具体分析的时候主要关注下面三个元素：
+          <ul>  
+            <li><strong>Elements of a batch</strong>: 每一次 forward computation 在一个 batch_size 大小的数据中进行，<code>forward</code>依次作用到 batch 中的每一个数据中。</li>
+            <li><strong>Sequence length</strong>: 对于 RMSNorm 和 Feed-forward 等 point-wise 的位置无关操作，在序列中每个位置的处理都一样。</li>
+            <li><strong>Attention heads</strong>: 注意力操作可以并行，也是 Transformer 可以并行的基础之一，并且可以基于 batch 来处理多头注意力操作。</li>
           </ul>
+          举例：data tensor D 的形状为 <code>(batch_size, sequence_length, d_model)</code>，在其上进行 batched vector-matrix multiply，矩阵为 A，形状是 <code>(d_model, d_model)</code>，则 <code>D @ A</code> 会进行 batched matrix multiply，其中 <code>(batch_size, sequence_length)</code> 是批处理的。
+        </p>
+        <p>使用 <strong>einsum notation</strong> 进行更方便的批处理。PyTorch 中是 <code>torch.einsum</code>，与框架无关的库是 <code>einops</code> （本次使用）和 <code>einx</code>。</p>
+        <p>主要有两个关键的操作：
+          <ul>
+            <li><strong>einsum</strong>: 可以对 tensor 做任意的操作，见下面的表格的总结。</li>
+            <table border="1" cellspacing="0" cellpadding="6">
+  <thead>
+    <tr>
+      <th>操作类型</th>
+      <th>einsum 表达式示例</th>
+      <th>张量形状示例</th>
+      <th>等价常见操作</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>转置 / 维度重排</td>
+      <td><code>einsum("ij->ji", A)</code></td>
+      <td>A: (i, j)</td>
+      <td><code>A.T</code>, <code>permute</code></td>
+      <td>只改变维度顺序，不做数值计算</td>
+    </tr>
+    <tr>
+      <td>求和（Reduce）</td>
+      <td><code>einsum("ij->i", A)</code></td>
+      <td>A: (i, j)</td>
+      <td><code>A.sum(dim=1)</code></td>
+      <td>消除未出现在输出中的维度</td>
+    </tr>
+    <tr>
+      <td>逐元素乘法</td>
+      <td><code>einsum("ij,ij->ij", A, B)</code></td>
+      <td>A,B: (i, j)</td>
+      <td><code>A * B</code></td>
+      <td>对应元素相乘</td>
+    </tr>
+    <tr>
+      <td>内积 / 点积</td>
+      <td><code>einsum("i,i->", x, y)</code></td>
+      <td>x,y: (i)</td>
+      <td><code>torch.dot</code></td>
+      <td>输出标量</td>
+    </tr>
+    <tr>
+      <td>外积</td>
+      <td><code>einsum("i,j->ij", x, y)</code></td>
+      <td>x:(i), y:(j)</td>
+      <td><code>outer</code></td>
+      <td>生成高阶张量</td>
+    </tr>
+    <tr>
+      <td>矩阵乘法</td>
+      <td><code>einsum("ij,jk->ik", A, B)</code></td>
+      <td>A:(i,j), B:(j,k)</td>
+      <td><code>matmul</code></td>
+      <td>经典线性代数操作</td>
+    </tr>
+    <tr>
+      <td>批量矩阵乘</td>
+      <td><code>einsum("bij,bjk->bik", A, B)</code></td>
+      <td>A,B:(b,i,j)</td>
+      <td><code>bmm</code></td>
+      <td>每个 batch 独立计算</td>
+    </tr>
+    <tr>
+      <td>Trace（迹）</td>
+      <td><code>einsum("ii->", A)</code></td>
+      <td>A:(i,i)</td>
+      <td><code>trace</code></td>
+      <td>对角线求和</td>
+    </tr>
+    <tr>
+      <td>Attention 核心计算</td>
+      <td><code>einsum("bhtd,bhsd->bhts", Q, K)</code></td>
+      <td>Q,K:(b,h,t,d)</td>
+      <td>Q @ Kᵀ</td>
+      <td>Transformer 中的相似度计算</td>
+    </tr>
+    <tr>
+      <td>线性层 / Token Mixing</td>
+      <td><code>einsum("btc,cd->btd", X, W)</code></td>
+      <td>X:(b,t,c), W:(c,d)</td>
+      <td>Linear / MatMul</td>
+      <td>特征维度线性变换</td>
+    </tr>
+    <tr>
+      <td>多操作融合</td>
+      <td><code>einsum("bct,td->bc", X, W)</code></td>
+      <td>X:(b,c,t)</td>
+      <td>permute + matmul + sum</td>
+      <td>一行完成多步计算</td>
+    </tr>
+  </tbody>
+</table>
+        <li><strong>rearrange</strong>: 可以重新排列、连接和拆分张量的维度。</li>
+        <table border="1" cellspacing="0" cellpadding="6">
+  <thead>
+    <tr>
+      <th>操作类型</th>
+      <th>rearrange 表达式示例</th>
+      <th>输入形状示例</th>
+      <th>输出形状</th>
+      <th>等价常见操作</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>转置 / 维度重排</td>
+      <td><code>rearrange(x, "b c h w -> b h w c")</code></td>
+      <td>(b, c, h, w)</td>
+      <td>(b, h, w, c)</td>
+      <td><code>permute</code></td>
+      <td>仅改变维度顺序，不改数值</td>
+    </tr>
+    <tr>
+      <td>合并维度（merge）</td>
+      <td><code>rearrange(x, "b t d -> b (t d)")</code></td>
+      <td>(b, t, d)</td>
+      <td>(b, t·d)</td>
+      <td><code>reshape</code></td>
+      <td>将多个维度合并成一个</td>
+    </tr>
+    <tr>
+      <td>拆分维度（split）</td>
+      <td><code>rearrange(x, "b (h d) -> b h d", h=8)</code></td>
+      <td>(b, h·d)</td>
+      <td>(b, h, d)</td>
+      <td><code>view</code></td>
+      <td>需要显式指定拆分尺寸</td>
+    </tr>
+    <tr>
+      <td>Flatten</td>
+      <td><code>rearrange(x, "b c h w -> b (c h w)")</code></td>
+      <td>(b, c, h, w)</td>
+      <td>(b, c·h·w)</td>
+      <td><code>flatten</code></td>
+      <td>常用于 CNN → Transformer</td>
+    </tr>
+    <tr>
+      <td>Unflatten</td>
+      <td><code>rearrange(x, "b (h w) c -> b c h w", h=32)</code></td>
+      <td>(b, h·w, c)</td>
+      <td>(b, c, h, w)</td>
+      <td><code>view</code></td>
+      <td>恢复空间结构</td>
+    </tr>
+    <tr>
+      <td>Patch 划分（ViT）</td>
+      <td><code>rearrange(x, "b c (h p1) (w p2) -> b (h w) (c p1 p2)", p1=16, p2=16)</code></td>
+      <td>(b, c, H, W)</td>
+      <td>(b, num_patches, patch_dim)</td>
+      <td>手写切块</td>
+      <td>Vision Transformer 核心操作</td>
+    </tr>
+    <tr>
+      <td>多头拆分（Heads）</td>
+      <td><code>rearrange(x, "b t (h d) -> b h t d", h=8)</code></td>
+      <td>(b, t, h·d)</td>
+      <td>(b, h, t, d)</td>
+      <td>reshape + permute</td>
+      <td>Attention 预处理</td>
+    </tr>
+    <tr>
+      <td>多头合并</td>
+      <td><code>rearrange(x, "b h t d -> b t (h d)")</code></td>
+      <td>(b, h, t, d)</td>
+      <td>(b, t, h·d)</td>
+      <td>reshape</td>
+      <td>Attention 输出恢复</td>
+    </tr>
+    <tr>
+      <td>Batch / Token 混合</td>
+      <td><code>rearrange(x, "b t d -> (b t) d")</code></td>
+      <td>(b, t, d)</td>
+      <td>(b·t, d)</td>
+      <td>view</td>
+      <td>常用于共享线性层</td>
+    </tr>
+    <tr>
+      <td>保持不变（Identity）</td>
+      <td><code>rearrange(x, "b t d -> b t d")</code></td>
+      <td>(b, t, d)</td>
+      <td>(b, t, d)</td>
+      <td>无</td>
+      <td>用于代码可读性 / 占位</td>
+    </tr>
+  </tbody>
+</table>    
+      </ul>
+        </p>
+
+<pre><code class="language-python">import torch
+from einops import einsum, rearrange
+
+def einstein_example1():
+    D = torch.rand(5, 3, 4)
+    A = torch.rand(3, 4)
+
+    # 普通矩阵乘法，不知道 D 和 A 具体的形状以及输出的形状
+    Y = D @ A.T
+
+    # 使用 einsum 进行矩阵乘法，可读性更好
+    Y = einsum(D, A, "batch sequence d_in, d_out d_in -> batch sequence d_out")
+
+    # D 可以有任意的前置维度，A 受限
+    Y = einsum(D, A, "... d_in, d_out d_in -> ... d_out")</code></pre>
+
+        <p>Token Embeddings: <code>(batch_size, sequence_length)</code> $\to$ <code>(batch_size, sequence_length, d_model)</code>.</p>
+        <p>发生在每个Transformer Block 中的 Attention 计算之前的 Normalization，Pre-norm Transformer Block: <code>(batch_size, sequence_length, d_model)</code> $\to$ <code>(batch_size, sequence_length, d_model).</code></p>
+        <p>Output Normalization 会在最后一个 Transformer Block 后进行 Layer Normalization。</p>
 
 
         <h2 id="reference">Reference</h2>
         <p>[1] <a href="https://github.com/stanford-cs336/assignment1-basics/blob/main/cs336_spring2025_assignment1_basics.pdf">CS336 Assignment 1 (basics): Building a Transformer LM. Version 1.0.5</a></p>
-        <p>[2] <a href="https://blog.csdn.net/Bug_makerACE/article/details/149248369">Stanford CS336 | Assignment 1 - BPE Tokenizer Training 实现</a></p>
         <h2 id="contact">Contact</h2>
-        <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+        <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao@mail.dlut.edu.cn</code>. I would appreciate it!</p>
       </div>
     </div>
   </div>
+
             
             
           </section>
