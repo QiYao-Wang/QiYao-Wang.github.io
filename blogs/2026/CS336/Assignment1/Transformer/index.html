@@ -57,9 +57,119 @@ layout: compress
           <figcaption>图1：(Figure 1) Transformer 架构图; (Figure 2) Pre-norm Transformer Block.</figcaption>
         </figure>
 
+        <h3 id="efficient-computation">Efficient Computation</h3>
+        <p>Transformer 架构中一般进行 batch-level 的并行计算。在具体分析的时候主要关注下面三个元素：
+          <ul>  
+            <li><strong>Elements of a batch</strong>: 每一次 forward computation 在一个 batch_size 大小的数据中进行，<code>forward</code>依次作用到 batch 中的每一个数据中。</li>
+            <li><strong>Sequence length</strong>: 对于 RMSNorm 和 Feed-forward 等 point-wise 的位置无关操作，在序列中每个位置的处理都一样。</li>
+            <li><strong>Attention heads</strong>: 注意力操作可以并行，也是 Transformer 可以并行的基础之一，并且可以基于 batch 来处理多头注意力操作。</li>
+          </ul>
+          举例：data tensor D 的形状为 <code>(batch_size, sequence_length, d_model)</code>，在其上进行 batched vector-matrix multiply，矩阵为 A，形状是 <code>(d_model, d_model)</code>，则 <code>D @ A</code> 会进行 batched matrix multiply，其中 <code>(batch_size, sequence_length)</code> 是批处理的。
+        </p>
+        <p>使用 <strong>einsum notation</strong> 进行更方便的批处理。PyTorch 中是 <code>torch.einsum</code>，与框架无关的库是 <code>einops</code> （本次使用）和 <code>einx</code>。</p>
+        <p>主要有两个关键的操作：
+          <ul>
+            <li><strong>einsum</strong>: 可以对 tensor 做任意的操作，见下面的表格的总结。</li>
+            <table border="1" cellspacing="0" cellpadding="6">
+  <thead>
+    <tr>
+      <th>操作类型</th>
+      <th>einsum 表达式示例</th>
+      <th>张量形状示例</th>
+      <th>等价常见操作</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>转置 / 维度重排</td>
+      <td><code>einsum("ij->ji", A)</code></td>
+      <td>A: (i, j)</td>
+      <td><code>A.T</code>, <code>permute</code></td>
+      <td>只改变维度顺序，不做数值计算</td>
+    </tr>
+    <tr>
+      <td>求和（Reduce）</td>
+      <td><code>einsum("ij->i", A)</code></td>
+      <td>A: (i, j)</td>
+      <td><code>A.sum(dim=1)</code></td>
+      <td>消除未出现在输出中的维度</td>
+    </tr>
+    <tr>
+      <td>逐元素乘法</td>
+      <td><code>einsum("ij,ij->ij", A, B)</code></td>
+      <td>A,B: (i, j)</td>
+      <td><code>A * B</code></td>
+      <td>对应元素相乘</td>
+    </tr>
+    <tr>
+      <td>内积 / 点积</td>
+      <td><code>einsum("i,i->", x, y)</code></td>
+      <td>x,y: (i)</td>
+      <td><code>torch.dot</code></td>
+      <td>输出标量</td>
+    </tr>
+    <tr>
+      <td>外积</td>
+      <td><code>einsum("i,j->ij", x, y)</code></td>
+      <td>x:(i), y:(j)</td>
+      <td><code>outer</code></td>
+      <td>生成高阶张量</td>
+    </tr>
+    <tr>
+      <td>矩阵乘法</td>
+      <td><code>einsum("ij,jk->ik", A, B)</code></td>
+      <td>A:(i,j), B:(j,k)</td>
+      <td><code>matmul</code></td>
+      <td>经典线性代数操作</td>
+    </tr>
+    <tr>
+      <td>批量矩阵乘</td>
+      <td><code>einsum("bij,bjk->bik", A, B)</code></td>
+      <td>A,B:(b,i,j)</td>
+      <td><code>bmm</code></td>
+      <td>每个 batch 独立计算</td>
+    </tr>
+    <tr>
+      <td>Trace（迹）</td>
+      <td><code>einsum("ii->", A)</code></td>
+      <td>A:(i,i)</td>
+      <td><code>trace</code></td>
+      <td>对角线求和</td>
+    </tr>
+    <tr>
+      <td>Attention 核心计算</td>
+      <td><code>einsum("bhtd,bhsd->bhts", Q, K)</code></td>
+      <td>Q,K:(b,h,t,d)</td>
+      <td>Q @ Kᵀ</td>
+      <td>Transformer 中的相似度计算</td>
+    </tr>
+    <tr>
+      <td>线性层 / Token Mixing</td>
+      <td><code>einsum("btc,cd->btd", X, W)</code></td>
+      <td>X:(b,t,c), W:(c,d)</td>
+      <td>Linear / MatMul</td>
+      <td>特征维度线性变换</td>
+    </tr>
+    <tr>
+      <td>多操作融合</td>
+      <td><code>einsum("bct,td->bc", X, W)</code></td>
+      <td>X:(b,c,t)</td>
+      <td>permute + matmul + sum</td>
+      <td>一行完成多步计算</td>
+    </tr>
+  </tbody>
+</table>
+        <li><strong>rearrange</strong>: 可以重新排列张量的维度。</li>
+          </ul>
+        </p>
+
+
         <p>Token Embeddings: <code>(batch_size, sequence_length)</code> $\to$ <code>(batch_size, sequence_length, d_model)</code>.</p>
         <p>发生在每个Transformer Block 中的 Attention 计算之前的 Normalization，Pre-norm Transformer Block: <code>(batch_size, sequence_length, d_model)</code> $\to$ <code>(batch_size, sequence_length, d_model).</code></p>
-       
+        <p>Output Normalization 会在最后一个 Transformer Block 后进行 Layer Normalization。</p>
+
+
         <h2 id="reference">Reference</h2>
         <p>[1] <a href="https://github.com/stanford-cs336/assignment1-basics/blob/main/cs336_spring2025_assignment1_basics.pdf">CS336 Assignment 1 (basics): Building a Transformer LM. Version 1.0.5</a></p>
         <h2 id="contact">Contact</h2>
