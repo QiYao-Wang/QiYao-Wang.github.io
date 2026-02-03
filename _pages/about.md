@@ -357,7 +357,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 
 <br>
 
-# Publications 
+# Publications
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
 
 <p><strong>Spotlight Models</strong></p>
