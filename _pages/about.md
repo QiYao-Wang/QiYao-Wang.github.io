@@ -372,6 +372,10 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
     <li>
      Learning Ordinal Probabilistic Reward from Preferences. <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. CAS-SIAT. <strong>ICLR 2026</strong>.
      [<a href="https://openreview.net/forum?id=0Vf5trUAVF">Paper</a>]
+     [<a href="https://arxiv.org/abs/2602.12660">Arxiv</a>]
+     [<a href="https://github.com/ritzz-ai/OPRM">Github</a>]
+     [<a href="https://huggingface.co/collections/ritzzai/oprm">HuggingFace</a>]
+     <a href="https://github.com/ritzz-ai/OPRM"><img src="https://img.shields.io/github/stars/ritzz-ai/OPRM" alt="OPRM"></a>
     </li>
     <li>
      SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines. <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. M-A-P. <strong>NeurIPS 2025 (CCF-A)</strong>.
