@@ -355,6 +355,17 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <dd><a href="https://github.com/QiYao-Wang/AutoPatent"><img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></dd>
 </dl>
 
+<ul>
+<li>
+     Beyond Quantity: Trajectory Diversity Scaling for Code Agents. <em>Guhong Chen, Chenghao Sun, Cheng Fu, <strong>Qiyao Wang</strong>, Zhihong Huang, ChaoPeng Wei, Guangxu Chen, Feiteng Fang, Ahmadreza Argha, Bing Zhao, Xander Xu, Qi Han, Hamid Alinejad-Rokny, QIANG QU, Binhua Li, Shiwen Ni, Min Yang, HU WEI, Yongbin Li </em>. CAS-SIAT and Qoder.
+     [<a href="https://arxiv.org/abs/2602.03219">Arxiv</a>]
+     [<a href="https://github.com/Eileen19200930/TDScaling">Github</a>]
+     <a href="https://github.com/Eileen19200930/TDScaling"><img src="https://img.shields.io/github/stars/Eileen19200930/TDScaling" alt="TDScaling"></a> | 
+     News: <a href="https://mp.weixin.qq.com/s/YGig9EA4HXdxskq3vk7M9w">深度学习与自然语言处理</a>
+
+</li>
+</ul>
+
 <br>
 
 # Publications
