@@ -545,7 +545,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 - ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 
 # 💻 Internships
-- ***2025.10 - (now)***: Tongyi Lab, Alibaba, Beijing
+- ***2025.10 - 2026.03***: Tongyi Lab, Alibaba, Beijing
 - ***2022.12 - 2025.09***: DUTIR, Dalian
 
 <div style="width: 300px; height: auto;">
