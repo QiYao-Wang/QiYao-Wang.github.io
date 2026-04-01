@@ -360,6 +360,13 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <div>
 <ul>
 <li>
+     FloWPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     [<a href="flowpie.wangqiyao.me">Website</a>]
+     [<a href="https://arxiv.org/pdf/2603.29557">Arxiv</a>]
+     [<a href="https://github.com/AIforIP/FlowPIE">Github</a>]
+     <a href="https://github.com/AIforIP/FlowPIE"><img src="https://img.shields.io/github/stars/AIforIP/FlowPIE" alt="FlowPIE"></a>
+</li>
+<li>
      Beyond Quantity: Trajectory Diversity Scaling for Code Agents. <em>Guhong Chen, Chenghao Sun, Cheng Fu, <strong>Qiyao Wang</strong>, Zhihong Huang, ChaoPeng Wei, Guangxu Chen, Feiteng Fang, Ahmadreza Argha, Bing Zhao, Xander Xu, Qi Han, Hamid Alinejad-Rokny, Qiang Qu, Binhua Li, Shiwen Ni, Min Yang, HU WEI, Yongbin Li </em>. CAS-SIAT and Qoder.
      [<a href="https://arxiv.org/abs/2602.03219">Arxiv</a>]
      [<a href="https://github.com/Eileen19200930/TDScaling">Github</a>]
