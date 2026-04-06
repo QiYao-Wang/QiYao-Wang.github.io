@@ -329,19 +329,6 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 </div>
 
 # Manuscripts
-<dl>
-  <dt><img align="left" width="100"
-hspace="10" wspace="20" src="../images/publications/ipbench.png">
-<span class="conference-label">Preprint</span>
-</dt>
-  <dd><strong>IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property</strong></dd>
-<dd><em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT.</dd>
-<!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
-<dd><a href="https://ipbench.wangqiyao.me">Website</a> | <a href="https://arxiv.org/abs/2504.15524">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/IPBench/IPBench">Github</a> | News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a></dd>
-<dd><a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a></dd>
-</dl>
-
-<hr>
 
 <dl>
 <dt><img align="left" width="100"
@@ -391,6 +378,15 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 
 <div>
   <ul>
+    <li>
+    IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property. <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT. <strong>ACL (CCF-A) Findings </strong>.
+    [<a href="https://ipbench.wangqiyao.me">Website</a>]
+    [<a href="https://arxiv.org/abs/2504.15524">Paper</a>]
+    [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
+    [<a href="https://github.com/IPBench/IPBench">Github</a>] |
+    News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a></dd>
+<dd><a href="https://github.com/IPBench/IPBench">
+    </li>
     <li>
      Learning Ordinal Probabilistic Reward from Preferences. <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. CAS-SIAT. <strong>ICLR 2026</strong>.
      [<a href="https://openreview.net/forum?id=0Vf5trUAVF">Paper</a>]
