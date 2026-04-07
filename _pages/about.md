@@ -343,6 +343,8 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <dd><a href="https://github.com/QiYao-Wang/AutoPatent"><img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></dd>
 </dl>
 
+<br>
+
 <div>
 <ul>
 <li>
@@ -355,8 +357,6 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 </li>
 </ul>
 </div>
-
-<br>
 
 # Publications
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
