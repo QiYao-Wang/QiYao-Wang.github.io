@@ -387,7 +387,7 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
      <a href="https://github.com/Eileen19200930/TDScaling"><img src="https://img.shields.io/github/stars/Eileen19200930/TDScaling" alt="TDScaling"></a>
     </li>
     <li>
-     Learning Ordinal Probabilistic Reward from Preferences. <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. CAS-SIAT. <strong>ICLR (CCF-A) 2026</strong>.
+     Learning Ordinal Probabilistic Reward from Preferences. <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. CAS-SIAT. <strong>ICLR 2026 (CCF-A)</strong>.
      [<a href="https://openreview.net/forum?id=0Vf5trUAVF">Paper</a>]
      [<a href="https://arxiv.org/abs/2602.12660">Arxiv</a>]
      [<a href="https://github.com/ritzz-ai/OPRM">Github</a>]
