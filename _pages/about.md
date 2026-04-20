@@ -330,21 +330,6 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 </div>
 
 # Manuscripts
-
-<dl>
-<dt><img align="left" width="100"
-hspace="10" wspace="20" src="../images/publications/autopatent.png">
-<span class="conference-label">Preprint</span>
-</dt>
-  <dd><strong>AutoPatent: A Multi-Agent Framework for Automatic Patent Generation</strong></dd>
-<dd> <em><strong>Qiyao Wang<sup>*</sup></strong>, Shiwen Ni<sup>*</sup>, Huaren Liu, Shule Lu, Guhong Chen, Xi Feng, Chi Wei, Qiang Qu, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT.</dd>
-<!-- <dd><a href="https://arxiv.org/abs/2504.15524">Arxiv: 2504.15524</a></dd> -->
-<dd><a href="https://autopatent.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2412.09796">Paper</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/AutoPatent">Github</a> | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a></dd>
-<dd><a href="https://github.com/QiYao-Wang/AutoPatent"><img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></dd>
-</dl>
-
-<br>
-
 <div>
 <ul>
 <li>
@@ -433,6 +418,14 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
 <div>
   <ul>
     <li>
+      <span>AutoPatent: 基于多智能体的自动专利生成框架.</span>
+      <em><strong>Qiyao Wang</strong>, Shiwen Ni, Guhong Chen, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>.  <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>.
+      CAS-SIAT and DUT. 
+      <a href="https://autopatent.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2412.09796">Arxiv</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/AutoPatent">Github</a> | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
+      <a href="https://github.com/QiYao-Wang/AutoPatent">
+      <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a>
+    </li>
+    <li>
       <span>大语言模型驱动知识产权服务智能体研究.</span>
       <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em> 2025. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT.
     </li>
@@ -440,10 +433,6 @@ hspace="10" wspace="20" src="../images/publications/autopatent.png">
       <span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span>
       <em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.
     </li>
-    <!-- <li>
-      <span>多智能体驱动的高校采购评审专家推荐研究.</span>
-      <em>Xinzhuo Wu, Rong Cao, Kan Xu, <strong>Qiyao Wang</strong>, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2025. CCIR 2025. <strong>计算机工程与应用 (CCF-T2, CCF-C, 北大核心)</strong>. DUT.
-    </li> -->
     <li>
       <span>大语言模型赋能知识产权信息服务模型构建及应用.</span>
       <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版, 北大核心)</strong>. DUT. [<a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">Paper</a>]
