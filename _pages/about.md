@@ -421,7 +421,11 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
       <span>AutoPatent: 基于多智能体的自动专利生成框架.</span>
       <em><strong>Qiyao Wang</strong>, Shiwen Ni, Guhong Chen, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>.  <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>.
       CAS-SIAT and DUT. 
-      <a href="https://autopatent.wangqiyao.me/">Website</a> | <a href="https://arxiv.org/pdf/2412.09796">Arxiv</a> | <a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a> | <a href="https://github.com/QiYao-Wang/AutoPatent">Github</a> | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
+      [<a href="https://autopatent.wangqiyao.me/">Website</a>] 
+      [<a href="https://arxiv.org/pdf/2412.09796">Arxiv</a>]
+      [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
+      [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>]
+      | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
       <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a>
     </li>
