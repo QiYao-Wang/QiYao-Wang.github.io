@@ -292,6 +292,10 @@ As the project leader and supervisor, guided the entire undergraduate team to ac
 <p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn</p>
 
 <hr>
+
+I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Weixin official account, <strong>Taibao-IP</strong>.
+
+<hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
 
 # 📌 Research Interests  
