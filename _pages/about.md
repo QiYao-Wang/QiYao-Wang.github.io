@@ -337,7 +337,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
-     FloWPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="flowpie.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/pdf/2603.29557">Arxiv</a>]
      [<a href="https://huggingface.co/papers/2603.29557">HuggingFace Paper</a>]
