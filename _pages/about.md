@@ -337,6 +337,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
+     InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang</strong>, Haoran Hu, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     [<a href="interactweb-bench.wangqiyao.me">Website</a>]
+     [<a href="https://arxiv.org/pdf/2604.27419">Arxiv</a>]
+     [<a href="https://huggingface.co/papers/">HuggingFace Paper</a>]
+     [<a href="https://github.com/AIforIP/InteractWeb-Bench">Github</a>]
+     <a href="https://github.com/AIforIP/InteractWeb-Bench"><img src="https://img.shields.io/github/stars/AIforIP/InteractWeb-Bench" alt="InteractWeb-Bench"></a>
+</li>
+<li>
      FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="flowpie.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/pdf/2603.29557">Arxiv</a>]
