@@ -337,7 +337,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
-     PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="patre.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/pdf/2605.03571">Arxiv</a>]
      [<a href="https://huggingface.co/papers/2605.03571">HuggingFace Paper</a>]
