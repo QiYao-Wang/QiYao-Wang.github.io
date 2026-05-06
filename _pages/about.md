@@ -342,7 +342,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://arxiv.org/pdf/2605.03571">Arxiv</a>]
      [<a href="https://huggingface.co/papers/2605.03571">HuggingFace Paper</a>]
      [<a href="https://github.com/AIforIP/PatRe">Github</a>]
-     <a href="https://github.com/AIforIP/PatRe"><img src="https://img.shields.io/github/stars/AIforIP/PatRe" alt="InteractWeb-Bench"></a>
+     <a href="https://github.com/AIforIP/PatRe"><img src="https://img.shields.io/github/stars/AIforIP/PatRe" alt="PatRe"></a>
 </li>
 <li>
      InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang</strong>, Haoran Hu, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
