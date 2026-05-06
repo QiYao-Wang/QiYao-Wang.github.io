@@ -338,7 +338,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <ul>
 <li>
      PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
-     [<a href="patre.wangqiyao.me">Website</a>]
+     [<a href="https://patre.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2605.03571">Arxiv</a>]
      [<a href="https://huggingface.co/papers/2605.03571">HuggingFace Paper</a>]
      [<a href="https://github.com/AIforIP/PatRe">Github</a>]
@@ -346,7 +346,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </li>
 <li>
      InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang</strong>, Haoran Hu, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
-     [<a href="interactweb-bench.wangqiyao.me">Website</a>]
+     [<a href="https://interactweb-bench.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2604.27419">Arxiv</a>]
      [<a href="https://huggingface.co/papers/2604.27419">HuggingFace Paper</a>]
      [<a href="https://github.com/AIforIP/InteractWeb-Bench">Github</a>]
