@@ -284,7 +284,7 @@ I warmly welcome undergraduates (any major) from DUT to join our research group 
 And if you are interested in my research, <strong style="color: darkred">feel free to collaborate with me</strong>!
 </p>
 <p>
-作为项目负责人和指导者，带领 Taibao-IP 团队获得 10 项国家级奖项（包括2024年挑战杯国家银奖和2025年挑战杯国家级一等奖）和 12 项省级奖项。
+作为项目负责人和指导者，带领团队获得 10 项国家级奖项（包括2024年挑战杯国家银奖和2025年挑战杯国家级一等奖）和 12 项省级奖项。
 </p>
 
 <p>本科期间，发表《中文信息学报》(CCF-T1) 一作两篇，CSSCI期刊论文两篇（《图书情报工作》、《图书馆理论与实践》）。学术服务与研究成果受"光明日报"等主流媒体及"新智元"等媒体报道。</p>
