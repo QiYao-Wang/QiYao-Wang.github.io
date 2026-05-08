@@ -289,7 +289,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 
 <p>本科期间，发表《中文信息学报》(CCF-T1) 一作两篇，CSSCI期刊论文两篇（《图书情报工作》、《图书馆理论与实践》）。学术服务与研究成果受"光明日报"等主流媒体及"新智元"等媒体报道。</p>
 
-<p>博士生在读，目前发表，自然语言处理国际顶级会议 ACL 一作一篇，《中文信息学报》（CCF-T1）一作一篇。</p>
+<p>博士生在读，目前发表，自然语言处理国际顶级会议 ACL (CCF-A) 一作一篇，《中文信息学报》（CCF-T1）一作一篇。</p>
 
 <p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn</p>
 
