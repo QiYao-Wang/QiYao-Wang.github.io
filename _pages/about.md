@@ -378,7 +378,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
   <ul>
     <li>
-    IPBench: Benchmarking the Knowledge of Large Language Models in Intellectual Property. <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.
+    Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice. <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.
     [<a href="https://ipbench.wangqiyao.me">Website</a>]
     [<a href="https://arxiv.org/abs/2504.15524">Paper</a>]
     [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
