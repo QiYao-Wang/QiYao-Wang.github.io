@@ -289,7 +289,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 
 <p>本科期间，发表《中文信息学报》(CCF-T1) 一作两篇，CSSCI期刊论文两篇（《图书情报工作》、《图书馆理论与实践》）。主导研发的知识产权服务大模型“太保”于第十四届中国国际专利技术与产品交易会发布。学术服务与研究成果受"光明日报"等主流媒体及"新智元"等媒体报道。</p>
 
-<p>博士生在读，目前以第一作者身份发表，自然语言处理国际顶级会议 ACL (CCF-A) 一篇，国内自然语言处理领域核心期刊《中文信息学报》（CCF-T1）一篇；以合作者身份参与发表，ACL (CCF-A) 一篇, ICLR (CCF-A) 一篇, NeurIPS (CCF-A) 一篇。</p>
+<p>博士生在读，目前以第一作者身份发表，自然语言处理国际顶级会议 ACL (CCF-A) 一篇，国内核心期刊《中文信息学报》（CCF-T1）一篇；以合作者身份参与发表，ACL (CCF-A) 一篇, ICLR (CCF-A) 一篇, NeurIPS (CCF-A) 一篇。</p>
 
 <p><em><strong>Email</strong></em>: wangqiyao25@mails.ucas.ac.cn</p>
 
