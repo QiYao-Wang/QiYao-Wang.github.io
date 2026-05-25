@@ -445,7 +445,6 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
       CAS-SIAT and DUT. 
       [<a href="https://autopatent.wangqiyao.me/">Website</a>] 
       [<a href="https://arxiv.org/pdf/2412.09796">Arxiv</a>]
-      [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
       [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>]
       | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
       <a href="https://github.com/QiYao-Wang/AutoPatent">
