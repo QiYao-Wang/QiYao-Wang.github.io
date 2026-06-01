@@ -7,6 +7,7 @@ layout: compress
   <head>
     {% include head.html %}
     {% include head/custom.html %}
+    <link rel="stylesheet" href="/assets/css/blog.css">
   </head>
   <body>
     {% include browser-upgrade.html %}
@@ -27,7 +28,7 @@ layout: compress
 
       <div class="sidebar sticky">
         <div id="toc"></div>
-        <div id="topics">
+        <div id="topics" class="blog-topics-section">
           <strong>Topics</strong>
         </div>
       </div>
@@ -37,29 +38,165 @@ layout: compress
         <div class="page__inner-wrap">
           <section class="page__content" itemprop="text">
 
-            <h1>📖 Qiyao Wang's Blog</h1>
-            <p id="total_blogs" style="color: gray">Total Blogs</p>
-            <h2>2026</h2>
-            <ul>
-              <li><em>Jan. 01, 2026</em>. <a href="https://qiyao-wang.github.io/blogs/2026/CS336/Assignment1/Transformer">CS336 Assignment 1: Transformers Language Model Architecture</a>. Language: Chinese. <font color="gray">#Basics</font> <font color="gray">#CS336</font></li>
-            </ul>
-            <h2>2025</h2>
-            <ul>      
-              <li><em>Aug. 01, 2025</em>. <a href="https://wangqiyao.me/blogs/2025/CS336/Assignment1/BPE">CS336 Assignment 1: BPE Tokenizer's Detailed Implementation</a>. Lanugage: Chinese. <font color="gray">#Basics</font> <font color="gray">#CS336</font></li>
-              <li><em>Feb. 27, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/Temperature_TopK_TopP">Three Sampling Methods: Temperature, Top K and Top P</a>. Language: Chinese. <font color="gray">#Decoding</font></li>
-              <li><em>Feb. 26, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/Greedy_and_Beam_Search">Greedy Search and Beam Search</a>. Language: Chinese. <font color="gray">#Decoding</font></li>
-              <li><em>Feb. 25, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/Autoregressive_Decoding">Autoregressive Decoding: Basic Manner of Decoder-Only LLMs</a>. Language: Chinese. <font color="gray">#Decoding</font></li>
-              <li><em>Feb. 24, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/PPO_and_RLHF">Proximal Policy Optimization (PPO) and RLHF</a>. Language: Chinese. <font color="gray">#RL</font></li>
-              <li><em>Feb. 23, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/RL_Basic_Knowledge_Before_PPO">Basic Knowledge of Reinforcement Learning before PPO</a>. Language: Chinese. <font color="gray">#RL</font></li>
-<!--               <li><em>Jan. 10, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1/Part2">CMU DLSys Course Homework 1: Implementation and Reflection (Part2)</a>. Language: Chinese. <font color="gray">#MLSys</font></li> -->
-              <li><em>Jan. 08, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1/Part1">CMU DLSys Course Homework 1: Implementation and Reflection (Part1)</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
-              <li><em>Jan. 07, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CoT-Decoding">Chain-of-Thought Reasoning without Prompting</a>. Language: Chinese. <font color="gray">#Reasoning</font></li>
-              <li><em>Jan. 01, 2025</em>. <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0">CMU DLSys Course Homework 0: Implementation and Reflection</a>. Language: Chinese. <font color="gray">#MLSys</font></li>
-            </ul>
-            <h2>2024</h2>
-            <ul>
-              <li><em>Dec. 28, 2024</em>. <a href="https://mathsion.notion.site/Pattern-Recognition-Machine-Learning-ce6d699ec88744a08dea19e859535ec8?pvs=4">Pattern Recognition and Machine Learning</a>. Language: Chinese. <font color="gray">#ML</font></li> 
-            </ul>
+            <div class="blog-index-header">
+              <h1>📖 Qiyao Wang's Blog</h1>
+              <p id="total_blogs" class="blog-stats">Total Blogs</p>
+            </div>
+
+            <!-- 2026 -->
+            <div class="blog-year-section">
+              <h2 class="blog-year-title">2026 <span class="year-count"></span></h2>
+              <ul class="blog-list" data-year="2026">
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2026/CS336/Assignment1/Transformer">
+                    <div class="blog-entry-title">CS336 Assignment 1: Transformers Language Model Architecture</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Jan. 01, 2026</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Basics</span>
+                        <span class="blog-tag">#CS336</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 2025 -->
+            <div class="blog-year-section">
+              <h2 class="blog-year-title">2025 <span class="year-count"></span></h2>
+              <ul class="blog-list" data-year="2025">
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://wangqiyao.me/blogs/2025/CS336/Assignment1/BPE">
+                    <div class="blog-entry-title">CS336 Assignment 1: BPE Tokenizer's Detailed Implementation</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Aug. 01, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Basics</span>
+                        <span class="blog-tag">#CS336</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/Temperature_TopK_TopP">
+                    <div class="blog-entry-title">Three Sampling Methods: Temperature, Top K and Top P</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Feb. 27, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Decoding</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/Greedy_and_Beam_Search">
+                    <div class="blog-entry-title">Greedy Search and Beam Search</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Feb. 26, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Decoding</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/Autoregressive_Decoding">
+                    <div class="blog-entry-title">Autoregressive Decoding: Basic Manner of Decoder-Only LLMs</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Feb. 25, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Decoding</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/PPO_and_RLHF">
+                    <div class="blog-entry-title">Proximal Policy Optimization (PPO) and RLHF</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Feb. 24, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#RL</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/RL_Basic_Knowledge_Before_PPO">
+                    <div class="blog-entry-title">Basic Knowledge of Reinforcement Learning before PPO</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Feb. 23, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#RL</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw1/Part1">
+                    <div class="blog-entry-title">CMU DLSys Course Homework 1: Implementation and Reflection (Part1)</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Jan. 08, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#MLSys</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/CoT-Decoding">
+                    <div class="blog-entry-title">Chain-of-Thought Reasoning without Prompting</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Jan. 07, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Reasoning</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0">
+                    <div class="blog-entry-title">CMU DLSys Course Homework 0: Implementation and Reflection</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Jan. 01, 2025</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#MLSys</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 2024 -->
+            <div class="blog-year-section">
+              <h2 class="blog-year-title">2024 <span class="year-count"></span></h2>
+              <ul class="blog-list" data-year="2024">
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://mathsion.notion.site/Pattern-Recognition-Machine-Learning-ce6d699ec88744a08dea19e859535ec8?pvs=4">
+                    <div class="blog-entry-title">Pattern Recognition and Machine Learning</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">Dec. 28, 2024</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#ML</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
            
           </section>
         </div>
@@ -67,95 +204,70 @@ layout: compress
     </div>
     {% include scripts.html %}
     <script>
-        // 动态生成目录
-        const toc = document.getElementById('toc');
-        toc.innerHTML = '<strong>Table of Contents</strong>';
-
-        const ul = document.createElement('ul');
-        toc.appendChild(ul);
-
-        // 获取所有标题
-        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        headers.forEach(header => {
-            const li = document.createElement('li');
-            li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
-
-            const a = document.createElement('a');
-            a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
-            a.textContent = header.innerText;
-            a.target="_self";
-
-            if (!header.id) {
-                header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
-            }
-
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
-      // 自动统计每一年的博客数量
-    const years = document.querySelectorAll('h2'); // 找到所有年份标题
-    years.forEach(yearHeader => {
-        const year = yearHeader.innerText.trim(); // 提取年份文本
-        const nextSibling = yearHeader.nextElementSibling; // 获取年份标题下的内容
-        let count = 0;
-
-        // 如果下一个兄弟节点是列表，则统计列表项数量
-        if (nextSibling && nextSibling.tagName === 'UL') {
-            count = nextSibling.querySelectorAll('li').length; // 统计当前年份的博客数量
-        }
-
-        // 将统计结果追加到年份标题中
-        yearHeader.innerHTML += ` <span style="font-weight: normal; color: gray;">(${count} blogs)</span>`;
-    });
-    </script>
-  <script>
-    // 自动统计每个 Topic 的博客数量
-    const topicCounts = {};
-    const blogs = document.querySelectorAll('li'); // 获取所有博客条目
-
-    blogs.forEach(blog => {
-        // 找到博客条目中的 topic（灰色字体）
-        const topicFont = blog.querySelector('font[color="gray"]');
-        if (topicFont) {
-            const topic = topicFont.innerText.trim();
-            topicCounts[topic] = (topicCounts[topic] || 0) + 1;
-        }
-    });
-
-    // 对 Topic 按字母顺序排序
-    const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
-
-    // 更新边栏 Topics 部分
-    const topicsContainer = document.getElementById('topics'); // 定位到 Topics 区域
-    let topicsHTML = '<strong>Topics</strong>'; // 初始化 Topics 标题
-
-    sortedTopics.forEach(([topic, count]) => {
-        topicsHTML += `<p><font color="gray">${topic} (${count} blogs)</font></p>`;
-    });
-
-    // 替换 Topics 区域内容
-    topicsContainer.innerHTML = topicsHTML;
-</script>
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 获取所有年份（h2）以及对应的博客条目（ul > li）
-        const yearSections = document.querySelectorAll('h2'); // 获取所有年份的 h2 标签
+      document.addEventListener('DOMContentLoaded', () => {
+        // Count blogs per year
+        const yearSections = document.querySelectorAll('.blog-year-section');
         let totalBlogs = 0;
 
-        // 遍历每个年份部分，计算该年份下博客的数量
         yearSections.forEach(section => {
-            const blogList = section.nextElementSibling; // 获取每个年份下的 <ul> 元素
-            if (blogList && blogList.tagName === 'UL') {
-                totalBlogs += blogList.querySelectorAll('li').length; // 统计该年份下的 <li> 数量
+          const blogList = section.querySelector('.blog-list');
+          const yearCount = section.querySelector('.year-count');
+          if (blogList) {
+            const count = blogList.querySelectorAll('.blog-entry').length;
+            totalBlogs += count;
+            if (yearCount) {
+              yearCount.textContent = `(${count} blogs)`;
             }
+          }
         });
 
-        // 更新 total_blogs 的文本内容
+        // Update total count
         const totalBlogsElement = document.getElementById('total_blogs');
         if (totalBlogsElement) {
-            totalBlogsElement.textContent = `Total Blogs: ${totalBlogs}`;
+          totalBlogsElement.textContent = `${totalBlogs} posts in total`;
         }
-    });
-</script>
+
+        // Generate Topics sidebar
+        const topicCounts = {};
+        const tags = document.querySelectorAll('.blog-tag');
+        tags.forEach(tag => {
+          const topic = tag.textContent.trim();
+          topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+        });
+
+        const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
+        const topicsContainer = document.getElementById('topics');
+        if (topicsContainer) {
+          let html = '<strong>Topics</strong>';
+          sortedTopics.forEach(([topic, count]) => {
+            html += `<div class="blog-topic-item"><span>${topic}</span><span class="blog-topic-count">${count}</span></div>`;
+          });
+          topicsContainer.innerHTML = html;
+        }
+
+        // Generate TOC
+        const toc = document.getElementById('toc');
+        if (toc) {
+          toc.innerHTML = '<strong>Table of Contents</strong>';
+          const ul = document.createElement('ul');
+          toc.appendChild(ul);
+
+          const headers = document.querySelectorAll('.blog-year-title');
+          headers.forEach(header => {
+            const year = header.textContent.trim().split(' ')[0];
+            if (!header.id) {
+              header.id = year;
+            }
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `#${header.id}`;
+            a.textContent = year;
+            a.target = "_self";
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+        }
+      });
+    </script>
   </body>
 </html>
