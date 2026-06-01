@@ -263,17 +263,24 @@ layout: compress
 from einops import einsum, rearrange
 
 def einstein_example1():
+    """
+    Batched matrix multiplication with einops.einsum
+    """
     D = torch.rand(5, 3, 4)
     A = torch.rand(3, 4)
 
     # 普通矩阵乘法，不知道 D 和 A 具体的形状以及输出的形状
     Y = D @ A.T
 
+    print(Y)
+
     # 使用 einsum 进行矩阵乘法，可读性更好
     Y = einsum(D, A, "batch sequence d_in, d_out d_in -> batch sequence d_out")
 
     # D 可以有任意的前置维度，A 受限
-    Y = einsum(D, A, "... d_in, d_out d_in -> ... d_out")</code></pre>
+    Y = einsum(D, A, "... d_in, d_out d_in -> ... d_out")
+
+    print(Y)</code></pre>
 
 
         <h2 id="reference">Reference</h2>
