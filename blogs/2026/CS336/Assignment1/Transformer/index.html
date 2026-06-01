@@ -54,6 +54,10 @@ layout: compress
           <figcaption>图1：(Figure 1) Transformer 架构图; (Figure 2) Pre-norm Transformer Block.</figcaption>
         </figure>
 
+        <p>Token Embeddings: <code>(batch_size, sequence_length)</code> $\to$ <code>(batch_size, sequence_length, d_model)</code>.</p>
+        <p>发生在每个Transformer Block 中的 Attention 计算之前的 Normalization，Pre-norm Transformer Block: <code>(batch_size, sequence_length, d_model)</code> $\to$ <code>(batch_size, sequence_length, d_model).</code></p>
+        <p>Output Normalization 会在最后一个 Transformer Block 后进行 Layer Normalization。</p>
+
         <h3 id="efficient-computation">Efficient Computation</h3>
         <p>Transformer 架构中一般进行 batch-level 的并行计算。在具体分析的时候主要关注下面三个元素：
           <ul>  
@@ -270,10 +274,6 @@ def einstein_example1():
 
     # D 可以有任意的前置维度，A 受限
     Y = einsum(D, A, "... d_in, d_out d_in -> ... d_out")</code></pre>
-
-        <p>Token Embeddings: <code>(batch_size, sequence_length)</code> $\to$ <code>(batch_size, sequence_length, d_model)</code>.</p>
-        <p>发生在每个Transformer Block 中的 Attention 计算之前的 Normalization，Pre-norm Transformer Block: <code>(batch_size, sequence_length, d_model)</code> $\to$ <code>(batch_size, sequence_length, d_model).</code></p>
-        <p>Output Normalization 会在最后一个 Transformer Block 后进行 Layer Normalization。</p>
 
 
         <h2 id="reference">Reference</h2>
