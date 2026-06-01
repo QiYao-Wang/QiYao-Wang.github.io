@@ -282,6 +282,25 @@ def einstein_example1():
 
     print(Y)</code></pre>
 
+    <p>有一批图像，对于每个图像希望基于一些缩放因子生成 10 种暗淡版本</p>
+
+<pre><code class="language-python">def einstein_example2():
+    """
+    Broadcasted operations with einops.rearrange
+    """
+    images = torch.randn(64, 128, 128, 3) # (batch, height, width, channel)
+    dim_by = torch.linspace(start=0.0, end=1.0, steps=10)
+
+    # Reshape and multiply
+    dim_value = rearrange(dim_by,    "dim_value              -> 1 dim_value 1 1 1")
+    images_rearr = rearrange(images, "b height width channel -> b 1 height width channel")
+    dimmed_images = images_rearr * dim_value
+
+    # Use einsum to reshape and multiply in one step
+    dimmed_images = einsum(
+        images, dim_by,
+        "batch height width channel, dim_value -> batch dim_value height width channel"
+    )</code></pre>
 
         <h2 id="reference">Reference</h2>
         <p>[1] <a href="https://github.com/stanford-cs336/assignment1-basics/blob/main/cs336_spring2025_assignment1_basics.pdf">CS336 Assignment 1 (basics): Building a Transformer LM. Version 1.0.5</a></p>
