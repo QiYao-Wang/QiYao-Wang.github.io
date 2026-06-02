@@ -71,7 +71,7 @@ layout: compress
               $$
               \begin{aligned}
               \mathcal{J}_{GRPO}(\theta)=&\,\mathbb{E}_{q\sim P(Q),\,\{o_i\}_{i=1}^G\sim\pi_{\theta_{old}}(O|q)}\Bigg[\frac{1}{G}\sum_{i=1}^G\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\Big\{\\
-              &\min\Big[\frac{\pi_\theta(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})}\hat{A}_{i,t},\,\text{clip}\Big(\frac{\pi_\theta(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})},1-\epsilon,1+\epsilon\Big)\hat{A}_{i,t}\Big]\\
+              &\min\Big[\frac{\pi_\theta(o_{i,t}|q,o_{i,\lt t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,\lt t})}\hat{A}_{i,t},\,\text{clip}\Big(\frac{\pi_\theta(o_{i,t}|q,o_{i,\lt t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,\lt t})},1-\epsilon,1+\epsilon\Big)\hat{A}_{i,t}\Big]\\
               &-\beta\,\mathbb{D}_{KL}[\pi_\theta\|\pi_{ref}]\Big\}\Bigg]
               \end{aligned}
               $$
@@ -80,15 +80,15 @@ layout: compress
 
               <ul>
                 <li>$\mathbb E[q\sim P(Q),\{o_i\}_{i=1}^G\sim \pi_{\theta_{old}}(O|q)]$：对问题 $q$ 从问题分布 $P(Q)$ 中采样，以及 rollout 组 $o_i$ 从旧策略 $\pi_{\theta_{old}}$ 中采样的期望。</li>
-                <li>$\pi_{\theta}(o_{i,t}|q,o_{i,<t})$：当前策略模型 $\pi_\theta$ 在给定问题 $q$ 和 rollout 的前 $t$ 个 token $o_{i,<t}$ 的条件下，生成当前 token $o_{i,t}$ 的概率。</li>
-                <li>$\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})$：旧策略模型 $\pi_{\theta_{old}}$ 下生成当前 token 的概率。</li>
+                <li>$\pi_{\theta}(o_{i,t}|q,o_{i,\lt t})$：当前策略模型 $\pi_\theta$ 在给定问题 $q$ 和 rollout 的前 $t$ 个 token $o_{i,\lt t}$ 的条件下，生成当前 token $o_{i,t}$ 的概率。</li>
+                <li>$\pi_{\theta_{old}}(o_{i,t}|q,o_{i,\lt t})$：旧策略模型 $\pi_{\theta_{old}}$ 下生成当前 token 的概率。</li>
                 <li>$\hat A_{i,t}$：基于组内相对奖励计算的优势函数。</li>
                 <li>$\epsilon$：裁剪超参数，用于限制策略更新的幅度。</li>
                 <li>$\beta$：KL 散度惩罚项系数。</li>
                 <li>$D_{KL}[\pi_\theta\|\pi_{ref}]$：当前策略 $\pi_\theta$ 和参考策略 $\pi_{ref}$ 间的 KL 散度。应该使用<strong>无偏估计 estimator</strong> 计算，目的：减少 KL 散度计算的高方差（参见 <a href="http://joschu.net/blog/kl-approx.html" target="_blank" rel="noopener">Schulman: Approximating KL Divergence</a>）：
 
                   $$
-                  D_{KL}[\pi_\theta\|\pi_{ref}]=\frac{\pi_{ref}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta}(o_{i,t}|q,o_{i,<t})} - \log \frac{\pi_{ref}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta}(o_{i,t}|q,o_{i,<t})}-1
+                  D_{KL}[\pi_\theta\|\pi_{ref}]=\frac{\pi_{ref}(o_{i,t}|q,o_{i,\lt t})}{\pi_{\theta}(o_{i,t}|q,o_{i,\lt t})} - \log \frac{\pi_{ref}(o_{i,t}|q,o_{i,\lt t})}{\pi_{\theta}(o_{i,t}|q,o_{i,\lt t})}-1
                   $$
                 </li>
               </ul>
@@ -193,11 +193,11 @@ layout: compress
                 <li>梯度计算算法：
 
                   $$
-                  \mathcal J_{SFT}(\theta)=\mathbb{E}_{q,o\sim P_{sft}(Q,O)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\log \pi_\theta(o_t|q,o_{<t})\right]
+                  \mathcal J_{SFT}(\theta)=\mathbb{E}_{q,o\sim P_{sft}(Q,O)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\log \pi_\theta(o_t|q,o_{\lt t})\right]
                   $$
 
                   $$
-                  \nabla_\theta\mathcal J_{SFT}(\theta)=\mathbb{E}_{q,o\sim P_{sft}(Q,O)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\nabla_\theta\log \pi_\theta(o_t|q,o_{<t})\right]
+                  \nabla_\theta\mathcal J_{SFT}(\theta)=\mathbb{E}_{q,o\sim P_{sft}(Q,O)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\nabla_\theta\log \pi_\theta(o_t|q,o_{\lt t})\right]
                   $$
 
                   此时 $GC$ 恒等于 1。
@@ -214,11 +214,11 @@ layout: compress
                 <li>梯度计算方法：
 
                   $$
-                  \mathcal{J}_{RFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_{sft}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\log\pi_{\theta}(o_t|q,o_{<t})\right]
+                  \mathcal{J}_{RFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_{sft}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\log\pi_{\theta}(o_t|q,o_{\lt t})\right]
                   $$
 
                   $$
-                  \nabla_\theta\mathcal J_{RFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_{sft}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\nabla_\theta\log\pi_{\theta}(o_t|q,o_{<t})\right]
+                  \nabla_\theta\mathcal J_{RFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_{sft}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\nabla_\theta\log\pi_{\theta}(o_t|q,o_{\lt t})\right]
                   $$
 
                   即 $GC_{RFT}(q,o,t)=\mathbb I(o)=\begin{cases}1 & \text{correct answer}\\ 0 & \text{incorrect answer}\end{cases}$
@@ -237,7 +237,7 @@ layout: compress
                   <p><strong>优化目标</strong></p>
 
                   $$
-                  \mathcal{J}_{DPO}(\theta)=\mathbb E_{q\sim P_{sft}(Q);~o^+,o^-\sim\pi_\theta(O|q)}\,\log\sigma\!\left(\beta\Big(\tfrac{1}{|o^+|}\sum_{t=1}^{|o^+|}\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})}-\tfrac{1}{|o^-|}\sum_{t=1}^{|o^-|}\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\Big)\right)
+                  \mathcal{J}_{DPO}(\theta)=\mathbb E_{q\sim P_{sft}(Q);~o^+,o^-\sim\pi_\theta(O|q)}\,\log\sigma\!\left(\beta\Big(\tfrac{1}{|o^+|}\sum_{t=1}^{|o^+|}\log\tfrac{\pi_\theta(o^+_t|q,o^+_{\lt t})}{\pi_{ref}(o^+_t|q,o^+_{\lt t})}-\tfrac{1}{|o^-|}\sum_{t=1}^{|o^-|}\log\tfrac{\pi_\theta(o^-_t|q,o^-_{\lt t})}{\pi_{ref}(o^-_t|q,o^-_{\lt t})}\Big)\right)
                   $$
 
                   <p><strong>目标函数梯度</strong></p>
@@ -250,16 +250,16 @@ layout: compress
                   \tfrac{1}{|o^{+}|}
                   \sum_{t=1}^{|o^{+}|}
                   GC_{\mathrm{DPO}}(q,o,t)\,
-                  \nabla_{\theta}\log \pi_{\theta}(o_t^{+}\mid q,o_{<t}^{+})
+                  \nabla_{\theta}\log \pi_{\theta}(o_t^{+}\mid q,o_{\lt t}^{+})
                   -
                   \tfrac{1}{|o^{-}|}
                   \sum_{t=1}^{|o^{-}|}
                   GC_{\mathrm{DPO}}(q,o,t)\,
-                  \nabla_{\theta}\log \pi_{\theta}(o_t^{-}\mid q,o_{<t}^{-})
+                  \nabla_{\theta}\log \pi_{\theta}(o_t^{-}\mid q,o_{\lt t}^{-})
                   \right]
                   $$
 
-                  即 $GC_{DPO}(q,o,t)=\sigma\!\left(\beta\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})} - \beta\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\right)$
+                  即 $GC_{DPO}(q,o,t)=\sigma\!\left(\beta\log\tfrac{\pi_\theta(o^+_t|q,o^+_{\lt t})}{\pi_{ref}(o^+_t|q,o^+_{\lt t})} - \beta\log\tfrac{\pi_\theta(o^-_t|q,o^-_{\lt t})}{\pi_{ref}(o^-_t|q,o^-_{\lt t})}\right)$
                 </li>
               </ol>
 
@@ -267,7 +267,7 @@ layout: compress
 
 {% raw %}
 <pre><code class="language-text">令：
-    R(o) = (1/|o|) * sum(log(π_θ(o_t|q,o_<t)) - log(π_ref(o_t|q,o_<t)))
+    R(o) = (1/|o|) * sum(log(π_θ(o_t|q,o_&lt;t)) - log(π_ref(o_t|q,o_&lt;t)))
     即每个序列的对数似然比的平均值
 
 则目标函数可以写为：
@@ -280,12 +280,12 @@ layout: compress
     ∇_θ J_DPO = E[sigmoid(-β(R(o+) - R(o-))) * β * ∇_θ(R(o+) - R(o-))]
 
 3. 对 R(o) 求导：
-    ∇_θ R(o) = (1/|o|) * sum(∇_θ log(π_θ(o_t|q,o_<t)))
+    ∇_θ R(o) = (1/|o|) * sum(∇_θ log(π_θ(o_t|q,o_&lt;t)))
 
 4. 最终梯度：
     ∇_θ J_DPO = E[sigmoid(-β(R(o+) - R(o-))) * β *
-                  ((1/|o+|) * sum(∇_θ log(π_θ(o_t+|q,o_<t+))) -
-                   (1/|o-|) * sum(∇_θ log(π_θ(o_t-|q,o_<t-))))]
+                  ((1/|o+|) * sum(∇_θ log(π_θ(o_t+|q,o_&lt;t+))) -
+                   (1/|o-|) * sum(∇_θ log(π_θ(o_t-|q,o_&lt;t-))))]
 </code></pre>
 {% endraw %}
 
@@ -299,7 +299,7 @@ layout: compress
                 <li>梯度计算方法：
 
                   $$
-                  \nabla_\theta\mathcal J_{OnlineRFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_\theta(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\nabla_\theta\log\pi_\theta(o_t|q,o_{<t})\right]
+                  \nabla_\theta\mathcal J_{OnlineRFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_\theta(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\nabla_\theta\log\pi_\theta(o_t|q,o_{\lt t})\right]
                   $$
 
                   即 $GC_{OnlineRFT}(q,o,t)=\mathbb I(o)$。
@@ -318,19 +318,19 @@ layout: compress
                   <p><strong>优化目标（完整形式）</strong></p>
 
                   $$
-                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\min\!\left(\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})}A_t,\;\operatorname{clip}\!\left(\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})},1-\epsilon,1+\epsilon\right)A_t\right)\right]
+                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\min\!\left(\frac{\pi_\theta(o_t \mid q,o_{\lt t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{\lt t})}A_t,\;\operatorname{clip}\!\left(\frac{\pi_\theta(o_t \mid q,o_{\lt t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{\lt t})},1-\epsilon,1+\epsilon\right)A_t\right)\right]
                   $$
 
                   <p><strong>简化形式（去掉 Clip）</strong></p>
 
                   $$
-                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})}A_t\right]
+                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\frac{\pi_\theta(o_t \mid q,o_{\lt t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{\lt t})}A_t\right]
                   $$
 
                   <p><strong>目标函数梯度</strong></p>
 
                   $$
-                  \nabla_\theta J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}A_t\,\nabla_\theta \log \pi_\theta(o_t \mid q,o_{<t})\right]
+                  \nabla_\theta J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}A_t\,\nabla_\theta \log \pi_\theta(o_t \mid q,o_{\lt t})\right]
                   $$
 
                   即 $GC_{PPO}(q,o,t,\pi_{\theta_{rm}})=A_t$，其中 $A_t$ 是使用 GAE 计算得到的优势，需要使用奖励 $\{r_{\ge t}\}$ 和 Critic 模型 $V_\psi$。
@@ -349,16 +349,16 @@ layout: compress
                   <p><strong>优化目标</strong></p>
 
                   $$
-                  J_{\mathrm{GRPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, \{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O|q)}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\!\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}-\beta\!\left(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-\log\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\right)\right)\right]
+                  J_{\mathrm{GRPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, \{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O|q)}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\!\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,\lt t})}\hat{A}_{i,t}-\beta\!\left(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,\lt t})}{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}-\log\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,\lt t})}{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}-1\right)\right)\right]
                   $$
 
                   <p><strong>目标函数梯度</strong></p>
 
                   $$
-                  \nabla_\theta J_{\mathrm{GRPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, \{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O|q)}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\!\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\!\left(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\right)\right)\nabla_\theta\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})\right]
+                  \nabla_\theta J_{\mathrm{GRPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, \{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O|q)}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\!\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,\lt t})}\hat{A}_{i,t}+\beta\!\left(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,\lt t})}{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}-1\right)\right)\nabla_\theta\log \pi_\theta(o_{i,t}\mid q,o_{i,\lt t})\right]
                   $$
 
-                  即 $GC_{\mathrm{GRPO}}(q,o,t,\pi_{\theta_{\mathrm{rm}}})=\dfrac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\Big(\dfrac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\Big)$
+                  即 $GC_{\mathrm{GRPO}}(q,o,t,\pi_{\theta_{\mathrm{rm}}})=\dfrac{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,\lt t})}\hat{A}_{i,t}+\beta\Big(\dfrac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,\lt t})}{\pi_\theta(o_{i,t}\mid q,o_{i,\lt t})}-1\Big)$
                 </li>
               </ol>
 

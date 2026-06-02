@@ -222,7 +222,7 @@ layout: compress
               <p>和 SFT 的区别，对于 SFT 来说，所有样本同等重要，都要学习：</p>
 
               $$
-              \mathrm{SFT}_\nabla = \frac{1}{N} \sum_{i=1}^n \sum_{t=1}^{T_n-1} \nabla_\theta \log\pi_\theta(o_t|q, o_{<t})
+              \mathrm{SFT}_\nabla = \frac{1}{N} \sum_{i=1}^n \sum_{t=1}^{T_n-1} \nabla_\theta \log\pi_\theta(o_t|q, o_{\lt t})
               $$
 
               <p>其中 $n$ 是序列 seq 数量，$T_n$ 是 seq 长度 $\Rightarrow$ next token prediction loss。</p>
@@ -230,7 +230,7 @@ layout: compress
               <p>而 RL 中会对不同的 action (decoding token) 给予不同的 Reward，相当于会对样本进行加权：</p>
 
               $$
-              \mathrm{Actor}_\nabla = \frac{1}{N} \sum_{i=1}^n \sum_{t=1}^{T_n-1} R(\tau_n) \nabla_\theta \log\pi_\theta(o_t|q, o_{<t})
+              \mathrm{Actor}_\nabla = \frac{1}{N} \sum_{i=1}^n \sum_{t=1}^{T_n-1} R(\tau_n) \nabla_\theta \log\pi_\theta(o_t|q, o_{\lt t})
               $$
 
               <p>其中 $R(\tau_n)$ 是每个 seq 的 Reward（不是每个 token）：</p>

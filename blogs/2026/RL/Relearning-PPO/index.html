@@ -83,7 +83,7 @@ layout: compress
                 </li>
                 <li>计算 $d= \hat{\mathbb E}_t[{\rm KL}[\pi_{\theta_{old}}(\cdot|s_t),\pi_\theta(\cdot|s_t)]]$：
                   <ul>
-                    <li>$d<d_{targ}/1.5,\quad\beta\leftarrow\beta/2$</li>
+                    <li>$d\lt d_{targ}/1.5,\quad\beta\leftarrow\beta/2$</li>
                     <li>$d>d_{targ}\times 1.5,\quad\beta\leftarrow\beta\times 2$</li>
                   </ul>
                 </li>
