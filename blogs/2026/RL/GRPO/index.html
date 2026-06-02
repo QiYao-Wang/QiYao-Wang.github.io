@@ -234,8 +234,29 @@ layout: compress
                 <li>奖励函数：对于数学题，基于规则，即正确与否。</li>
                 <li>梯度计算算法：
 
+                  <p><strong>优化目标</strong></p>
+
                   $$
-                  \mathcal J_{DPO}(\theta)=\mathbb E\,\log\sigma\Big(\beta\Big(\tfrac{1}{|o^+|}\sum_{t=1}^{|o^+|}\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})}-\tfrac{1}{|o^-|}\sum_{t=1}^{|o^-|}\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\Big)\Big)
+                  \mathcal{J}_{DPO}(\theta)=\mathbb E_{q\sim P_{sft}(Q);~o^+,o^-\sim\pi_\theta(O|q)}\,\log\sigma\!\left(\beta\Big(\tfrac{1}{|o^+|}\sum_{t=1}^{|o^+|}\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})}-\tfrac{1}{|o^-|}\sum_{t=1}^{|o^-|}\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\Big)\right)
+                  $$
+
+                  <p><strong>目标函数梯度</strong></p>
+
+                  $$
+                  \nabla_{\theta} J_{\mathrm{DPO}}(\theta)
+                  =
+                  \mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o^{+},o^{-}\sim \pi_{\mathrm{sft}}(O|q)}
+                  \left[
+                  \tfrac{1}{|o^{+}|}
+                  \sum_{t=1}^{|o^{+}|}
+                  GC_{\mathrm{DPO}}(q,o,t)\,
+                  \nabla_{\theta}\log \pi_{\theta}(o_t^{+}\mid q,o_{<t}^{+})
+                  -
+                  \tfrac{1}{|o^{-}|}
+                  \sum_{t=1}^{|o^{-}|}
+                  GC_{\mathrm{DPO}}(q,o,t)\,
+                  \nabla_{\theta}\log \pi_{\theta}(o_t^{-}\mid q,o_{<t}^{-})
+                  \right]
                   $$
 
                   即 $GC_{DPO}(q,o,t)=\sigma\!\left(\beta\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})} - \beta\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\right)$
@@ -292,14 +313,24 @@ layout: compress
               <ol>
                 <li>数据源：$q\sim P_{sft}(Q),~o\sim\pi_\theta(O|q)$。</li>
                 <li>奖励函数：Reward Model 给出。</li>
-                <li>梯度计算方法（去掉 Clip 的简化形式）：
+                <li>梯度计算方法：
+
+                  <p><strong>优化目标（完整形式）</strong></p>
 
                   $$
-                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})}A_t\right]
+                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\min\!\left(\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})}A_t,\;\operatorname{clip}\!\left(\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})},1-\epsilon,1+\epsilon\right)A_t\right)\right]
                   $$
 
+                  <p><strong>简化形式（去掉 Clip）</strong></p>
+
                   $$
-                  \nabla_\theta J_{\mathrm{PPO}}(\theta)=\mathbb{E}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}A_t\,\nabla_\theta \log \pi_\theta(o_t \mid q,o_{<t})\right]
+                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})}A_t\right]
+                  $$
+
+                  <p><strong>目标函数梯度</strong></p>
+
+                  $$
+                  \nabla_\theta J_{\mathrm{PPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, o \sim \pi_{\theta_{\mathrm{old}}}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}A_t\,\nabla_\theta \log \pi_\theta(o_t \mid q,o_{<t})\right]
                   $$
 
                   即 $GC_{PPO}(q,o,t,\pi_{\theta_{rm}})=A_t$，其中 $A_t$ 是使用 GAE 计算得到的优势，需要使用奖励 $\{r_{\ge t}\}$ 和 Critic 模型 $V_\psi$。
@@ -315,8 +346,16 @@ layout: compress
                 <li>奖励函数：由 Reward Model 给出。</li>
                 <li>梯度计算方法：
 
+                  <p><strong>优化目标</strong></p>
+
                   $$
-                  \nabla_\theta J_{\mathrm{GRPO}}(\theta)=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\Big(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\Big)\right)\nabla_\theta\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})\right]
+                  J_{\mathrm{GRPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, \{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O|q)}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\!\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}-\beta\!\left(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-\log\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\right)\right)\right]
+                  $$
+
+                  <p><strong>目标函数梯度</strong></p>
+
+                  $$
+                  \nabla_\theta J_{\mathrm{GRPO}}(\theta)=\mathbb{E}_{q \sim P_{\mathrm{sft}}(Q),\, \{o_i\}_{i=1}^{G}\sim\pi_{\theta_{\mathrm{old}}}(O|q)}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\!\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\!\left(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\right)\right)\nabla_\theta\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})\right]
                   $$
 
                   即 $GC_{\mathrm{GRPO}}(q,o,t,\pi_{\theta_{\mathrm{rm}}})=\dfrac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\Big(\dfrac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\Big)$
