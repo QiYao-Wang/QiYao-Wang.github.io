@@ -1,0 +1,365 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>GRPO: Group Relative Policy Optimization</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 May. 21, 2026 · Qiyao Wang</span>
+                <span class="meta-topic">#Basics</span>
+                <span class="meta-topic">#RL</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+              <p>PPO 的缺点：</p>
+
+              <ul>
+                <li>需要训练一个与 Policy Model 大小相当的 Value Model，带来巨大的内存与计算负担。</li>
+                <li>LLM 上下文中，<strong>仅最后一个 token 被奖励模型打分</strong>，使得训练一个在每个 token 上都准确的 Value Function 很困难。</li>
+              </ul>
+
+              <figure>
+                <img src="/blogs/2026/RL/GRPO/image.png" alt="PPO vs GRPO">
+                <figcaption>图1：PPO 与 GRPO 的整体对比</figcaption>
+              </figure>
+
+              <h2 id="optimization-objective">Optimization Objective</h2>
+
+              <p>GRPO 避免 PPO 用额外的价值函数近似，使用<strong>同一问题下多个采样输出的平均奖励</strong>作为基线。</p>
+
+              <p>给定每个问题 $q$，GRPO 从旧策略 $\pi_{\theta_{old}}$ 中采样出一组 rollout $\{o_1, o_2,...,o_G\}$，最大化目标函数，优化 Policy Model：</p>
+
+              $$
+              \begin{aligned}
+              \mathcal J_{GRPO}(\theta)&=\mathbb E[q\sim P(Q),\{o_i\}_{i=1}^G\sim \pi_{\theta_{old}}(O|q)]\\
+              &=\frac{1}{G}\sum_{i=1}^G\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\Big\{\min\Big[\frac{\pi_{\theta}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})}\hat A_{i,t},\\
+              &\quad\text{clip}\Big(\frac{\pi_{\theta}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})},1-\epsilon,1+\epsilon\Big)\hat A_{i,t}\Big]-\beta\mathbb{D}_{KL}[\pi_\theta\|\pi_{ref}]\Big\}
+              \end{aligned}
+              $$
+
+              <p>其中各元素：</p>
+
+              <ul>
+                <li>$\mathbb E[q\sim P(Q),\{o_i\}_{i=1}^G\sim \pi_{\theta_{old}}(O|q)]$：对问题 $q$ 从问题分布 $P(Q)$ 中采样，以及 rollout 组 $o_i$ 从旧策略 $\pi_{\theta_{old}}$ 中采样的期望。</li>
+                <li>$\pi_{\theta}(o_{i,t}|q,o_{i,<t})$：当前策略模型 $\pi_\theta$ 在给定问题 $q$ 和 rollout 的前 $t$ 个 token $o_{i,<t}$ 的条件下，生成当前 token $o_{i,t}$ 的概率。</li>
+                <li>$\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})$：旧策略模型 $\pi_{\theta_{old}}$ 下生成当前 token 的概率。</li>
+                <li>$\hat A_{i,t}$：基于组内相对奖励计算的优势函数。</li>
+                <li>$\epsilon$：裁剪超参数，用于限制策略更新的幅度。</li>
+                <li>$\beta$：KL 散度惩罚项系数。</li>
+                <li>$D_{KL}[\pi_\theta\|\pi_{ref}]$：当前策略 $\pi_\theta$ 和参考策略 $\pi_{ref}$ 间的 KL 散度。应该使用<strong>无偏估计 estimator</strong> 计算，目的：减少 KL 散度计算的高方差（参见 <a href="http://joschu.net/blog/kl-approx.html" target="_blank" rel="noopener">Schulman: Approximating KL Divergence</a>）：
+
+                  $$
+                  D_{KL}[\pi_\theta\|\pi_{ref}]=\frac{\pi_{ref}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta}(o_{i,t}|q,o_{i,<t})} - \log \frac{\pi_{ref}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta}(o_{i,t}|q,o_{i,<t})}-1
+                  $$
+                </li>
+              </ul>
+
+              <h2 id="advantage-function">Advantage Function</h2>
+
+              <p>GRPO <strong>无 Critic 模型</strong>，利用组内相对奖励计算优势。</p>
+
+              <p>对于每个问题 $q$，GRPO 从旧策略 $\pi_{\theta_{old}}$ 中采样一组 $\{o_1,o_2,...,o_G\}$，使用奖励模型对这些输出进行评分，得到相应奖励 $r=\{r_1,r_2,...,r_G\}$。通过减去<strong>组平均值</strong>并除以<strong>组标准差</strong>来归一化奖励：</p>
+
+              $$
+              \hat A_{i,t}=\tilde r_i=\frac{r_i-\text{mean}(r)}{\text{std}(r)}
+              $$
+
+              <p>⇒ <strong>结果监督 Outcome Supervision</strong>：只对结果给出奖励分数。</p>
+
+              <p><strong>过程监督 Process Supervision</strong>：仅在末尾提供奖励的结果监督在复杂数学任务中可能不足，可在每个推理步骤的末尾提供奖励，更细粒度地指导策略学习。对于每个问题 $q$ 和一组采样 $\{o_1,o_2,...,o_G\}$，使用 PRM 对每个输出的推理步骤评分，得到步骤奖励：</p>
+
+              $$
+              R=\{\{r_1^{index(1)},...,r_1^{index(K_1)}\},...,\{r_G^{index(1)},...,r_G^{index(K_G)}\}\}
+              $$
+
+              <p>其中 $index(j)$ 表示第 $j$ 步结束 token 的索引，$K_i$ 是第 $i$ 个输出的思维链的总步骤数。</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/GRPO/image-1.png" alt="Process Supervision">
+                <figcaption>图2：过程监督下的步骤奖励示意</figcaption>
+              </figure>
+
+              <p>每个 token 的优势函数 $\hat A_{i,t}$ 计算为<strong>该 token 之后所有步骤的奖励之和</strong>：</p>
+
+              $$
+              \tilde r_i^{index(j)}=\frac{r_i^{index(j)}-\text{mean}(r)}{\text{std}(r)}
+              $$
+
+              $$
+              \hat A_{i,t}=\sum_{index(j)\ge t}\tilde r_i^{index(j)}
+              $$
+
+              <h2 id="rm-dataset">RM Dataset</h2>
+
+              <p>自动化标注方法，方法来源：<strong>MATH-SHEPHERD</strong>。将一个推理步骤的质量定义为<strong>推导出正确答案的潜力</strong>，通过<em>补全</em>和<em>估计</em>两个步骤实现自动标注。</p>
+
+              <ol>
+                <li><strong>补全</strong>：给定推理步骤 $s_i$，使用补全器（completer）从该步骤开始，完成 $N$ 个后续的推理过程，表示为 $(s_{i+1,j},...,s_{K_j,j},a_j)_{j=1}^N$。其中 $s_{i+1,j},...,s_{K_j,j},a_j$ 表示第 $j$ 个完成推理过程的后续步骤，$a_j$ 表示第 $j$ 个完成推理过程的解码答案，$K_j$ 表示第 $j$ 个完成推理过程的总步骤数。可以通过完成的推理过程，评估步骤 $s_i$ 的潜力。</li>
+                <li><strong>估计</strong>：基于补全得到的 $N$ 个完成推理过程的答案，估计步骤 $s_i$ 的质量 $y_{s_i}$：
+                  <ul>
+                    <li><strong>硬估计 Hard Estimation</strong>：存在一个答案 $a_j$ 等于正确答案 $a^*$，认为步骤 $s_i$ 好，将标签设置为 1，否则为 0。</li>
+                    <li><strong>软估计 Soft Estimation</strong>：将步骤 $s_i$ 质量定义为答案等于正确答案 $a^*$ 的频率：
+
+                      $$
+                      y_{s_i}^{SE}=\frac{\sum_{j=1}^N\mathbb{I}(a_j=a^*)}{N}
+                      $$
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+
+              <figure>
+                <img src="/blogs/2026/RL/GRPO/image-2.png" alt="MATH-SHEPHERD pipeline 1">
+                <figcaption>图3：MATH-SHEPHERD 自动标注示意（一）</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/RL/GRPO/image-3.png" alt="MATH-SHEPHERD pipeline 2">
+                <figcaption>图4：MATH-SHEPHERD 自动标注示意（二）</figcaption>
+              </figure>
+
+              <h2 id="grpo-advantages">GRPO 优点</h2>
+
+              <ul>
+                <li><strong>无需额外的价值函数</strong>：组内平均奖励作为 baseline，无需额外的价值函数，减少内存和计算负担。
+                  <ul>
+                    <li>原先的 Advantage：$R-V(s)$</li>
+                    <li>现在的 Advantage：$R-\text{mean}(r)$</li>
+                  </ul>
+                </li>
+                <li><strong>与 Reward Model 的比较性质对齐</strong>：组内平均奖励计算优势函数，与 RM 在同一问题的不同输出之间进行比较的性质相符。</li>
+                <li><strong>KL 惩罚在损失函数中</strong>：将训练策略 $\pi_\theta$ 和参考策略 $\pi_{ref}$ 间的 KL 散度加到损失中，而不是如 PPO 将 KL 加在奖励中，避免了复杂化的 $\hat A_{i,t}$ 的计算。</li>
+              </ul>
+
+              <h2 id="unified-paradigm">理解 LLM 多种学习方法的统一范式</h2>
+
+              <p>训练中模型参数 $\theta$ 的梯度可以从以下三个维度统一描述：</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/GRPO/image-4.png" alt="Unified gradient form">
+                <figcaption>图5：统一范式下的梯度形式</figcaption>
+              </figure>
+
+              <ul>
+                <li><strong>数据源 $\mathcal{D}$</strong>：决定训练数据。</li>
+                <li><strong>奖励函数 $\pi_{rf}$</strong>：训练过程奖励信号的来源。</li>
+                <li><strong>梯度计算算法 $\mathcal A$</strong>：将训练数据和奖励信号处理为梯度系数 $GC$，决定数据的惩罚或强化幅度。</li>
+              </ul>
+
+              <h3 id="sft">1) SFT — Supervised Fine-tuning</h3>
+
+              <ol>
+                <li>数据源：SFT 数据集 $q,o\sim P_{sft}(Q,O)$。</li>
+                <li>奖励函数：SFT 数据为人工挑选 / 模型或方法筛选，视作奖励规则，所有数据均视为正向奖励。</li>
+                <li>梯度计算算法：
+
+                  $$
+                  \mathcal J_{SFT}(\theta)=\mathbb{E}_{q,o\sim P_{sft}(Q,O)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\log \pi_\theta(o_t|q,o_{<t})\right]
+                  $$
+
+                  $$
+                  \nabla_\theta\mathcal J_{SFT}(\theta)=\mathbb{E}_{q,o\sim P_{sft}(Q,O)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\nabla_\theta\log \pi_\theta(o_t|q,o_{<t})\right]
+                  $$
+
+                  此时 $GC$ 恒等于 1。
+                </li>
+              </ol>
+
+              <h3 id="rft">2) RFT — Rejection Sampling Fine-tuning</h3>
+
+              <p>从经过 SFT 的 LLM 中采样多个输出，然后利用具有正确答案的 sample 进行训练。</p>
+
+              <ol>
+                <li>数据源：采样 $\pi_{sft}$ 回答，$q\sim P_{sft}(Q),~o\sim\pi_{sft}(O|q)$。</li>
+                <li>奖励函数：基于规则 $\mathbb I(o)$，即正确与否。</li>
+                <li>梯度计算方法：
+
+                  $$
+                  \mathcal{J}_{RFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_{sft}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\log\pi_{\theta}(o_t|q,o_{<t})\right]
+                  $$
+
+                  $$
+                  \nabla_\theta\mathcal J_{RFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_{sft}(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\nabla_\theta\log\pi_{\theta}(o_t|q,o_{<t})\right]
+                  $$
+
+                  即 $GC_{RFT}(q,o,t)=\mathbb I(o)=\begin{cases}1 & \text{correct answer}\\ 0 & \text{incorrect answer}\end{cases}$
+                </li>
+              </ol>
+
+              <h3 id="dpo">3) DPO — Direct Preference Optimization</h3>
+
+              <p>无需 reward model，使用 pair-wise 的 DPO loss 对 SFT 模型采样的增强输出微调。</p>
+
+              <ol>
+                <li>数据源：采样自 $\pi_{sft}$ 的回答，包含正负样本 $q\sim P_{sft}(Q);~o^+,o^-\sim\pi_\theta(O|q)$。</li>
+                <li>奖励函数：对于数学题，基于规则，即正确与否。</li>
+                <li>梯度计算算法：
+
+                  $$
+                  \mathcal J_{DPO}(\theta)=\mathbb E\,\log\sigma\Big(\beta\Big(\tfrac{1}{|o^+|}\sum_{t=1}^{|o^+|}\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})}-\tfrac{1}{|o^-|}\sum_{t=1}^{|o^-|}\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\Big)\Big)
+                  $$
+
+                  即 $GC_{DPO}(q,o,t)=\sigma\!\left(\beta\log\tfrac{\pi_\theta(o^+_t|q,o^+_{<t})}{\pi_{ref}(o^+_t|q,o^+_{<t})} - \beta\log\tfrac{\pi_\theta(o^-_t|q,o^-_{<t})}{\pi_{ref}(o^-_t|q,o^-_{<t})}\right)$
+                </li>
+              </ol>
+
+              <p>DPO 梯度推导（简记 $R(o)=\frac{1}{|o|}\sum_t (\log\pi_\theta - \log\pi_{ref})$）：</p>
+
+{% raw %}
+<pre><code class="language-text">令：
+    R(o) = (1/|o|) * sum(log(π_θ(o_t|q,o_<t)) - log(π_ref(o_t|q,o_<t)))
+    即每个序列的对数似然比的平均值
+
+则目标函数可以写为：
+    J_DPO(θ) = E[logsigmoid(β(R(o+) - R(o-)))]
+
+1. logsigmoid 的导数：
+    d/dx(logsigmoid(x)) = sigmoid(-x)
+
+2. 链式法则：
+    ∇_θ J_DPO = E[sigmoid(-β(R(o+) - R(o-))) * β * ∇_θ(R(o+) - R(o-))]
+
+3. 对 R(o) 求导：
+    ∇_θ R(o) = (1/|o|) * sum(∇_θ log(π_θ(o_t|q,o_<t)))
+
+4. 最终梯度：
+    ∇_θ J_DPO = E[sigmoid(-β(R(o+) - R(o-))) * β *
+                  ((1/|o+|) * sum(∇_θ log(π_θ(o_t+|q,o_<t+))) -
+                   (1/|o-|) * sum(∇_θ log(π_θ(o_t-|q,o_<t-))))]
+</code></pre>
+{% endraw %}
+
+              <h3 id="online-rft">4) Online RFT — Online Rejection Sampling Fine-tuning</h3>
+
+              <p>使用 SFT model $\pi_{sft}$ 初始化策略模型 $\pi_\theta$。与 RFT 的区别：通过使用<strong>从实时策略模型 $\pi_\theta$ 中采样</strong>的增强输出进行微调。</p>
+
+              <ol>
+                <li>数据源：采样自 $\pi_\theta$ 的回答，$q\sim P_{sft}(Q),~o\sim\pi_\theta(O|q)$。</li>
+                <li>奖励函数：基于规则 $\mathbb I(o)$。</li>
+                <li>梯度计算方法：
+
+                  $$
+                  \nabla_\theta\mathcal J_{OnlineRFT}(\theta)=\mathbb E_{q\sim P_{sft}(Q),o\sim\pi_\theta(O|q)}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\mathbb I(o)\nabla_\theta\log\pi_\theta(o_t|q,o_{<t})\right]
+                  $$
+
+                  即 $GC_{OnlineRFT}(q,o,t)=\mathbb I(o)$。
+                </li>
+              </ol>
+
+              <h3 id="ppo-unified">5) PPO — Proximal Policy Optimization</h3>
+
+              <p>从实时策略模型 $\pi_\theta$ 中采样输出，然后用这些数据优化模型。</p>
+
+              <ol>
+                <li>数据源：$q\sim P_{sft}(Q),~o\sim\pi_\theta(O|q)$。</li>
+                <li>奖励函数：Reward Model 给出。</li>
+                <li>梯度计算方法（去掉 Clip 的简化形式）：
+
+                  $$
+                  J_{\mathrm{PPO}}(\theta)=\mathbb{E}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}\frac{\pi_\theta(o_t \mid q,o_{<t})}{\pi_{\theta_{\mathrm{old}}}(o_t \mid q,o_{<t})}A_t\right]
+                  $$
+
+                  $$
+                  \nabla_\theta J_{\mathrm{PPO}}(\theta)=\mathbb{E}\left[\frac{1}{|o|}\sum_{t=1}^{|o|}A_t\,\nabla_\theta \log \pi_\theta(o_t \mid q,o_{<t})\right]
+                  $$
+
+                  即 $GC_{PPO}(q,o,t,\pi_{\theta_{rm}})=A_t$，其中 $A_t$ 是使用 GAE 计算得到的优势，需要使用奖励 $\{r_{\ge t}\}$ 和 Critic 模型 $V_\psi$。
+                </li>
+              </ol>
+
+              <h3 id="grpo-unified">6) GRPO — Group Relative Policy Optimization</h3>
+
+              <p>从实时策略模型 $\pi_\theta$ 采样一组数据。</p>
+
+              <ol>
+                <li>数据源：$q\sim P_{sft}(Q),~\{o_i\}_{i=1}^G\sim\pi_\theta(O|q)$。</li>
+                <li>奖励函数：由 Reward Model 给出。</li>
+                <li>梯度计算方法：
+
+                  $$
+                  \nabla_\theta J_{\mathrm{GRPO}}(\theta)=\mathbb{E}\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\left(\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\Big(\frac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\Big)\right)\nabla_\theta\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})\right]
+                  $$
+
+                  即 $GC_{\mathrm{GRPO}}(q,o,t,\pi_{\theta_{\mathrm{rm}}})=\dfrac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}\hat{A}_{i,t}+\beta\Big(\dfrac{\pi_{\mathrm{ref}}(o_{i,t}\mid q,o_{i,<t})}{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}-1\Big)$
+                </li>
+              </ol>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+
+            </div>
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
