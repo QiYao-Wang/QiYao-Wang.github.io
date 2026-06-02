@@ -302,6 +302,10 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 # 📌 Research Interests  
 
+<p align="center">
+  <img src="/images/research-focus.png" alt="Research Focus: Advancing LLMs and Agentic AI for Complex Reasoning, Retrieval, and Domain-Specific Intelligence" style="max-width: 100%; height: auto;">
+</p>
+
 - ***General LLMs and MLLMs***: Exploring the underlying mechanisms of LLMs and MLLMs, and researching improved fine-tuning methods to enhance their understanding, reasoning, and generation capabilities.
   - ***Reinforcement Learning***: RL for LLMs Reasoning, Reward Modeling. [[Topic Homepage](https://wangqiyao.me/RL/)]
   - ***Multi-Modal LLMs***: [[MLLMs Topic Homepage](https://wangqiyao.me/MLLMs/)]
