@@ -70,9 +70,9 @@ layout: compress
 
               $$
               \begin{aligned}
-              \mathcal J_{GRPO}(\theta)&=\mathbb E[q\sim P(Q),\{o_i\}_{i=1}^G\sim \pi_{\theta_{old}}(O|q)]\\
-              &=\frac{1}{G}\sum_{i=1}^G\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\Big\{\min\Big[\frac{\pi_{\theta}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})}\hat A_{i,t},\\
-              &\quad\text{clip}\Big(\frac{\pi_{\theta}(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})},1-\epsilon,1+\epsilon\Big)\hat A_{i,t}\Big]-\beta\mathbb{D}_{KL}[\pi_\theta\|\pi_{ref}]\Big\}
+              \mathcal{J}_{GRPO}(\theta)=&\,\mathbb{E}_{q\sim P(Q),\,\{o_i\}_{i=1}^G\sim\pi_{\theta_{old}}(O|q)}\Bigg[\frac{1}{G}\sum_{i=1}^G\frac{1}{|o_i|}\sum_{t=1}^{|o_i|}\Big\{\\
+              &\min\Big[\frac{\pi_\theta(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})}\hat{A}_{i,t},\,\text{clip}\Big(\frac{\pi_\theta(o_{i,t}|q,o_{i,<t})}{\pi_{\theta_{old}}(o_{i,t}|q,o_{i,<t})},1-\epsilon,1+\epsilon\Big)\hat{A}_{i,t}\Big]\\
+              &-\beta\,\mathbb{D}_{KL}[\pi_\theta\|\pi_{ref}]\Big\}\Bigg]
               \end{aligned}
               $$
 
