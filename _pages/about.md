@@ -369,7 +369,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </ul>
 </div>
 
-# Publications
+# 📚 Publications
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
 
 <p><strong>Spotlight Models</strong></p>
