@@ -1,0 +1,223 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/paper_daily/">Paper Daily</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>Prompt-OIRL: Query-Dependent Prompt Optimization with Offline Inverse RL</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 Mar. 25, 2026 · Qiyao Wang</span>
+                <span class="meta-topic">#RL</span>
+                <span class="meta-topic">#Prompt</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+              <h2 id="motivation">Motivation</h2>
+              <p>No prompt is perfect that works for all queries. The optimal prompt is query-dependent.</p>
+
+              <h2 id="query-dependent-prompt-optimization">Query-Dependent Prompt Optimization</h2>
+              <p>zero-shot prompting 更多关注寻找在 distribution-level 上有效的 prompts 而非 instance-level。</p>
+
+              <h3 id="challenge-1">Challenge 1: Inference Time Evaluation is Hard</h3>
+              <p>如何在 inference 时评估当前 prompt 的有效性？特别是 query 的 true answer 未知时。</p>
+
+              <h3 id="challenge-2">Challenge 2: Online Prompt Evaluation and Optimization is Expensive</h3>
+              <p>以往做法：验证提出的 prompt 的有效性 需要在多个数据集和 LLMs 上实验。</p>
+
+              <h3 id="solution">Solution: Query-Dependent Prompt Evaluation and Optimization with Offline Inverse RL</h3>
+
+              <h2 id="query-dependent-prompting">Query-Dependent Prompting</h2>
+
+              <p><strong>Queries and Answers.</strong> 用自然语言表达的 Task $x \in \mathcal{X} = \mathcal{V}^{\infty}$，其中 $\mathcal{V}$ 是词汇表。假设每个 query $x$ 存在一个期望 answer $y^* \in \mathcal{Y}$。</p>
+
+              <p><strong>Language Model.</strong> $l: \mathcal{X} \to \mathcal{Y}$，向语言模型中输入 $x$，得到答案 $\hat{y} = l(x)$。假设这些答案可以被一个指标进行量化 $r: \mathcal{Y} \times \mathcal{Y} \to \mathbb{R}$，例如存在可获取的 golden labels $r(y^*, \hat{y}) = \mathbb{1}\{\hat{y} = y^*\}$。</p>
+
+              <p><strong>Prompting.</strong> $\pi: \mathcal{X} \to \mathcal{X}$，将原始 query $x$ 映射到修改后的 prompted query $\pi(x)$，$\hat{y} = l(\pi(x))$。</p>
+
+              <p><strong>Objective.</strong> 给定数据集 $\mathcal{D} = \{x^{(i)}, y^{*(i)}\}_{i \in [N]}$，query-agnostic zero-shot prompt optimization 的优化目标是寻找 distributional optimal prompt $\bar{\pi}^*$，最大化答案的期望质量。</p>
+
+              <p>寻求 single prompt 实现数据集上的性能：</p>
+
+              $$
+              \bar{\pi}^{*}
+              = \arg\max_{\pi}
+              \mathbb{E}_{(x^{(i)}, y^{*(i)}) \sim \mathcal{D}}
+              \left[
+              r\left(y^{*(i)}, \ell(\pi(x^{(i)}))\right)
+              \right]
+              $$
+
+              <p>使用 query-dependent approach 调整训练目标：</p>
+
+              $$
+              \pi^{*} = \arg\max_{\pi} \, r\left(y^{*(i)}, \ell(\pi(x^{(i)}))\right)
+              $$
+
+              <p>寻求 different prompts for different queries，因此 $\pi^*$ 应该优于 $\bar{\pi}^*$：</p>
+
+              $$
+              \mathbb{E}_{(x^{(i)}, y^{*(i)}) \sim \mathcal{D}}
+              \left[
+              r\left(y^{*(i)}, \ell(\pi^{*}(x^{(i)}))\right)
+              \right]
+              \ge
+              \mathbb{E}_{(x^{(i)}, y^{*(i)}) \sim \mathcal{D}}
+              \left[
+              r\left(y^{*(i)}, \ell(\bar{\pi}^{*}(x^{(i)}))\right)
+              \right]
+              $$
+
+              <h2 id="prompt-oirl">Prompt-OIRL: Prompting with Offline Inverse RL</h2>
+
+              <figure>
+                <img src="/blogs/2026/RL/Prompt-OIRL/image.png" alt="Prompt-OIRL Overview">
+                <figcaption>图1：Prompt-OIRL 整体框架</figcaption>
+              </figure>
+
+              <p><strong>Challenge 1:</strong> inability to compute rewards during inference.</p>
+              <p><strong>Challenge 2:</strong> the necessity for extensive interactions with LLMs.</p>
+
+              <p>传统 RL：稀疏的 trajectory-level feedback and huge overheads of interaction with LLMs，同时在 inference phase 没有确定性标签。</p>
+
+              <h3 id="step-1">Step 1: Existence of Offline Prompt Demonstrations</h3>
+
+              $$
+              \mathcal{D}^{\ell}_{\mathrm{dem}}
+              =
+              \left\{
+              x^{(i)},\, \pi^{(k)},\, r^{(i,k)} = r\!\left(y^{*(i)},\, \ell(\pi^{(k)}(x^{(i)}))\right)
+              \right\}_{i \in [N],\, k \in [K]}
+              $$
+
+              <p>prompt-alignment demonstration datasets 通过评估现有 prompts，其中奖励受语言模型影响。</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/Prompt-OIRL/image-1.png" alt="Offline Prompt Demonstrations">
+                <figcaption>图2：Offline Prompt Demonstration Dataset 构建示意</figcaption>
+              </figure>
+
+              <h3 id="step-2">Step 2: Offline Reward Modeling — Inverse RL without an Environment</h3>
+
+              <p>当前问题：</p>
+              <ul>
+                <li>奖励指标是语言模型 $l$ 上的一个函数，成本高；</li>
+                <li>计算奖励需要获取真实答案 $y^*$，但在 inference time 通常无法获取。</li>
+              </ul>
+
+              <p>引入参数化的 proxy reward model，是 query $x$ 和 prompt $\pi$ 的函数，记为 $r_\theta(x, \pi(x))$。</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/Prompt-OIRL/image-2.png" alt="Offline Reward Modeling">
+                <figcaption>图3：Offline Reward Modeling 流程</figcaption>
+              </figure>
+
+              <p>数学推理任务中的奖励信号是二元的，可以被视为分类任务，预测输入语言模型后能否产生正确答案：</p>
+
+              $$
+              \mathcal{L}_{\mathrm{CE}}(\theta; \mathcal{D}^{\ell}_{\mathrm{dem}})
+              =
+              - \mathbb{E}_{i \in [N],\, k \sim [K]}
+              \left[
+              r^{(i,k)} \log \sigma\!\left(r^{(i,k)}_{\theta}\right)
+              +
+              \left(1 - r^{(i,k)}\right)
+              \log\!\left(1 - \sigma\!\left(r^{(i,k)}_{\theta}\right)\right)
+              \right]
+              $$
+
+              <p>使用 $x$ 和 $\pi$ 的 embedding 作为 reward model 的输入。</p>
+
+              <h3 id="step-3">Step 3: Offline Prompt Optimization with the Learned Reward Model</h3>
+
+              $$
+              \pi^{*}
+              =
+              \arg\max_{\pi}\, r_{\theta}(x, \pi(x))
+              \;\approx\;
+              \arg\max_{\pi}\, r\!\left(y^{*}, \ell(\pi(x))\right)
+              $$
+
+              <p>使用通用语言模型生成 batch 候选 prompts，利用学习到的 RM 选择最好的一个。</p>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] Sun, H., Hüyük, A., & van der Schaar, M. (2024). <a href="https://arxiv.org/abs/2309.06553">Query-Dependent Prompt Evaluation and Optimization with Offline Inverse RL</a>. <em>ICLR 2024</em>.</p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
