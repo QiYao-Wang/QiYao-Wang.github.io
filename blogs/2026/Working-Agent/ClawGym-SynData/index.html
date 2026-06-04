@@ -7,6 +7,7 @@ layout: compress
   <head>
     {% include head.html %}
     {% include head/custom.html %}
+    <base target="_self">
     <link rel="stylesheet" href="/assets/css/blog.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -143,7 +144,7 @@ layout: compress
               <h2 id="clawgym-syndata">ClawGym-SynData</h2>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image.png" alt="ClawGym-SynData Pipeline">
+                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image.png" alt="ClawGym-SynData Pipeline" style="max-width: 90%;">
                 <figcaption>图1：ClawGym-SynData 整体流程</figcaption>
               </figure>
 
@@ -324,7 +325,7 @@ layout: compress
               <p>⇒ Persona-Driven 合成产生的任务在场景覆盖和所需操作方面都具有多样性</p>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image-1.png" alt="Persona-Driven Task Distribution">
+                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image-1.png" alt="Persona-Driven Task Distribution" style="max-width: 70%;">
                 <figcaption>图2：Persona-Driven 合成数据分布</figcaption>
               </figure>
 
@@ -333,7 +334,7 @@ layout: compress
               <p>Skill-Grounded 合成是建立在一个广泛的可执行能力空间上，而不是一个狭窄的操作集合上</p>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image-2.png" alt="Skill-Grounded Task Distribution">
+                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image-2.png" alt="Skill-Grounded Task Distribution" style="max-width: 60%;">
                 <figcaption>图3：Skill-Grounded 合成数据分布</figcaption>
               </figure>
 
@@ -344,7 +345,7 @@ layout: compress
               <p>随机采样 50 个任务实例进行 human evaluation，沿 4 个维度：task reasonableness, execution feasibility, resource consistency, verification quality，每个维度打 1-5 分</p>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image-3.png" alt="Human Evaluation Results">
+                <img src="/blogs/2026/Working-Agent/ClawGym-SynData/image-3.png" alt="Human Evaluation Results" style="max-width: 60%;">
                 <figcaption>图4：Human Evaluation 结果</figcaption>
               </figure>
 
@@ -355,6 +356,33 @@ layout: compress
       </article>
     </div>
 
-    <script src="/assets/js/main.min.js"></script>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
   </body>
 </html>
