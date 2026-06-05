@@ -1,0 +1,487 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>LRAT：从Agent轨迹中学习检索 —— 迈向Agentic Search时代的检索训练新范式</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 05, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-topic">#Search Agent</span>
+                <span class="meta-topic">#Paper</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+              <h2 id="motivation">Motivation：检索系统面临的使用者范式转变</h2>
+
+              <p>信息检索（Information Retrieval, IR）长期以来一直是搜索引擎等信息获取系统的核心基础。几十年来，<strong>learning to rank</strong> 的研究始终围绕着一个<strong>以人为中心</strong>的范式展开：检索模型从大规模人类交互日志（如点击 click、停留时间 dwell time）中学习，并优化为服务人类用户而设计。这套「人类数据 → 模型训练 → 服务人类」的闭环构成了强大的数据飞轮。</p>
+
+              <p>然而，随着大语言模型（LLM）驱动的智能体（Agent）的迅速崛起，这一范式正在被<strong>根本性地挑战</strong>。搜索引擎越来越多地被 Agent 而非人类查询，检索不再是独立的终端服务，而是嵌入在 Agent 的多轮推理-行动循环中的<strong>核心工具</strong>。搜索 Agent 迭代地发出子查询、消费检索信息、优化行动以解决复杂任务——检索质量直接决定了 Agent 能观测到什么信息、能推理出什么结论、最终能完成什么任务。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/intro_5.svg" alt="检索范式转变" style="max-width: 85%;">
+                <figcaption>图1：检索范式的根本转变 —— 检索器的服务目标从人类变为 Agent，训练数据来源也应从人类交互日志转向 Agent 交互轨迹</figcaption>
+              </figure>
+
+              <p>尽管检索的消费者已经变了，但今天的搜索 Agent 仍然依赖通用的检索模型（如稠密嵌入检索器）或外部搜索 API（如 Google、Bing）。这些检索器<strong>压倒性地基于人类交互日志训练</strong>，内在地编码了关于「查询如何被发出」「结果如何被检查」「相关性信号如何被表达」的<strong>人类中心假设</strong>。当主要用户变成 Agent 时，这些假设在根本层面失效：</p>
+
+              <ul>
+                <li>Agent 的查询<strong>不是</strong>为了满足即时的信息需求，而是为了推进<strong>中间推理目标</strong></li>
+                <li>Agent 的相关性判断模式<strong>不同于</strong>人类用户</li>
+                <li>Agent 的查询具有<strong>探索性、局部性、上下文依赖性</strong>，反映了其对任务不断演进的理解</li>
+              </ul>
+
+              <p>⇒ 这造成了<strong>检索模型的训练方式与实际使用方式之间的根本性错配</strong>（fundamental mismatch）。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/intro_performance.svg" alt="LRAT 性能总览" style="max-width: 90%;">
+                <figcaption>图2：LRAT 在六种 Agent backbone 上的增益概览（使用 Qwen3-Embedding-0.6B 作为检索器）。左：InfoSeek-Eval 上的成功率；右：BrowseComp-Plus 上的证据召回率。LRAT 在域内任务成功率和域外检索质量上均表现出一致的提升</figcaption>
+              </figure>
+
+              <p>这种错配促使我们重新思考 Agent 时代的检索训练。作者提出了一个核心论点：<strong>检索模型应该直接从 Agent 交互数据中训练</strong>，而非复用人类中心的搜索数据。类比于传统搜索中从用户交互日志中 learning to rank，作者提出了 <strong>Learning to Retrieve from Agent Trajectories（从 Agent 轨迹中学习检索）</strong> 这一全新训练范式。Agent 轨迹记录了任务执行过程中产生的中间查询序列、检索文档和推理步骤，提供了丰富且自然丰富的监督信号来源。在此基础上，作者提出了 <strong>LRAT</strong>（Learning to Retrieve from Agent Trajectories）框架。</p>
+
+              <h2 id="preliminary">背景：Deep Research Agent 轨迹</h2>
+
+              <h3 id="trajectory-definition">轨迹定义</h3>
+
+              <p>论文聚焦于 <strong>Deep Research Agent</strong>——通过外部检索系统迭代交互来解决复杂信息获取任务的 LLM 驱动智能体。给定一个初始用户查询 \(q\)，Agent 遵循 <strong>ReAct 风格</strong>的交互模式，交替进行 <strong>Think（思考）</strong>和 <strong>Act（行动）</strong>，生成多轮执行轨迹：</p>
+
+              \[
+              \mathcal{T} = \{(r_t, a_t, o_t)\}_{t=1}^{T}
+              \]
+
+              <p>每轮 \(t\) 中，Agent 维持一个内部推理状态 \(r_t\)，指导后续行动 \(a_t\)，并融合从外部检索系统返回的新观测信息 \(o_t\)。</p>
+
+              <h3 id="three-actions">三种核心动作</h3>
+
+              <p><strong>① [Think]（思考）</strong>：每轮开始时，Agent 产生显式的推理状态 \(r_t\)，分析当前上下文，总结已有证据，识别还缺少什么信息来回答原始用户查询。</p>
+
+              <p><strong>② [Search]（搜索）或 [Browse]（浏览）</strong>：Agent 基于推理状态选择行动：</p>
+              <ul>
+                <li><strong>[Search]</strong>：生成中间搜索查询 \(q_t\)，检索系统返回 Top-\(K\) 候选文档 \(\mathcal{D}_t = \{ d_{t,i} \}_{i=1}^{K}\)。Agent 不会立即看到完整文档内容，而是收到<strong>片段列表</strong>（如标题和摘要）作为观测 \(o_t\)，用于初步评估和后续决策。</li>
+                <li><strong>[Browse]</strong>：Agent 从之前检索的候选中选择一个文档 \(d_t\) 并请求完整阅读。检索系统返回该文档的<strong>完整内容</strong>作为观测 \(o_t\)，Agent 将其融入推理状态。</li>
+              </ul>
+
+              <p><strong>③ [Answer]（回答）</strong>：当 Agent 判断信息已足够时，执行最终推理步骤，综合轨迹中积累的证据，生成最终答案返回给用户。</p>
+
+              <h3 id="trajectory-example">轨迹示例</h3>
+
+              <p>以下展示一个典型的 Deep Research Agent 轨迹。Agent 收到问题后，先搜索，再根据摘要选择相关文档进行浏览，从中提取关键信息，经过多轮迭代后给出最终答案。</p>
+
+              <div style="border: 1px solid #999; border-radius: 6px; background: #fff; padding: 0; margin: 1em 0;">
+                <div style="background: #f0f0f0; padding: 6px 12px; font-weight: bold; font-size: 0.9em; border-bottom: 1px solid #999;">Trajectory Example</div>
+                <div style="padding: 8px;">
+                  <div style="background: #f5f0ff; padding: 6px 10px; margin: 2px 0;"><strong>[User Query]:</strong> Which station merged with Immaculate Heart Radio in 2017?</div>
+                  <hr style="border-color: #ccc; margin: 4px 0;">
+                  <div style="background: #f0f8ff; padding: 6px 10px; margin: 2px 0;"><strong>[Think]:</strong> No merger info yet. Let's search for the 2017 merger details.</div>
+                  <div style="background: #fff5ee; padding: 6px 10px; margin: 2px 0;"><strong>[Search]:</strong> <code>Search["Immaculate Heart" "merged" "2017"]</code></div>
+                  <div style="background: #f5f5f5; padding: 6px 10px; margin: 2px 0;"><strong>[Information]:</strong> Found 10 results:<br>
+                  <strong>Doc [3948]:</strong> Immaculate Heart Radio ...<br>
+                  <strong>Doc [2295]:</strong> corporate name Relevant Radio, Inc...<br>
+                  ...</div>
+                  <hr style="border-color: #ccc; margin: 4px 0;">
+                  <div style="background: #f0f8ff; padding: 6px 10px; margin: 2px 0;"><strong>[Think]:</strong> Doc [2295] mentioned Relevant Radio. It might contain the specific merger date. Let's read it.</div>
+                  <div style="background: #fff5ee; padding: 6px 10px; margin: 2px 0;"><strong>[Browse]:</strong> <code>Browse[DocID: 2295]</code></div>
+                  <div style="background: #f5f5f5; padding: 6px 10px; margin: 2px 0;"><strong>[Information]:</strong> ... Relevant Radio announced it would merge...</div>
+                  <hr style="border-color: #ccc; margin: 4px 0;">
+                  <div style="background: #fafae8; text-align: center; padding: 3px; font-size: 0.8em; color: #888;"><em>... Intermediate turns omitted ...</em></div>
+                  <hr style="border-color: #ccc; margin: 4px 0;">
+                  <div style="background: #f0f8ff; padding: 6px 10px; margin: 2px 0;"><strong>[Think]:</strong> I have found the answer...</div>
+                  <div style="background: #f5f0ff; padding: 6px 10px; margin: 2px 0;"><strong>[Answer]:</strong> The station is <span style="color: red; font-weight: bold;">WMJR</span> (Nicholasville, KY).</div>
+                </div>
+              </div>
+
+              <p style="text-align: center; font-size: 0.9em; color: #666;">图3：Deep Research Agent 轨迹示例，展示了 Think → Search → Browse → Think → Answer 的迭代交互过程</p>
+
+              <h3 id="task-definition">任务定义</h3>
+
+              <p>大多数现有搜索 Agent 采用现成的检索模型（如 Qwen3-Embedding、E5-Embedding 或 Google/Bing API），这些模型从人类交互日志训练而来。而 Deep Research Agent 生成的丰富多轮执行轨迹尽管自然大量存在，却<strong>几乎未被用于训练检索模型</strong>。因此，论文定义了 <strong>Learning to Retrieve from Agent Trajectories</strong> 任务：</p>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                给定一组 Agent 执行轨迹 \(\{\mathcal{T}\}\)，目标是学习一个检索模型，使其产生的排序文档列表能够<strong>优化支持 Agent 的多步推理和问题解决过程</strong>。与传统 learning-to-rank 不同，该任务的监督信号应<strong>直接从 Agent 轨迹中导出</strong>，使检索训练与 Agent 行为直接对齐。
+              </p>
+
+              <h2 id="trajectory-analysis">Agent 轨迹分析：关键发现</h2>
+
+              <h3 id="env-setup">实验环境设置</h3>
+
+              <p>为系统地分析 Agent 轨迹，作者搭建了一个完整的实验环境：</p>
+
+              <ul>
+                <li><strong>种子数据</strong>：从 InfoSeekQA（一个包含 50K+ 问答对的大规模 deep research benchmark）中选取 top 10K 具有验证答案的查询。InfoSeekQA 的任务通常涉及更深层次的搜索过程，产生比传统 QA 数据集长得多的交互轨迹。</li>
+                <li><strong>检索语料</strong>：Wiki-25-Dump，包含超 1120 万个文档块，每个截断至 512 tokens。</li>
+                <li><strong>检索系统</strong>：部署了四种检索模型——稀疏检索 BM25 和三种不同规模的稠密检索器 Qwen3-Embedding（0.6B, 4B, 8B），覆盖词汇匹配和语义检索能力。</li>
+                <li><strong>Agent</strong>：Tongyi-DeepResearch-30B-A3B，最强开源搜索 Agent 之一，支持超 100 步交互。</li>
+                <li><strong>交互设置</strong>：每次 [Search] 返回 Top-10 候选，每个候选显示前 64 tokens 的摘要；最大交互轮数 \(T=100\)；仅当最终答案与 ground truth 匹配时，轨迹被认为有效。</li>
+              </ul>
+
+              <p>最终收集到 <strong>26,482</strong> 条正确轨迹、<strong>8,137</strong> 条错误轨迹，共计 34,619 条完整轨迹，形成 <strong>91,713</strong> 个训练样本对。</p>
+
+              <h3 id="trajectory-stats">轨迹统计特征</h3>
+
+              <p>下表展示了不同检索器下生成轨迹的统计信息。一个关键观察是：<strong>正确轨迹与错误轨迹在搜索-浏览比例上存在显著差异</strong>。</p>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.82em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc;">Retriever</th>
+                    <th colspan="5" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Correct</th>
+                    <th colspan="5" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Incorrect</th>
+                  </tr>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">N</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. S</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. B</th><th style="padding: 4px 6px; border: 1px solid #ccc;">B/S</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. T</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">N</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. S</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. B</th><th style="padding: 4px 6px; border: 1px solid #ccc;">B/S</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. T</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">BM25</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7,674</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">9.15</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">2.96</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0.32</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">12.11</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">1,872</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.15</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5.97</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">0.20</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.11</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Qwen3-Emb-0.6B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5,913</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">12.81</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">3.68</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0.29</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">16.49</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">2,062</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.95</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.17</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">0.18</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.12</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Qwen3-Emb-4B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">6,354</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">13.24</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">4.11</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0.31</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.34</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">2,121</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">36.13</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.47</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">0.21</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">43.60</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Qwen3-Emb-8B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">6,541</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.86</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">3.69</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0.31</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15.55</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">2,082</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.47</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.20</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">0.21</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">41.67</td></tr>
+                  <tr style="font-weight: bold; background: #f5f5f5;"><td style="padding: 5px 8px; border: 1px solid #ccc;">Total</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26,482</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.77</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">3.61</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #060;">0.31</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15.38</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">8,137</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.68</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">6.95</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">0.20</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">41.63</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表1：不同检索器下的轨迹统计。正确轨迹的 B/S 比率为 0.31，远高于错误轨迹的 0.20，表明有效的浏览行为是任务成功的关键</p>
+
+              <p><strong>关键数据</strong>：正确轨迹平均每轮包含 11.77 次搜索和 3.61 次浏览（B/S = 0.31），而错误轨迹的 B/S 仅为 0.20，且错误轨迹的搜索次数（34.68）几乎是正确轨迹（11.77）的 3 倍，说明失败的 Agent 陷入了「只搜不读」的低效循环。</p>
+
+              <h3 id="finding-1">发现一：浏览行为是任务成功的必要条件</h3>
+
+              <p>作者对比了成功与失败轨迹中的行为模式。如图 4(a) 所示，成功轨迹从 [Search] (S) 到 [Browse] (B) 的转移概率<strong>显著更高</strong>，而失败轨迹更倾向于停留在仅搜索的循环中而不进入文档消费。图 4(b) 进一步表明，任务成功率随着浏览的证据文档数量<strong>单调递增</strong>，当 Agent 从未浏览任何包含所需证据的文档时，成功率降至零。</p>
+
+              <p>⇒ 浏览检索文档不仅是任务成功的相关因素，更是<strong>成功完成任务的必要条件</strong>。这促使我们将<strong>被浏览的文档作为正监督信号的主要候选</strong>。</p>
+
+              <h3 id="finding-2">发现二：未浏览文档是可靠的负样本</h3>
+
+              <p>在人类点击日志中，负信号因<strong>位置偏差（position bias）</strong>而众所周知地模糊：未点击的文档可能是不相关的，也可能仅仅是被忽略了。因此传统 learning-to-rank 方法通常采用保守策略（如 skip-above 采样）来避免引入假负样本。</p>
+
+              <p>然而，Agent 轨迹与此不同。如图 4(c) 所示，与人类点击不同，Agent 的浏览行为<strong>并不尖锐地集中在 top 位置</strong>，而是相对均匀地分布在各排名位置。这表明 Agent 积极地评估所有候选而非依赖位置线索，未浏览的文档通常是<strong>经过摘要检查后被明确拒绝</strong>的结果，而非缺乏曝光。</p>
+
+              <p>⇒ 与人类点击日志不同，检索候选集中的<strong>所有未浏览文档都可以被视为可靠的负样本</strong>，无需位置偏差校正。</p>
+
+              <h3 id="finding-3">发现三：浏览后推理痕迹是文档效用的重要指标</h3>
+
+              <p>虽然浏览行为标识了 Agent 选择检查的文档，但它仍是隐式信号且可能包含噪声。Deep Research Agent 在 [Browse] 动作后会产生<strong>显式的推理痕迹</strong>，提供关于检索内容如何被解释和利用的更直接视角。</p>
+
+              <p>如图 4(d) 所示，最终产生正确答案的轨迹在浏览后伴随着<strong>显著更长</strong>的推理链。仔细观察发现：在失败轨迹中，Agent 通常在判断文档不包含有用信息后<strong>迅速放弃</strong>该文档，产生简短的浏览后推理；而成功轨迹则在浏览后表现出<strong>显著更深</strong>的分析和内容整合。此外，包含 ground-truth 证据的文档比非证据文档引发<strong>明显更长</strong>的推理痕迹。</p>
+
+              <p>⇒ <strong>浏览后推理痕迹提供了文档效用的可靠信号</strong>。特别是，浏览后推理痕迹的长度与文档是否对任务进展有实质性贡献<strong>强相关</strong>，为超越二值反馈的细粒度相关性提供了宝贵洞见。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/data_analysis_3.svg" alt="Agent轨迹分析" style="max-width: 95%;">
+                <figcaption>图4：Agent 轨迹分析。(a) [Search] (S) 与 [Browse] (B) 之间的动作转移概率；(b) 成功率随浏览证据文档数量的变化；(c) 文档打乱后的浏览排名分布（Agent vs. 人类）；(d) 浏览后推理长度（tokens）按轨迹正确性和文档类型分组</figcaption>
+              </figure>
+
+              <h2 id="lrat-method">LRAT 方法：从轨迹中学习检索</h2>
+
+              <p>基于以上三个关键发现，作者提出了 <strong>LRAT</strong>——一个简洁而有效的框架，直接从 Deep Research Agent 交互中训练检索器。LRAT 逐步从轨迹中挖掘相关性信号以构建高质量的查询-文档监督，然后使用效用感知的加权策略优化稠密检索器。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/method_7.svg" alt="LRAT 框架总览" style="max-width: 95%;">
+                <figcaption>图5：LRAT 框架总览。(a) 从交互序列的 Browse 动作中提取相关性信号；(b) 用 LLM 判断浏览后推理来过滤不相关文档；(c) 基于浏览后推理长度估计相关性权重；(d) 使用过滤后的样本及其相关性权重进行对比学习</figcaption>
+              </figure>
+
+              <h3 id="naive-mining">第一步：从 Search-Browse 转换中挖掘朴素相关性信号</h3>
+
+              <p>首先从 Agent 的 <strong>[Search] → [Browse] 转换</strong>中构建粗粒度监督。考虑一个搜索轮次 (t)，Agent 发出中间查询 (q_t) 并收到 Top-(K) 候选集 (\mathcal{D}_t = \{d_{t,i}\}_{i=1}^{K})。如果 Agent 在下一轮对某个候选执行了 [Browse] 动作，则被浏览的文档 (d_{t+1}) 被视为<strong>朴素正样本</strong>（naive positive）。</p>
+
+              <p>对于负样本：基于发现二的洞察，Agent 的浏览决策表现出弱位置依赖性，未浏览的候选更可能反映<strong>明确的拒绝</strong>而非缺乏曝光。因此，对于每个被浏览的文档 (d_{t+1})，同一检索集中的<strong>所有其他未被浏览的候选</strong>都被视为朴素负样本：</p>
+
+              \[
+              \mathcal{N}_t = \mathcal{D}_t \setminus \{d_{t+1}\}
+              \]
+
+              <p>这产生了形式为 ((q_t, d_{t+1}, \mathcal{N}_t)) 的粗粒度训练实例。</p>
+
+              <h3 id="reasoning-filter">第二步：基于推理的正样本过滤</h3>
+
+              <p>浏览动作仍是相关性的不完美代理——Agent 基于粗粒度摘要选择文档浏览，之后可能判断某浏览过的文档<strong>并无帮助</strong>。基于发现三，浏览后推理痕迹能可靠地指示文档效用，通常明确陈述浏览内容是否解决了信息缺口。</p>
+
+              <p>因此，LRAT 引入了一个<strong>推理感知的 LLM-as-Judge 过滤器</strong>。对每个被浏览的文档 (d_{t+1})，收集 Agent 紧随其后的推理痕迹 (r_{t+2})，使用 Qwen3-30B-A3B-Thinking-2507 作为判断器，根据推理痕迹判定文档是 <code>Relevant</code> 还是 <code>Irrelevant</code>。</p>
+
+              <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50; margin: 1em 0;">
+                <strong>过滤效果验证</strong>：在 BrowseComp-Plus 证据标注上，该过滤器能保留 <strong>97.2%</strong> 的 ground-truth 证据文档（几乎完美的正样本召回），同时保留 <strong>74.8%</strong> 的浏览过但非证据的文档——说明过滤器移除了明显噪声，同时捕获了可能超出刚性数据集证据标签的 Agent 特定效用。
+              </p>
+
+              <h3 id="relevance-intensity">第三步：推理长度驱动的相关性强度估计</h3>
+
+              <p>除识别哪些文档相关外，Agent 轨迹还揭示了文档<strong>对任务进展的贡献程度</strong>。LRAT 显式地将相关性强度（relevance intensity）纳入检索器优化。这类似于经典人类搜索中，<strong>停留时间（dwell time）</strong>被广泛用作相关性强度的有效代理——在两种情况下，增加的认知努力反映了对检索内容的更深投入。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/thought_token_distribution.svg" alt="推理Token长度分布" style="max-width: 55%;">
+                <figcaption>图6：浏览动作后的推理 token 长度分布。呈现指数衰减模式，与时间感知点击模型中的边际收益衰减规律一致</figcaption>
+              </figure>
+
+              <p>受时间感知点击模型（time-aware click model）的饱和原理启发，LRAT 将推理长度映射为有界效用分数，使用<strong>指数饱和函数</strong>来捕捉日益增长的推理痕迹所带来的边际收益递减效应。</p>
+
+              <p>在时间感知点击模型中，停留长度 (x) 处的边际增益遵循指数衰减函数：</p>
+              \[
+              g(x) = \exp\left(-\frac{\ln 2}{\beta} x \right)
+              \]
+              <p>其中 (\beta) 是累积增益的半衰期。对 Agent 轨迹中浏览后推理长度的分析（图 6）显示了类似的指数衰减模式。将边际增益从 0 积分到观测的推理长度 (l) 得到累积相关性效用：</p>
+
+              \[
+              u(l) = \int_0^l g(x)\, dx
+                    = \frac{\beta}{\ln 2} \left( 1 - \exp\left(-\frac{\ln 2}{\beta} l \right) \right)
+              \]
+
+              <p>归一化后，相关性强度权重为：</p>
+              \[
+              w = \frac{1}{\mu_{\text{raw}}} \left( 1 - \exp\left(-\frac{\ln 2 \cdot l}{\beta}\right) \right)
+              \]
+              <p>其中 (\beta) 设为所有轨迹中推理长度的中位数，\(\mu_{\text{raw}}\) 为全局未归一化分数的均值，确保 \(\mathbb{E}[w] \approx 1\)，同时为触发更深 Agent 推理和更大任务进展的文档分配更高重要性。</p>
+
+              <h3 id="weighted-contrastive">第四步：加权对比学习</h3>
+
+              <p>LRAT 使用标准的双编码器稠密检索器（bi-encoder）。每个查询 (q) 和文档 (d) 被独立编码为向量表示 \(\mathbf{e}_q, \mathbf{e}_d \in \mathbb{R}^h\)。相关性分数通过相似度函数计算：\(s(q,d) = \mathrm{sim}(\mathbf{e}_q, \mathbf{e}_d)\)。</p>
+
+              <p>为将相关性强度纳入优化，LRAT 修改了标准 InfoNCE 损失，引入<strong>样本级加权</strong>。对大小为 (N) 的 mini-batch，加权对比目标定义为：</p>
+
+              \[
+              \mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N} 
+              w_i \cdot 
+              \log \frac{\exp\left(s(q_i, d_i^+) / \tau\right)}
+              {\displaystyle \exp\left(s(q_i, d_i^+) / \tau\right) + 
+              \sum_{d^- \in \mathcal{N}_i} \exp\left(s(q_i, d^-) / \tau\right)}
+              \]
+
+              <p>其中 \(\tau\) 为温度参数，(d_i^+\) 为查询 (q_i\) 的正文档，(w_i\) 为推理长度导出的权重。权重 (w_i\) 缩放每个实例的梯度贡献，使得与更深推理相关联的文档在训练中发挥<strong>更强的影响力</strong>。</p>
+
+              <p>负样本集 \(\mathcal{N}_i\) 由两个互补来源构建：<strong>(1)</strong> 来自 Agent 轨迹的同一检索候选集中未被浏览的文档（轨迹导出负样本），<strong>(2)</strong> 同一 mini-batch 中与其他查询配对的文档（in-batch negatives）。这种混合负采样策略提高了区分能力，同时避免表示坍缩。</p>
+
+              <h2 id="experiments">实验</h2>
+
+              <h3 id="exp-setup">实验设置</h3>
+
+              <p><strong>Benchmarks</strong>：</p>
+              <ul>
+                <li><strong>域内评估</strong>：<strong>InfoSeek-Eval</strong>（300 个多跳信息检索查询，严格与训练数据不相交）</li>
+                <li><strong>域外评估</strong>：<strong>BrowseComp-Plus</strong>（830 个复杂人工编写问题，需要多步推理和证据聚合，基于 100,195 篇文档的语料库）</li>
+              </ul>
+
+              <p><strong>检索 Backbone</strong>：两种代表性稠密检索器——<strong>Multilingual-E5-Large-Instruct</strong>（编码器架构）和 <strong>Qwen3-Embedding-0.6B</strong>（解码器架构）。</p>
+
+              <p><strong>Agent Backbone</strong>：覆盖 6 种不同规模和类型的 Agent：</p>
+              <ul>
+                <li><strong>任务优化搜索 Agent</strong>：AgentCPM-Explore (4B)、WebExplore (8B)、Tongyi-DeepResearch (30B)</li>
+                <li><strong>通用 Agentic 基础模型</strong>：GPT-OSS (120B)、MiniMax-M2.1 (229B)、GLM-4.7 (358B)</li>
+              </ul>
+
+              <p><strong>评估指标</strong>：成功率（SR）、证据召回率（Recall）、平均步数（Avg. Steps）。</p>
+
+              <p><strong>训练细节</strong>：使用 FlagEmbedding 框架，微调 2 epochs，batch size 32，学习率 \(1\mathrm{e}{-6}\)，最大输入长度 512 tokens，InfoNCE 的 group size 10，温度 0.02。</p>
+
+              <h3 id="main-results">主要实验结果</h3>
+
+              <p>下表展示了在域内（InfoSeek-Eval）和域外（BrowseComp-Plus）benchmark 上的完整实验结果。</p>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.78em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc;">Agent Backbone</th>
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc;">Retriever</th>
+                    <th colspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">InfoSeek-Eval (ID)</th>
+                    <th colspan="3" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">BrowseComp-Plus (OOD)</th>
+                  </tr>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">SR ↑</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. Steps ↓</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">SR ↑</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Recall ↑</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg. Steps ↓</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="7" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">I. Task-Optimized Search Agents</td></tr>
+                  <tr><td rowspan="2" style="padding: 5px 8px; border: 1px solid #ccc; font-weight: bold;">AgentCPM-Explore (4B)</td><td style="padding: 5px 6px; border: 1px solid #ccc;">Qwen3-Emb</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">13.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.7</td></tr>
+                  <tr><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa;"><strong>+ LRAT</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">55.7 (+38.2%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>34.4</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">15.8 (+17.0%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">32.0 (+37.9%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>40.4</strong></td></tr>
+                  <tr><td rowspan="2" style="padding: 5px 8px; border: 1px solid #ccc; font-weight: bold;">WebExplore (8B)</td><td style="padding: 5px 6px; border: 1px solid #ccc;">Qwen3-Emb</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">52.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">24.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">47.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.7</td></tr>
+                  <tr><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa;"><strong>+ LRAT</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">68.7 (+32.1%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>19.0</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">27.2 (+29.5%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">55.9 (+17.2%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>38.7</strong></td></tr>
+                  <tr><td rowspan="2" style="padding: 5px 8px; border: 1px solid #ccc; font-weight: bold;">Tongyi-DeepResearch (30B)</td><td style="padding: 5px 6px; border: 1px solid #ccc;">Qwen3-Emb</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">52.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.9</td></tr>
+                  <tr><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa;"><strong>+ LRAT</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">68.0 (+29.0%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>20.7</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">23.7 (+33.1%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">60.7 (+23.4%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>41.0</strong></td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="7" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">II. Generalist Agentic Foundation Models</td></tr>
+                  <tr><td rowspan="2" style="padding: 5px 8px; border: 1px solid #ccc; font-weight: bold;">GPT-OSS (120B)</td><td style="padding: 5px 6px; border: 1px solid #ccc;">Qwen3-Emb</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">9.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">43.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">45.4</td></tr>
+                  <tr><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa;"><strong>+ LRAT</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">47.0 (+17.5%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>30.5</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">12.1 (+34.4%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">56.4 (+29.1%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>45.2</strong></td></tr>
+                  <tr><td rowspan="2" style="padding: 5px 8px; border: 1px solid #ccc; font-weight: bold;">MiniMax-M2.1 (229B)</td><td style="padding: 5px 6px; border: 1px solid #ccc;">Qwen3-Emb</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">58.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">57.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">30.8</td></tr>
+                  <tr><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa;"><strong>+ LRAT</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">78.3 (+33.4%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>14.7</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">48.3 (+26.4%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">69.2 (+21.0%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>28.3</strong></td></tr>
+                  <tr><td rowspan="2" style="padding: 5px 8px; border: 1px solid #ccc; font-weight: bold;">GLM-4.7 (358B)</td><td style="padding: 5px 6px; border: 1px solid #ccc;">Qwen3-Emb</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">67.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">27.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">43.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">66.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">45.5</td></tr>
+                  <tr><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa;"><strong>+ LRAT</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">82.0 (+21.1%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>18.5</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">54.6 (+24.4%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong style="color: #c00;">77.8 (+16.8%)</strong></td><td style="padding: 5px 6px; border: 1px solid #ccc; background: #dce8fa; text-align: center;"><strong>44.6</strong></td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表2：主要实验结果。LRAT 在域内外 benchmark 上，跨不同 Agent 和 Retriever backbone，一致地提升成功率、证据召回率，并减少平均交互步数</p>
+
+              <p>从结果中可以总结出三个关键发现：</p>
+
+              <p><strong>① 证据检索显著改善</strong>：在 BrowseComp-Plus 上，LRAT 一致地提升了检索器检索标注证据文档的能力（召回率相对增益 <strong>7%~37%+</strong>），说明从 Agent 轨迹导出的监督信号有效增强了检索质量。</p>
+
+              <p><strong>② 端到端任务成功率全面提升</strong>：更强的检索质量直接转化为更高的任务成功率。在域内外设置下，配备 LRAT 训练检索器的 Agent（从 4B 到 358B）均取得显著更高的成功率。即使是超大模型（120B-358B），检索质量仍是关键瓶颈。</p>
+
+              <p><strong>③ Agent 执行效率提高</strong>：LRAT 一致地减少了完成任务所需的平均交互步数（在 InfoSeek-Eval 上最多减少 <strong>~30%</strong>）。步数减少表明 LRAT 训练的检索器在每次搜索中提供<strong>更精确、更有用</strong>的证据，使 Agent 以更少的探索性交互满足信息需求。</p>
+
+              <h3 id="ablation">消融实验</h3>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/ablation.svg" alt="消融实验" style="max-width: 70%;">
+                <figcaption>图7：消融实验。逐步添加 LRAT 组件，括号中的 (n) 表示各变体使用的训练数据量</figcaption>
+              </figure>
+
+              <p>消融实验在 BrowseComp-Plus 上进行，使用 Qwen3-Embedding-0.6B 作为检索器，逐步添加 LRAT 组件：</p>
+
+              <ul>
+                <li><strong>「+Naive」</strong>：仅将 Agent 浏览的文档视为正样本，其他文档为负样本。该策略已带来<strong>显著性能增益</strong>，验证了 Agent 浏览过程中不存在强位置偏差，未浏览文档可作为可靠负信号。</li>
+                <li><strong>「+Filter」</strong>：引入 LLM 过滤，去除被访问但未对后续推理有实质贡献的假正文档。性能的进一步提升表明<strong>浏览后推理痕迹是文档效用的重要指标</strong>。</li>
+                <li><strong>「+Reweight」</strong>：使用推理长度作为重要性代理纳入相关性强度估计。性能增益凸显了<strong>考虑不同文档异质性贡献的必要性</strong>，验证了推理感知监督的有效性。</li>
+              </ul>
+
+              <h3 id="scalability">可扩展性与鲁棒性分析</h3>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/scale.svg" alt="可扩展性与鲁棒性" style="max-width: 75%;">
+                <figcaption>图8：不同训练数据规模和 Top-K 检索设置下的 Agent 性能。(a) 训练时可扩展性；(b) 推理时鲁棒性</figcaption>
+              </figure>
+
+              <p><strong>训练时可扩展性</strong>：随着训练数据量增长（从 10K 到 30K 轨迹），Agent 成功率<strong>持续提升</strong>，表明 LRAT 能有效利用更大规模的 Agent 轨迹数据，不会出现早期性能饱和。</p>
+
+              <p><strong>推理时鲁棒性</strong>：在不同 Top-(K) 检索设置下，增大 (K) 不一定带来单调性能提升（过大的 (K) 可能因噪声增加而降低性能）。尽管如此，LRAT 在<strong>所有 (K) 值下始终优于基础检索器</strong>，展示了其对不同检索预算的鲁棒性。</p>
+
+              <h3 id="data-flywheel">数据飞轮：Agent 轨迹驱动的持续改进</h3>
+
+              <p>传统搜索中，人类点击日志被持续利用以迭代改进检索器，形成自维持的数据飞轮。作者探索了在 LRAT 框架下是否能够建立类似的机制。一个关键问题是：<strong>真实用户查询是开放式的，Agent 轨迹并不总是完全正确的——不完美的轨迹是否仍能提供有用的监督信号？</strong></p>
+
+              <p>实验结果表明答案<strong>是肯定的</strong>：</p>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 60%; font-size: 0.85em; border-collapse: collapse; margin: 0 auto;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">Training Data</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">GPT-OSS</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">MiniMax-M2.1</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">GLM-4.7</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">Base (w/o LRAT)</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">9.0</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">38.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">43.9</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">LRAT (w/ Incorrect Traj.)</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; background: #e8f5e9;">10.7 <span style="color: #c00;">(+18.9%)</span></td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; background: #e8f5e9;">43.6 <span style="color: #c00;">(+14.1%)</span></td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; background: #e8f5e9;">50.6 <span style="color: #c00;">(+15.3%)</span></td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">LRAT (w/ Correct Traj.)</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; background: #dce8fa;"><strong>11.8</strong> <span style="color: #c00;">(+31.1%)</span></td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; background: #dce8fa;"><strong>45.3</strong> <span style="color: #c00;">(+18.6%)</span></td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; background: #dce8fa;"><strong>52.6</strong> <span style="color: #c00;">(+19.8%)</span></td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表3：轨迹正确性消融实验。正确轨迹和错误轨迹各使用 10K 样本。即使使用错误轨迹训练，检索器也一致优于基础模型</p>
+
+              <p>使用<strong>错误轨迹训练</strong>的检索器也一致优于基础检索器（相对增益 14%~19%），尽管增益略小于使用正确轨迹的情况。这说明即使 Agent 未能产生正确的最终答案，其<strong>中间交互仍反映了对文档效用的有意义的判断</strong>。因此，当正确性标签不可用或不可靠时，可以纳入所有收集到的轨迹。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/LRAT/loop_setting_3.svg" alt="数据飞轮设置" style="max-width: 47%; display: inline-block; vertical-align: top;">
+                <img src="/blogs/2026/Search-Agent/LRAT/data_flywheel.svg" alt="数据飞轮性能" style="max-width: 47%; display: inline-block; vertical-align: top;">
+                <figcaption>图9：数据飞轮模拟。(左) 迭代更新设置——检索器在每步收集 Agent 交互轨迹并在下一步之前更新；(右) 飞轮性能趋势——成功率和证据召回率在迭代中稳步提升</figcaption>
+              </figure>
+
+              <p>在模拟数据飞轮实验中，检索器通过持续的 Agent 交互进行迭代更新。结果显示，Agent 成功率和检索器召回率在迭代中<strong>稳步提升</strong>，证明 LRAT 能可靠地支持迭代检索器更新并维持<strong>正向数据飞轮</strong>。在流式设置中性能得以维持甚至提升，凸显了基于 Agent 轨迹监督在实际检索系统中的实用价值。</p>
+
+              <h2 id="conclusion">总结</h2>
+
+              <p>这篇论文的核心贡献可以归纳为：</p>
+
+              <p><strong>① 识别了根本性错配</strong>：传统的以人为中心的检索训练方式与 Agentic Search 时代的需求之间存在根本性不匹配。Agent 的查询模式、相关性判断和信息消费方式与人类用户有本质不同。</p>
+
+              <p><strong>② 提出了新范式</strong>：形式化了 <strong>Learning to Retrieve from Agent Trajectories</strong> 作为 Agent 时代的检索训练新范式，监督信号从 Agent 多步交互中导出，直接对齐检索训练与 Agent 行为。</p>
+
+              <p><strong>③ 三个关键发现</strong>：通过系统分析 Deep Research Agent 轨迹，揭示了：(i) 浏览行为是任务成功的必要条件，(ii) 未浏览文档是可靠的负样本（无位置偏差），(iii) 浏览后推理痕迹长度是文档效用强度的可靠指标。</p>
+
+              <p><strong>④ LRAT 框架</strong>：提出了一个简洁而有效的四步框架——朴素信号挖掘 → 推理感知过滤 → 相关性强度估计 → 加权对比学习，将 Agent 轨迹转化为高质量检索监督信号。</p>
+
+              <p><strong>⑤ 全面验证</strong>：在 6 种 Agent backbone（4B~358B）、2 种检索器架构、域内外 benchmark 上的实验一致证明了 LRAT 的有效性、可扩展性和鲁棒性。数据飞轮实验进一步展示了 Agent 轨迹作为可持续监督源的潜力。</p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800; margin: 1em 0;">
+                <strong>核心启示</strong>：在 Agentic Search 时代，Agent 轨迹是传统用户点击日志的自然对应物。正如点击日志推动了传统搜索的持续改进，Agent 轨迹有望成为驱动 Agent 时代检索系统持续进化的<strong>可扩展、自维持的数据飞轮</strong>。
+              </p>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2604.04949" target="_blank" rel="noopener">Learning to Retrieve from Agent Trajectories</a> — Yuqi Zhou, Sunhao Dai, Changle Qu, Liang Pang, Jun Xu, Ji-Rong Wen. arXiv:2604.04949, 2026.</p>
+              <p>[2] <a href="https://github.com/Yuqi-Zhou/LRAT" target="_blank" rel="noopener">LRAT GitHub Repository</a></p>
+              <p>[3] <a href="https://yuqi-zhou.github.io/LRAT-homepage/" target="_blank" rel="noopener">LRAT Project Homepage</a></p>
+              <p>[4] <a href="https://huggingface.co/collections/Yuqi-Zhou/lrat" target="_blank" rel="noopener">LRAT Hugging Face Collection</a></p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+
+            </div>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
+
