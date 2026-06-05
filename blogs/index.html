@@ -43,13 +43,6 @@ layout: compress
               <p id="total_blogs" class="blog-stats">Total Blogs</p>
             </div>
 
-            <!-- Search Bar -->
-            <div class="blog-search-container">
-              <input type="text" id="blog-search" class="blog-search-input" placeholder="🔍  Search by title, tag or date..." autocomplete="off">
-              <span id="blog-search-clear" class="blog-search-clear" style="display:none;">&times;</span>
-            </div>
-            <p id="blog-search-no-results" class="blog-search-no-results" style="display:none;">No matching blog posts found.</p>
-
             <!-- 2026 -->
             <div class="blog-year-section">
               <h2 class="blog-year-title">2026 <span class="year-count"></span></h2>
@@ -57,6 +50,20 @@ layout: compress
                 <li class="blog-entry">
                   <a class="blog-entry-link" href="https://wangqiyao.me/blogs/2026/Working-Agent/Workspace-Bench">
                     <div class="blog-entry-title">Workspace-Bench：面向大规模文件依赖的AI Agent工作空间学习评测基准</div>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">June 05, 2026</span>
+                      <span class="blog-entry-lang">Chinese</span>
+                      <div class="blog-tags">
+                        <span class="blog-tag">#Working Agent</span>
+                        <span class="blog-tag">#Paper</span>
+                        <span class="blog-tag">#Benchmark</span>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li class="blog-entry">
+                  <a class="blog-entry-link" href="https://wangqiyao.me/blogs/2026/Working-Agent/Claw-Eval">
+                    <div class="blog-entry-title">Claw-Eval：面向可信自主 Agent 评估的全轨迹审计与多维评分基准</div>
                     <div class="blog-entry-meta">
                       <span class="blog-entry-date">June 05, 2026</span>
                       <span class="blog-entry-lang">Chinese</span>
@@ -383,94 +390,6 @@ layout: compress
           });
         }
 
-        // --- Blog Search ---
-        const searchInput = document.getElementById('blog-search');
-        const searchClear = document.getElementById('blog-search-clear');
-        const noResultsMsg = document.getElementById('blog-search-no-results');
-        const blogEntries = document.querySelectorAll('.blog-entry');
-
-        function performSearch() {
-          const query = searchInput.value.trim().toLowerCase();
-
-          // Show/hide clear button
-          searchClear.style.display = query.length > 0 ? 'block' : 'none';
-
-          let totalVisible = 0;
-
-          if (query.length === 0) {
-            // Show all entries and year sections
-            blogEntries.forEach(entry => entry.classList.remove('search-hidden'));
-            yearSections.forEach(section => section.classList.remove('search-hidden'));
-            noResultsMsg.style.display = 'none';
-            // Update total count
-            blogEntries.forEach(() => totalVisible++);
-          } else {
-            // Filter entries
-            yearSections.forEach(section => {
-              const entries = section.querySelectorAll('.blog-entry');
-              let sectionVisible = false;
-
-              entries.forEach(entry => {
-                const title = (entry.querySelector('.blog-entry-title')?.textContent || '').toLowerCase();
-                const tags = Array.from(entry.querySelectorAll('.blog-tag'))
-                  .map(tag => tag.textContent.toLowerCase());
-                const date = (entry.querySelector('.blog-entry-date')?.textContent || '').toLowerCase();
-                const lang = (entry.querySelector('.blog-entry-lang')?.textContent || '').toLowerCase();
-
-                const matches = title.includes(query) ||
-                  tags.some(tag => tag.includes(query)) ||
-                  date.includes(query) ||
-                  lang.includes(query);
-
-                if (matches) {
-                  entry.classList.remove('search-hidden');
-                  sectionVisible = true;
-                  totalVisible++;
-                } else {
-                  entry.classList.add('search-hidden');
-                }
-              });
-
-              if (sectionVisible) {
-                section.classList.remove('search-hidden');
-              } else {
-                section.classList.add('search-hidden');
-              }
-            });
-
-            // Show/hide no-results message
-            noResultsMsg.style.display = totalVisible === 0 ? 'block' : 'none';
-          }
-        }
-
-        // Search on input (debounced)
-        let debounceTimer;
-        searchInput.addEventListener('input', () => {
-          clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(performSearch, 150);
-        });
-
-        // Clear button
-        searchClear.addEventListener('click', () => {
-          searchInput.value = '';
-          performSearch();
-          searchInput.focus();
-        });
-
-        // Keyboard shortcut: Ctrl+K or Cmd+K to focus search
-        document.addEventListener('keydown', (e) => {
-          if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            searchInput.focus();
-            searchInput.select();
-          }
-          // Escape to clear search
-          if (e.key === 'Escape' && document.activeElement === searchInput) {
-            searchInput.value = '';
-            performSearch();
-            searchInput.blur();
-          }
-        });
       });
     </script>
   </body>
