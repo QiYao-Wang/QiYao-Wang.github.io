@@ -1,0 +1,384 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>OpenSeeker：完全开源训练数据，学术团队实现前沿级搜索 Agent</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 05, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-topic">#Search Agent</span>
+                <span class="meta-topic">#Paper</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+              <h2 id="motivation">Motivation：搜索 Agent 的"数据护城河"困境</h2>
+
+              <p>在过去的一年中，<strong>深度搜索（Deep Search）</strong>能力已经成为前沿大语言模型（LLM）Agent 不可或缺的核心竞争力。截至 2026 年 3 月，已有超过十个 Agent 系统在代表性基准 BrowseComp 上突破 50 分大关，标志着自主网络智能进入新时代。</p>
+
+              <p>然而，这一飞速进展的背后隐藏着一个令人担忧的现实：<strong>高性能搜索 Agent 的训练一直被资金雄厚的企业巨头所垄断</strong>。最强大的搜索 Agent 目前由 Google、OpenAI 等公司的专有模型主导。虽然 Kimi、MiniMax 等实验室贡献了开源权重模型，但它们对训练数据始终保持沉默。即使在学术界，现有工作要么只开源模型不开源数据，要么仅提供小部分数据，要么数据质量不足以达到有竞争力的性能。</p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800; margin: 1em 0;">
+                <strong>核心困境</strong>：高质量训练数据的持续缺乏，已经严重扼制了开源社区在搜索 Agent 领域近一年的发展。企业凭借"数据护城河"将前沿性能保持为商业机密，学术界和开源社区长期缺乏训练高性能 Agent 所需的 <strong>完全开源、高质量</strong>的训练数据。
+              </p>
+
+              <p>为此，来自<strong>上海交通大学</strong>的纯学术团队提出了 <strong>OpenSeeker</strong>——首个实现前沿级性能且<strong>完全开源训练数据</strong>的搜索 Agent。OpenSeeker 不仅是一个开源权重的模型，更是对搜索 Agent 全流程的民主化：<strong>同时开源完整的训练数据集（包括复杂问答对和详细交互轨迹）与模型权重</strong>。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker/teaser_benchmarks.svg" alt="OpenSeeker 性能总览" style="max-width: 95%;">
+                <figcaption>图1：OpenSeeker 是唯一在四个搜索基准上均达到竞争性能的完全开源 Agent，仅通过一次 SFT 训练即实现</figcaption>
+              </figure>
+
+              <p>值得注意的是，OpenSeeker 仅使用 <strong>11.7K 合成样本</strong>通过<strong>简单的 SFT</strong>（Supervised Fine-Tuning，监督微调）进行<strong>单次训练</strong>（无超参调优、无启发式过滤），即在 BrowseComp（29.5%）、BrowseComp-ZH（48.4%）、xbench-DeepSearch（74.0%）和 WideSearch（59.4% item F1）等基准上达到最先进水平，甚至超越了通过大量持续预训练+SFT+RL 训练的工业界模型（如通义 DeepResearch 在 BrowseComp-ZH 上的 46.7%）。</p>
+
+              <h2 id="method-overview">方法总览</h2>
+
+              <p>OpenSeeker 的高保真数据背后，由两项核心技术驱动：</p>
+
+              <p><strong>① 基于事实的可扩展可控 QA 合成</strong>（Fact-Grounded Scalable Controllable QA Synthesis）：从真实网络图谱中逆向构建复杂的多跳推理问题，确保问题具有可控的覆盖范围和复杂度。</p>
+
+              <p><strong>② 去噪轨迹合成</strong>（Denoised Trajectory Synthesis）：通过回顾式摘要机制为教师模型生成去噪后的上下文，促使其产生高质量动作；同时让学生模型在原始噪声轨迹上进行训练，迫使其内化去噪和信息提取能力。</p>
+
+              <h2 id="qa-synthesis">QA 合成：从网络图谱到复杂推理问题</h2>
+
+              <p>传统的 QA 合成方法往往依赖于 LLM 自由生成问题-答案对，存在两大缺陷：(1) 容易产生幻觉，不可靠；(2) 难以控制问题的推理复杂度和多跳性质。OpenSeeker 提出了一种全新的范式——<strong>从真实网络图谱中逆向构建推理路径</strong>，再将其转化为强制多跳推理的问题。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker/QA.svg" alt="QA 合成流程" style="max-width: 95%;">
+                <figcaption>图2：基于事实的可扩展可控 QA 合成流程。(a) 图扩展——从种子节点展开为连接页面的子图；(b) 实体提取——将关键信息提炼为结构化实体子图；(c) 问题生成——基于实体子图结构生成强制多跳推理的初版问题；(d) 实体模糊化——将具体实体替换为模糊描述以增加难度；(e) 问题模糊化——重新表述使问题更具挑战性</figcaption>
+              </figure>
+
+              <h3 id="qa-step1">第一步：图扩展（Graph Expansion）</h3>
+
+              <p>将网络建模为一个有向图 \(\mathcal{G} = (\mathcal{V}, \mathcal{E})\)，其中 \(\mathcal{V}\) 表示网页节点，\(\mathcal{E}\) 表示超链接边。从一个随机采样的<strong>种子页面</strong> \(v_{seed} \sim \mathcal{V}\) 出发，沿出边遍历收集 \(k\) 个连接节点，形成一个<strong>局部依赖子图</strong>：</p>
+
+              \[
+              \mathcal{G}_{sub} = \{v_{seed}\} \cup \{v_i \mid (v_{seed}, v_i) \in \mathcal{E}\}_k
+              \]
+
+              <p>这一步模拟了自然的「由一个线索导向另一个线索」的信息发现过程。</p>
+
+              <h3 id="qa-step2">第二步：实体提取（Entity Extraction）</h3>
+
+              <p>子图 \(\mathcal{G}_{sub}\) 的原始内容通常包含大量噪声，会分散生成模型的注意力。为此，识别种子页面 \(v_{seed}\) 的中心主题 \(y_{theme}\)，然后提取子图中与该主题直接或间接相关的关键实体，重新组织为<strong>实体子图</strong> \(\mathcal{G}_{entity}\)。在这一结构中，节点表示提取的实体，边保留原始拓扑连接。</p>
+
+              <p>这一步骤有效地将 \(\mathcal{G}_{sub}\) <strong>抽象为稠密的关系结构</strong>，去除文本噪声同时保留必要的逻辑路径。</p>
+
+              <h3 id="qa-step3">第三步：问题生成（Question Generation）</h3>
+
+              <p>为避免生成可通过简单查表解决的问题，生成器 \(P_{gen}\) 在<strong>显式结构约束</strong>下生成初版问题 \(q_{init}\)：从 \(q_{init}\) 推导 \(y_{theme}\) 必须遍历 \(\mathcal{G}_{entity}\) 中的多条边。这强制 Agent 进行<strong>序列化的多节点演绎推理</strong>，而非单步检索。</p>
+
+              <h3 id="qa-step4">第四步：实体模糊化与问题模糊化</h3>
+
+              <p>合成问题旨在驱动 Agent 进行多步 ReAct 推理。然而，Agent 常常利用问题中的特定关键词走捷径，通过直接搜索绕过推理过程。为解决这一问题，OpenSeeker 引入了<strong>模糊化算子</strong> \(\Phi\)：</p>
+
+              \[
+              \tilde{e} = \Phi(e)
+              \]
+
+              <p>将具体实体 \(e\) 映射为模糊的描述性指代 \(\tilde{e}\)，生成<strong>模糊实体子图</strong> \(\tilde{\mathcal{G}}_{entity}\)。在最终的问题模糊化阶段，生成器融合模糊描述，将 \(q_{init}\) 重写为最终问题 \(\tilde{q}\)，同时保持目标答案 \(y = y_{theme}\) 不变。</p>
+
+              <p>⇒ 最终产生的问题在结构上<strong>强制多步导航</strong>，且语义上的模糊性模拟了真实用户查询的不确定性。</p>
+
+              <h3 id="qa-verification">第五步：双重标准拒收采样验证</h3>
+
+              <p>为确保合成的问题-答案对 \((\tilde{q}, y)\) 既具有挑战性又逻辑有效，OpenSeeker 采用基于两个指示函数的拒收采样方案：</p>
+
+              <p><strong>标准一——难度验证（严格工具必要性）</strong>：\(\mathbb{I}[\pi_{base}(\tilde{q}) \neq y]\)。令强基础模型 \(\pi_{base}\) 在<strong>闭卷</strong>（无外部工具）设置下回答问题。若模型仅凭参数记忆就能正确回答，问题被丢弃。</p>
+
+              <p><strong>标准二——可解性验证（逻辑一致性）</strong>：\(\mathbb{I}[\pi_{base}(\tilde{q} \mid \mathcal{G}_{entity}) = y]\)。将实体子图 \(\mathcal{G}_{entity}\) 的完整内容作为上下文提供给模型（预言机设置）。若模型仍无法推导出 \(y\)，说明推理路径已断裂或存在幻觉，该样本被拒绝。</p>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                <strong>QA 合成的三大核心优势</strong>：<br>
+                (1) <strong>事实锚定</strong>：将查询锚定在真实网络拓扑上而非依赖 LLM 生成，显著降低幻觉风险；<br>
+                (2) <strong>可扩展性</strong>：利用 ~68GB 英文和 ~9GB 中文网络数据，将开放网络转化为取之不尽的训练数据源；<br>
+                (3) <strong>可控性</strong>：通过调节子图大小 \(k\) 来校准推理复杂度和信息覆盖范围，可构建量身定制的课程学习路径。
+              </p>
+
+              <h2 id="traj-synthesis">去噪轨迹合成：解耦生成上下文与训练上下文</h2>
+
+              <p>构建高质量搜索轨迹需要在<strong>信息保留</strong>和<strong>上下文窗口约束</strong>之间取得严格平衡。在网络规模的搜索中，原始观测往往被无关噪声所主导。OpenSeeker 提出了一个在<strong>生成上下文（教师）</strong>与<strong>训练上下文（学生）</strong>之间进行技术解耦的合成框架。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker/traj_v2.svg" alt="去噪轨迹合成" style="max-width: 95%;">
+                <figcaption>图3：去噪轨迹合成总览。在每次工具调用后，将上一轮的原始工具响应压缩为「摘要响应」替换历史窗口中的原始响应。这种更干净的上下文使教师模型能够产生高质量推理和动作。注意不对称性：虽然合成依赖摘要上下文，但训练和推理阶段使用原始工具响应，迫使模型学习内在的去噪能力</figcaption>
+              </figure>
+
+              <h3 id="traj-problem">问题形式化</h3>
+
+              <p>定义一个搜索轨迹为序列：</p>
+
+              \[
+              \tau = [q, (r_1, a_1, o_1), \dots, (r_T, a_T, o_T), y]
+              \]
+
+              <p>其中 \(q\) 为问题，\(r_t\) 为推理步骤（思维链），\(a_t\) 为动作（工具调用），\(o_t\) 为观测（工具响应），\(y\) 为最终答案。目标是合成能最优导向 \(y\) 的推理路径 \(r_t\) 和动作 \(a_t\)。</p>
+
+              <h3 id="traj-denoising">动态上下文去噪：回顾式摘要机制</h3>
+
+              <p>在轨迹合成过程中，采用<strong>回顾式摘要</strong>机制。在第 \(t\) 轮，Agent 基于当前上下文 \(\mathcal{H}_t\) 生成推理-动作对 \((r_t, a_t)\)。上下文构建遵循「<strong>摘要化长期历史 + 原始近期上下文</strong>」协议：</p>
+
+              \[
+              \mathcal{H}_t = \{q, \underbrace{(r_1, a_1, s_1), \dots, (r_{t-2}, a_{t-2}, s_{t-2})}_{\text{摘要化长期历史}}, \underbrace{(r_{t-1}, a_{t-1}, o_{t-1})}_{\text{原始短期上下文}}\}
+              \]
+
+              <p>其中 \(s_i = \text{Summarize}(o_i \mid \text{context})\) 表示观测 \(o_i\) 的压缩语义摘要。该机制在两个阶段间循环运作：</p>
+
+              <p><strong>① 决策阶段（信息使用）</strong>：为生成当前决策 \((r_t, a_t)\)，Agent 获得 \(\mathcal{H}_t\)，其中包含紧邻上一轮的<strong>完整原始观测</strong> \(o_{t-1}\)。这确保 Agent 能够访问最近观测中的所有潜在信号来指导下一步移动。</p>
+
+              <p><strong>② 压缩阶段（上下文去噪）</strong>：一旦第 \(t\) 轮结束并获得新观测 \(o_t\)，系统回顾式地调用摘要器将先前观测 \(o_{t-1}\) 压缩为 \(s_{t-1}\)。该摘要随后替换长期历史中的 \(o_{t-1}\)。这种<strong>滚动窗口方法</strong>有效过滤噪声，实现超长轨迹生成而不出现性能退化。</p>
+
+              <h3 id="traj-asymmetric">非对称上下文训练：内化去噪能力</h3>
+
+              <p>为培养最终 Agent 的鲁棒性，OpenSeeker 在<strong>合成数据格式</strong>和<strong>训练数据格式</strong>之间定义了战略性的不对称：</p>
+
+              <p><strong>合成数据（教师）</strong>：轨迹使用包含摘要的干净、去噪上下文 \(\mathcal{H}_t\) 生成。这充当"脚手架"，使教师模型能够在不受过多噪声干扰的情况下产生"黄金"推理路径。</p>
+
+              <p><strong>训练数据（学生）</strong>：对于最终训练数据集，<strong>剥离摘要、恢复完整原始上下文</strong>：</p>
+
+              \[
+              \mathcal{H}^{train}_t = \{q, (r_1, a_1, o_1), \dots, (r_{t-1}, a_{t-1}, o_{t-1})\}
+              \]
+
+              <p>学生模型被监督以在给定<strong>噪声原始上下文</strong> \(\mathcal{H}^{train}_t\) 的条件下，预测教师模型产出的最优 \(r_t, a_t\)。这迫使学生<strong>隐式地学习去噪和信息提取能力</strong>，有效地将上下文去噪逻辑内化到自身参数中，以应对真实世界的非结构化数据。</p>
+
+              <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50; margin: 1em 0;">
+                <strong>非对称训练的核心思想</strong>：教师用「干净」的上下文产生高质量决策，学生被强制在「噪声」上下文中复现这些决策——类似于「戴着镣铐跳舞」，迫使学生学会自主从噪声中提取关键信号。
+              </p>
+
+              <h2 id="experiments">实验</h2>
+
+              <h3 id="exp-setup">实验设置</h3>
+
+              <p><strong>模型初始化</strong>：OpenSeeker 基于 <strong>Qwen3-30B-A3B-Thinking-2507</strong> 初始化，总参数 30B，推理时激活 3B。最大工具调用次数 200，上下文窗口 256K。</p>
+
+              <p><strong>训练细节</strong>：仅进行<strong>单次 SFT 训练</strong>（受限于计算资源，无超参调优、无启发式数据过滤），每个训练样本包含用户问题 \(q\) 以及完整的原始推理步骤、工具调用和工具响应的序列。</p>
+
+              <p><strong>评估基准</strong>：</p>
+              <ul>
+                <li><strong>BrowseComp</strong>（英文）/ <strong>BrowseComp-ZH</strong>（中文）：测试多步导航和困难信息定位</li>
+                <li><strong>xbench-DeepSearch</strong>：评估复杂深度研究能力，如规划与综合</li>
+                <li><strong>WideSearch</strong>：衡量广泛信息检索中的可靠性</li>
+              </ul>
+
+              <h3 id="main-results">主要实验结果</h3>
+
+              <p>下表展示了 OpenSeeker 与各基线模型在四个基准上的完整对比。</p>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.78em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 8px; border: 1px solid #ccc;">模型</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">样本数</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">开源样本</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">训练方式</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">学术团队</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">BrowseComp</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">BC-ZH</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">xbench</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">WideSearch</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="9" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">闭源专有模型</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Claude-4.5-Sonnet</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">24.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">OpenAI-o3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">60.0</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">GPT-5-High</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">54.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">63.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="9" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">开源模型 &gt; 30B</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">DeepSeek-V3.2-671B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">51.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">GLM-4.7-357B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">52.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">66.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="9" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">~30B 级别模型</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">MiroThinker-32B (SFT+RL)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">147K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">147K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">13.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">DeepDive-32B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">4.1K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">4.1K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">51.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">WebSailor-V2-30B (SFT+RL)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">44.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">73.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">WebLeaper-30B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">27.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">66.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">44.1</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Tongyi DeepResearch</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">CPT+SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">43.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">75.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">OpenSeeker-v1-30B-SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.7K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">11.7K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✓</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">48.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">74.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">59.4</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表1：OpenSeeker 与各类搜索 Agent 的全面对比。"样本数"为训练数据总量，"开源样本"为开源数据量，"训练"表示训练技术（CPT：持续预训练，SFT：监督微调，RL：强化学习），"学术团队"表示是否由纯学术团队完成。OpenSeeker 在 BrowseComp-ZH 上超越通过 CPT+SFT+RL 训练的通义 DeepResearch，且在 <strong>所有仅使用 SFT 的 Agent 中表现最优</strong></p>
+
+              <p>从实验结果中可以提炼出以下关键发现：</p>
+
+              <p><strong>① 超越资源密集的工业界基线</strong>：OpenSeeker 仅使用 11.7K 样本和标准 SFT 协议，在 BrowseComp-ZH 上取得 48.4 分，<strong>超越</strong>阿里巴巴通义 DeepResearch（46.7）。后者采用了持续预训练（CPT）+ SFT + 强化学习（RL）的复杂、资源密集型训练流程——OpenSeeker 仅靠高质量 SFT 数据就实现了超越。</p>
+
+              <p><strong>② 同训练设置下性能碾压</strong>：在 ~30B 参数级别、同使用 SFT 训练的模型中，OpenSeeker 展现出压倒性优势。在 BrowseComp-ZH 上以 48.4 的成绩领先第二名 WebSailor-V2-SFT（28.3）近 <strong>20 个百分点</strong>。值得注意的是，数据量并非决定性因素——MiroThinker 的 147K 样本远多于 OpenSeeker 的 11.7K，但性能却显著落后，印证了<strong>数据质量 &gt; 数据量</strong>。</p>
+
+              <p><strong>③ 同等数据量下的效率优势</strong>：与使用 10K-15K 样本的 WebSailor-V2 和 WebLeaper 配置相比，OpenSeeker 在所有基准上表现更优。在 xbench 和 WideSearch 上，分别超出最佳基线组合近 <strong>8%（74.0 vs 66.0）</strong>和 <strong>15%（59.4 vs 44.1）</strong>。</p>
+
+              <h3 id="sft-comparison">SFT 模型横向对比</h3>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.85em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">数据</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">样本数</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">开源样本</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">学术团队</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">BrowseComp</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">BC-ZH</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">xbench</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">WideSearch</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">DeepDive-32B</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">4.1K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">4.1K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">9.5</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">23.0</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">48.5</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">MiroThinker-32B-v0.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">147K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">147K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">10.6</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">13.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">WebSailor-V2-30B (SFT)</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">24.4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">28.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">61.7</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">WebLeaper-30B</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">15K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">27.7</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">66.0</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">44.1</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 10px; border: 1px solid #ccc;">OpenSeeker-v1-30B-SFT</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">11.7K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">11.7K</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">✓</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">29.5</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">48.4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">74.0</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">59.4</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表2：SFT 训练的模型性能对比。OpenSeeker 在所有四个基准上一致且显著表现最优，仅用 11.7K 训练样本</p>
+
+              <h3 id="data-stats">数据难度分析</h3>
+
+              <p>为量化合成数据与标准基准的难度对比，作者使用同一开源模型对合成样本和 BrowseComp 基准进行推理。结果表明，OpenSeeker 的合成数据在难度上<strong>匹配甚至超越</strong>已建立的基准。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker/compare_ZH.png" alt="中文数据难度对比" style="max-width: 85%;">
+                <figcaption>图4：OpenSeeker 中文合成数据与 BrowseComp-ZH 的难度对比。OpenSeeker 中文数据平均每轨迹 46.35 次工具调用、平均 token 长度 76.1K，远超 BrowseComp-ZH 的 26.98 次调用和 15.1K tokens</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker/compare_EN.png" alt="英文数据难度对比" style="max-width: 85%;">
+                <figcaption>图5：OpenSeeker 英文合成数据与 BrowseComp-EN 的难度对比。英文数据难度与 BrowseComp 基本相当，由于资源受限尚未更新至最新 QA 标准</figcaption>
+              </figure>
+
+              <h3 id="concurrent-comparison">与同期工作的对比</h3>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker/compare_tool_calls.png" alt="工具调用次数对比" style="max-width: 85%;">
+                <figcaption>图6：OpenSeeker 数据与 REDSearcher 数据的工具调用次数对比。OpenSeeker 的数据表现出显著更高的平均工具调用次数：英文 45.92 vs 36.91，中文 46.35 vs 20.02</figcaption>
+              </figure>
+
+              <p>与同期工作相比，OpenSeeker 展现出显著优势。在 SFT 训练设置下，OpenSeeker 在 BrowseComp-ZH 上比 REDSearcher 高出 <strong>21.6%</strong>（48.4% vs 26.8%），且仅使用 11.7K 样本就超越了使用 96K 样本的 OpenResearcher。数据难度分析进一步验证了这一点：OpenSeeker 的合成轨迹在平均工具调用次数上显著高于 REDSearcher。</p>
+
+              <h2 id="discussions">讨论</h2>
+
+              <h3 id="data-monopoly">打破企业数据垄断</h3>
+
+              <p>长期以来，高性能搜索 Agent 的发展一直是科技巨头主导的「闭门游戏」，高质量数据是它们的主要护城河。与此同时，现有的开源数据集往往质量不佳、推理复杂度不足，使学术界难以训练真正具备前沿能力的搜索模型。</p>
+
+              <p>OpenSeeker 针对这一关键瓶颈给出了明确的答案：<strong>通过完全开源高保真训练数据</strong>，为社区提供了复现和构建工业级能力所需的完整资源，打破了长期存在的「数据护城河」。这是首个由<strong>纯学术团队</strong>在前沿搜索基准上达到最先进水平并<strong>同时完全开源训练数据</strong>的工作。</p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800; margin: 1em 0;">
+                <strong>关键洞察</strong>：数据质量 &gt; 数据量 &gt; 训练规模。OpenSeeker 用 11.7K 高质量合成数据 + 简单 SFT + 单次训练，超越了使用 147K 数据、CPT+SFT+RL 多阶段训练的工业界方案。这一结果表明，<strong>战略性数据合成</strong>是弥合学术界与工业界搜索 Agent 性能差距的有效路径。
+              </p>
+
+              <h3 id="future-work">未来工作</h3>
+
+              <p>当前工作仅代表了 OpenSeeker 潜力的<strong>下界</strong>。由于计算资源限制，仅进行了单次训练，限制了在更具挑战性数据上的效果验证以及各种参数和数据过滤策略的探索。后续工作计划：</p>
+              <ul>
+                <li>优化数据分布，实施严格的质量过滤</li>
+                <li>生成<strong>更高复杂度</strong>的训练数据以推动性能边界</li>
+                <li>将 Agent 能力扩展到纯网络搜索之外，整合更多样化的工具和数据源</li>
+                <li>探索多阶段的 RL 训练以进一步释放模型潜力</li>
+              </ul>
+
+              <h2 id="conclusion">总结</h2>
+
+              <p>OpenSeeker 的核心贡献可以归纳为：</p>
+
+              <p><strong>① 识别核心瓶颈</strong>：明确指出高质量训练数据的垄断是阻碍开源搜索 Agent 社区发展的根本瓶颈。企业通过数据不公开维持"数据护城河"，学术界长期缺乏可用的高质量训练资源。</p>
+
+              <p><strong>② 两项技术创新</strong>：提出了 <strong>基于事实的可扩展可控 QA 合成</strong>——从真实网络图谱逆向构建强制多跳推理的复杂问题；以及 <strong>去噪轨迹合成</strong>——通过回顾式摘要机制与不对称训练，使学生模型学会从噪声中提取关键信号。</p>
+
+              <p><strong>③ 完全开源</strong>：作为首个由纯学术团队实现前沿级搜索性能并<strong>完全开源训练数据、合成方案和模型权重</strong>的工作，OpenSeeker 为社区提供了完整的可复现方案。</p>
+
+              <p><strong>④ 高效性验证</strong>：仅用 11.7K 合成样本、简单 SFT 和单次训练，即在四个基准上达到或超越工业界通过大规模多阶段训练取得的性能，充分验证了<strong>数据质量优先</strong>的范式有效性。</p>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                <strong>核心启示</strong>：在搜索 Agent 领域，<strong>战略性数据合成是实现高质量训练的有效途径</strong>。通过精心设计的数据合成 pipeline，学术团队完全可以打破企业的数据垄断，训练出具有竞争力的前沿级搜索 Agent。这为开源社区指明了方向——与其等待企业公开训练数据，不如自己创造出比企业数据更高质量的合成训练数据。
+              </p>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2603.15594" target="_blank" rel="noopener">OpenSeeker: Democratizing Frontier Search Agents by Fully Open-Sourcing Training Data</a> — Yuwen Du, Rui Ye, Shuo Tang, Xinyu Zhu, Yijun Lu, Yuzhu Cai, Siheng Chen. arXiv:2603.15594, 2026.</p>
+              <p>[2] <a href="https://github.com/rui-ye/OpenSeeker" target="_blank" rel="noopener">OpenSeeker GitHub Repository</a></p>
+              <p>[3] <a href="https://huggingface.co/datasets/OpenSeeker/OpenSeeker-v1-Data" target="_blank" rel="noopener">OpenSeeker Training Dataset on Hugging Face</a></p>
+              <p>[4] <a href="https://huggingface.co/OpenSeeker/OpenSeeker-v1-30B-SFT" target="_blank" rel="noopener">OpenSeeker Model Weights on Hugging Face</a></p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+
+            </div>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
