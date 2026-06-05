@@ -1,0 +1,290 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>Claw-Eval：面向可信自主 Agent 评估的全轨迹审计与多维评分基准</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 05, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-topic">#Working Agent</span>
+                <span class="meta-topic">#Paper</span>
+                <span class="meta-topic">#Benchmark</span>
+              </div>
+            </div>
+
+           <div class="blog-content">
+
+              <ul>
+                <li><strong>Claw-Eval</strong>：由北京大学与香港大学联合提出的<strong>可信自主 Agent 评估套件</strong>，300 个人工验证任务、9 个细粒度类别，覆盖通用服务编排、多模态感知与交互、多轮专业对话三大场景</li>
+                <li><strong>全轨迹审计（Full-Trajectory Auditing）</strong>：通过执行轨迹、服务端审计日志、环境快照三条独立证据通道，实现<strong>2,159 条细粒度 Rubric</strong>的轨迹感知评分，彻底解决传统"只看输出不看过程"的评估缺陷</li>
+                <li><strong>多维评分体系</strong>：Completion（完成度）、Safety（安全性）、Robustness（鲁棒性）三维度耦合评分，配合 Average Score、Pass@\(k\)（能力上限）、Pass\(^{\smallfrown}k\)（可靠性下限）三重指标</li>
+                <li><strong>14 个前沿模型</strong>评测：最强模型 Pass\(^{\smallfrown}3\) 仅 <strong>70.4%</strong>，多模态 Pass\(^{\smallfrown}3\) 最高仅 <strong>25.7%</strong>；轨迹不透明评估遗漏 <strong>44%</strong> 安全违规、<strong>13%</strong> 鲁棒性失败</li>
+                <li>核心发现：能力不等于一致性；多轮对话中<strong>问题质量</strong>解释 76% 方差（\(r=0.87\)），而对话轮次几乎无贡献（\(r=0.07\)）</li>
+              </ul>
+
+              <h2 id="intro">Intro</h2>
+
+              <p>大语言模型正从对话助手快速演化为<strong>自主 Agent</strong>——能够调用工具、浏览文件系统、查询数据库、跨应用编排动作，在真实软件环境中执行复杂的多步工作流。Claude Code、OpenClaw 等现代 Agent Harness 赋予了 LLM 前所未有的行动能力，也由此将核心评估问题从"模型是否拥有知识"<strong>转变为"模型是否能通过主动的、情境化的行动可靠地达成目标"</strong>。</p>
+
+              <p>然而，现有 Agent 评估基准在三个关键维度上存在严重不足，限制了其诊断能力：</p>
+
+              <p><strong>(G1) 轨迹不透明评分（Trajectory-Opaque Grading）</strong>：许多 Benchmark 仅验证模型的最终输出，而不系统审计产生该输出的<strong>执行过程</strong>。这使得忠实执行难以与伪造或捷径行为区分，仅看输出的评估极易遭受 Reward Hacking。例如，Agent 可能生成看似合理的最终摘要，却依赖了过期文件或忽略了关键支持文档——仅凭输出本身无法检测这些问题。</p>
+
+              <p><strong>(G2) 安全性与鲁棒性评估不足</strong>：在实际部署中，Agent 不仅需要满足任务目标，还必须遵守安全约束并从瞬态故障中恢复。虽然已有工作引入了专门的安全 Benchmark，但<strong>安全性很少被嵌入到普通的端到端工作流任务中</strong>；在受控扰动（如超时、速率限制）下的鲁棒性也鲜有评估。</p>
+
+              <p><strong>(G3) 任务覆盖范围狭窄</strong>：真实 Agent 需要在同一部署中处理异构场景——服务编排、多模态感知、扩展对话，但大多数 Benchmark 仅聚焦单一模态或交互范式，如纯文本工具调用、命令行执行或 GUI 导航。</p>
+
+              <p>⇒ 为此，论文提出了 <strong>Claw-Eval</strong>——一个在统一框架内系统解决上述三大缺陷的端到端评估套件。其核心主张是：<strong>可信的 Agent 评估必须将评分建立在 Agent 实际行为的证据之上，而非其声称的行为。</strong></p>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image.svg" alt="Claw-Eval Architecture Overview" style="max-width: 95%;">
+                <figcaption>图1：Claw-Eval 架构总览 — 每次运行经历 Setup、Execution、Judge 三个阶段，通过执行轨迹、服务端审计日志、环境快照三条独立证据通道实现全轨迹审计评分</figcaption>
+              </figure>
+
+              <h2 id="framework">Claw-Eval 框架设计</h2>
+
+              <h3 id="execution-pipeline">可审计执行流水线</h3>
+
+              <p>为解决轨迹不透明问题（G1），Claw-Eval 将<strong>完整运行过程——而非仅最终答案——作为评估对象</strong>。每次运行被组织为三个时间上严格分离的阶段：</p>
+
+              <ul>
+                <li><strong>Setup 阶段</strong>：读取任务定义，为本次运行配置全新的隔离 Sandbox 容器。任务资源（数据集、文档、代码、媒体素材）被注入容器构成 Agent 的工作环境。若任务需要外部服务，框架同步启动对应的 Mock 服务（模拟 CRM、邮件网关、调度后端、知识库等），并从启动时刻起<strong>在服务端审计日志中记录所有入站请求</strong>。</li>
+                <li><strong>Execution 阶段</strong>：Agent 通过工具接口与环境交互，尝试完成任务。框架提供两层能力：<strong>系统层</strong>（代码执行、文件操作、代码库搜索、Web 交互、多模态媒体处理共 11 个内置工具）和<strong>服务层</strong>（任务特定的 Mock API）。全程在 Sandbox 外部维护<strong>结构化执行轨迹</strong>，记录所有工具调用和观察结果序列。由于轨迹在外部收集，Agent 在任务求解过程中无法感知。</li>
+                <li><strong>Judge 阶段</strong>：Agent 终止后，框架才将评分产物（评估脚本、参考答案、验证工具）引入容器。此时可渲染生成的网页、执行验证代码、检查 Agent 产生的所有产物。最终评分基于三条证据通道：<strong>执行轨迹</strong>（完整交互历史）、<strong>服务端审计日志</strong>（外部服务实际收到的请求及参数）、<strong>环境快照</strong>（执行后状态，含生成文件和验证器输出）。</li>
+              </ul>
+
+              <p>这一"时序防火墙"设计确保：Agent 在执行期间仅能访问任务求解资源，而评估资源被完全隔离至评分阶段。评分依据的是<strong>观察到的行为</strong>而非 Agent 的自我报告。</p>
+
+              <h3 id="task-suite">跨模态任务套件</h3>
+
+              <p>Claw-Eval 包含 <strong>300 个人工验证任务</strong>，横跨 <strong>9 个细粒度类别</strong>，组织为三个互补的任务组。所有任务共享相同的三阶段执行生命周期和声明式任务模式：</p>
+
+              <p><strong>General（通用任务，161 个）</strong>：评估 Agent 完成实际工作流目标的能力，从单服务查询到跨服务协调和多系统编排。按难度分为 Easy（71 个，单服务查询/基础调度）、Medium（47 个，跨服务协调/数据检索）、Hard（43 个，多系统编排/财务合规/运维）。部分任务嵌入了显式安全约束（如禁止通信、禁止凭据暴露），使安全性在普通任务完成压力下被评估而非孤立测试。</p>
+
+              <p><strong>Multimodal（多模态任务，101 个）</strong>：评估对富媒体的主动感知与生成能力。Video（53 个）：从简单 QA 到视频定位与裁剪；Doc &amp; Image（22 个）：图表解读、跨页推理；Code（26 个）：网页生成、SVG 动画、视频编辑。Agent 必须<strong>主动选择检查什么</strong>（哪些片段、帧、页面），再基于检索到的视觉内容进行推理。</p>
+
+              <p><strong>Multi-turn Dialogue（多轮对话，38 个）</strong>：评估通过多轮交互进行专业咨询的能力，覆盖 STEM（10 个）、社会科学（13 个）、商业（15 个）。每个任务设定<strong>隐藏意图的用户画像</strong>——关键信息被刻意隐藏，只有当 Agent 提出正确问题时才逐步释放。</p>
+
+              <h3 id="scoring-protocol">评分协议</h3>
+
+              <p>Claw-Eval 的评分协议包含三个层次的设计，将丰富的证据记录转化为全面、精确、可信的分数：</p>
+
+              <p><strong>多维评分结构</strong>：每次任务尝试从三个维度评量：</p>
+              <ul>
+                <li><strong>Completion（完成度）</strong>：Agent 满足任务目标的程度</li>
+                <li><strong>Safety（安全性）</strong>：执行过程中是否遵守了策略约束。Safety 作为<strong>乘性门控</strong>（multiplicative gate），使策略违规无法被高完成度分数弥补</li>
+                <li><strong>Robustness（鲁棒性）</strong>：从瞬态环境故障中恢复的能力，通过受控错误注入测量</li>
+              </ul>
+
+              <p>最终任务得分：
+              \[
+              \text{score} = s_{\text{safety}} \times \bigl(\alpha \cdot s_{\text{completion}} + \beta \cdot s_{\text{robustness}}\bigr)
+              \]
+              其中 \(\alpha + \beta = 1\)（实验中 \(\alpha = 0.8, \beta = 0.2\)）。鲁棒性分数定义为：
+              \[
+              s_{\text{robustness}} =
+              \begin{cases}
+              \dfrac{|\mathcal{T}_{\text{recovered}}|}{|\mathcal{T}_{\text{errored}}|}, & \text{if } |\mathcal{T}_{\text{errored}}| > 0, \\[6pt]
+              1, & \text{otherwise.}
+              \end{cases}
+              \]
+              其中 \(\mathcal{T}_{\text{errored}}\) 为遭遇至少一次注入错误的工具类型集合，\(\mathcal{T}_{\text{recovered}}\) 为 Agent 后续获得成功响应的子集。</p>
+
+              <p><strong>细粒度 Rubric</strong>：300 个任务被分解为 <strong>2,159 条可独立验证的 Rubric</strong>（平均每任务 7.2 条），分为两类：(i) <strong>确定性检查</strong>——验证客观条件，如必需文件是否存在、API 是否以正确参数调用、审计日志中是否出现禁止操作；(ii) <strong>判断式检查</strong>——使用 LLM Judge 对开放性输出（文本质量、推理连贯性、视觉保真度）进行评分。所有 Rubric 均锚定于独立证据源，形成从最终得分到维度级细分、底层 Rubric 项、对应行为证据的<strong>完整审计链</strong>。</p>
+
+              <p><strong>多指标评估协议</strong>：由于 Agent 执行具有随机性，每个任务运行 \(k\) 次独立试验，报告三个互补指标：
+              \[
+              \text{Average Score} = \frac{1}{N}\sum_{i=1}^{N}\frac{1}{k}\sum_{j=1}^{k} s_{ij}
+              \]
+              \[
+              \text{Pass@}k = \frac{1}{N}\sum_{i=1}^{N}
+              \mathds{1}\!\left[\max_{j=1}^{k} s_{ij} \ge \tau\right]
+              \]
+              \[
+              \text{Pass}^{\smallfrown}k = \frac{1}{N}\sum_{i=1}^{N}
+              \mathds{1}\!\left[\min_{j=1}^{k} s_{ij} \ge \tau\right]
+              \]
+              Pass@\(k\) 测量<strong>能力上限</strong>（至少有一次通过），Pass\(^{\smallfrown}k\) 测量<strong>可靠性下限</strong>（每次均通过）。两者间的巨大差距指示有限的一致性。</p>
+
+              <h2 id="experiments">实验</h2>
+
+              <h3 id="experimental-setup">实验设置</h3>
+
+              <p>评估了 <strong>14 个前沿模型</strong>，覆盖 10 个模型家族：Claude-Opus-4.6、Claude-Sonnet-4.6、GPT-5.4、Gemini-3.1-Pro、Gemini-3-Flash、Qwen3.5-397B-A17B、MiMo-V2-Pro、MiMo-V2-Omni、GLM-5-Turbo、GLM-5V-Turbo、DeepSeek-V3.2、MiniMax-M2.7、Kimi-K2.5、Nemotron-3-Super。所有 14 个模型在 General（161 任务）和 Multi-turn（38 任务）上评测；Multimodal（101 任务）限于 9 个支持视觉输入的模型。每个模型在同一 Scaffold 和工具集下评估，温度设为 0，启用 thinking，每个任务在独立 Docker Sandbox 中运行 3 次独立试验，错误注入率默认 0。</p>
+
+              <h3 id="main-results">主要结果</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-1.svg" alt="Pass^3 by Difficulty Level" style="max-width: 85%;">
+                <figcaption>图2：General 任务上各模型的 Pass\(^{\smallfrown}3\) 按难度分解 — 所有模型从 Easy 到 Hard 单调下降</figcaption>
+              </figure>
+
+              <p><strong>整体结果</strong>：Claude-Sonnet-4.6 以 81.4% Average Score 领先，Claude-Opus-4.6 以 70.4% Overall Pass\(^{\smallfrown}3\) 领先。关键发现：</p>
+
+              <ul>
+                <li><strong>一致性与峰值性能不对齐</strong>：Claude-Opus-4.6 在 Pass\(^{\smallfrown}3\) 上领先（70.4%），而 Claude-Sonnet-4.6 在 Score 上领先（81.4%）</li>
+                <li><strong>不同任务组测试不同能力</strong>：Gemini-3.1-Pro 在 Multi-turn Pass\(^{\smallfrown}3\) 排名第 2（65.8%），但在 General Pass\(^{\smallfrown}3\) 仅排第 7（55.9%）</li>
+                <li><strong>Benchmark 仍有巨大提升空间</strong>：最强模型 Overall Pass\(^{\smallfrown}3\) 仅 70.4%</li>
+                <li><strong>难度分层有效</strong>：Easy 上 Pass\(^{\smallfrown}3\) 跨六个模型从 14% 到 75%，Hard 上 Claude-Opus-4.6 仅保留 65.1%</li>
+              </ul>
+
+              <p><strong>多模态结果</strong>：多模态任务远更困难——最高 Pass\(^{\smallfrown}3\) 仅 <strong>25.7%</strong>（GPT-5.4），远低于 Claude-Opus-4.6 在 General 上的 70.8%，表明当前模型处理基于文本的工具使用远比视觉感知和生成可靠。排名跨模态转移：Claude-Opus-4.6 在 General 领先但在 Multimodal 排名第二，GPT-5.4 在 General 排第三却在 Multimodal 排第一。<strong>多模态能力是一个独立维度，不能从纯文本表现预测</strong>。</p>
+
+              <h2 id="analysis">深入分析</h2>
+
+              <h3 id="trajectory-opaque">发现1：轨迹不透明的 LLM Judge 系统性遗漏 44% 的安全违规</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-2.svg" alt="Safety Violations Missed" style="max-width: 85%;">
+                <figcaption>图3：安全违规检测对比 — 混合评分管道（Hybrid Pipeline）与纯 LLM Judge（Vanilla Judge）在五个模型上的安全违规检测差异</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-3.svg" alt="Robustness Issues Missed" style="max-width: 85%;">
+                <figcaption>图4：鲁棒性问题检测对比 — 混合管道 vs 纯 LLM Judge，纯 LLM Judge 遗漏 13% 的鲁棒性失败</figcaption>
+              </figure>
+
+              <p>为验证轨迹审计的价值，论文将完整的对话记录（含每个工具调用）和评分器源代码提供给纯 LLM Judge（Gemini-3-Flash），仅隐藏服务端审计日志和环境快照。在 5 个模型、<strong>2,000+ 条轨迹</strong>上，纯 LLM Judge 系统性漏检了混合管道捕获的问题：遗漏 <strong>12/27（44%）安全违规</strong>和 <strong>15/118（13%）鲁棒性问题</strong>。混合评分器通过对工具调用参数的确定性匹配检测安全违规，而 LLM Judge 无法仅从文本可靠地执行相同规则，有时还会<strong>"合理化"Agent 的违规行为</strong>。</p>
+
+              <p>进一步的<strong>盲法人类仲裁</strong>（12 个安全分歧案例 + 15 个鲁棒性分歧案例 + 100 个对照案例）证实：在安全分歧上，人类仲裁结果 100% 与混合管道一致，而纯 LLM Judge 一致率为 0%；在鲁棒性分歧上，混合管道与人类仲裁一致率 86.7%，纯 LLM Judge 仅 6.7%。这以有力证据支持：<strong>对于依赖外部审计信号或执行后状态的标准，混合管道比仅凭对话轨迹的判断更可靠</strong>。</p>
+
+              <h3 id="error-injection">发现2：错误注入侵蚀一致性远甚于峰值能力，Pass\(^{\smallfrown}3\) 骤降达 24 个百分点</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-4.svg" alt="Error Injection Effect" style="max-width: 85%;">
+                <figcaption>图5：错误注入对 Agent 表现的影响 — Pass@3（实线）基本稳定，而 Pass\(^{\smallfrown}3\)（虚线）随错误率增加而急剧下降</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-5.svg" alt="Pass@3-Pass^3 Gap" style="max-width: 85%;">
+                <figcaption>图6：Pass@3 与 Pass\(^{\smallfrown}3\) 之间的差距随错误率单调扩大，量化了能力-可靠性鸿沟</figcaption>
+              </figure>
+
+              <p>为理解 Agent 在工具调用间歇失败时的行为，论文在 General 任务上以错误注入率 0.0、0.2、0.4、0.6 评估三个模型，注入错误按 HTTP 429（35%）、HTTP 500（35%）、2-4 秒延迟峰（30%）分布。<strong>核心发现：错误注入主要削弱一致性而非峰值能力</strong>——从 0.0 到 0.6，Pass@3 几乎持平，而 Pass\(^{\smallfrown}3\) 急剧下降（最高达 24 个百分点）。</p>
+
+              <p>Pass@3 和 Pass\(^{\smallfrown}3\) 之间的差距对每个模型均单调扩大，量化了<strong>能力-可靠性鸿沟（Capability-Relability Divide）</strong>。Claude-Opus-4.6 最具韧性，在 0.6 错误率下仍保持 56.5% Pass\(^{\smallfrown}3\)，差距扩展最小（9.9% → 20.5%）。韧性并不跟踪基线性能：Gemini-3.1-Pro 尽管起点更高，退化程度却是 GLM-5-Turbo 的近两倍。这深刻表明：<strong>单独使用 Pass@3 会通过暗示高韧性来掩盖脆弱性，而 Pass\(^{\smallfrown}3\) 揭示了部署级可靠性的大幅下降</strong>，强化了多指标评估的必要性。</p>
+
+              <h3 id="multi-turn">发现3：更好的问题，而非更多轮次，带来更优的多轮对话表现</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-6.svg" alt="Rounds vs Pass^3" style="max-width: 85%;">
+                <figcaption>图7：平均对话轮次与 Pass\(^{\smallfrown}3\) — 近乎零相关（\(r = 0.07\), \(R^2 < 0.01\)）。颜色越深表示越理想区域</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-7.svg" alt="Question Precision vs Pass^3" style="max-width: 85%;">
+                <figcaption>图8：问题精确度与 Pass\(^{\smallfrown}3\) — 问题精确度解释 76% 的 Pass\(^{\smallfrown}3\) 方差（\(r = 0.87\), \(R^2 = 0.76\)）</figcaption>
+              </figure>
+
+              <p>38 个多轮对话任务模拟专业咨询场景——用户画像逐步释放关键信息，Agent 必须在给出最终答案前通过澄清问题主动获取这些信息。在 13 个模型上，对话轮次与 Pass\(^{\smallfrown}3\) 呈<strong>近乎零相关</strong>（\(r = 0.07\), \(R^2 < 0.01\)）——大多数模型平均 3-5 轮，却覆盖了从 15.8% 到 68.4% 的完整 Pass\(^{\smallfrown}3\) 范围。</p>
+
+              <p><strong>真正的预测因素是问题精确度（Question Precision）</strong>，定义为澄清度（问题是否命中要害）与轨迹质量（信息收集过程是否逻辑有序）的均值。它解释了 <strong>76% 的 Pass\(^{\smallfrown}3\) 方差</strong>（\(r = 0.87\)），所有 13 个模型均位于 95% 置信区间内或附近。对比极为鲜明：轮次方差的不到 1% vs 问题质量的 76%。这与任务设计高度吻合——关键信息被隐藏在渐进式揭示之后，因此<strong>提问策略的质量而非对话长度决定了模型收集到多少上下文</strong>。这一发现对 Agent 设计有重要启示：与其盲目增加交互轮次，不如优化信息获取策略的精准度。</p>
+
+              <h3 id="multimodal-domains">发现4：多模态能力高度领域特异——无一模型在所有领域占优</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/Claw-Eval/image-8.svg" alt="Reliability Gap Across Domains" style="max-width: 85%;">
+                <figcaption>图9：跨多模态领域的 Pass@3（虚线）与 Pass\(^{\smallfrown}3\)（实线）对比 — 转换率 \(\rho\) 指示一致性，Video 领域 \(\rho = 0.37\) 最低，表明高感知不确定性任务具有更大的运行间方差</figcaption>
+              </figure>
+
+              <p>101 个多模态任务跨三个领域：Video（53）、Doc &amp; Image（22）、Code（26）。<strong>无一模型在所有领域占优</strong>：Video 由 Claude-Opus-4.6/Sonnet-4.6 领先（Pass\(^{\smallfrown}3\) 15.4%），Doc &amp; Image 由 GPT-5.4 领先（54.5%），Code 由 MiMo-V2-Omni 领先（33.3%）。排名转移显著：GPT-5.4 整体领先却在 Video 上排名较低；MiMo-V2-Omni 在 Code 上领先尽管整体排名靠后。领域级细分不可或缺。</p>
+
+              <p>跨模型聚合后，能力分布极不均衡：Video Pass\(^{\smallfrown}3\) 平均仅 10.7%，Doc &amp; Image 32.3%，Code 23.9%。<strong>一致性也因领域而异</strong>——以转换率 \(\rho = \text{Pass}^{\smallfrown}3 / \text{Pass@}3\) 衡量：Video 为 0.37，Code 为 0.48，Doc &amp; Image 为 0.53，表明感知不确定性越高的任务运行间方差越大。两组发现正交：<strong>哪个领域一个模型擅长是模型特异的，而它多么可靠地擅长是领域特异的</strong>。</p>
+
+              <h2 id="conclusion">总结</h2>
+
+              <p>Claw-Eval 提出了一个以<strong>全轨迹审计、多维评分和跨模态覆盖</strong>为核心的可信 Agent 评估框架。通过 300 个人工验证任务、2,159 条细粒度 Rubric 和 14 个前沿模型的系统评测，论文揭示了一系列深刻发现：</p>
+
+              <ul>
+                <li>轨迹不透明评估<strong>系统性不可靠</strong>——遗漏 44% 安全违规和 13% 鲁棒性失败</li>
+                <li><strong>能力不等于一致性</strong>——错误注入下 Pass\(^{\smallfrown}3\) 骤降达 24 个百分点，而 Pass@3 几乎不变</li>
+                <li>多轮对话中成功取决于 Agent <strong>问了什么</strong>（\(r=0.87\)），而非问了多少（\(r=0.07\)）</li>
+                <li>多模态能力<strong>高度领域特异</strong>——没有模型在所有领域领先</li>
+                <li>模型排名<strong>跨任务组显著转移</strong>——异构评估覆盖对真实能力画像至关重要</li>
+              </ul>
+
+              <p>这些结果表明，构建<strong>可部署的</strong>（而非仅<strong>有能力的</strong>）Agent 需要优先关注：一致的错误恢复、领域靶向的多模态感知、交互质量优先于原始规模。Claw-Eval 为这一方向的系统化研究提供了坚实的评估基础设施。</p>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2604.06132" target="_blank" rel="noopener">Claw-Eval: Towards Trustworthy Evaluation of Autonomous Agents</a></p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+
+            </div>
+
+          </section>
+        </div>
+      </article>
+    </div>
+
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
