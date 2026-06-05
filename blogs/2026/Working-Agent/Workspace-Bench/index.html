@@ -43,41 +43,46 @@ layout: compress
             <div class="blog-post-header">
               <h1>Workspace-Bench：面向大规模文件依赖的AI Agent工作空间学习评测基准</h1>
               <div class="blog-post-meta">
-                <span class="meta-date">📅 June 05, 2026 · Qiyao Wang</span>
+                <span class="meta-date">📅 June 05, 2026 · AI-assistanted Qiyao Wang</span>
                 <span class="meta-topic">#Working Agent</span>
                 <span class="meta-topic">#Paper</span>
                 <span class="meta-topic">#Benchmark</span>
               </div>
             </div>
 
-            <div class="blog-content">
+           <div class="blog-content">
 
               <ul>
-                <li><strong>Workspace-Bench</strong>：首个系统性评测 AI Agent <strong>工作空间学习（Workspace Learning）</strong>能力的 Benchmark，聚焦大规模异构文件间的依赖推理</li>
-                <li><strong>5 种用户画像、74 种文件类型、20,476 个文件</strong>，构建高度真实的工作空间环境</li>
-                <li><strong>388 个任务、7,399 条 Rubric</strong>，覆盖 6 大协同能力维度，每个任务平均标注 5.1 条依赖边</li>
-                <li><strong>15 种 Agent 配置</strong>（4 种 Harness × 7 种 Backbone LLM）全面评测，最强组合仅 ~60%，远低于人类专家 + 工具的 80.7%</li>
+                <li><strong>Workspace-Bench</strong>：首个系统性评测 AI Agent <strong>工作空间学习（Workspace Learning）</strong>能力的 Benchmark，由上海交通大学与 ByteDance 联合提出，聚焦大规模异构文件间的依赖推理</li>
+                <li><strong>5 种用户画像、74 种文件类型、20,476 个文件</strong>（最大 20GB），构建高度真实、深度嵌套的数字工作空间环境</li>
+                <li><strong>388 个依赖驱动任务、7,399 条细粒度 Rubric</strong>，覆盖 6 大协同能力维度，每个任务平均标注 5.1 条依赖边、跨 4.7 个不同文件</li>
+                <li><strong>27 种组合</strong>（4 种 Agent Harness × 7 种 Backbone LLM）全面评测，最强组合仅 ~60%，平均仅 <strong>43.3%</strong>，远低于人类专家 + 工具辅助的 <strong>80.7%</strong></li>
+                <li>额外提供 <strong>Workspace-Bench-Lite</strong>（100 任务子集），保持分布一致性，评估成本降低约 <strong>70%</strong></li>
               </ul>
 
               <h2 id="intro">Intro</h2>
 
-              <p>近年来，Foundation Model 和 Agent Harness 的快速发展显著扩展了 AI Agent 的操作边界。然而，<strong>当前 Agent 在真实工作场景中的表现仍远未达到可靠水平</strong>——即便是最先进的 Agent，在 TheAgentCompany 上也仅能完成 24–30% 的任务，在 OfficeBench 上的成绩也仅为 47%。</p>
+              <p>近年来，Foundation Model 和 Agent Harness 的快速发展显著扩展了 AI Agent 的操作边界。从 OpenAI 的 ChatGPT Agent、Anthropic 的 Cowork/Claude Code，到开源框架 OpenClaw、Hermes——这些系统不仅提供模型推理能力，更集成了 <strong>MCP（Model Context Protocol）工具调用、持久化状态管理、长程任务编排、安全护栏和系统化评估机制</strong>等系统级能力。这使得 AI Agent 在减少日常乃至高级任务中的人力投入方面展现出越来越大的潜力。</p>
 
-              <p>核心瓶颈在于：真实工作空间中的任务往往要求 Agent 具备 <strong>Workspace Learning（工作空间学习）</strong>能力——即识别、推理、利用和更新异构文件之间的显式与隐式依赖关系。例如：</p>
+              <p>然而，<strong>当前 Agent 在真实工作场景中的表现仍远未达到可靠水平</strong>。在 TheAgentCompany 上，表现最好的 Agent 也仅能完成 24–30% 的任务；在 OfficeBench 上，GPT-4 Omni 仅取得 47.0% 的成绩。更令人担忧的是，Anthropic 内部分析显示，虽然 Claude Code 在 2025 年 8 月至 12 月期间难度任务成功率翻倍，但每次会话中平均仍需 <strong>3.3 次人工干预</strong>——人类监督仍然不可或缺。在实际部署中，49% 的企业将推理成本列为扩展 AI Agent 的首要障碍，近半数企业将 76–100% 的 AI 预算仅用于推理。</p>
+
+              <p>论文作者对 ByteDance 内部 Lark 平台的 <strong>154 个真实任务场景</strong>进行了深入分析，揭示出核心瓶颈：真实工作空间中的任务要求 Agent 具备 <strong>Workspace Learning（工作空间学习）</strong>能力——即识别、推理、利用和更新异构文件之间显式与隐式依赖关系的能力。典型例子包括：</p>
               <ul>
-                <li>撰写销售提案需要协调非结构化的客户档案、历史沟通记录和结构化的行业知识库</li>
-                <li>更新项目预算需要交叉引用多个电子表格、演示文稿和 CFO 的邮件确认</li>
+                <li>撰写高度定制化的销售提案需要协调非结构化的客户档案、历史沟通记录和结构化的行业知识库</li>
+                <li>更新项目预算需要交叉引用多个电子表格的原始数据、从看似无关的演示文稿中提取修订后的市场预估，并对照 CFO 的非正式邮件来验证最终数字</li>
               </ul>
 
-              <p>然而，现有的 Agent Benchmark 在以下方面存在严重不足：</p>
-              <ol>
-                <li><strong>预设上下文</strong>：将任务所需信息预先打包提供，跳过了真实场景中最关键的<strong>自主发现相关信息</strong>环节</li>
-                <li><strong>文件同质化</strong>：仅涉及少量文件格式（&lt; 10 种），忽略真实工作中的 70+ 种异构格式</li>
-                <li><strong>依赖关系缺失</strong>：将文件视为独立实体，不评估跨文件语义关联、版本追溯、隐式约定等依赖推理</li>
-                <li><strong>静态环境</strong>：不模拟文件系统的动态演化（版本更新、文件移动、命名歧义等）</li>
-              </ol>
+              <p>然而，现有的 Agent Benchmark 在评测工作空间学习能力方面存在严重不足。论文将现有 Benchmark 分为四类，并逐类分析其局限性：</p>
 
-              <p>⇒ 开发一个能够系统评测 Agent <strong>工作空间学习</strong>能力的 Benchmark —— <strong>Workspace-Bench</strong></p>
+              <p><strong>1) Prompt-Driven Benchmarks</strong>（如 OneMillion-Bench、CL-Bench）：将所有任务信息完全嵌入自然语言指令中，<strong>完全不需要与外部环境或实际文件交互</strong>，从根本上绕过了办公工作流的核心操作媒介。虽然适合评测纯粹推理能力，但无法反映 Agent 在真实文件系统中的表现。</p>
+
+              <p><strong>2) Open-Source/Environment-Driven Benchmarks</strong>（如 OSWorld、Odysseys Bench、WebArena、CRMArena-Pro）：要求 Agent 通过工具调用与动态环境（API、Web、操作系统）交互。这些 Benchmark 虽然引入了多步执行，但<strong>主要关注动作接地和 API 编排</strong>，忽略了日常知识工作的核心——在复杂的、关系型本地文件生态系统中进行导航、推理和管理。</p>
+
+              <p><strong>3) Task-File-Driven Benchmarks</strong>（如 OfficeQA-Pro、GDPVal、DataCross）：引入了实际文件处理，但<strong>将任务视为独立问题</strong>，直接提供预打包的任务特定文件给 Agent，更像"孤立文档 QA"而非真实办公。Agent 完全不需要从复杂文件生态中<strong>自主搜索、过滤和发现</strong>关键信息。</p>
+
+              <p><strong>4) Workspace-Relevant Benchmarks</strong>（如 OfficeBench、TheAgentCompany、SWE-Bench）：是最接近真实的尝试，模拟了完整的工作结构并需要动态工具调用。但仍存在关键瓶颈：(i) 依赖单一的、单一风格的文件系统结构，缺乏角色多样性；(ii) 主要覆盖不到 10 种基本文件格式，缺少真实场景中 50+ 种多样化格式；(iii) 任务虽涉及多个文件，但将跨文件协同视为隐式副产品，而非<strong>显式评估任务到数据的依赖发现</strong>；(iv) 完全缺失<strong>文件血统关系（Lineage Relations）</strong>——即追踪版本历史和派生的能力。</p>
+
+              <p>⇒ 开发一个能够系统评测 Agent <strong>工作空间学习</strong>能力的 Benchmark —— <strong>Workspace-Bench</strong>，填补从原子化技能到工作空间感知推理之间的评测鸿沟。</p>
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image.png" alt="Workspace-Bench Overview" style="max-width: 95%;">
@@ -86,17 +91,17 @@ layout: compress
 
               <h2 id="five-stages">工作空间学习的五个阶段</h2>
 
-              <p>论文提出了 <strong>Workspace Learning（工作空间学习）</strong>的概念，并将其演进分为五个阶段：</p>
+              <p>论文提出了 <strong>Workspace Learning（工作空间学习）</strong>的概念——Agent 原生感知、推理和利用工作空间中异构实体之间结构化关系网络的能力。其核心洞察是：<strong>真实办公工作不是对独立数据对象的一系列原子操作，而是一个通过导航复杂关联关系图谱来持续转换信息的过程</strong>。作者将工作空间学习的演进分为五个阶段：</p>
 
               <ul>
-                <li><strong>L0：数据不敏感执行（Data Insensitive Execution）</strong> — Agent 作为被动顾问，接收任务相关数据，仅提供高层操作指导，不直接操作数据</li>
-                <li><strong>L1：用户指定文件执行（User-Specified File Execution）</strong> — Agent 依赖用户明确指定文件路径和操作序列，将文件视为孤立实体，缺乏跨文件依赖意识</li>
-                <li><strong>L2：文件间依赖推理（File-to-File Dependency Reasoning）</strong> — Agent 开始主动识别文件间的显式和隐式依赖关系，如区分同一文档的不同版本。此阶段到达 <strong>编排奇点（Orchestration Singularity）</strong>：Harness 对任务执行的贡献开始超过 Foundation Model</li>
-                <li><strong>L3：任务到文件的依赖发现（Task-to-File Dependency Discovery）</strong> — Agent 成为主动探索者，根据高层任务意图自主搜索整个工作空间。此阶段到达 <strong>能力奇点（Capability Singularity）</strong>：Agent 能够端到端独立完成任务。评测显示当前 Agent 在此阶段性能从 Easy 的 57.6% 骤降至 Hard 的 40.5%</li>
-                <li><strong>L4：工作空间原生自进化（Workspace-Native Self-Evolution）</strong> — Agent 成为与用户工作空间共同演化的"活体伙伴"，将每次任务执行和环境变化内化为隐式反馈，持续优化自身能力</li>
+                <li><strong>L0：数据不敏感执行（Data Insensitive Execution）</strong> — Agent 作为被动顾问而非主动数据操作者。系统接收任务相关数据作为输入，仅向用户提供高层操作指导（如分析步骤和工作流程），实际的数据录入和交叉引用完全由用户完成。Agent 与数据和工作空间完全隔离，功能主要依赖 LLM 的基础能力，Harness 的支持微乎其微。例如，当用户需要执行财务审计时，Agent 可能告知用户所需的 Excel 公式或银行对账单与分类账之间的具体核对步骤，但实际的数据操作仍由人工完成。</li>
+                <li><strong>L1：用户指定文件执行（User-Specified File Execution）</strong> — Agent 作为被动执行器，<strong>完全依赖用户提供显式文件路径和操作序列</strong>。虽然能够处理特定数据，但将文件视为孤立实体，缺乏对文件间逻辑依赖的全局感知。如同现代 GUI Agent 所展现的，它们擅长局部的、单应用操作，但在高级意图与碎片化工作空间结构之间的桥接上挣扎——这导致 <strong>Task-File Omission（任务-文件遗漏）</strong>：Agent 无法从高级任务描述定位到正确的文件。例如，用户可能指示 Agent 从特定 CSV 文件生成柱状图并插入指定演示文稿幻灯片，Agent 能够基于提供的数据成功完成，但无法识别这些文件之间的协同关系。</li>
+                <li><strong>L2：文件间依赖推理（File-to-File Dependency Reasoning）</strong> — Agent 开始主动识别用户提供文件之间的显式和隐式依赖关系。通过映射依赖关系，Agent 理解不同文件如何共同运作。然而当前 Agent 在此阶段经常失败——例如错误选择<strong>命名中的"最终版"文件（如 report_final_v2.docx vs report_final.docx）</strong>而非真正的最新版本，因为它们缺乏区分命名约定与实际文件时效的时间感知能力。此阶段到达 <strong>编排奇点（Orchestration Singularity）</strong>：Harness 对任务执行的贡献开始超过 Foundation Model，因为多文件处理需要长程任务规划、中间状态管理和对不同文件应用不同技能等 Harness 级机制。</li>
+                <li><strong>L3：任务到文件的依赖发现（Task-to-File Dependency Discovery）</strong> — Agent 进化为<strong>主动探索者</strong>，能够根据高层任务意图在整个数字工作空间中自由探索。核心能力从分析显式提供的数据转变为<strong>自主发现相关数据及其底层结构</strong>。人类用户的角色退化为观察者，Agent 的贡献逐渐超过人类。此阶段到达 <strong>能力奇点（Capability Singularity）</strong>：Agent 具备端到端独立处理任务的能力。评测显示当前 Agent 在接近此阶段时性能单调下降——从 Easy 任务的 57.6% 骤降至 Hard 任务的 40.5%。例如，当用户请求"为某区域扩张准备审计报告"时，Agent 需要自主导航深层嵌套目录以查找最新的预算电子表格、法律合同和利益相关者邮件，映射其结构关系，过滤无关版本，无需用户指点具体文件位置。</li>
+                <li><strong>L4：工作空间原生自进化（Workspace-Native Self-Evolution）</strong> — Agent 成为与用户数字工作空间和历史上下文共同演化的<strong>"活体伙伴"</strong>。Agent 将每次任务执行和环境变化内化为隐式反馈，持续优化自身能力。例如，当本地工作空间安装了新软件时，Agent 应能<strong>高效检测到此修改并无缝将该应用集成到其可用工具库</strong>中以供未来调用。这是工作空间学习的终极阶段，代表着 Agent 从工具使用者到环境共演化者的质的飞跃。</li>
               </ul>
 
-              <p>从 L2 开始，Harness 的贡献持续大于 Foundation Model。在 L3/L4 阶段，所需的工作空间学习能力与当前 Agent 孤立文件处理范式之间的失配不断扩大，形成 <strong>数据关联鸿沟（Data Association Gap）</strong>——这是当前 AI Agent 尚未能跨越的根本性瓶颈。</p>
+              <p>从 L2 开始，Harness 的贡献持续大于 Foundation Model。在 L3/L4 阶段，所需的工作空间学习能力与当前 Agent 孤立文件处理范式之间的失配不断扩大，形成 <strong>数据关联鸿沟（Data Association Gap）</strong>——这是当前 AI Agent 尚未能跨越的根本性瓶颈。跨越这一鸿沟需要<strong>重新思考 Agent Harness 如何发现、表示和利用跨文件依赖关系</strong>。</p>
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-1.png" alt="Five Stages of Workspace Learning" style="max-width: 95%;">
@@ -105,7 +110,15 @@ layout: compress
 
               <h2 id="benchmark-construction">Benchmark 构建</h2>
 
-              <p>Workspace-Bench 的设计遵循四大原则：(1) <strong>高保真关系型工作空间</strong>：模拟真实的混乱数字工作空间，包含嵌套目录、语义噪声文件、隐式跨文件依赖；(2) <strong>依赖驱动的推理</strong>：显式标注并评估文件间的依赖交互，而非将每个文件视为孤立证据源；(3) <strong>真实任务标注</strong>：任务来源于真实办公场景，由领域专家人工标注，LLM 仅作为辅助验证工具；(4) <strong>过程感知的细粒度评估</strong>：不仅评估最终输出，还评估中间决策（如是否正确选择了文件版本）。</p>
+              <p>Workspace-Bench 的设计遵循<strong>四大核心原则</strong>，使其与现有 Agent 和文档 Benchmark 有本质区别：</p>
+
+              <p><strong>(1) 高保真关系型工作空间（High-Fidelity Relational Workspaces）</strong>：现有 Benchmark 通常将数据放置在干净、独立的文件中，而真实工作场景要求 Agent 在混乱的数字工作空间中导航。Workspace-Bench 构建了包含<strong>数千个相互关联工件</strong>的工作空间，Agent 必须处理隐式约定、角色特定文件组织和嘈杂的工作空间结构。这与静态 Benchmark 有本质区别——它迫使 Agent 像"团队成员"一样理解组织的"谁、做什么、在哪里"。</p>
+
+              <p><strong>(2) 依赖驱动的推理（Dependency-Driven Reasoning）</strong>：许多跨文件 Benchmark 仅测试表面级聚合。而真实工作空间任务通常需要从不同位置检索上下文相关文件并对其依赖关系进行推理——包括显式引用、语义关系、模态转换、版本血统。Workspace-Bench 的 388 个任务被设计为<strong>不能通过简单关键词搜索解决</strong>，需要追踪项目生命周期中决策的血统，协调跨异构源的证据。</p>
+
+              <p><strong>(3) 真实任务标注（Authentic Task Annotation）</strong>：LLM 生成的任务虽然可规模化，但往往<strong>遗漏真实专业工作流的结构复杂性和隐式约束</strong>，尤其是在需要导航多模态、相互依赖的工作空间时。Workspace-Bench 从真实办公场景中整理任务，由<strong>领域专家手工标注</strong>，LLM 仅作为辅助工具用于验证和 Rubric 优化，任务逻辑、依赖规范和参考输出保持人工管理。</p>
+
+              <p><strong>(4) 过程感知的细粒度评估（Process-Aware Fine-Grained Evaluation）</strong>：单一成功率分数不足以诊断 Agent 在工作空间任务中的行为。Agent 可能生成看似合理的最终摘要，却依赖了<strong>过时的文件版本</strong>或忽略了<strong>所需的支持文档</strong>。Workspace-Bench 不仅评分最终输出，还评估关键中间决策——是否识别了正确的文件、是否遵守了依赖约束、是否使用了正确的文件版本。</p>
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-2.png" alt="Data Collection and Curation Pipeline" style="max-width: 90%;">
@@ -114,31 +127,49 @@ layout: compress
 
               <h3 id="workspace-construction">工作空间构建</h3>
 
-              <p>构建了<strong>五种代表性职业角色</strong>的工作空间：运营经理、物流经理、产品经理、后端开发者和研究员，覆盖互联网公司中不同的工作流和文件组织结构。</p>
+              <p>构建了<strong>五种代表性职业角色</strong>的工作空间：运营经理（Operations Manager）、物流经理（Logistics Manager）、产品经理（Product Manager）、后端开发者（Backend Developer）和研究员（Researcher），覆盖互联网公司中不同的工作流和文件组织结构。每个工作空间配备了显式的组织结构，编码了报告关系、团队成员和项目职责，使得需要角色约束和隐式知识的任务成为可能。</p>
 
-              <p>采用<strong>自顶向下的两阶段混合构建流水线</strong>：</p>
+              <p>采用<strong>自顶向下的两阶段混合构建流水线</strong>（Top-Down Two-Stage Hybrid Construction Pipeline），模拟真实工作空间自然演化的三个属性：深度嵌套的目录结构、语义噪声文件（过时草稿和历史修订）、隐式跨文件依赖：</p>
+
+              <p><strong>第一阶段：结构生成（Structure Generation）</strong>。不同职业角色按照不同的工作流组织文件。例如，开发者通常维护 <code>src/</code>、<code>tests/</code>、<code>docs/</code> 等目录，而研究员可能围绕 <code>literature/</code>、<code>experiments/</code>、<code>results/</code> 组织文件。为捕捉这种多样性，首先为每种角色定义详细画像——包括职责、典型工作流、文件使用模式和领域特定术语。然后基于这些画像，利用 Agent 生成反映角色特定工作空间组织的<strong>树状目录层次结构</strong>。同时引入<strong>受控结构噪声</strong>——冗余文件夹、歧义名称（如 report_final、report_final_edited）、归档目录等——以更好地匹配真实文件系统。</p>
+
+              <p><strong>第二阶段：内容填充（Content Population）</strong>。采用混合策略，结合真实世界数据检索和扎根式生成。首先部署<strong>语义驱动的 Agentic Crawler</strong>，遍历生成的目录树并根据文件路径的语义上下文自主抓取相关公开资源——如 arXiv 论文、GitHub 仓库、技术文档、报告、电子表格和演示文稿材料。然后利用 LLM 基于收集到的文件<strong>合成相关工件</strong>——如讨论某篇论文的邮件、引用设计文档的会议记录、基于电子表格派生的分析报告等。这一过程在丰富工作空间的同时有效缓解了纯合成语料的同质化问题，成功在整个文件系统中注入了<strong>深层文件关系</strong>。</p>
+
+              <p>最终由领域专家审核模拟文件系统，验证其合理性和结构一致性——重点关注目录层次是否与目标画像匹配、文件内容是否与其位置保持一致、注入的文件关系是否能够支撑有意义的工作空间任务。构建完成的工作空间包含<strong>三大核心挑战</strong>：</p>
               <ul>
-                <li><strong>结构生成（Structure Generation）</strong>：首先为每种角色定义详细的画像（职责、工作流、文件使用模式、领域术语），然后基于画像生成反映角色特征的文件目录层次，并引入受控的结构噪声（冗余文件夹、歧义命名、归档目录等）</li>
-                <li><strong>内容填充（Content Population）</strong>：采用混合策略——首先用语义驱动的 Agentic Crawler 遍历目录树并抓取相关公开资源（arXiv 论文、GitHub 仓库、技术文档、报告等），然后用 LLM 基于已有文件合成相关工件（如讨论某篇论文的邮件、引用设计文档的会议记录、基于电子表格派生的分析报告等）</li>
+                <li><strong>任务相关文件检索</strong>：Agent 需要在嵌套目录结构中导航，从噪声候选中识别相关文件</li>
+                <li><strong>版本追溯（Lineage Understanding）</strong>：Agent 需要区分同一工件的多次修订——如 report_v1、report_reviewed、report_final——理解版本演化关系</li>
+                <li><strong>异构源推理（Heterogeneous-Source Reasoning）</strong>：Agent 需要跨模态连接信息——如将幻灯片中的图表与其源电子表格关联，或将讨论邮件与对应的设计文档连接</li>
               </ul>
-
-              <p>最终由领域专家审核，确保目录结构与角色的匹配性、文件内容与其位置的一致性，以及注入的文件关系能够支撑有意义的任务。构建的工作空间包含<strong>三大挑战</strong>：任务相关文件检索、版本追溯（如区分 report_v1、report_reviewed、report_final）、跨模态异构源推理。</p>
 
               <h3 id="task-curation">任务构建</h3>
 
-              <p>基于构建的工作空间，<strong>人工构建了 388 个任务</strong>。任务流程包括：</p>
+              <p>基于构建的工作空间，<strong>人工构建了 388 个任务</strong>。每个任务以自然语言请求的形式编写，且<strong>故意欠指定（Intentionally Under-specified）</strong>——Agent 必须检查工作空间结构并恢复相关文件依赖才能完成任务。任务覆盖从常规操作（表单填写、文件组织）到复杂多步请求（通过协调先前文档、近期代码变更和项目状态更新来准备周报）的广泛范围。为确保真实性和可评估性，论文避免了 LLM 全自动生成，而是采用<strong>问题驱动的人工整理流水线</strong>：</p>
 
+              <p><strong>1) 真实工作流收集（Sourcing Authentic Workflows）</strong>。首先通过内部问卷收集真实工作场景中的工作流——参与者提供任务描述、预期输入和期望输出。领域专家随后筛选收集到的工作流，去除琐碎或欠指定的案例，保留需要非平凡工作空间探索和跨文件推理的任务。选定的工作流被标准化为 <strong>154 个代表性任务场景</strong>——例如综合客户档案、购买历史和交互日志来生成客户评分和个性化推荐。</p>
+
+              <p><strong>2) 多维度任务标注（Multi-dimensional Task Annotation）</strong>。<strong>25 名标注者</strong>根据五种工作空间角色从代表性场景出发创建具体任务。对于每个任务，标注者需完成：编写自然语言指令、识别所需输入文件、生成参考答案、设计评估 Rubric。标注者进一步为每个任务构建<strong>文件依赖图谱（File Dependency Graph）</strong>——定义 Agent 为正确解决任务所必须访问或使用的<strong>最小关键文件路径集合</strong>。这一标注使得过程感知评估成为可能——判断 Agent 是否发现了正确的证据、使用了正确的文件版本、遵循了所需的依赖结构。标注者还为每个任务标记所需的能力维度和<strong>三个难度级别</strong>：仅需工作空间探索和结果提供文件的为 <strong>Easy</strong>（14%）、主要需要语义内容关系理解和任务支撑文件的为 <strong>Medium</strong>（53%）、涉及异构文件理解和血统追溯的为 <strong>Hard</strong>（33%）。</p>
+
+              <p><strong>3) 客观可评估性保证（Ensuring Objective Evaluability）</strong>。开放性任务常引入人工编写 Rubric 的模糊性。为提高客观性，论文使用<strong>辅助 Agent Pipeline</strong>将模糊标准转化为数据锚定的断言——例如将"计算是否正确？"转化为"最终值是否等于 [具体值]？"。人类专家随后交叉验证所有任务、依赖图谱、参考答案和 Rubric，确保标注一致性和评估可靠性。每个任务平均由专家耗时 <strong>超过 3 小时</strong>进行标注和验证。</p>
+
+              <p>每个任务平均需要解析 <strong>5.1 条依赖边</strong>（跨 4.7 个不同文件），通过平均 <strong>19.1 条 Rubric</strong> 进行评估（范围 6–30，总计 7,399 条）。Rubric 分为三类：</p>
               <ul>
-                <li><strong>真实工作流收集</strong>：通过内部问卷收集真实工作场景中的任务描述、预期输入和期望输出，经领域专家筛选后标准化为 154 个代表性任务场景</li>
-                <li><strong>多维度任务标注</strong>：25 名标注者根据五种角色创建具体任务，为每个任务编写自然语言指令、识别所需输入、生成参考答案、设计评估 Rubric。同时构建文件依赖图谱（File Dependency Graph），标注者显式标注完成任务所需的最少关键文件路径集合</li>
-                <li><strong>客观可评估性保证</strong>：利用辅助 Agent Pipeline 将模糊标准转化为数据锚定的断言（如将"计算是否正确？"转化为"最终值是否等于 [具体值]？"），并由人类专家交叉验证所有任务、依赖图谱、参考答案和 Rubric</li>
+                <li><strong>结果导向（Result-oriented）— 54.8%</strong>：验证最终输出的正确性和完整性，如摘要是否包含所需的项目风险、最终计算值是否正确</li>
+                <li><strong>基础（Foundation）— 25.0%</strong>：检查基本任务合规性，如文件命名、格式、存储位置是否符合要求</li>
+                <li><strong>过程导向（Process-oriented）— 20.2%</strong>：评估 Agent 是否遵循了合理的推理和执行过程，如是否使用了正确的中间文件、是否按正确顺序处理了依赖</li>
               </ul>
-
-              <p>每个任务平均需要解析 <strong>5.1 条依赖边</strong>（跨 4.7 个不同文件），通过平均 <strong>19.1 条 Rubric</strong> 进行评估（范围 6–30）。Rubric 分为三类：<strong>结果导向</strong>（54.8%，验证最终输出的正确性和完整性）、<strong>基础</strong>（25.0%，检查文件命名、格式、存储位置等基本合规性）、<strong>过程导向</strong>（20.2%，评估推理和执行过程的合理性）。</p>
 
               <h3 id="evaluation-framework">评估框架</h3>
 
-              <p>设计了专门的评估系统，解决三个核心挑战：(1) <strong>任务隔离与快速恢复</strong>：通过独立 Sandbox 和并行 BFS 工作空间回滚算法，确保跨任务无污染；(2) <strong>结果精确抽取</strong>：采用三路并行检索策略——指令约束路径提取、统一副本集中检索、基于元数据的全局模糊匹配；(3) <strong>并行评估加速</strong>：工作空间级和任务级双重并行机制，显著提升评估吞吐量。</p>
+              <p>在工作空间锚定的环境中评估 Agent 面临三个核心技术挑战，Workspace-Bench 设计了专门的自动化评估系统逐一解决：</p>
+
+              <p><strong>挑战1：严格的状态隔离与高效环境恢复</strong>。由于 Agent 在工作空间内执行读写操作，防止跨任务污染并实现低延迟的文件系统状态重置是可靠评估的基础。解决方案：采用<strong>独立 Sandbox 机制</strong>——每个任务在隔离的工作空间沙盒中执行。任务完成后，运行<strong>并行 BFS 工作空间回滚算法</strong>：从根节点开始逐层比较当前工作空间与基准快照的目录树差异，复制缺失节点、强制删除多余节点、用基准副本覆盖二进制哈希不匹配的修改节点。沙盒释放回池中以供后续任务复用。</p>
+
+              <p><strong>挑战2：开放工作空间中的精确结果抽取</strong>。Agent 生成的输出文件通常存储在不可预测的非固定路径中，从海量噪声文件中精确提取目标结果是重大挑战。解决方案：<strong>三路并行检索策略（Multi-strategy File Extraction）</strong>：(i) <strong>指令约束路径提取</strong>：在任务分配阶段通过 Prompt 强制 Agent 在最终回复中显式声明结果文件的确切路径；(ii) <strong>统一副本集中检索</strong>：强制 Agent 在全局指定目录中保存结果的额外副本，评估框架直接扫描提取；(iii) <strong>基于元数据的全局模糊匹配</strong>：利用任务元数据中定义的目标文件特征（如预期文件名），在沙盒文件系统中执行全面的遍历和模糊搜索。最终系统聚合去重后通过三种并发策略获取的文件列表。</p>
+
+              <p><strong>挑战3：长程任务的评估效率瓶颈</strong>。Workspace-Bench 中每个任务的平均执行时间超过 5 分钟，跨大量测试集会带来巨大的时间成本。解决方案：<strong>双级并行加速机制</strong>——工作空间级并行：利用五个独立的用户画像工作空间并发调度和执行不同任务，实现 <strong>5 倍评估吞吐量</strong>；任务级并行：预克隆同一工作空间的多个镜像副本并集成到 Sandbox Pool 进行动态管理，新任务被调度时自动分配空闲沙盒环境执行，实现更显著的加速效果。</p>
+
+              <p>评估过程中，所有 Agent 配置统一采用 <strong>Seed-2.0-Lite</strong> 作为 Agent-as-a-Judge 的 Backbone LLM，标准化的执行和评估 Prompt 统一应用于所有测试配置，确保公平评估。</p>
 
               <h2 id="benchmark-statistics">Benchmark 统计</h2>
 
@@ -147,22 +178,36 @@ layout: compress
                 <figcaption>图4：工作空间（左）和任务（右）分布统计</figcaption>
               </figure>
 
-              <p>Workspace-Bench 的核心统计数据：</p>
+              <p>Workspace-Bench 包含 388 个任务，分布在 5 个独立的专业工作空间中。与每个任务仅提供少量孤立文件的传统 Benchmark 不同，Workspace-Bench 中每个工作空间都是一个<strong>大规模、自包含的数字环境</strong>——单个工作空间最多包含 <strong>11,020 个文件</strong>，平均每个工作空间超过 <strong>4,000 个文件</strong>。核心统计数据：</p>
 
               <ul>
-                <li><strong>5 个工作空间</strong>（5 种职业角色），总计 <strong>20,476 个文件</strong>，<strong>3,299 个目录</strong>，最大目录深度 <strong>8 层</strong></li>
-                <li>覆盖 <strong>74 种文件类型</strong>：文档（.docx, .pdf, .md）、电子表格（.xlsx, .csv）、演示文稿（.pptx）、代码（.java, .py, .js）、配置（.yaml, .json）、邮件（.eml）、统计数据集（.dat, .sav）、图像（.png, .jpg）等</li>
-                <li><strong>388 个任务</strong>，每个任务平均 <strong>19.1 条 Rubric</strong>，总计 <strong>7,399 条</strong></li>
-                <li>任务难度分布：Easy 14%、Medium 53%、Hard 33%</li>
-                <li>6 大能力维度覆盖：工作空间探索（67.5%）、任务支撑文件利用（61.3%）、结果提供文件利用（54.4%）、内容关系理解（43.8%）、语义异构文件理解（36.1%）、版本追溯（35.1%）</li>
-                <li>额外提供 <strong>Workspace-Bench-Lite</strong>：100 个任务的精简子集，保持分布一致性，评估成本降低约 <strong>70%</strong></li>
+                <li><strong>5 个工作空间</strong>（5 种职业角色），总计 <strong>20,476 个文件</strong>，<strong>3,299 个目录</strong>，最大目录深度 <strong>8 层</strong>，平均文件深度 <strong>3.7 层</strong></li>
+                <li>覆盖 <strong>74 种文件类型</strong>：文档（.docx, .pdf, .md）、电子表格（.xlsx, .csv）——两者合计占 37.5% 和 35.3%，反映其在专业办公场景中的普遍性；演示文稿（.pptx）、代码（.java, .py, .js, .ts）——代码和配置文件贡献了额外的 12.7%，主要由后端开发者工作空间驱动；配置（.yaml, .json）、邮件（.eml）、统计数据集（.dat, .sav, .xpt）、图像（.png, .jpg）等</li>
+                <li><strong>388 个任务</strong>，每个任务平均 <strong>19.1 条 Rubric</strong>（范围 6–30），总计 <strong>7,399 条</strong></li>
+                <li>任务输出涵盖 16+ 种不同文件格式，包括分析报告、电子表格、演示文稿和脚本</li>
+                <li>任务难度分布：<strong>Easy 14%、Medium 53%、Hard 33%</strong></li>
+                <li>依赖边密度分布：低密度（0–2 边）33.8%、中密度（3–5 边）36.9%、高密度（≥6 边）29.4%</li>
+                <li>各工作空间任务数：运营经理 122（31%）、物流经理 115（30%）、研究员 67（17%）、后端开发者 43（11%）、产品经理 41（11%）</li>
+                <li>6 大能力维度覆盖（多标签）：工作空间探索 67.5%、任务支撑文件利用 61.3%、结果提供文件利用 54.4%、内容关系理解 43.8%、语义异构文件理解 36.1%、版本追溯 35.1%</li>
+                <li>额外提供 <strong>Workspace-Bench-Lite</strong>：100 个任务的精简子集，跨所有工作空间、难度级别和能力维度严格保持分布一致性，评估成本降低约 <strong>70%</strong></li>
               </ul>
+
+              <p>五个工作空间的文件组成差异显著。研究员工作空间是最大的，包含 11,020 个文件分布在 2,059 个目录中；产品经理工作空间最紧凑，包含 1,379 个文件组织在 309 个目录中。为模拟真实工作空间的时态演化，<strong>部分文件具有多个历史版本</strong>（如 v1、v2、final），要求 Agent 进行血统追溯。此外，文件深度嵌套在层次化目录结构中<strong>（最大深度 8 层）</strong>，迫使 Agent 主动导航和发现信息，而非依赖扁平检索。</p>
 
               <h2 id="experiments">实验</h2>
 
               <h3 id="experimental-setup">实验设置</h3>
 
-              <p>评估了 <strong>4 种 Agent Harness</strong>（OpenClaw、LangChain DeepAgent、Hermes）搭配 <strong>7 种 Foundation Model</strong>（GLM-5.1、GPT-5.4、Gemini-3.1-Pro、Kimi-2.5、MiniMax-M2.7、Grok-4.3、Qwen-3.6-Plus），共 <strong>15 种配置</strong>。所有评估在 Workspace-Bench-Lite 上进行。</p>
+              <p>评估了 <strong>4 种 Agent Harness</strong> 搭配 <strong>7 种 Foundation Model</strong>，共 <strong>15 种配置</strong>。所有评估在 Workspace-Bench-Lite 上运行：</p>
+
+              <p><strong>三种 Agent Harness 基线：</strong></p>
+              <ul>
+                <li><strong>OpenClaw</strong>：开源基线，采用<strong>解耦双循环执行架构</strong>——将高层认知规划与低层工具调用隔离，有效防止长程任务中的死锁。为缓解上下文遗忘，用结构化知识存储和语义路由层替代传统滑动窗口策略，实现跨会话共享记忆。</li>
+                <li><strong>LangChain DeepAgent</strong>：高度可控的白盒 Harness 基线，基于 LangGraph 的<strong>持久化有向无环图（DAG）架构</strong>。通过将核心 Agent 能力抽象为独立中间件序列（如任务分解和显式文件 I/O），将控制流逻辑与底层 LLM 解耦。通过强制内置规划工具（如 write_todos），将 LLM 内部决策树序列化，确保完全透明和可追踪的执行路径。</li>
+                <li><strong>Hermes</strong>：前曕性开源基线，代表配备<strong>内置学习循环</strong>的 Agent。无缝集成本地交互环境与多通道消息网关，原生利用 MCP 实现高可扩展的工具调用和子 Agent 编排。采用<strong>四层解耦记忆引擎</strong>——严格隔离静态身份指令与有界动态状态文件和 SQLite 支持的 FTS5 全文搜索归档，使用主动提取和按需注入策略显著降低 Token 消耗和认知噪声。其独特的<strong>自学习机制</strong>将试错洞察持久化到标准化本地技能库，有效跨瞬时会话保留工程经验。</li>
+              </ul>
+
+              <p><strong>七种 Backbone LLM：</strong>GLM-5.1、GPT-5.4、Gemini-3.1-Pro、Kimi-2.5、MiniMax-M2.7、Grok-4.3、Qwen-3.6-Plus。覆盖从顶级闭源模型到开源模型的完整谱系。</p>
 
               <h3 id="main-results">主要结果</h3>
 
