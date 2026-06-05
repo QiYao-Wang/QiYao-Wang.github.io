@@ -85,7 +85,7 @@ layout: compress
               <p>⇒ 开发一个能够系统评测 Agent <strong>工作空间学习</strong>能力的 Benchmark —— <strong>Workspace-Bench</strong>，填补从原子化技能到工作空间感知推理之间的评测鸿沟。</p>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image.png" alt="Workspace-Bench Overview" style="max-width: 95%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image.svg" alt="Workspace-Bench Overview" style="max-width: 95%;">
                 <figcaption>图1：Workspace-Bench 概览 — 5 种用户画像、丰富的异构文件生态、依赖驱动的任务设计与细粒度评估体系</figcaption>
               </figure>
 
@@ -104,7 +104,7 @@ layout: compress
               <p>从 L2 开始，Harness 的贡献持续大于 Foundation Model。在 L3/L4 阶段，所需的工作空间学习能力与当前 Agent 孤立文件处理范式之间的失配不断扩大，形成 <strong>数据关联鸿沟（Data Association Gap）</strong>——这是当前 AI Agent 尚未能跨越的根本性瓶颈。跨越这一鸿沟需要<strong>重新思考 Agent Harness 如何发现、表示和利用跨文件依赖关系</strong>。</p>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-1.png" alt="Five Stages of Workspace Learning" style="max-width: 95%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-1.svg" alt="Five Stages of Workspace Learning" style="max-width: 95%;">
                 <figcaption>图2：工作空间学习的五个阶段演进</figcaption>
               </figure>
 
@@ -121,7 +121,7 @@ layout: compress
               <p><strong>(4) 过程感知的细粒度评估（Process-Aware Fine-Grained Evaluation）</strong>：单一成功率分数不足以诊断 Agent 在工作空间任务中的行为。Agent 可能生成看似合理的最终摘要，却依赖了<strong>过时的文件版本</strong>或忽略了<strong>所需的支持文档</strong>。Workspace-Bench 不仅评分最终输出，还评估关键中间决策——是否识别了正确的文件、是否遵守了依赖约束、是否使用了正确的文件版本。</p>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-2.png" alt="Data Collection and Curation Pipeline" style="max-width: 90%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-2.svg" alt="Data Collection and Curation Pipeline" style="max-width: 90%;">
                 <figcaption>图3：Workspace-Bench 数据收集与构建流程</figcaption>
               </figure>
 
@@ -174,7 +174,7 @@ layout: compress
               <h2 id="benchmark-statistics">Benchmark 统计</h2>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-3.png" alt="Workspace and Task Distribution" style="max-width: 95%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-3.svg" alt="Workspace and Task Distribution" style="max-width: 95%;">
                 <figcaption>图4：工作空间（左）和任务（右）分布统计</figcaption>
               </figure>
 
@@ -212,7 +212,7 @@ layout: compress
               <h3 id="main-results">主要结果</h3>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-4.png" alt="Main Results" style="max-width: 95%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-4.svg" alt="Main Results" style="max-width: 95%;">
                 <figcaption>图5：各 Agent 配置的 Rubric 通过率排名（15 种配置 + 人类基线）</figcaption>
               </figure>
 
@@ -233,7 +233,7 @@ layout: compress
               <h4>发现2：6 大工作空间任务维度中，异构文件理解和版本追溯构成当前 Agent 的主要瓶颈</h4>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-5.png" alt="Capability Dimension Analysis" style="max-width: 90%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-5.svg" alt="Capability Dimension Analysis" style="max-width: 90%;">
                 <figcaption>图6：6 大能力维度的 TCR@70（70% Rubric 通过率的任务完成率）对比</figcaption>
               </figure>
 
@@ -244,7 +244,7 @@ layout: compress
               <h4>发现3：不同 Harness 和基础 LLM 在不同用户画像上表现各异</h4>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-6.png" alt="Performance Across Personas" style="max-width: 85%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-6.svg" alt="Performance Across Personas" style="max-width: 85%;">
                 <figcaption>图7：不同用户画像上的 Agent 表现（5 个工作空间 × 多种 Agent 配置）</figcaption>
               </figure>
 
@@ -255,7 +255,7 @@ layout: compress
               <h4>发现4：高交互轮次和高计算成本并不保证优质表现，优秀系统展现出卓越的"推理效率"</h4>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-7.png" alt="Turns vs Accuracy vs Token Cost" style="max-width: 80%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-7.svg" alt="Turns vs Accuracy vs Token Cost" style="max-width: 80%;">
                 <figcaption>图8：交互轮次（X 轴）、Rubric 通过率（Y 轴）与 Token 消耗（气泡大小）之间的关系。HM = Hermes, DA = DeepAgent, OC = OpenClaw</figcaption>
               </figure>
 
@@ -272,7 +272,7 @@ layout: compress
               <h3 id="error-analysis">错误分析</h3>
 
               <figure>
-                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-8.png" alt="Error Analysis" style="max-width: 80%;">
+                <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-8.svg" alt="Error Analysis" style="max-width: 80%;">
                 <figcaption>图9：各 Agent 配置在失败 Rubric 中的错误类型分布</figcaption>
               </figure>
 
