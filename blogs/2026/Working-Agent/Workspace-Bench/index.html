@@ -213,53 +213,61 @@ layout: compress
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-4.png" alt="Main Results" style="max-width: 95%;">
-                <figcaption>图5：各 Agent 配置的 Rubric 通过率排名</figcaption>
+                <figcaption>图5：各 Agent 配置的 Rubric 通过率排名（15 种配置 + 人类基线）</figcaption>
               </figure>
 
-              <p><strong>整体结果</strong>：所有配置的 Rubric 通过率分布在 27%–60% 之间，平均仅为 <strong>45.1%</strong>，严重低于人类专家水平（<strong>80.7%</strong>）。表现最佳的组合是 <strong>DeepAgent + GLM-5.1</strong>，紧随其后的是 Hermes + GLM-5.1 和 OpenClaw + GLM-5.1。</p>
+              <p><strong>整体结果</strong>：所有 15 种配置的 Rubric 通过率分布在 27%–60% 之间，平均仅为 <strong>45.1%</strong>，严重低于人类专家 + 工具辅助水平（红色参考线，<strong>80.7%</strong>）。排名前三的组合是：<strong>DeepAgent + GLM-5.1</strong>、Hermes + GLM-5.1、OpenClaw + GLM-5.1。GLM-5.1 搭配多个 Harness 均占据领先位置，表明 Foundation Model 的规划与推理能力是决定上限的关键因素。</p>
 
-              <p>关键发现：拥有更强规划与推理能力的 Foundation Model 通常带来更高的 Rubric 通过率；在相同 Backbone LLM 下，Harness 框架的选择也对最终任务执行性能产生显著影响。</p>
+              <p>与此同时，<strong>在相同 Backbone LLM 下，Harness 的选择也产生显著影响</strong>。例如，当使用 Gemini-3.1-Pro 时，不同 Harness 之间的性能差异可达 10 个百分点以上。这表明 Harness 的编排策略、记忆管理和错误恢复机制对最终性能有实质性影响——尤其是当底层模型的能力不足以独立弥补 Harness 的缺陷时。</p>
+
+              <p>此外，论文还对依赖图谱识别率进行了分析。<strong>节点 F1 分数</strong>（识别任务相关文件的能力）显著高于<strong>边 F1 分数</strong>（理解文件间关系的能力），说明<strong>理解文件间的关系比仅仅识别任务相关文件更具挑战性</strong>。Hermes 在节点 F1 上表现最优，归因于其对工作空间探索的更稳健支持。而普遍偏低的边 F1 分数突显了当前 Agent 在推导跨文件依赖方面的关键缺陷。</p>
 
               <h3 id="in-depth-analysis">深入分析</h3>
 
               <h4>发现1：Agent 在执行更高级工作空间任务时性能持续显著下降</h4>
 
-              <p>从 Easy (51.4%) 到 Medium (46.0%) 再到 Hard (35.7%)，通过率呈阶梯式下降。Easy 任务涉及简单异构输入和较少推理步骤，Hard 任务则要求高级能力——文件关系发现、长程规划、状态跟踪和错误恢复。性能的下降是 <strong>基础 LLM 推理局限性</strong>与 <strong>Harness 编排约束</strong>双重作用的结果。GLM-5.1 搭配三种 Harness 均表现出强鲁棒性，而 Hermes + Gemini-3.1-Pro 在 Hard 任务上跌至 30% 以下。</p>
+              <p>从 Easy (51.4%) 到 Medium (46.0%) 再到 Hard (35.7%)，通过率呈<strong>阶梯式下降</strong>，验证了难度分层的合理性。在 Easy 任务中，Agent 主要执行涉及简单异构输入和较少推理步骤的原子操作（如多文件摘要或单文件编辑），即使最低配置也能维持 40%–60% 的基线。此级别的性能主要由基础 LLM 的固有能力决定，而非 Harness——共享同一 Backbone LLM 的配置之间差异很小。</p>
 
-              <h4>发现2：6 大工作空间任务维度中，3 个维度的能力构成当前 Agent 的主要瓶颈</h4>
+              <p>然而当任务复杂度增加时，性能差距急剧扩大。Hard 任务引入了高动态性，要求 Agent 具备：<strong>文件关系发现</strong>（通过任务到文件和文件到文件的依赖识别相关文件）、<strong>长程规划</strong>（将复杂执行步骤映射到用户意图）、<strong>状态跟踪</strong>（管理中间过程）和<strong>错误恢复</strong>（在意外结果后进行重试）。性能下降是<strong>基础 LLM 推理局限性与 Harness 编排约束双重作用</strong>的结果。例如，Hermes + Gemini-3.1-Pro 在 Hard 任务上跌至 30% 以下，而 GLM-5.1 搭配三种 Harness 均展现出强大的韧性，维持在接近 60% 的通过率且仅轻微下降。</p>
+
+              <h4>发现2：6 大工作空间任务维度中，异构文件理解和版本追溯构成当前 Agent 的主要瓶颈</h4>
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-5.png" alt="Capability Dimension Analysis" style="max-width: 90%;">
-                <figcaption>图6：6 大能力维度的 TCR@70 对比</figcaption>
+                <figcaption>图6：6 大能力维度的 TCR@70（70% Rubric 通过率的任务完成率）对比</figcaption>
               </figure>
 
-              <p>大多数配置在工作空间探索和结果提供文件利用上表现相对较好（前者得益于 Agent 的工具调用能力，后者依赖 LLM 的推理能力）。<strong>异构文件理解（Heterogeneous File Understanding）</strong>和<strong>版本追溯（Lineage Tracing）</strong>在所有 Agent 中持续垫底——跨格式内容解析和深度跨文件依赖推理是所有系统共同面临的通用瓶颈。</p>
+              <p>大多数配置在<strong>工作空间探索</strong>和<strong>结果提供文件利用</strong>上表现相对较好。前者的熟练度源于当前 Agent 强大的工具调用能力（如执行终端命令进行文件系统导航），后者则重度依赖 LLM 的推理能力。<strong>异构文件理解（Heterogeneous File Understanding）</strong>和<strong>版本追溯（Lineage Tracing）</strong>在所有 Agent 中<strong>持续排名垫底</strong>——解析跨格式内容和对深度跨文件依赖进行推理是所有当前 Agent 系统共同面临的通用工作空间学习瓶颈。</p>
 
-              <p>更强的基础模型（如 GLM-5.1）在不同协同维度上表现出显著方差：DeepAgent + GLM-5.1 在 Workspace Exploration 上接近 50%，但在 Heterogeneous File Understanding 上降至约 30%。表明 <strong>Harness 的编排策略能够重塑同一 Backbone LLM 的能力分布</strong>。</p>
+              <p>更强的基础模型在不同维度上表现出显著方差。例如，DeepAgent + GLM-5.1 在工作空间探索上接近 50%，但在异构文件理解上降至约 30%。而较弱配置（如使用 Gemini-3.1-Pro 的组合）在各维度的任务完成率密集聚集在约 10%。这暗示<strong>不足的底层推理能力无法赋予 Harness 提升整体任务执行的能力</strong>。横向比较四种 Harness 发现：以 GLM-5.1 为例，在 DeepAgent 下其各维度表现高度聚集（集中在 30%–50%），但在 Hermes 下同一模型的能力分布变得更加分散——表明 <strong>Harness 的编排能够重塑同一 Backbone LLM 的能力分布</strong>。</p>
 
               <h4>发现3：不同 Harness 和基础 LLM 在不同用户画像上表现各异</h4>
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-6.png" alt="Performance Across Personas" style="max-width: 85%;">
-                <figcaption>图7：不同用户画像上的 Agent 表现</figcaption>
+                <figcaption>图7：不同用户画像上的 Agent 表现（5 个工作空间 × 多种 Agent 配置）</figcaption>
               </figure>
 
-              <p>多数 Agent 配置在后端开发和研究员画像上表现更好（偏重代码执行和结构化数据处理），而在产品经理和运营经理等偏业务型画像上性能下降显著——后者需要战略规划、资源分配和模糊语义理解。Hermes + GLM-5.1 在 Researcher 维度上接近 65%，得益于 Hermes 对代码开发和研究任务的原生优化。</p>
+              <p>多数 Agent 配置在<strong>后端开发者</strong>和<strong>研究员</strong>画像上表现更好——这些画像强调代码执行和结构化数据处理。例如，Hermes + GLM-5.1 在 Researcher 维度上接近 <strong>65%</strong>，归因于 Hermes 对代码开发和研究任务的原生编排优化。相反，在<strong>产品经理</strong>和<strong>运营经理</strong>等偏业务型画像上，平均性能基线出现相对下降——后者需要战略规划、资源分配和模糊语义理解。</p>
 
-              <h4>发现4：高交互轮次和高计算成本并不保证优质任务表现，优秀 Agent 系统展现出卓越的"推理效率"</h4>
+              <p>由于当前 Harness 框架普遍缺乏解决工作空间任务的高级能力，Agent 的任务性能仍主要由 Backbone LLM 的固有能力决定。例如，GLM-5.1 在几乎所有画像上都形成了最外层包络，展现出异常稳健和平衡的跨领域泛化能力。而领域特定模型如 Seed-2.0-Code 在后端开发者维度上保持尚可表现，但在物流和运营管理画像上出现急剧下降。</p>
+
+              <h4>发现4：高交互轮次和高计算成本并不保证优质表现，优秀系统展现出卓越的"推理效率"</h4>
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Workspace-Bench/image-7.png" alt="Turns vs Accuracy vs Token Cost" style="max-width: 80%;">
-                <figcaption>图8：交互轮次、Rubric 通过率与 Token 消耗之间的关系</figcaption>
+                <figcaption>图8：交互轮次（X 轴）、Rubric 通过率（Y 轴）与 Token 消耗（气泡大小）之间的关系。HM = Hermes, DA = DeepAgent, OC = OpenClaw</figcaption>
               </figure>
 
-              <p>虽然更多交互轮次通常意味着更全面的推理链和更多试错机会，但结果表明显著的反例：<strong>Hermes + GLM-5.1</strong> 以极低交互轮次（&lt; 30）和最小 Token 消耗实现了超过 55% 的平均准确率，展现出卓越的"推理效率"。而 DeepAgent + GLM-5.1 取得近 60% 的顶级准确率，却以极高 Token 消耗和大量交互轮次为代价。</p>
+              <p>虽然更多交互轮次通常意味着更全面的推理链和更多试错机会，但结果显示了显著的反例：<strong>Hermes + GLM-5.1</strong> 位于图表的左上象限，以<strong>极低交互轮次（< 30）和最小 Token 消耗</strong>实现了超过 55% 的平均准确率，展现出卓越的"推理效率"——优秀框架搭配顶级基础模型可以依赖强大的推理质量和精确的意图识别来快速、准确地完成任务。</p>
 
-              <p>配置聚集在右下区域的组合（如 DA+Gemini、HM+Gemini）产生 40–60 轮交互、消耗海量 Token，准确率却停滞在 30%–45%。当底层 LLM 缺乏足够复杂的推理和自我反思能力时，Agent 极易陷入<strong>无意义的重复循环</strong>。</p>
+              <p>而 <strong>DeepAgent + GLM-5.1</strong> 位于图表最右侧，取得了近 60% 的顶级准确率，但以<strong>极大的气泡和极高的交互轮次</strong>为代价——表明 DeepAgent 框架倾向于采用<strong>广泛探索策略</strong>，以极其高昂的经济和时间成本换取可嘉的任务成果。配置聚集在右下区域的组合（如 DA+Gemini、HM+Gemini）产生 40–60 轮交互、消耗海量 Token，准确率却停滞在 30%–45%。当底层 LLM 缺乏足够复杂的推理和自我反思能力时，Agent 极易陷入<strong>无意义的重复循环</strong>——反复调用无效工具或在遇到错误后沿错误路径越走越远。</p>
 
               <h4>发现5：人类专家与 Agent 协作仍然显著优于全自主 Agent</h4>
 
-              <p>20 名领域专家在仅提供任务指令和对应工作空间文件、可使用 Agent 作为辅助工具的条件下，Rubric 通过率达到 <strong>80.7%</strong>，远超所有全自主 Agent 配置。值得注意的是，人类基线的通过率不随任务复杂度增加而显著下降，这归因于专家天生具备辨别异构文件间潜在关系并灵活利用这些联系解决问题的能力。</p>
+              <p>20 名领域专家在仅提供任务指令和对应工作空间文件、可使用 Agent 作为辅助工具的条件下，Rubric 通过率达到 <strong>80.7%</strong>（图中红色参考线），远超所有全自主 Agent 配置。跨任务难度比较显示：<strong>人类基线的通过率不随任务复杂度增加而显著下降</strong>——这归因于专家天生具备辨别异构文件间潜在关系并灵活利用这些联系解决问题的能力。从认知和规划角度看，人类专家的能力天然满足复杂开放任务的阈值要求。</p>
+
+              <p>这一发现表明：虽然 Agent 可以在真实场景中大幅提升操作效率，但<strong>人机协同（Human-in-the-Loop）</strong>仍然是确保复杂任务高质量输出的不可或缺的组成部分。核心 Agent 能力仍处于向更高级工作空间任务演进的阶段。</p>
 
               <h3 id="error-analysis">错误分析</h3>
 
@@ -268,9 +276,16 @@ layout: compress
                 <figcaption>图9：各 Agent 配置在失败 Rubric 中的错误类型分布</figcaption>
               </figure>
 
-              <p>将 Rubric 失败原因分为五类：(1) 约束错误（文件命名/路径违规）、(2) 内容缺失（核心信息遗漏）、(3) 推理错误（统计/聚合/排序/关联/数学计算不准确）、(4) 过程错误（执行轨迹缺陷）、(5) 格式错误（输出结构不符）。</p>
+              <p>为系统分析 Rubric 失败原因，论文将错误分为五类：</p>
+              <ul>
+                <li><strong>约束错误（Constraint Error）</strong>：违反文件命名约定或目标路径等规范</li>
+                <li><strong>内容缺失（Missing Content）</strong>：核心信息的遗漏——这是占比最大的错误类型</li>
+                <li><strong>推理错误（Reasoning Error）</strong>：统计、聚合、排序、关联或数学计算不准确——这是第二大错误类型</li>
+                <li><strong>过程错误（Process Error）</strong>：Agent 执行轨迹中的缺陷</li>
+                <li><strong>格式错误（Format Error）</strong>：输出结构与请求格式不符</li>
+              </ul>
 
-              <p><strong>内容缺失</strong>和<strong>推理错误</strong>构成绝大多数失败原因，表明当前 Agent 在复杂文件系统中的主要瓶颈在于<strong>深度嵌入信息的全面召回</strong>和<strong>跨文件数据聚合与理解</strong>能力。格式错误和过程错误占比极少，说明现有模型在执行基础工作流和遵循格式化输出指令方面已相对成熟。</p>
+              <p>各 Agent 配置的错误分布高度一致：<strong>内容缺失</strong>和<strong>推理错误</strong>构成绝大多数失败原因。这表明当前 Agent 在复杂文件系统中的主要瓶颈在于<strong>深度嵌入信息的全面召回</strong>和<strong>跨文件数据聚合与理解</strong>能力。相比之下，格式错误和过程错误占比极少，说明现有模型在<strong>执行基础工作流和遵循格式化输出指令方面已相对成熟</strong>——真正的差距不在于"知道该怎么做"，而在于"在复杂工作空间中正确地做对"。</p>
 
               <h2 id="reference">Reference</h2>
               <p>[1] <a href="https://arxiv.org/abs/2605.03596" target="_blank" rel="noopener">Workspace-Bench 1.0: Benchmarking AI Agents on Workspace Tasks with Large-Scale File Dependencies</a></p>
