@@ -1,0 +1,411 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 07, 2026 · Qiyao Wang</span>
+                <span class="meta-topic">#RL</span>
+                <span class="meta-topic">#Credit Assignment</span>
+                <span class="meta-topic">#Paper</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+<!-- ====== 前文回顾 (Sections 1–4.1 already written) ====== -->
+
+<p><em>（前文回顾：第 1–4.1 节已介绍 RAGEN 的背景动机、MDP 形式化、StarPO 框架、RAGEN 系统设计、以及 StarPO 基线在四个环境上的基础表现与 "Echo Trap" 坍塌模式的诊断指标。本节从 4.2 StarPO-S 开始继续。）</em></p>
+
+<hr>
+
+<!-- ====== 4.2 StarPO-S ====== -->
+
+<h2 id="starpo-s">4.2 StarPO-S：基于不确定性过滤与梯度塑形的稳定化训练</h2>
+
+<p>前述实验揭示了一个核心困境：将单轮 RL 方法（PPO / GRPO）直接迁移到多轮 Agent RL 中，<strong>初期可以获得提升，但最终往往会发生坍塌</strong>。坍塌的信号包括：Reward Std 骤降、输出熵崩塌、梯度范数尖峰——论文称这种失败模式为 <strong>"Echo Trap"</strong>（回声陷阱），即模型在自生成轨迹上反复强化局部最优的推理模板，丧失探索能力。</p>
+
+<p>针对这一问题，作者提出 <strong>StarPO-S</strong>（StarPO Stabilized），一个在原 StarPO 框架上引入三项关键修改的稳定化变体：</p>
+
+<ol>
+  <li><strong>不确定性驱动的实例过滤（Uncertainty-Based Instance Filtering）：</strong>每步训练只保留 reward 方差最高的 top-\(p\%\) 的 prompt 实例。</li>
+  <li><strong>KL 惩罚项移除（KL Removal）：</strong>从 PPO 损失中移除 KL 散度惩罚，仅依靠策略损失和熵奖励来塑形更新。</li>
+  <li><strong>非对称裁剪（Decoupled Clipping / Clip-Higher）：</strong>为高奖励轨迹设置更高的裁剪上界（如 \(\epsilon_\text{high} = 0.4\)），为低奖励轨迹设置更低的裁剪下界（\(\epsilon_\text{low} = 0.1\)），允许模型更激进地学习成功经验，同时不过度惩罚失败样本。</li>
+</ol>
+
+<h3 id="uncertainty-filtering">4.2.1 动机：不确定性驱动的主动学习</h3>
+
+<p>前文分析表明，<strong>Reward Std 的下降往往是坍塌的早期预警信号</strong>。作者由此提出一个直觉问题：<em>是否应该让 agent 更多地在"行为不确定"的任务实例上训练？</em>这与主动学习（Active Learning）的原则一致——不确定性最高的样本往往提供最有信息量的学习信号。</p>
+
+<p>作者正式定义了轨迹级的结果不确定性：</p>
+
+$$
+U(\pi_{\theta}, \mathcal{M}, s_0) = \text{Std}_{\tau \sim \pi_\theta(\cdot | s_0)}\left[R(\tau)\right]
+$$
+
+<p>其中 \(\mathcal{M} = \{S, A, P\}\) 为 MDP，\(s_0\) 为初始状态，\(\pi_\theta\) 为当前策略。在训练的每一步，对所有 prompt 按其多次 rollout 的 reward 标准差进行排序，<strong>仅保留方差最高的 top-\(p\%\) 的 prompt</strong>用于更新。</p>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image-6.svg" alt="Effect of uncertainty-based filtering" style="width:95%;">
+  <figcaption>图：不确定性过滤对多轮 RL 稳定性的影响。过滤低方差轨迹可显著降低坍塌风险并提升成功率。在 PPO 变体下，当过滤超过半数轨迹后，坍塌基本被消除。</figcaption>
+</figure>
+
+<p>实验结果表明：</p>
+<ul>
+  <li><strong>在 PPO 下：</strong>保留 75% 的 rollout 即可将 FrozenLake 的稳定训练步数从 100 延长至 140；保留 50% 可以完全避免坍塌。在 Sokoban 上效果同样显著。</li>
+  <li><strong>在 GRPO 下：</strong>由于无 Critic 设计本身稳定性较差，过滤带来的收益相对温和，但仍有一定改善。</li>
+  <li><strong>过滤同时提升了训练效率：</strong>丢弃低信息量的 rollout 减少了无效计算。</li>
+</ul>
+
+<p>作者最终采用 \(p = 25\%\) 作为 StarPO-S 的默认设置（即仅保留方差最高的 25% prompt）。不过他们也指出，这个激进的值可能并非对所有场景都是最优的。</p>
+
+<div style="background:#fff8e1; border-left:4px solid #f0c040; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>🔑 Finding 4：过滤低方差轨迹提升稳定性与效率</strong><br>
+  在高方差 prompt 上训练可以延缓甚至消除多轮 RL 中的坍塌。StarPO-S 通过丢弃低信息量的 rollout，在提升表现的同时减少了更新步数，尤其在 PPO 下效果显著。这与主动学习的原则一致：不确定的样本提供最有价值的梯度信号。
+</div>
+
+<h3 id="gradient-shaping">4.2.2 梯度塑形技术</h3>
+
+<p>除了不确定性过滤，StarPO-S 还引入了两项借鉴自 DAPO（单轮 RL 稳定化工作）的梯度塑形技巧，并首次验证了它们在多轮 agent 场景下的有效性：</p>
+
+<ul>
+  <li><strong>KL Removal：</strong>传统的 PPO 损失中包含一个 KL 散度惩罚项 \(\beta D_{KL}[\pi_\theta \| \pi_{ref}]\)，用于约束策略更新幅度。但在多轮 agent 训练中，这个惩罚可能过度限制了对新推理路径的探索。移除 KL 项后，模型可以更灵活地适应环境反馈。</li>
+  <li><strong>Clip-Higher（非对称裁剪）：</strong>标准 PPO 使用对称的裁剪范围 \(1 \pm \epsilon\)。而 Clip-Higher 使用非对称范围（如上界 0.4、下界 0.1），这使得模型可以从高奖励轨迹中学习更多，同时对低奖励轨迹的惩罚更温和——这在多轮交互中尤其重要，因为一次失败的 rollout 可能仅仅是因为环境的随机性而非策略本身的问题。</li>
+</ul>
+
+<p>实验表明，两项技术均提升了 PPO 在多轮 RL 中的峰值成功率和训练稳定性。它们共同实现了 <strong>"强化有效推理路径，而非过度惩罚噪声样本"</strong> 的目标。</p>
+
+<h3 id="starpo-s-overall">4.2.3 StarPO-S 整体对比</h3>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image-3.svg" alt="StarPO vs StarPO-S" style="width:95%;">
+  <figcaption>图：StarPO-S 在三个符号化环境上一致优于 vanilla StarPO，延缓坍塌并提升最终表现。</figcaption>
+</figure>
+
+<p>StarPO-S 将上述三项改进（不确定性过滤 + KL 移除 + 非对称裁剪）组合在一起。在 Bandit、Sokoban 和 Frozen Lake 三个环境上的对比显示：</p>
+
+<ul>
+  <li>StarPO-S <strong>一致地延缓了坍塌</strong>，并在所有环境上取得了<strong>更高的最终成功率</strong>。</li>
+  <li>改进的核心机制是：更精选的训练数据（不确定性过滤）+ 更均衡的优化信号（KL 移除 + 非对称裁剪），共同抑制了推理模式的单一化。</li>
+</ul>
+
+<p>附录中还验证了 StarPO-S 在不同环境下的适用边界：当环境本身天然具有高 rollout 方差时（如 WebShop），StarPO-S 的过滤收益较小，因为此时方差本身已经足够高，不易陷入坍塌。</p>
+
+<hr>
+
+<!-- ====== 4.3 Generating Useful Trajectories ====== -->
+
+<h2 id="rollout-quality">4.3 生成高质量训练轨迹：多样性、交互粒度与更新频率</h2>
+
+<p>有效的 RL 训练高度依赖轨迹质量。在 StarPO-S 保证训练稳定性的基础上，作者进一步研究了三个影响 rollout 质量的关键维度：<strong>任务多样性</strong>、<strong>交互粒度</strong> 和 <strong>rollout 更新频率</strong>。实验以 Sokoban 为主训练环境，在 SokobanNewVocab、LargeSokoban 和 FrozenLake 上评估泛化能力。</p>
+
+<h3 id="task-diversity">4.3.1 任务多样性：多样 prompt + 多响应对比 = 更好泛化</h3>
+
+<p>任务多样性指每个 rollout-update 循环中使用的不同 prompt 数量。在固定 batch size 的前提下，更多的 prompt 意味着每个 prompt 下的响应数量减少，反之亦然。</p>
+
+<table style="width:80%; margin: 1em auto; font-size: 0.9em; border-collapse: collapse; text-align: center;">
+  <caption style="text-align: center; font-weight: bold; margin-bottom: 0.5em;">表：任务多样性对泛化性能的影响（%）</caption>
+  <thead>
+    <tr style="background: #f0f0f0;">
+      <th style="padding: 0.5em; border: 1px solid #ddd;">每 Prompt 响应数</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">SingleSokoban</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">SokobanNewVocab</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">FrozenLake</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">32</td><td style="padding: 0.3em; border: 1px solid #ddd;">21.09</td><td style="padding: 0.3em; border: 1px solid #ddd;">20.22</td><td style="padding: 0.3em; border: 1px solid #ddd;">17.97</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">16</td><td style="padding: 0.3em; border: 1px solid #ddd;">20.31</td><td style="padding: 0.3em; border: 1px solid #ddd;">21.48</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.53</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">8</td><td style="padding: 0.3em; border: 1px solid #ddd;">20.31</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.53</td><td style="padding: 0.3em; border: 1px solid #ddd;">17.19</td></tr>
+    <tr style="background: #e8f5e9;"><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>4</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>20.70</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>25.39</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>21.48</strong></td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">2</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.92</td><td style="padding: 0.3em; border: 1px solid #ddd;">25.00</td><td style="padding: 0.3em; border: 1px solid #ddd; color: #c62828;">12.50</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">1</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.53</td><td style="padding: 0.3em; border: 1px solid #ddd;">22.27</td><td style="padding: 0.3em; border: 1px solid #ddd; color: #c62828;">12.50</td></tr>
+  </tbody>
+</table>
+
+<p>核心发现：</p>
+<ul>
+  <li><strong>每个 prompt 下 4 个响应是最优配置</strong>——既保证了足够高的任务多样性，也为模型提供了在同条件下对比不同结果的机会。</li>
+  <li>当每 prompt 仅 1–2 个响应时，FrozenLake 上的泛化性能急剧下降（从 21.48% 跌至 12.50%），说明<strong>缺乏同 prompt 内的对比会导致模型无法有效学习</strong>。</li>
+  <li>高任务多样性之所以有效，是因为它迫使模型接触到更多的状态分布，避免了过拟合到少数场景。</li>
+</ul>
+
+<h3 id="action-budget">4.3.2 交互粒度：适中的 action budget 平衡规划与噪声</h3>
+
+<p>交互粒度指每个 turn 允许的最大动作数。增加 action budget 可以让模型在单个 turn 内进行更充分的规划，但过长则可能引入无关的转移噪声。</p>
+
+<table style="width:85%; margin: 1em auto; font-size: 0.9em; border-collapse: collapse; text-align: center;">
+  <caption style="text-align: center; font-weight: bold; margin-bottom: 0.5em;">表：不同每 turn 动作预算下的表现（%）</caption>
+  <thead>
+    <tr style="background: #f0f0f0;">
+      <th style="padding: 0.5em; border: 1px solid #ddd;">最大动作数 / Turn</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">Sokoban</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">SokobanNewVocab</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">LargeSokoban</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;">FrozenLake</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">1</td><td style="padding: 0.3em; border: 1px solid #ddd;">12.11</td><td style="padding: 0.3em; border: 1px solid #ddd;">13.67</td><td style="padding: 0.3em; border: 1px solid #ddd;">1.17</td><td style="padding: 0.3em; border: 1px solid #ddd;">11.72</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">2</td><td style="padding: 0.3em; border: 1px solid #ddd;">16.41</td><td style="padding: 0.3em; border: 1px solid #ddd;">21.09</td><td style="padding: 0.3em; border: 1px solid #ddd;">3.52</td><td style="padding: 0.3em; border: 1px solid #ddd;">18.36</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">3</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.53</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.53</td><td style="padding: 0.3em; border: 1px solid #ddd;">1.95</td><td style="padding: 0.3em; border: 1px solid #ddd;">20.88</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">4</td><td style="padding: 0.3em; border: 1px solid #ddd;">26.95</td><td style="padding: 0.3em; border: 1px solid #ddd;">26.95</td><td style="padding: 0.3em; border: 1px solid #ddd;">5.08</td><td style="padding: 0.3em; border: 1px solid #ddd;">20.70</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">5</td><td style="padding: 0.3em; border: 1px solid #ddd;">28.13</td><td style="padding: 0.3em; border: 1px solid #ddd;">25.78</td><td style="padding: 0.3em; border: 1px solid #ddd;">6.25</td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>21.09</strong></td></tr>
+    <tr style="background: #e8f5e9;"><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>6</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>33.59</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>31.64</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>6.64</strong></td><td style="padding: 0.3em; border: 1px solid #ddd; color: #c62828;">18.36</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">7</td><td style="padding: 0.3em; border: 1px solid #ddd; color: #c62828;">22.27</td><td style="padding: 0.3em; border: 1px solid #ddd;">28.52</td><td style="padding: 0.3em; border: 1px solid #ddd; color: #c62828;">3.91</td><td style="padding: 0.3em; border: 1px solid #ddd; color: #c62828;">19.53</td></tr>
+  </tbody>
+</table>
+
+<p>核心发现：</p>
+<ul>
+  <li><strong>每 turn 5–6 个动作是最优配置</strong>，在 Sokoban（33.59%）、SokobanNewVocab（31.64%）和 LargeSokoban（6.64%）上均取得最佳表现。</li>
+  <li>当动作预算过少（1–2 个）时，模型缺乏足够的规划空间，尤其在需要多步推理的 LargeSokoban 上几乎无法学习（1.17%–3.52%）。</li>
+  <li>当动作预算过多（7 个）时，性能反而下降——过多的动作引入了噪声转移，稀释了奖励信号的密度。</li>
+  <li>这个发现揭示了一个重要的设计权衡：<strong>为模型提供足够的"思考-行动"空间，但不要让单个 turn 变得过于冗长</strong>。</li>
+</ul>
+
+<h3 id="rollout-frequency">4.3.3 Rollout 更新频率：新鲜数据是关键</h3>
+
+<p>作者引入了 <strong>Online-\(k\)</strong> 的 rollout 策略：一组 rollout 被重复用于 \(k\) 次策略更新后才重新采样。\(k=1\) 对应完全在线（每次更新都用最新 rollout），\(k\) 越大意味着 rollout 数据越陈旧。</p>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image-7.svg" alt="Online-k rollout frequency" style="width:95%;">
+  <figcaption>图：不同 rollout 频率下的性能对比。更新更频繁的 Online-1 策略收敛更快、泛化更好。</figcaption>
+</figure>
+
+<p>实验表明：</p>
+<ul>
+  <li><strong>Online-1</strong>（每次更新都采集新 rollout）在所有任务上取得了<strong>最快收敛和最佳泛化</strong>。</li>
+  <li>随着 \(k\) 增大（Online-5、Online-10），性能逐步下降——旧数据反映的是过时策略的行为，与当前策略的优化目标不匹配。</li>
+  <li>这验证了一个多轮 RL 的核心设计原则：<strong>训练数据应尽可能反映 agent 的最新行为</strong>。频繁的 rollout 更新减少了策略-数据不匹配（policy-data mismatch），从而提高优化稳定性。</li>
+</ul>
+
+<div style="background:#fff8e1; border-left:4px solid #f0c040; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>🔑 Finding 5：任务多样性、动作预算和 rollout 频率共同决定轨迹质量</strong><br>
+  多样的任务实例 + 每 prompt 多个响应 → 更好的策略对比与泛化；适中的动作预算（5–6/turn）提供足够的规划空间；高频的 rollout 更新确保优化目标与当前策略行为对齐。三者缺一不可。
+</div>
+
+<hr>
+
+<!-- ====== 4.4 Reasoning Generalization ====== -->
+
+<h2 id="reasoning-generalization">4.4 推理促进泛化，但在多轮环境中无细粒度奖励会衰退</h2>
+
+<p>前面的讨论主要关注训练稳定性和轨迹质量。但 RAGEN 还有一个更深层的问题：<strong>推理（reasoning）到底在多大程度上有用，以及它是否能在 RL 训练中持续存在？</strong></p>
+
+<h3 id="single-turn-reasoning">4.4.1 单轮 Bandit：推理显著提升泛化</h3>
+
+<p>作者在符号化 Bandit 环境中设计了受控的泛化测试。原始 <strong>Bandit</strong> 任务使用 <code>[Teacher, Engineer]</code> 手臂对进行训练，在 <code>[Librarian, Trader]</code> 上评估（保留直觉上的风险-收益对齐：Engineer 和 Trader 为高风险高收益）。<strong>BanditRev</strong> 则将这种关联反转，使推理更具挑战性。</p>
+
+<table style="width:80%; margin: 1em auto; font-size: 0.9em; border-collapse: collapse; text-align: center;">
+  <caption style="text-align: center; font-weight: bold; margin-bottom: 0.5em;">表：StarPO-S 下有无推理的泛化性能（%）</caption>
+  <thead>
+    <tr style="background: #f0f0f0;">
+      <th style="padding: 0.5em; border: 1px solid #ddd;"></th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;" colspan="2">训练于 Bandit</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;" colspan="4">训练于 Sokoban</th>
+    </tr>
+    <tr style="background: #f5f5f5;">
+      <th style="padding: 0.3em; border: 1px solid #ddd;"></th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Bandit</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Bandit-Rev</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">FrozenLake</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">LargeSokoban</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Sokoban</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">SokobanNewVocab</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">StarPO-S</td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>100.00</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>67.58</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>19.92</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;">2.34</td><td style="padding: 0.3em; border: 1px solid #ddd;">21.48</td><td style="padding: 0.3em; border: 1px solid #ddd;">18.75</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">NoThink</td><td style="padding: 0.3em; border: 1px solid #ddd;">81.25</td><td style="padding: 0.3em; border: 1px solid #ddd;">56.25</td><td style="padding: 0.3em; border: 1px solid #ddd;">19.53</td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>2.73</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>20.73</strong></td><td style="padding: 0.3em; border: 1px solid #ddd;"><strong>26.17</strong></td></tr>
+  </tbody>
+</table>
+
+<p>在单轮 Bandit 任务中：</p>
+<ul>
+  <li><strong>带推理的 StarPO-S 在 Bandit 上达到 100%（vs 无推理的 81.25%）</strong>，在反直觉的 BanditRev 上也领先（67.58% vs 56.25%）。</li>
+  <li>即使在语义-奖励错位的 BanditRev 设置中，显式推理仍能帮助模型<strong>内化符号-奖励的关联</strong>，而非仅仅进行表面记忆。</li>
+</ul>
+
+<h3 id="multi-turn-reasoning-decay">4.4.2 多轮环境：推理信号随训练衰减</h3>
+
+<p>与单轮形成鲜明对比的是，在多轮环境（Sokoban、FrozenLake）中，推理的收益极其有限。即使输出格式中包含 <code>&lt;think&gt;</code> 标记，移除了推理（NoThink 变体）后，性能往往<strong>持平甚至更好</strong>（如 NoThink 在 SokobanNewVocab 上达到 26.17% vs StarPO-S 的 18.75%）。</p>
+
+<p>为理解这一退化，作者分析了训练过程中的平均响应长度：</p>
+
+<table style="width:70%; margin: 1em auto; font-size: 0.9em; border-collapse: collapse; text-align: center;">
+  <caption style="text-align: center; font-weight: bold; margin-bottom: 0.5em;">表：不同训练阶段的推理长度（&lt;think&gt; 块 token 数）</caption>
+  <thead>
+    <tr style="background: #f0f0f0;">
+      <th style="padding: 0.5em; border: 1px solid #ddd;" rowspan="2">Step</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;" colspan="4">Bandit</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd;" colspan="2">Sokoban</th>
+    </tr>
+    <tr style="background: #f5f5f5;">
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Original</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">NoThink</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Reverse</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Reverse NoThink</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">Original</th>
+      <th style="padding: 0.3em; border: 1px solid #ddd;">NoThink</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">0</td><td style="padding: 0.3em; border: 1px solid #ddd;">66.0</td><td style="padding: 0.3em; border: 1px solid #ddd;">12.7</td><td style="padding: 0.3em; border: 1px solid #ddd;">68.8</td><td style="padding: 0.3em; border: 1px solid #ddd;">12.7</td><td style="padding: 0.3em; border: 1px solid #ddd;">307.1</td><td style="padding: 0.3em; border: 1px solid #ddd;">68.6</td></tr>
+    <tr><td style="padding: 0.3em; border: 1px solid #ddd;">100</td><td style="padding: 0.3em; border: 1px solid #ddd;">25.6</td><td style="padding: 0.3em; border: 1px solid #ddd;">12.4</td><td style="padding: 0.3em; border: 1px solid #ddd;">33.7</td><td style="padding: 0.3em; border: 1px solid #ddd;">13.0</td><td style="padding: 0.3em; border: 1px solid #ddd;">104.6</td><td style="padding: 0.3em; border: 1px solid #ddd;">55.3</td></tr>
+    <tr style="background: #ffebee;"><td style="padding: 0.3em; border: 1px solid #ddd;">200</td><td style="padding: 0.3em; border: 1px solid #ddd;">17.6</td><td style="padding: 0.3em; border: 1px solid #ddd;">12.4</td><td style="padding: 0.3em; border: 1px solid #ddd;">30.7</td><td style="padding: 0.3em; border: 1px solid #ddd;">13.0</td><td style="padding: 0.3em; border: 1px solid #ddd;">89.5</td><td style="padding: 0.3em; border: 1px solid #ddd;">60.0</td></tr>
+  </tbody>
+</table>
+
+<p>数据显示了一个令人担忧的趋势：</p>
+<ul>
+  <li><strong>Sokoban 中推理长度从 307.1 token 骤降至 89.5 token（下降 71%）</strong>——模型在训练过程中逐渐压缩甚至"关闭"了自己的思考过程。</li>
+  <li><strong>Bandit-Rev</strong>（反直觉设置）的推理衰减相对较慢（68.8 → 30.7），说明<strong>当任务本身更具认知挑战性时，推理更容易被保留</strong>。</li>
+  <li>在 Bandit 的 NoThink 变体中，响应长度基本不变（12.7 → 12.4），进一步证实推理的衰减是 RL 优化过程的直接后果。</li>
+</ul>
+
+<h3 id="why-reasoning-fades">4.4.3 为什么推理会消退？稀疏奖励与幻觉推理</h3>
+
+<p>作者推测，多轮任务中推理消退的根因在于<strong>稀疏且延迟的奖励结构</strong>。</p>
+
+<p>在单轮 Bandit 中，选择动作后立即获得奖励，推理可以直接关联到结果。但在多轮 Sokoban 中，最终成功可能依赖于多步之前的正确决策，<strong>中间的推理步骤与最终奖励之间的因果关系被时间和环境噪声严重稀释</strong>——模型难以判断某段推理是否真正有助于成功。</p>
+
+<p>更糟糕的是，附录中的案例表明，模型有时会产生<strong>"幻觉推理"（hallucinated reasoning）</strong>：生成的 <code>&lt;think&gt;</code> 内容与环境状态不一致，但仍然碰巧获得了高奖励。这进一步削弱了推理与奖励之间的因果关联。</p>
+
+<div style="background:#fff8e1; border-left:4px solid #f0c040; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>🔑 Finding 6：推理不会在没有精细奖励设计的情况下自然涌现</strong><br>
+  在简单单轮任务中，符号推理可以在弱监督下自然涌现；但在多轮环境中，如果奖励信号仅关注最终结果，推理会随着训练逐步衰减。即使使用结构化 prompt，模型也可能倾向于绕过推理走捷径。这意味着<strong>需要更精细的、与推理质量挂钩的奖励设计来持续强化推理能力</strong>——例如奖励部分正确性、或对推理与状态的一致性进行显式评估。
+</div>
+
+<hr>
+
+<!-- ====== 5 Related Work ====== -->
+
+<h2 id="related-work">5. 相关工作</h2>
+
+<p>RAGEN 的工作横跨两个活跃的研究方向：<strong>LLM 推理的强化学习</strong>和<strong>LLM Agent 框架</strong>。</p>
+
+<h3 id="rl-for-reasoning">5.1 LLM 推理的强化学习</h3>
+
+<p>近年来，RL 在提升 LLM 推理能力方面取得了显著进展。从经典 PPO 和 Actor-Critic 方法，到结构化 token 提示（如 meta tokens），再到 GRPO 和 DAPO 等近年提出的训练稳定化变体，单轮 RL 的方法论日趋成熟。然而，这些方法大多针对<strong>静态、单轮</strong>的数学或编程任务设计，在多轮交互式场景中的适用性和稳定性尚未被系统研究。RAGEN 正是填补了这一空白。</p>
+
+<h3 id="agent-frameworks">5.2 LLM Agent 框架</h3>
+
+<p>Agent 系统从早期的 ReAct 反应式规划，发展到模块化决策管线、多智能体协作、以及具身交互等前沿方向。Sokoban、FrozenLake、WebShop 等基准提供了不同动态特性下的受控测试环境。然而现有框架要么依赖于大量人工标注的 SFT 数据，要么需要复杂的架构工程。RAGEN 的目标是<strong>用 RL 驱动 agent 的自我进化</strong>，在尽量减少人工干预的前提下实现通用决策能力的提升。</p>
+
+<hr>
+
+<!-- ====== 6 Conclusion ====== -->
+
+<h2 id="conclusion">6. 总结与讨论</h2>
+
+<p>RAGEN 这篇工作对多轮 Agent RL 训练进行了系统性的诊断与改进。回顾全文，可以提炼出以下核心贡献：</p>
+
+<ol>
+  <li><strong>提出了 StarPO 框架</strong>：一个统一的轨迹级 RL 框架，将单轮 RL 方法（PPO / GRPO）自然扩展到多轮 agent 场景，支持推理引导的 rollout、灵活的奖励分配和多种优化器。</li>
+  <li><strong>发现了 Echo Trap 坍塌模式</strong>：多轮 RL 训练中反复出现的失败模式——reward 方差坍塌、输出熵骤降、梯度范数尖峰——并建立了基于 Reward Std 和梯度范数的早期预警指标体系。</li>
+  <li><strong>提出了 StarPO-S 稳定化方案</strong>：通过不确定性驱动的实例过滤、KL 移除和非对称裁剪三项改进，有效延缓甚至消除了多轮 RL 中的坍塌，在所有环境中提升了最终表现。</li>
+  <li><strong>揭示了 rollout 质量的关键因素</strong>：任务多样性（多 prompt + 多响应对比）、适中交互粒度（5–6 actions/turn）和高频 rollout 更新（Online-1）三者共同决定了 RL 训练的轨迹质量与泛化能力。</li>
+  <li><strong>诊断了推理消退的根本原因</strong>：在缺乏精细奖励信号的情况下，多轮 RL 训练会导致推理行为逐渐衰减，模型倾向于走捷径或产生幻觉推理——这对未来设计 reasoning-aware 的奖励函数提出了明确方向。</li>
+</ol>
+
+<div style="background:#f0f7ff; border-left:4px solid #42a5f5; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>💡 关键启示</strong><br>
+  RAGEN 的核心信息是：<strong>将单轮 RL 直接套用到多轮 Agent 训练中是不够的</strong>。稳定性（StarPO-S）、数据质量（rollout 设计）和奖励精细度（reasoning-aware reward）三者缺一不可。未来的 Agent RL 研究需要在这三个维度上持续迭代。
+</div>
+
+<p>当然，RAGEN 也存在局限性，包括：</p>
+<ul>
+  <li><strong>任务规模有限</strong>：主要在符号化小规模环境中验证，尚未在大规模真实世界任务上测试；</li>
+  <li><strong>未使用 replay buffer</strong>：这是一项成熟的 RL 实践，可能进一步提升样本效率；</li>
+  <li><strong>缺乏多模态支持</strong>：当前仅支持纯文本环境。</li>
+</ul>
+
+<p>这些都为后续工作留下了丰富的探索空间。</p>
+
+<hr>
+
+<!-- ====== Contact & Reference ====== -->
+
+<h2 id="reference">Reference</h2>
+<div class="contact-section">
+  <p>[1] Wang et al. <em>RAGEN: Understanding Self-Evolution in LLM Agents via Multi-Turn Reinforcement Learning</em>. arXiv:2504.20073v2, 2025.</p>
+  <p>[2] RAGEN Project: <a href="https://ragen-ai.github.io/" target="_blank" rel="noopener">https://ragen-ai.github.io/</a></p>
+  <p>[3] Code: <a href="https://github.com/RAGEN-AI/RAGEN" target="_blank" rel="noopener">https://github.com/RAGEN-AI/RAGEN</a></p>
+</div>
+
+<br>
+
+<h2 id="contact">Contact</h2>
+<div class="contact-section">
+  <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+</div>
+
+            </div>
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        const headers = document.querySelectorAll('h2[id], h3[id]');
+        headers.forEach(h => {
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = '#' + h.id;
+          a.textContent = h.textContent;
+          a.style.textDecoration = 'none';
+          if (h.tagName === 'H3') {
+            li.style.paddingLeft = '1em';
+            li.style.fontSize = '0.9em';
+          }
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+        toc.appendChild(ul);
+      });
+    </script>
+  </body>
+</html>
