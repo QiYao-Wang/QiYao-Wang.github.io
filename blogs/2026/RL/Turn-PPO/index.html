@@ -1,0 +1,461 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+      <div class="masthead__inner-wrap">
+        <div class="masthead__menu">
+          <nav id="site-nav" class="greedy-nav">
+            <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div id="main" role="main">
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+            <div class="blog-post-header">
+              <h1>Turn-PPO：基于 Turn 级别优势估计的 PPO 改进 —— 面向多轮 Agent LLM 训练的稳定强化学习方法</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 07, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-topic">#RL</span>
+                <span class="meta-topic">#Credit Assignment</span>
+                <span class="meta-topic">#Paper</span>
+              </div>
+            </div>
+            <div class="blog-content">
+
+              <p>将强化学习（RL）应用于多轮交互的 LLM Agent 是当前最活跃的研究方向之一。然而，主流的 <strong>GRPO</strong>（Group Relative Policy Optimization）算法在从单轮扩展到多轮场景时暴露出严重的训练不稳定性。来自 UT Austin 和 Amazon 的研究团队系统性地分析了 GRPO 在多轮 RL 中的失败根源，并重新引入了 PPO 算法，提出了 <strong>turn-PPO</strong>——一种基于 turn 级别 MDP 建模的 PPO 变体，在 WebShop 和 Sokoban 任务上实现了显著优于 GRPO 和 token-PPO 的性能。</p>
+
+              <h2 id="key-takeaways">Key Takeaways</h2>
+              <ul>
+                <li><strong>GRPO 在多轮场景中系统性崩溃</strong>：将单轮 GRPO 直接扩展到多轮 token-MDP 会导致训练崩溃，即使移除标准差归一化、去掉 KL 正则、增加 batch 多样性等变体改进也无法根本解决。</li>
+                <li><strong>PPO 天生更适合多轮 MDP</strong>：PPO 使用可学习的 critic 进行优势估计，天然支持 GAE（广义优势估计），在多轮任务中比依赖采样归一化的 GRPO 更稳定。</li>
+                <li><strong>Turn-PPO 将 MDP 从 token 级别重新定义为 turn 级别</strong>：将每轮的完整 LLM 响应视为一个 action，状态定义为当前轮次前的完整交互历史，解决了 token-MDP 中"状态表示不对齐"问题。</li>
+                <li><strong>Sokoban 上 Turn-PPO 显著超越 GRPO 和 token-PPO</strong>：Qwen2.5-7B 上 Turn-PPO 达到 <strong>3.74</strong>平均奖励，远高于 token-PPO 的 <strong>2.90</strong>，GRPO 则直接崩溃。</li>
+                <li><strong>Turn-PPO 允许灵活调节 GAE 参数</strong>：在 turn-MDP 下，\(\gamma\) 和 \(\lambda\) 可以灵活调节（推荐 \(\gamma=0.99, \lambda=0.9\)），而 token-PPO 中两者必须固定为 1.0，否则早期 token 的优势会衰减至零。</li>
+                <li><strong>PPO 训练配方总结</strong>：critic 学习率需 5–10 倍于 actor；PPO 偏好更大的样本多样性（每 query 仅需 1 条轨迹），而非 GRPO 所需的多样本重复采样；优先增加 minibatch 更新次数而非 epoch 数。</li>
+              </ul>
+
+              <h2 id="background">背景与动机</h2>
+
+              <h3 id="multi-turn-agent">多轮 Agent 场景与 RL 的必要性</h3>
+              <p>LLM 在工具使用和环境交互方面展现出巨大潜力。在 Web 导航、GUI 自动化、具身 AI 等场景中，LLM 需要在多轮交互中逐步完成复杂任务。与单轮推理任务不同，多轮工具使用场景天然是一个 <strong>马尔可夫决策过程（MDP）</strong>——涉及序列决策和状态转移。</p>
+
+              <p>在这些场景中，<strong>强化学习比离线算法（如 DPO）更受青睐</strong>，原因在于：高质量的逐步监督信号极难获得，而 RL 允许模型直接从环境反馈和稀疏奖励中优化策略，无需最优参考轨迹。</p>
+
+              <p>目前，多轮 Agent RL 的主流方法是 <strong>GRPO 的直接扩展</strong>（即 M-GRPO）：对每个 query 采样多条多轮轨迹，然后用组内轨迹奖励的均值和标准差对所有 token 进行归一化，获得统一优势估计。这种做法的核心假设是：同一轨迹内所有 token 对最终奖励的贡献是均等的。</p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800;"><strong>核心困境：</strong>GRPO 在多轮场景中面临两个根本挑战——① 环境交互不可完全控制，导致采样方差高于单轮；② 不同 turn 对最终奖励的贡献<strong>不相等</strong>，对所有 token 施加相同优势会引入严重偏差。这两点叠加导致训练在长推理场景中频繁崩溃。</p>
+
+              <h3 id="gaps">现有方法的局限</h3>
+              <p>已有工作（如 RAGEN 的 StarPO-s、GiGPO、MT-GRPO）尝试引入 turn 级别的 credit assignment，但这些方法通常：</p>
+              <ul>
+                <li><strong>特化于特定场景</strong>，缺乏通用性；</li>
+                <li><strong>引入额外偏差</strong>，需要手工调节 turn 级别的信用权重；</li>
+                <li><strong>仍依赖采样归一化</strong>，无法从根本上解决 GRPO 在高方差环境中的不稳定问题。</li>
+              </ul>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;"><strong>核心研究问题：</strong>是否存在一种更稳定、更通用的优势估计策略，既能在多轮 MDP 中实现准确的 turn 级别 credit assignment，又能避免 GRPO 的采样不稳定性？</p>
+
+              <h3 id="related-work">相关工作</h3>
+
+              <p><strong>多轮 Agent LLM：</strong>LLM 通过工具调用能力可以逐步推理和行动。当配备工具调用能力后，它们可以与外部环境交互解决广泛的任务，包括 Web 导航（WebAgent-R1、WebShop、AgentQ、WebRL）、GUI 自动化（UI-TARS、OS-Copilot）和具身 AI 控制。本研究限制在纯文本环境中，以集中精力改进 RL 算法本身。</p>
+
+              <p><strong>LLM 的 RL 训练：</strong>在单轮设置中，严格 on-policy 的 REINFORCE 风格方法（Reinforce++、RLOO、ReMax）和 off-policy PPO 风格方法（VinePPO、VC-PPO、VAPO）已被广泛探索。DeepSeek-R1 引入 GRPO，用基于采样的优势估计替换可学习的 critic。后续工作 DAPO、Dr. GRPO、Reinforce-Rej、GSPO 进一步改进 GRPO。</p>
+
+              <p>扩展到多轮设置后，ArCHer 引入分层 RL 框架（turn 级别 actor-critic + token 级别策略梯度），WebAgent-R1 引入 M-GRPO（GRPO 到多轮的直接扩展）。为应对 GRPO 的不稳定，RAGEN 提出 StarPO-s（比例轨迹过滤），GiGPO 通过合并相同状态改进优势估计，MT-GRPO 证明 turn 级别 credit assignment 的收益。但<strong>这些方法不够通用</strong>，常需手工调节 turn 级别信用权重。与本文同期的工作 GEM 和 ST-PPO 也发现 turn 级别 PPO 在长程复杂任务上通常表现更优。</p>
+
+              <h2 id="method">方法：从 Token-MDP 到 Turn-MDP</h2>
+
+              <h3 id="llm-as-mdp">LLM 的 MDP 建模</h3>
+              <p>首先回顾 LLM RL 训练的 MDP 框架：一个多轮交互 episode 包含 \(N \geq 1\) 个 turn，每轮 \(n\) 包含环境输入 token 序列 \(Q_n\)（系统提示、用户 query、工具输出等）和 LLM 生成的响应 token 序列 \(R_n\)。RL 的目标是学习一个策略 \(\pi_{\theta}\)，最大化期望累计回报：</p>
+              \[
+              \max_{\theta} \ \mathbb{E}_{s_1 \sim \mathcal{D}}
+              \sum_{h=1}^H
+              \mathbb{E}_{\substack{
+              a_h \sim \pi_{\theta}(\cdot|s_h),\\
+              s_{h+1} \sim \mathbb{P}(\cdot|s_h, a_h)
+              }} r(s_h, a_h).
+              \]
+
+              <h3 id="token-mdp">Token-MDP 及其缺陷</h3>
+              <p>在传统的 <strong>token-MDP</strong> 中，每个 token 被视为一个独立的状态-动作步：状态 \(s_h\) 是 query 加上前 \(h-1\) 个 token，动作 \(a_h\) 是第 \(h\) 个 token。本文在统一的数学框架下给出了四种 MDP-回合组合的目标函数（见表1原文）。统一的 PPO/GRPO 目标函数（以多轮为例）为：</p>
+              <p><strong>四种目标函数变体</strong>（token-单轮 / token-多轮 / turn-单轮 / turn-多轮）的核心区别在于：</p>
+              <ul>
+                <li><strong>Token-Single</strong>（单轮 token-MDP）：每个 token 为一步，importance ratio \(r^i_{h}(\theta)=\frac{\pi_{\theta}(a^i_h|s^i_h)}{\pi_{\theta_t}(a^i_h|s^i_h)}\)。GRPO 设 \(G>1\)，PPO 设 \(G=1\)。</li>
+                <li><strong>Token-Multi</strong>（多轮 token-MDP）：同样的 token 级别 formulation，但 masked 掉环境 token 的 loss，仅保留 LLM 生成 token 的 loss。</li>
+                <li><strong>Turn-Single</strong>（单轮 turn-MDP）：整个 response 为一个 action，ratio 为 \(r^i(\theta)=\prod_{h=1}^{|a^i|}\frac{\pi_\theta(a^i_h|s^i_h)}{\pi_{\theta_t}(a^i_h|s^i_h)}\)。实证中可取几何平均 \({r^i}^{1/|a^i|}\) 以提升稳定性。该版本 GRPO + turn-MDP + 几何平均退化至 GSPO 的特例。</li>
+                <li><strong>Turn-Multi</strong>（多轮 turn-MDP）：每轮 response 为一个 action，ratio 为每轮内各 token ratio 的乘积，优势按 turn 计算。</li>
+              </ul>
+              <p>其中 PPO 和 GRPO 的核心区别在于优势 \(\hat{A}\) 的计算方式：</p>
+              \[
+              \max_{\theta} \mathbb{E}_{\substack{s_1 \sim \mathcal{D}\\\{a^i\}\!\sim\!\pi_{\theta_t}\\ s_{n+1}^i \sim \mathcal{P}}}
+              \frac{1}{G}\!\sum_{i=1}^G \frac{1}{|a^i|}\!\sum_{n=1}^{N_i}\!\sum_{h=1}^{|a_n^i|}
+              \min\!\big(r^i_{n,h}(\theta) \, \hat{A}^i_{n,h},\ \text{clip}_{\varepsilon}(r^i_{n,h}(\theta)) \, \hat{A}^i_{n,h}\big),
+              \]
+              <p>其中 PPO 和 GRPO 的核心区别在于优势 \(\hat{A}\) 的计算方式：</p>
+              <ul>
+                <li><strong>GRPO</strong>：\(\hat{A}^i_{n,h} := \hat{A}^i\)，所有 token 共享同一优势，通过组内奖励归一化获得。</li>
+                <li><strong>PPO</strong>：\(\hat{A}^i_{n,h}\) 通过 GAE 和可学习的 critic \(V(\cdot)\) 估计，随 token 不同而变化。</li>
+              </ul>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800;"><strong>Token-MDP 的"状态表示不对齐"问题：</strong>在 token-MDP 中，状态转换是不连续的——response 内部只是简单拼接一个 token，而跨 response 时则引入整个环境输出 token block。这种<strong>异质的状态转换模式</strong>导致 critic 学习时回归到一个平均化后的值，降低了状态价值估计的保真度，最终<strong>劣化了优势计算的质量</strong>。</p>
+
+              <h3 id="turn-mdp">Turn-MDP 与 Turn-PPO</h3>
+              <p>与直接进行实现层面的经验性扩展不同，turn-PPO 重新定义了 MDP 的粒度：</p>
+
+              <p><strong>Turn-MDP 定义：</strong></p>
+              <ul>
+                <li><strong>状态 \(s_n\)</strong>：在当前轮次之前的所有交互历史，concat 上当前轮次的 query。即 \(s_n := \left(\oplus_{n'<n}(Q_{n'}, R_{n'})\right) \oplus Q_n\)。</li>
+                <li><strong>动作 \(a_n\)</strong>：当前轮次 LLM 的完整响应 token 序列，即 \(a_n := R_n\)。</li>
+              </ul>
+
+              <p>这带来了<strong>统一的表征</strong>：每个 \(s_n\) 都是完整历史 + 当前 query，每个 \(a_n\) 都是对该 query 的完整响应。多轮 Turn-MDP 下的 PPO 目标函数为：</p>
+              \[
+              \max_{\theta} \mathbb{E}_{\substack{s_1 \sim \mathcal{D}\\\{a^i\}\!\sim\!\pi_{\theta_t}\\ s_{n+1}^i \sim \mathcal{P}}}
+              \frac{1}{G}\!\sum_{i=1}^G \frac{1}{|a^i|}\!\sum_{n=1}^{N_i}
+              \min\!\big(r^i_{n}(\theta) \, \hat{A}^i_{n},\ \text{clip}_{\varepsilon}(r^i_{n}(\theta)) \, \hat{A}^i_{n}\big),
+              \]
+              <p>其中 \(r^i_{n}(\theta)=\frac{\pi_{\theta}(a_n^i|s_n^i)}{\pi_{\theta_t}(a_n^i|s_n^i)}=\prod_{h=1}^{|a_n^i|}\frac{\pi_\theta(a_{n,h}^i|s_{n,h}^i)}{\pi_{\theta_t}(a_{n,h}^i|s_{n,h}^i)}\) 是整个 turn 响应的重要性比率。</p>
+
+              <h3 id="gae-comparison">GAE 在 Token-PPO vs Turn-PPO 中的差异</h3>
+              <p>两种 PPO 变体都使用 <strong>广义优势估计（GAE）</strong>：</p>
+              \[
+              \delta_h = r_h + \gamma V_{h+1} - V_h,\quad
+              A_h = \delta_h + \gamma \lambda A_{h+1}.
+              \]
+
+              <p>关键区别在于 <strong>时序粒度</strong>：</p>
+              <ul>
+                <li><strong>Token-PPO</strong>：critic 在每个 token 位置输出价值 \(V_t\)，优势按 token 计算。\(\gamma\) 和 \(\lambda\) 必须固定为 1.0——因为轨迹可能包含数千个 token，即使微小的折扣也会使早期 token 的优势衰减为零，导致训练发散。</li>
+                <li><strong>Turn-PPO</strong>：critic 在每轮<strong>最后一个 token</strong>（即 query 或环境输出的末尾）输出价值 \(V_n\)，优势按 turn 计算：\(\gamma V_{n+1} - V_n\)（中间 turn）或 \(r - V_N\)（最后 turn）。clipping 也在 response（turn）级别执行。由于 turn 数量远少于 token 数，\(\gamma\) 和 \(\lambda\) 可以灵活调节。</li>
+              </ul>
+
+              <h3 id="critic-training">Critic 价值函数训练</h3>
+              <p>除了 actor loss，turn-PPO 还需优化 critic。critic 从预训练 LLM 初始化，附加独立的 value head。其损失函数为 turn 级别的 MSE：</p>
+              \[
+              \min_{\phi}~
+              \mathbb{E}_{\substack{
+                  s_1 \sim \mathcal{D},\\
+                  \{a^i\}_{i=1}^G \sim \pi_{\theta_t}(\cdot|s_i),\\
+                  s_{n+1}^i \sim \mathcal{P}(\cdot|s_n^i,a_n^i)
+              }}
+              \frac{1}{G}\sum_{i=1}^G \frac{1}{N_i}\sum_{n=1}^{N_i}
+              \frac{1}{2}\big(V_\phi(s_n^i) - \hat{R}_{n}^i\big)^2,
+              \]
+              <p>其中 \(\hat{R}_{n}^i\) 是从 turn \(n\) 开始的累计折扣回报。由于 turn 数量远少于 token 数，critic 的回归目标更加清晰，学习信号的质量也相应提高。</p>
+
+              <p>值得注意的是，turn-PPO 与 token-PPO 的<strong>计算开销相同</strong>——唯一的区别在于 loss 计算粒度，前向和反向传播完全一致。</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/Turn-PPO/image.svg" alt="GRPO vs Token-PPO vs Turn-PPO" style="max-width:95%;">
+                <figcaption>图1：GRPO、token-PPO 和 turn-PPO 的优势计算对比。在 turn-PPO 中，状态定义为 \(s_n := \left(\oplus_{n'<n}(Q_{n'}, R_{n'})\right) \oplus Q_n\)，动作为 \(a_n := R_n\)。\(\hat{V}_h\) 的位置表示 critic 以所有到该位置为止的 token 为条件进行价值预测。</figcaption>
+              </figure>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;"><strong>核心洞察：</strong>Turn-PPO 的"turn 级别 clipping"带来了更高的 clipping 比例——当策略分布在某个 turn 上变化过大时，整个 turn 被 clip，阻止不稳定梯度更新。这相当于在 turn 级别施加了更强的信任域约束，使训练更加平滑可控。</p>
+
+              <h2 id="experiments">实验</h2>
+
+              <h3 id="setup">实验设置</h3>
+
+              <p><strong>环境与数据：</strong></p>
+              <ul>
+                <li><strong>WebShop</strong>（在线购物）：模型接收用户 query，需要完成搜索、选择商品、调整属性（颜色/尺寸）、最终购买一系列操作。需要多步顺序决策和长程目标维持能力。</li>
+                <li><strong>Sokoban</strong>（推箱子）：空间规划任务，在网格世界中推动箱子到目标位置，每步有不可逆后果和时间惩罚，仅提供稀疏的终止奖励。测试多步对齐和规划能力。</li>
+              </ul>
+
+              <p><strong>模型：</strong></p>
+              <ul>
+                <li>Qwen2.5-3B / Qwen2.5-7B（始终启用推理 thinking）</li>
+                <li>Qwen3-1.7B（评估 thinking 启用和禁用的两种设置）</li>
+              </ul>
+
+              <p>训练框架基于 RAGEN，turn-PPO 作为新增模块实现。critic 在预训练 LLM 基础上附加独立的 value head。基线算法为 GRPO 和 token-PPO。</p>
+
+              <h3 id="grpo-failure">GRPO 失败分析</h3>
+              <p>在 token-MDP 下直接应用 GRPO 的训练表现极不稳定：在 WebShop 和 Sokoban 上训练频繁<strong>突然崩溃</strong>，尤其在 Qwen3 的长推理设置下最为严重。</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/Turn-PPO/image-1.svg" alt="GRPO analysis results" style="max-width:95%;">
+                <figcaption>图2：GRPO 的失败分析。(左一&左二) WebShop 和 Sokoban 上的 GRPO 验证奖励曲线；(左三) GRPO 变体在标准差、KL、batch 多样性方面的表现；(右一) 训练过程中的标准差变化。</figcaption>
+              </figure>
+
+              <p>研究者系统地探索了以下 GRPO 变体改进，但<strong>均无法根治崩溃</strong>：</p>
+
+              <ul>
+                <li><strong>移除标准差归一化</strong>（类似 Reinforce-Rej / DR.GRPO）：假设熵崩溃是主因，但结果显示<strong>无缓解效果</strong>。进一步可视化训练中的奖励标准差，也确认熵崩溃并非核心问题。</li>
+                <li><strong>移除 KL 项</strong>（类似 DAPO）：在 Qwen3 长推理设置下，模型分布剧烈偏移，KL 正则可能过度约束学习。但去掉后效果<strong>微乎其微</strong>，依然崩溃。</li>
+                <li><strong>增加 batch 多样性</strong>：减少每 query 的采样数、增加不同 query 数。仅带来轻微改善，<strong>只是推迟崩溃</strong>，未能根本解决问题或提升性能。</li>
+              </ul>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800;"><strong>崩溃的根源：</strong>GRPO 在多轮 token-MDP 下的失败是<strong>系统性的</strong>。① 所有 turn 共享统一优势，忽略了不同 turn 的难度差异和贡献不均等；② 基于采样的优势估计方差高，在动态/部分可观测环境中被进一步放大。两者叠加导致模型在简单 turn 上过训练，最终引起崩溃。长推理设置下，turn 边界清晰且异质性更强，同时低熵 token 比例高，使模型更容易在这些 token 上崩溃。</p>
+
+              <h3 id="ppo-comparison">PPO 与 Turn-PPO 对比</h3>
+              <p>PPO 系列方法有效缓解了 GRPO 的训练崩溃，而 turn-PPO 进一步提升了性能。</p>
+
+              <table>
+                <caption style="caption-side:top; text-align:center; font-weight:bold;">表1：GRPO、Token-PPO 和 Turn-PPO 在 WebShop 和 Sokoban 上的平均奖励对比。"Crash"表示 RL 训练失败。</caption>
+                <thead>
+                  <tr style="background: #ebf0f5;">
+                    <th>环境</th>
+                    <th>模型</th>
+                    <th>GRPO</th>
+                    <th>Token-PPO</th>
+                    <th>Turn-PPO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td rowspan="3"><strong>WebShop</strong></td>
+                    <td>Qwen2.5-3B</td>
+                    <td>0.72</td>
+                    <td>0.73</td>
+                    <td style="background: #dce8fa;"><strong>0.75</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Qwen3-1.7B (no think)</td>
+                    <td>0.78</td>
+                    <td>0.77</td>
+                    <td style="background: #dce8fa;"><strong>0.80</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Qwen3-1.7B (think)</td>
+                    <td style="color: #c00;">Crash</td>
+                    <td>0.54</td>
+                    <td style="background: #dce8fa;"><strong>0.55</strong></td>
+                  </tr>
+                  <tr style="background: #ebf0f5;">
+                    <td rowspan="2"><strong>Sokoban</strong></td>
+                    <td>Qwen2.5-3B</td>
+                    <td style="color: #c00;">Crash</td>
+                    <td>1.93</td>
+                    <td style="background: #dce8fa;"><strong>2.29</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Qwen2.5-7B</td>
+                    <td style="color: #c00;">Crash</td>
+                    <td>2.90</td>
+                    <td style="background: #dce8fa;"><strong>3.74</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <figure>
+                <img src="/blogs/2026/RL/Turn-PPO/image-2.svg" alt="PPO comparison results" style="max-width:95%;">
+                <figcaption>图3：Turn-PPO 与 token-PPO 在多种设置下的平均奖励对比，以及 Sokoban 上的 token clipping 比例。Turn-PPO 在大多数设置下表现更优，验证了 turn 级别优势估计的收益。</figcaption>
+              </figure>
+
+              <h4>关键发现：</h4>
+
+              <p><strong>1. 与 GRPO 的比较：</strong></p>
+              <ul>
+                <li>WebShop 上 token-PPO 与 GRPO 表现相当或稳定了原本不稳定的训练，turn-PPO 进一步取得提升。</li>
+                <li>Sokoban 上 GRPO 在 Qwen2.5-3B 和 7B 上均崩溃，而 turn-PPO 分别达到 <strong style="color: #c00;">2.29</strong> 和 <strong style="color: #c00;">3.74</strong>，大幅领先。</li>
+                <li>在 GRPO 崩溃的 Qwen3 thinking 设置下，turn-PPO 仍能以 0.55 完成训练。</li>
+              </ul>
+
+              <p><strong>2. Turn-PPO vs Token-PPO：</strong>在 WebShop 的 Qwen2.5-3B 上从 0.73 → 0.75，Qwen3 no-think 上从 0.77 → 0.80，Sokoban Qwen2.5-7B 上从 2.90 → 3.74。turn-PPO 在所有可比设置下均优于 token-PPO。</p>
+
+              <p><strong>3. Clipping 机制分析：</strong>Turn-PPO 的 <strong>clipping 比例远高于 token-PPO</strong>。因为 clipping 在 turn 级别执行——当策略分布在某个 turn 上变化过大时，整个 turn 被 clip，有效防止了不稳定梯度更新，实现更平滑可靠的训练。</p>
+
+              <p><strong>4. 模型 backbone 差异：</strong>Qwen2.5 的推理长度适中，在训练中逐步改善。Qwen3 则产生过长且不必要的推理（overthinking），且训练中无改善。关闭 thinking 后 Qwen3 表现显著优于 Qwen2.5——推测 Qwen3 的 thinking 分布与任务设置不匹配，引入不稳定性。</p>
+
+              <h3 id="ablation">PPO 训练配方消融实验</h3>
+
+              <p><strong>学习率：</strong>PPO 的 actor 和 critic 使用独立学习率，且极度敏感。critic 的学习率需约为 actor 的 <strong>5–10 倍</strong>（\(1\times10^{-5}\) vs \(1\times10^{-6}\)），否则训练停滞或发散。</p>
+
+              <p><strong>Batch 结构：</strong>PPO 的有效 batch 由 rollout 样本数 \(B_R\)、minibatch 大小 \(B_M\) 和 epoch 数 \(E\) 决定。关键差异：</p>
+              <ul>
+                <li><strong>GRPO</strong>：\((B_R, G, B_M, E)=(32, 16, 32, 1)\)——32 条轨迹来自 2 个不同 query，每个 query 16 条。</li>
+                <li><strong>PPO</strong>：\((B_R, G, B_M, E)=(32, 1, 32, 1)\)——32 条轨迹来自 32 个不同 query，每个 1 条。</li>
+              </ul>
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;"><strong>PPO 的关键优势：</strong>在相同总 rollout 数下，PPO 看到<strong>更多样化的问题</strong>，因为不需要每个 query 多条轨迹。更高的问题多样性帮助 critic 更好地泛化，防止对个别 query 过拟合。</p>
+
+              <figure>
+                <img src="/blogs/2026/RL/Turn-PPO/image-3.svg" alt="Ablation study results" style="max-width:95%;">
+                <figcaption>图4：消融实验。(左) batch 中多样化样本数的影响；(中) 折扣因子 \(\gamma\) 的影响；(右) 偏差-方差折衷参数 \(\lambda\) 的影响。均在 WebShop + Qwen3 thinking 设置下进行。</figcaption>
+              </figure>
+
+              <p><strong>Batch 多样性：</strong>GRPO 在稳定训练时，增加每 query 采样数可提升优势估计精度。PPO 则相反——每 query 仅 1 条轨迹效果最佳。</p>
+
+              <p><strong>Offline 采样效率：</strong>优先减小 \(B_M\) 而非增加 \(E\) 来重复利用数据。过度增加 epoch 数会导致过拟合。</p>
+
+              <p><strong>GAE 参数 \(\gamma\) 和 \(\lambda\)：</strong>在 turn-MDP 下可灵活调节。\(\gamma=0.99\) 和 \(\lambda=0.9\) 是相对稳定且最优的选择。对比 token-PPO 中两者必须固定为 1.0，这进一步凸显了 turn-PPO 在超参数调节空间上的优势。</p>
+
+              <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50;"><strong>PPO 训练配方总结：</strong>① 学习率极度敏感，critic 需高于 actor；② GRPO 偏好更大的每样本 rollout 数，PPO 偏好更大的 batch 内样本多样性；③ 优先增加 minibatch 更新次数而非 epoch 数；④ Turn-PPO 允许灵活调节 \(\gamma\) 和 \(\lambda\)，持续获得更优结果。</p>
+
+              <h2 id="discussion">讨论与未来工作</h2>
+              <p>Turn-PPO 展示了将 RL 从 token 级别重新建模为 turn 级别的有效性，在多轮 Agent 训练中打破了 GRPO 的稳定性瓶颈。然而：</p>
+              <ul>
+                <li>当前实验局限于两个代表性数据集（Web 导航和文本模拟的具身环境），未来需要扩展到<strong>真实 Web Agent</strong>（更丰富的工具使用和复杂决策）和<strong>物理交互具身场景</strong>。</li>
+                <li>turn-PPO 与 token-PPO 计算开销相同，但 critic 学习收敛可能受 turn 长度不均的影响，这也是一个重要的工程性挑战。</li>
+                <li>与同期工作（GEM、ST-PPO）共同验证了 turn 级别 PPO 在长程复杂任务上的优势，形成了一定的学术共识。</li>
+              </ul>
+
+              <h3 id="training-details">完整训练超参数</h3>
+              <p>论文附录提供了完整的训练超参数配置，以下汇总以便复现：</p>
+
+              <table>
+                <caption style="caption-side:top; text-align:center; font-weight:bold;">表2：完整训练超参数配置</caption>
+                <thead>
+                  <tr style="background: #ebf0f5;">
+                    <th>参数</th>
+                    <th>GRPO (WebShop)</th>
+                    <th>GRPO (Sokoban)</th>
+                    <th>PPO (WebShop)</th>
+                    <th>PPO (Sokoban)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Actor 学习率</td>
+                    <td>\(1\times10^{-6}\)</td>
+                    <td>\(1\times10^{-6}\)</td>
+                    <td>\(1\times10^{-6}\)</td>
+                    <td>\(1\times10^{-6}\)</td>
+                  </tr>
+                  <tr>
+                    <td>Critic 学习率</td>
+                    <td>—</td><td>—</td>
+                    <td>\(1\times10^{-5}\)</td>
+                    <td>\(1\times10^{-5}\)</td>
+                  </tr>
+                  <tr>
+                    <td>KL 系数</td>
+                    <td>0.001</td><td>0.001</td>
+                    <td>—</td><td>—</td>
+                  </tr>
+                  <tr>
+                    <td>\((B_R, G, B_M, E)\)</td>
+                    <td>(256, 16, 64, 1)</td>
+                    <td>(512, 16, 128, 1)</td>
+                    <td>(256, 1, 64, 1)</td>
+                    <td>(512, 16, 128, 1)</td>
+                  </tr>
+                  <tr>
+                    <td>Clip ratio</td>
+                    <td>0.2</td><td>0.2</td><td>0.2</td><td>0.2</td>
+                  </tr>
+                  <tr>
+                    <td>训练步数 (Qwen2.5-7B)</td>
+                    <td>—</td><td>100</td><td>—</td><td>100</td>
+                  </tr>
+                  <tr>
+                    <td>训练步数 (Qwen2.5-3B / Qwen3-1.7B)</td>
+                    <td>200</td><td>—</td><td>200</td><td>—</td>
+                  </tr>
+                  <tr>
+                    <td>GAE \(\gamma\)</td>
+                    <td>—</td><td>—</td>
+                    <td>0.99</td><td>0.99</td>
+                  </tr>
+                  <tr>
+                    <td>GAE \(\lambda\)</td>
+                    <td>—</td><td>—</td>
+                    <td>0.9</td><td>0.9</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;"><strong>设计启示：</strong>GRPO 和 PPO 的 \(B_R\) 设置存在一个有趣的对称关系——WebShop 上，GRPO 用 256 个 rollout（16 个 query × 16 条），PPO 用 256 个 rollout（256 个 query × 1 条）。前者追求"更深"的每 query 采样以降低优势估计方差，后者追求"更广"的 query 覆盖以提升 critic 泛化。这一差异本质上反映了两种优势估计范式的根本设计哲学。</p>
+
+              <h3 id="model-backbone-deep">模型 Backbone 选择深度分析</h3>
+              <p>论文对 Qwen2.5 和 Qwen3 的对比揭示了一个重要的工程性发现：</p>
+              <ul>
+                <li><strong>Qwen2.5</strong> 的推理链在 RL 训练中会<strong>自然缩短并提升质量</strong>——推理变得更有针对性，逐步聚焦于核心决策点。这是 RL 训练的理想行为。</li>
+                <li><strong>Qwen3</strong> 的过思考（overthinking）行为<strong>在 RL 中不会自我纠正</strong>——推理保持冗长，产生大量与任务无关的辅助 token。这些 token 通常是低熵的（模型对其分布高度确定），更容易在 GRPO 中引起崩溃。</li>
+                <li>当关闭 thinking 后，Qwen3 反而<strong>超越</strong> Qwen2.5（WebShop: 0.80 vs 0.75），说明 Qwen3 的基础能力更强，但 thinking 分布与任务设置不匹配导致了训练不稳定。</li>
+              </ul>
+              <p>这一发现对实践者的启示是：<strong>在选择 RL 训练的 base model 时，推理长度和推理风格与任务设置的对齐程度是比模型能力更关键的因素</strong>。</p>
+
+              <h2 id="trajectory-examples">轨迹示例分析：Qwen2.5 vs Qwen3 的推理模式差异</h2>
+              <p>论文附录中提供了 WebShop 上 Qwen2.5 和 Qwen3 的完整轨迹示例，清晰揭示了两者在推理模式上的根本差异：</p>
+
+              <p><strong>Qwen2.5 的推理风格（5 turn，最终奖励 0.8）：</strong></p>
+              <ul>
+                <li>Turn 1：简洁搜索 "holiday hoodie vintage camo large dry clean"，推理仅 1 句。</li>
+                <li>Turn 2：在搜索结果中快速识别匹配产品 B01HQTWL6S，基于价格范围（$36.99–$48.99）和描述做出决策。</li>
+                <li>Turn 3–4：依次点击 size（large）和 color（vintage camo），推理精炼到 1 句。</li>
+                <li>Turn 5：直接点击 buy now 完成购买。</li>
+                <li><strong>特点：</strong>推理长度适中（每 turn 1–2 句），在训练中逐步改善，推理 tokens 既包含关键决策信息又不过度冗长。</li>
+              </ul>
+
+              <p><strong>Qwen3 的推理风格（5 turn，最终奖励 0.6）：</strong></p>
+              <ul>
+                <li>Turn 1：使用了更长的搜索词，推理长达 5 句，包含大量冗余解释（如"First, I need to search for the right keywords..."）。</li>
+                <li>Turn 2：重复描述已明确的任务要求，逐项分析搜索结果。</li>
+                <li>Turn 3–4：在选择 size 和 color 时持续输出冗长推理，包括对无关选项的分析。</li>
+                <li>Turn 5：最终购买时仍进行大段推理后才执行动作。</li>
+                <li><strong>特点：</strong>推理过度冗长（overthinking），产生大量低熵辅助 token。这些长推理链与长 RL 轨迹叠加，使训练极不稳定——GRPO 在此设置下直接崩溃。</li>
+              </ul>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800;"><strong>关键洞察：</strong>Qwen3 的过思考（overthinking）行为在训练过程中<strong>无法自我纠正</strong>——即使关闭 thinking 后性能反而显著提升，超过 Qwen2.5。这揭示了当前长推理模型在多轮 RL 训练中的一个重要挑战：推理长度与训练稳定性的根本性矛盾。Turn-PPO 通过 turn 级别 clipping 在一定程度上缓解了这一问题，但并未完全解决。</p>
+
+              <h2 id="conclusion">结论</h2>
+              <p>本文在多轮 Agent LLM 的 RL 训练领域做出了以下贡献：</p>
+              <ol>
+                <li><strong>系统性地识别并分析了 GRPO 在多轮设置中的不稳定性：</strong>通过系统性消融实验证明，采样归一化优势估计的方差高、所有 turn 共享统一优势这两个根本问题无法在 GRPO 框架内被解决。</li>
+                <li><strong>重新引入 PPO 并证明其在多轮 MDP 中的优势：</strong>PPO 使用可学习 critic 和 GAE 进行优势估计，提供比 GRPO 更稳定、更可靠的学习信号，尤其适合多步 MDP 场景。</li>
+                <li><strong>提出 turn-PPO——基于 turn 级别 MDP 的 PPO 变体：</strong>将 MDP 建模从 token 粒度提升到 turn 粒度，解决了 token-MDP 中"状态表示不对齐"问题，实现更准确的 turn 级别 credit assignment。</li>
+                <li><strong>在 WebShop 和 Sokoban 上全面验证：</strong>Turn-PPO 在多个模型尺度和推理设置下均优于 GRPO 和 token-PPO，尤其在 Sokoban 等复杂规划任务上优势显著。</li>
+                <li><strong>提供实用的 PPO 训练指南：</strong>总结了学习率、batch 结构、GAE 参数调节等关键超参数的优化策略，为后续研究和应用奠定基础。</li>
+              </ol>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2512.17008v2" target="_blank" rel="noopener">Turn-PPO: Turn-Level Advantage Estimation with PPO for Improved Multi-Turn RL in Agentic LLMs</a></p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+          if (!header.id) header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
