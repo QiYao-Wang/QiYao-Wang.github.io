@@ -51,9 +51,249 @@ layout: compress
 
             <div class="blog-content">
 
-<!-- ====== 前文回顾 (Sections 1–4.1 already written) ====== -->
+<!-- ====== 1. Introduction ====== -->
 
-<p><em>（前文回顾：第 1–4.1 节已介绍 RAGEN 的背景动机、MDP 形式化、StarPO 框架、RAGEN 系统设计、以及 StarPO 基线在四个环境上的基础表现与 "Echo Trap" 坍塌模式的诊断指标。本节从 4.2 StarPO-S 开始继续。）</em></p>
+<h2 id="intro">1. 引言：让 LLM Agent 在交互中自我进化</h2>
+
+<p>将 LLM 训练为能够在交互式环境中自主行动的 Agent，面临着与静态任务（如数学推理、代码生成）截然不同的挑战。Agent 需要<strong>多轮序列决策</strong>、<strong>跨 turn 的记忆维持</strong>以及<strong>对环境随机反馈的适应能力</strong>——这些在传统的单轮 RL 训练范式中几乎不存在。</p>
+
+<p>尽管近年来的 RL 方法（如 PPO、GRPO、DAPO 等）在单轮推理任务上取得了显著进展，但一个关键问题仍未得到系统性回答：<strong>什么设计因素能让自我进化的 LLM Agent 在交互式、随机环境中有效且稳定地学习？</strong></p>
+
+<p>为此，作者提出了 <strong>StarPO</strong>（<strong>S</strong>tate-<strong>T</strong>hinking-<strong>A</strong>ctions-<strong>R</strong>eward <strong>P</strong>olicy <strong>O</strong>ptimization）——一个统一的<strong>多轮、轨迹级</strong> Agent 训练框架，并在此基础上构建了 <strong>RAGEN</strong>（<strong>R</strong>easoning <strong>AGEN</strong>t），一个模块化的 Agent RL 训练与评估系统。</p>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image.svg" alt="RAGEN teaser" style="width:95%;">
+  <figcaption>图1：RAGEN 概览。以往方法聚焦于数学、编程等非交互式任务；RAGEN 通过 StarPO 框架实现多轮 rollout、轨迹级奖励分配与策略更新，支持多轮随机交互中的 Agent RL 训练。</figcaption>
+</figure>
+
+<h3 id="env-overview">1.1 实验环境：从符号推理到真实 Web 交互</h3>
+
+<p>为系统研究 Agent RL 的学习动态，作者构建了四个跨越不同复杂度的环境：</p>
+
+<table style="width:90%; margin: 1em auto; font-size: 0.9em; border-collapse: collapse;">
+  <thead>
+    <tr style="background: #f0f0f0;">
+      <th style="padding: 0.5em; border: 1px solid #ddd; text-align: left;">环境</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">交互轮次</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">随机性</th>
+      <th style="padding: 0.5em; border: 1px solid #ddd; text-align: left;">特点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td style="padding: 0.5em; border: 1px solid #ddd;"><strong>Bandit</strong></td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">单轮</td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">✓</td><td style="padding: 0.5em; border: 1px solid #ddd;">风险敏感的符号推理，低风险臂 vs 高风险高收益臂</td></tr>
+    <tr><td style="padding: 0.5em; border: 1px solid #ddd;"><strong>Sokoban</strong></td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">多轮</td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">✗</td><td style="padding: 0.5em; border: 1px solid #ddd;">不可逆的推箱子规划，需要前瞻性多步推理</td></tr>
+    <tr><td style="padding: 0.5em; border: 1px solid #ddd;"><strong>Frozen Lake</strong></td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">多轮</td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">✓</td><td style="padding: 0.5em; border: 1px solid #ddd;">滑冰到达目标，每步有 2/3 概率发生侧滑——<strong>同时具有多轮和随机性</strong></td></tr>
+    <tr><td style="padding: 0.5em; border: 1px solid #ddd;"><strong>WebShop</strong></td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">多轮</td><td style="padding: 0.5em; border: 1px solid #ddd; text-align: center;">✓</td><td style="padding: 0.5em; border: 1px solid #ddd;">真实世界在线购物任务，需要自然语言理解和网页交互</td></tr>
+  </tbody>
+</table>
+
+<p>前三个环境是<strong>极简且完全可控的符号环境</strong>，剥离了真实世界的先验知识，让研究者可以干净地分析 Agent 推理能力的涌现与退化。WebShop 则引入了真实的任务结构和语言输入。</p>
+
+<h3 id="three-findings-preview">1.2 三大核心发现预览</h3>
+
+<p>通过 RAGEN 的系统性实验，作者揭示了 Agent RL 训练中的三个核心发现：</p>
+
+<ol>
+  <li><strong>梯度稳定性是多轮 RL 稳定训练的关键。</strong>多轮 RL 训练经常出现一种名为 <strong>Echo Trap</strong>（回声陷阱）的周期性不稳定模式——Agent 过拟合到局部奖励最优的推理模板，表现为 reward 方差坍塌、输出熵骤降和梯度范数尖峰。为此，提出了 <strong>StarPO-S</strong> 稳定化方案。</li>
+  <li><strong>Rollout 的频率与多样性塑造了自我进化。</strong>Agent RL 中，模型自生成的 rollout 轨迹是核心训练材料。关键的 rollout 因素包括：(a) 多样的初始状态 + 每状态多个响应来实现有效对比；(b) 每 turn 多个动作来扩展交互深度；(c) 高频的 rollout 更新以保证数据反映最新策略。</li>
+  <li><strong>Agent 推理的涌现需要精心设计的奖励信号。</strong>仅仅在输出格式中鼓励推理（如 <code>&lt;think&gt;</code> 标签）<strong>并不保证推理行为会被保留</strong>。如果奖励仅关注任务最终成功，模型往往会退化到直接动作选择，甚至产生<strong>幻觉推理</strong>（推理内容与环境状态不一致但仍获高奖励）。</li>
+</ol>
+
+<hr>
+
+<!-- ====== 2. Framework ====== -->
+
+<h2 id="framework">2. 框架：StarPO 与 RAGEN</h2>
+
+<h3 id="mdp-formulation">2.1 从单轮 RL 到多轮 MDP 形式化</h3>
+
+<p>传统的 LLM RL 方法假设<strong>单轮</strong>设置：最大化数据集 \(\mathcal{D}\) 上 prompt-response 对 \((s, a)\) 的期望奖励：</p>
+
+$$
+J_{\text{step}}(\theta) = \mathbb{E}_{s \sim \mathcal{D}, a \sim \pi_\theta(\cdot|s)}[R(s, a)]
+$$
+
+<p>但 LLM Agent 必须在<strong>多轮交互</strong>和<strong>环境随机性</strong>中运作。为捕捉这些动态，作者将问题形式化为 <strong>Markov Decision Process (MDP)</strong> \(\mathcal{M} = \{S, A, P\}\)：</p>
+
+<ul>
+  <li>\(S\)：状态空间（观测序列或交互历史）</li>
+  <li>\(A\)：动作空间（token 序列）</li>
+  <li>\(P\)：转移动态与奖励生成过程</li>
+</ul>
+
+<p>在每个时间步 \(t\)，策略 \(\pi_\theta\) 基于当前状态和交互历史生成动作，环境返回奖励和新状态：</p>
+
+$$
+a_t \sim \pi_\theta(\cdot | s_t, \tau_{<t}), \quad (r_t, s_{t+1}) \sim P(\cdot | s_t, a_t)
+$$
+
+<p>其中 \(\tau_{<t} = \{s_0, a_0, r_0, ..., s_{t-1}, a_{t-1}, r_{t-1}\}\) 为交互历史。整个过程持续最大 horizon \(K\)，产生完整轨迹 \(\tau = \{s_0, a_0, r_0, ..., s_K\}\)。</p>
+
+<h3 id="starpo">2.2 StarPO：轨迹级推理-交互策略优化</h3>
+
+<p>StarPO 的核心创新在于将<strong>整个多轮交互轨迹</strong>——包括观测、推理过程、动作和环境反馈——视为统一的优化单元。目标为最大化期望轨迹奖励：</p>
+
+$$
+J_{\text{StarPO}}(\theta) = \mathbb{E}_{\mathcal{M}, \tau \sim \pi_{\theta}} \left[R(\tau) \right]
+$$
+
+<div style="background:#f0f7ff; border-left:4px solid #42a5f5; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>📐 StarPO vs 传统方法的本质区别</strong><br><br>
+  <strong>传统方法（PPO / GRPO）：</strong><br>
+  \(J_{\text{step}}(\theta) = \mathbb{E}_{x \sim \mathcal{D}, y \sim \pi_\theta(\cdot|x)}\left[ R(x, y) \right]\)<br>
+  <em>→ 优化单轮输出 \(y\) 给定输入 \(x\)</em><br><br>
+  <strong style="color:#d32f2f;">StarPO（本工作）：</strong><br>
+  <span style="color:#d32f2f;">\(J_{\text{StarPO}}(\theta) = \mathbb{E}_{\mathcal{M}, \tau \sim \pi_\theta}\left[ R(\tau) \right]\)</span><br>
+  <em style="color:#d32f2f;">→ 优化完整轨迹 \(\tau = \{s_0, a_0, r_0, \dots, s_K\}\) 的总奖励</em>
+</div>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image-1.svg" alt="StarPO framework" style="width:95%;">
+  <figcaption>图2：StarPO 框架。LLM 生成推理引导的动作与环境进行多轮交互，累积轨迹级奖励，经归一化后用于策略更新。</figcaption>
+</figure>
+
+<h3 id="starpo-procedure">2.3 优化流程：从推理-交互轨迹中学习</h3>
+
+<p>在每个训练迭代中，Agent 从初始状态 \(s_0\) 出发，生成 \(N\) 条轨迹。每一步产生推理引导的结构化输出：</p>
+
+$$
+a^T_t = \texttt{<think>}...\texttt{</think><answer>}~a_t~\texttt{</answer>}
+$$
+
+<p>其中 \(a^T_t\) 是包含中间推理的完整动作输出，\(a_t\) 是环境可执行的子动作序列。环境返回下一状态 \(s_{t+1}\) 和奖励 \(r_t\)。StarPO 交替执行 rollout 和 update 阶段，每个训练循环包含 \(P\) 个初始状态，每个状态生成 \(N\) 条轨迹，batch size \(E\)，共 \(L\) 个循环，产生 \(S = \frac{L \cdot P \cdot N}{E}\) 次梯度更新。</p>
+
+<h3 id="starpo-modular">2.4 模块化优化策略：PPO 与 GRPO</h3>
+
+<p>StarPO 在统一的轨迹级抽象下支持多种策略优化算法。对于每条 rollout 轨迹 \(\tau_i\)（共 \(|\tau_i|\) 个 token），token 级更新如下：</p>
+
+<p><strong>PPO（带 Critic）：</strong>训练一个 Critic 网络估计 token 级价值 \(V\) 和优势 \(A_{i,t}\)：</p>
+
+$$
+\small
+J_{\text{PPO}}(\theta) = \frac{1}{G} \sum_{i=1}^G \frac{1}{|\tau_i|} \sum_{t=1}^{|\tau_i|}
+\min \left[
+    \frac{\pi_\theta(\tau_{i,(t)}|\tau_{i,<t})}{\pi_{\text{old}}(\tau_{i,(t)}|\tau_{i,<t})} \cdot A_{i,t},\,
+    \text{clip}\left( \frac{\pi_\theta(\tau_{i,(t)}|\tau_{i,<t})}{\pi_{\text{old}}(\tau_{i,(t)}|\tau_{i,<t})}, 1 - \epsilon, 1 + \epsilon \right) \cdot A_{i,t}
+\right]
+$$
+
+<p><strong>GRPO（无 Critic）：</strong>为每条轨迹分配标量奖励 \(R(\tau_i)\)，在组内归一化：</p>
+
+$$
+\small
+\hat{A}_{i,t} = \frac{R(\tau_i) - \text{mean}(\{R(\tau_1), \ldots, R(\tau_G)\})}
+                     {\text{std}(\{R(\tau_1), \ldots, R(\tau_G)\})}
+$$
+
+$$
+\small
+J_{\text{GRPO}}(\theta) = \frac{1}{G} \sum_{i=1}^G \frac{1}{|\tau_i|} \sum_{t=1}^{|\tau_i|} 
+\min \left[
+    \frac{\pi_\theta(\tau_{i,(t)}|\tau_{i,<t})}{\pi_{\text{old}}(\tau_{i,(t)}|\tau_{i,<t})} \cdot \hat{A}_{i,t},\,
+    \text{clip}\left( \frac{\pi_\theta(\tau_{i,(t)}|\tau_{i,<t})}{\pi_{\text{old}}(\tau_{i,(t)}|\tau_{i,<t})}, 1 - \epsilon, 1 + \epsilon \right) \cdot \hat{A}_{i,t}
+\right]
+$$
+
+<h3 id="ragen-system">2.5 RAGEN 系统</h3>
+
+<p>为在实践中实现 StarPO，作者构建了 <strong>RAGEN</strong>——一个完整的 LLM Agent 训练与评估系统。RAGEN 支持结构化 rollout、可定制奖励函数、与多轮随机环境的集成，既是 StarPO 的执行后端，也是研究 Agent RL 稳定性、泛化能力和学习动态的平台。RAGEN 设计上具有<strong>可扩展性</strong>：新的环境、奖励方案或 rollout 策略可以轻松接入。</p>
+
+<hr>
+
+<!-- ====== 3. Experiment Setup ====== -->
+
+<h2 id="exp-setup">3. 实验设置</h2>
+
+<h3 id="envs-detail">3.1 环境与任务</h3>
+
+<p>四个评估环境覆盖了从符号推理到真实语言交互的决策挑战谱系（详见 1.1 节表格）。前三个符号化环境极简且完全可控，适合干净的分析；WebShop 则测试在现实场景中的泛化能力。</p>
+
+<h3 id="training-settings">3.2 训练设置</h3>
+
+<p>主要实验使用 <strong>Qwen-2.5 Instruct 0.5B</strong> 模型训练三个符号化任务，使用 <strong>3B</strong> 变体训练 WebShop。模型在 H100 GPU 上用 StarPO 变体训练 100–200 个 rollout–update 迭代。每 batch 采样 \(P = 8\) 个 prompt，每个 prompt 生成 \(N = 16\) 条 rollout，最多 5 个 turn 和 10 个动作。策略更新使用 GRPO 或 PPO with GAE（\(\gamma = 1.0, \lambda = 1.0\)），Adam 优化器，熵奖励（\(\beta = 0.001\)），响应格式惩罚（\(-0.1\)）。</p>
+
+<h3 id="eval-metrics">3.3 评估指标</h3>
+
+<p>在 256 个固定 prompt 上以 temperature \(T = 0.5\) 评估，最多 5 turn 后截断。指标包括：</p>
+
+<ul>
+  <li><strong>成功率（Success Rate）：</strong>任务完成比例</li>
+  <li><strong>Rollout 熵（Rollout Entropy）：</strong>衡量探索行为的多样性</li>
+  <li><strong>组内奖励方差（In-Group Reward Variability）：</strong>衡量行为多样性</li>
+  <li><strong>响应长度（Response Length）：</strong>衡量推理的详细程度</li>
+  <li><strong>梯度范数（Gradient Norm）：</strong>监控训练稳定性</li>
+</ul>
+
+<hr>
+
+<!-- ====== 4.1 Instability Pattern ====== -->
+
+<h2 id="instability">4.1 多轮 Agent RL 引入的新型不稳定性</h2>
+
+<h3 id="baseline-starpo">4.1.1 StarPO 基线表现：初期提升，终归坍塌</h3>
+
+<p>首先在四个环境下评估基线 StarPO（PPO 和 GRPO 变体）的表现。</p>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image-2.svg" alt="PPO vs GRPO baseline" style="width:95%;">
+  <figcaption>图3：基线 StarPO 在四个环境上的表现。符号任务 Bandit 和 Sokoban 出现坍塌，而真实世界任务 WebShop 起点较高且快速提升。PPO 在 Bandit/Sokoban 上更强（Critic 提供更稳定的 token 级奖励信号），GRPO 在 FrozenLake（状态值难以估计）和 WebShop（初始表现强，不需要 Critic）上更强。</figcaption>
+</figure>
+
+<p>关键观察：</p>
+<ul>
+  <li><strong>Bandit 和 Sokoban</strong> 上，所有方法初期提升后最终<strong>坍塌</strong>。PPO 比 GRPO 更稳定——Critic 提供的平滑价值估计延缓了崩溃。</li>
+  <li><strong>Frozen Lake</strong> 上，GRPO <strong>反而比 PPO 更稳定</strong>——高随机性使得 Critic 难以准确估计状态价值，反而可能引入噪声。</li>
+  <li><strong>WebShop</strong> 上，两种方法均成功——强大的语言先验和高初始奖励降低了对 Critic 的依赖。</li>
+</ul>
+
+<div style="background:#fff8e1; border-left:4px solid #f0c040; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>🔑 Finding 1：单轮 RL 方法不能直接适配多轮 Agent RL</strong><br>
+  将 PPO / GRPO 原样迁移到多轮 Agent 场景，初期可以获得提升但最终往往坍塌。PPO 的 Critic 可能延缓不稳定，但<strong>不能阻止推理退化</strong>——这突显了为 Agent 场景设计<strong>专门的稳定化方案</strong>的迫切需求。
+</div>
+
+<h3 id="echo-trap">4.1.2 Echo Trap（回声陷阱）：坍塌的本质</h3>
+
+<p>为理解坍塌的原因，作者对比了训练早期和晚期的轨迹。在 Bandit 任务中：</p>
+<ul>
+  <li><strong>早期轨迹</strong>（Step 0）：模型展现出关于符号意义和期望奖励的<strong>多样化推理</strong>：<br><em>"Dragon is often associated with patience, strength, and reliability, while Phoenix is associated with speed, agility, and creativity..."</em></li>
+  <li><strong>晚期轨迹</strong>（Step 150）：推理退化为<strong>确定性、重复的模板</strong>：<br><em>"My initial intention is to pick arm Dragon. My first action is to go for arm Dragon."</em></li>
+</ul>
+
+<p>作者称这种失败模式为 <strong>"Echo Trap"（回声陷阱）</strong>——RL 训练过度放大了固有的推理捷径，强化了局部奖励最优的模板，同时<strong>压制了探索行为</strong>。模型在自生成的轨迹上反复回响已记忆的推理路径，导致多样性坍塌和长期性能退化。</p>
+
+<div style="background:#fff8e1; border-left:4px solid #f0c040; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>🔑 Finding 2：Agent RL 中的模型坍塌表现为 "Echo Trap"</strong><br>
+  早期 Agent 产生多样化的符号推理，但训练后坍塌为确定性、重复的模板。模型收敛到固定表述，表明 RL 可能在强化<strong>表面模式</strong>而非<strong>泛化推理</strong>，形成了阻碍长期泛化的 Echo Trap。
+</div>
+
+<h3 id="collapse-indicators">4.1.3 坍塌的诊断与预警指标</h3>
+
+<p>为系统地检测和预测坍塌，作者跟踪了两类指标：</p>
+<ul>
+  <li><strong>直接信号（确认坍塌已发生）：</strong>平均奖励（平台期或下降）和梯度范数（尖峰表示不稳定更新）</li>
+  <li><strong>早期预警信号（坍塌前兆）：</strong>Rollout 奖励标准差（Reward Std）和输出熵（Entropy）</li>
+</ul>
+
+<figure>
+  <img src="/blogs/2026/RL/RAGEN/image-4.svg" alt="Collapse indicators - direct" style="width:95%;">
+  <img src="/blogs/2026/RL/RAGEN/image-5.svg" alt="Collapse indicators - early warning" style="width:95%;">
+  <figcaption>图4：多轮 RL 中的坍塌指标与早期预警信号。左侧：平均奖励和梯度范数直接反映坍塌（平台期和尖峰确认表现与训练不稳定）。右侧：奖励标准差和熵往往<strong>在奖励退化之前</strong>就开始波动，可作为早期预警信号。</figcaption>
+</figure>
+
+<p>从数据中可以归纳出<strong>模型坍塌的发生规律</strong>：</p>
+
+<ol>
+  <li><strong>Reward Std 是收敛的早期指标。</strong>在 FrozenLake-PPO 中，Std 在第 40 步急剧下降，远早于奖励均值在第 90 步的崩溃（此时表现仍接近最优）。在 Bandit-PPO 中，Std 在第 70 步触底，领先奖励峰值（第 120 步）。</li>
+  <li><strong>梯度范数尖峰标志着不可逆的坍塌。</strong>一旦梯度尖峰出现——Bandit 第 170 步、Sokoban 第 110 步、FrozenLake 第 90 步——即使微小的参数更新也会引发剧烈的损失变化，之后恢复几乎不可能。</li>
+  <li><strong>熵应呈现稳定下降趋势。</strong>FrozenLake-GRPO 展示了健康的缓慢熵减。而迅速的熵增或剧烈波动（如 Bandit-GRPO 和 Sokoban-GRPO）往往与坍塌的推理行为相关。</li>
+</ol>
+
+<div style="background:#fff8e1; border-left:4px solid #f0c040; padding:0.8em 1em; margin:1em 0; border-radius:4px;">
+  <strong>🔑 Finding 3：坍塌遵循相似的动力学，可通过指标预判</strong><br>
+  <strong>Reward Std</strong> 和 <strong>Entropy</strong> 往往在表现退化之前波动，而<strong>梯度范数尖峰</strong>通常标志不可逆的坍塌点。这些指标提供了<strong>早期预警</strong>，也直接催生了稳定化策略 StarPO-S 的设计。
+</div>
+
+<p>以上模式确认了多轮 RL 引入了单轮方法无法应对的独特挑战。作为回应，接下来介绍 <strong>StarPO-S</strong>——一个针对采样质量、梯度稳定性和探索正则化的稳定化变体。</p>
 
 <hr>
 
