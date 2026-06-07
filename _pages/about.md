@@ -490,6 +490,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <summary style="color:gray; cursor:pointer;">Projects in Dalian University of Technology.</summary>
 <div>
 <ul>
+  <li>Innovative technology generation based on large language models. <i>Hongbo Wang, Hanyu Kang, Yihang Wu, Jiting Sui, Xiao Yang</i>. Supervisor: <i>Yuan Lin, Kan Xu, <strong>Qiyao Wang</strong></i>. National Level. 2025-2026.</li>
+  <li>Patent Image and Text Understanding Based on Multimodal Large Models. Student: <i>Haoran Hu, Yifan Mo, Jiayuan Lu, Kaibin Lin, Mingda Li</i>. Supervisor: <i>Yuan Lin, Kan Xu, <strong>Qiyao Wang</strong></i>. Provincial Level. 2025-2026.</li>
   <li>Research on large language models for intellectual property public service. <i><strong>Qiyao Wang</strong>, Jianguo Huang, Shule Lu, Huaren Liu</i>. Supervisor: <i>Yuan Lin, Kan Xu</i>. National Level. 2023.09-2025.04. Leader. Completed.</li>
   <li>Research and application of technological gene based on representation learning. <i><strong>Qiyao Wang</strong>, Jiaxu Wu et.al.</i>. Supervisor: <i>Yuan Lin, Kan Xu</i>. School Level. 2022.12-2024.04. Leader. Completed.</li>
 </ul>
