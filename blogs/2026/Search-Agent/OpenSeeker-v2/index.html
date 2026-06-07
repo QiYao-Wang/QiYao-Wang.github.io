@@ -1,0 +1,271 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>OpenSeeker-v2：以高质量高难度轨迹推动搜索Agent极限 —— 仅用SFT超越工业级CPT+SFT+RL训练管线</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 07, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-topic">#Search Agent</span>
+                <span class="meta-topic">#Paper</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+              <p>本文介绍上海交通大学团队的最新工作 <strong>OpenSeeker-v2</strong>——一个全新的搜索 Agent，仅用 <strong>10.6K 高质量 SFT 数据</strong>即取得 BrowseComp <strong>46.0%</strong>、BrowseComp-ZH <strong>58.1%</strong>、HLE <strong>34.6%</strong>、xbench <strong>78.0%</strong> 的 SOTA 成绩，全面超越通义 DeepResearch（CPT+SFT+RL）和 RedSearcher。它是首个在该模型规模和范式（ReAct）下由<strong>纯学术团队仅用 SFT</strong>实现的最先进搜索 Agent。</p>
+
+              <ul>
+                <li><strong>核心贡献</strong>：揭示了当 SFT 数据具备足够的高难度和高信息密度时，简单 SFT 即能训练出超越复杂多阶段工业管线的搜索 Agent</li>
+                <li><strong>三项简单数据合成改进</strong>：(1) 扩大知识图谱规模以增加探索丰富度，(2) 扩展工具集以增强功能广度，(3) 严格低步数过滤以确保最低难度底线</li>
+                <li><strong>仅 10.6K 样本</strong>通过单次 SFT 训练，在四个代表性基准全面超越同规模 ReAct Agent，并在 BrowseComp-ZH 上 <strong>领先通义 DeepResearch 11.4 个百分点</strong></li>
+                <li><strong>数据难度碾压</strong>：OpenSeeker-v2 平均每轨迹 <strong>64.67 步</strong>，远超 v1 的 46.97 步和 RedSearcher 的 36.01 步</li>
+                <li><strong>首个纯学术 SOTA</strong>：证明学术团队可通过战略性数据合成绕过工业界的「数据护城河」，完全开源模型权重</li>
+              </ul>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker-v2/image.svg" alt="OpenSeeker-v2 性能总览" style="max-width: 95%;">
+                <figcaption>图1：OpenSeeker-v2 在四个代表性基准上取得了同规模模型和范式内的 SOTA 性能，仅通过简单 SFT 即超越经过大量 CPT+SFT+RL 训练的通义 DeepResearch</figcaption>
+              </figure>
+
+              <h2 id="motivation">Motivation：搜索 Agent 的「重训练管线」迷思</h2>
+
+              <p>深度搜索能力已成为前沿大语言模型 Agent 不可或缺的核心竞争力，但其发展长期被<strong>资金雄厚的企业巨头垄断</strong>。典型的工业界 SOTA 方案依赖于极其资源密集的训练管线：<strong>持续预训练（CPT）→ 监督微调（SFT）→ 强化学习（RL）</strong>。通义 DeepResearch、RedSearcher 等代表性工作均采用这一重型管线，需要海量计算资源和专有数据管道，对学术界和开源社区形成了巨大的参与壁垒。</p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800; margin: 1em 0;">
+                <strong>核心问题</strong>：我们是否真的需要 CPT+SFT+RL 这样的重型训练管线？能否仅用简单的 SFT 方法，通过提升训练轨迹的<strong>难度和信息丰富度</strong>，推动搜索 Agent 达到与重型工业管线相媲美的性能？
+              </p>
+
+              <p>在 OpenSeeker-v1 的基础上，OpenSeeker-v2 将焦点<strong>完全转向训练轨迹本身的质量</strong>，提出了一个令人惊讶的发现：当 SFT 数据具备足够的高难度和丰富信息时，<strong>简单 SFT 就可以足够强大</strong>，甚至超越重型工业管线。</p>
+
+              <h2 id="method-overview">方法：三项简单但高效的数据合成改进</h2>
+
+              <p>OpenSeeker-v2 的核心假设是：<strong>给定足够困难和信息丰富的训练数据，直接的 SFT 目标足以引导模型学习强大的长程搜索和推理能力</strong>。为此，作者在 v1 的数据合成 pipeline 上引入了三项看似简单但极其有效的修改：</p>
+
+              <h3 id="graph-scaling">改进一：扩大知识图谱规模，注入更丰富的探索空间</h3>
+
+              <p>设 \(\mathcal{G}=(\mathcal{V},\mathcal{E})\) 表示用于任务合成的源知识图谱。在原始 pipeline 中，从种子节点 \(v_{\mathrm{seed}}\) 出发沿出边遍历 \(k\) 个相邻节点，构建局部子图。而在 v2 中，将扩展预算从 \(k\) 提升至 \(K\)（\(K > k\)）：</p>
+
+              \[
+              \mathcal{G}_{\mathrm{sub}}^{(K)} = \operatorname{Expand}(\mathcal{G}, v_{\mathrm{seed}}, K)
+              \]
+
+              <p>扩大后的子图包含<strong>更丰富的拓扑相关源信息</strong>，增加了可行推理路径的数量和多样性。合成问题随后基于这个扩展上下文生成：</p>
+
+              \[
+              q \sim P_{\mathrm{gen}}\left(q \mid \mathcal{G}_{\mathrm{sub}}^{(K)}\right)
+              \]
+
+              <p>通过增大 \(K\)，生成的问题更可能需要<strong>跨多个节点的证据聚合</strong>，而非仅依赖少数源即可解决。这一步的核心作用是<strong>结构性地强制多跳探索</strong>，使得训练出的 Agent 天然具备深度搜索的能力。</p>
+
+              <h3 id="tool-expansion">改进二：扩展工具集，赋予更广泛的功能覆盖</h3>
+
+              <p>给定生成的问题 \(q\)，v2 为搜索 Agent 配备了<strong>比 v1 更大的工具集</strong> \(\mathcal{A}\)，让其产生多步 ReAct 风格轨迹：</p>
+
+              \[
+              \tau = \left( r_1,a_1,o_1, r_2,a_2,o_2, \ldots, r_T,a_T,o_T, r_{T+1},y \right)
+              \]
+
+              <p>其中每个动作 \(a_t \in \mathcal{A}\) 对应一次工具调用，\(o_t\) 表示工具返回的观测，\(r_t\) 为每步动作前的推理痕迹。轨迹包含 \(T\) 步工具调用，随后进行最终推理 \(r_{T+1}\) 并给出答案 \(y\)。</p>
+
+              <p>通过扩展 \(\mathcal{A}\)，Agent 被鼓励学习<strong>更多样化的交互模式</strong>，并利用互补工具组合，产生更灵活、功能更丰富的问题解决行为。这直接提升了 Agent 在真实场景中应对多样化查询的能力。</p>
+
+              <h3 id="low-step-filtering">改进三：严格低步数过滤，确保最低难度底线</h3>
+
+              <p>为移除过于简单的训练实例，OpenSeeker-v2 引入严格的<strong>低步数过滤规则</strong>：</p>
+
+              \[
+              \mathcal{D}_{\mathrm{v2}} = \left\{ (q,\tau) \in \mathcal{D}_{\mathrm{raw}} \;\middle|\; T(\tau) \geq T_{\min} \right\}
+              \]
+
+              <p>其中 \(T_{\min}\) 为预设的最低工具调用阈值。工具调用步数 \(T(\tau) < T_{\min}\) 的轨迹被直接丢弃，因为它们往往可以通过直接查表或浅层关键词匹配解决，<strong>无法为模型提供有效的长程推理训练信号</strong>。</p>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                <strong>三项改进的协同效应</strong>：扩大图谱增加了上下文丰富度和多跳依赖性 → 扩展工具集赋能更多样化的解决策略 → 低步数过滤强制执行最低难度底线。三者共同作用，产出了<strong>高质量 SFT 数据</strong>，驱动 Agent 学会持续推理、鲁棒信息提取和长程搜索行为。
+              </p>
+
+              <h2 id="experiments">实验设置</h2>
+
+              <h3 id="exp-setup">训练与评估配置</h3>
+
+              <p><strong>模型初始化</strong>：基于 <strong>Qwen3-30B-A3B-Thinking-2507</strong> 初始化（总参 30B，推理时激活 3B），256K 上下文窗口，最多 200 次工具调用。</p>
+
+              <p><strong>训练方式</strong>：<strong>仅 SFT</strong>，无 RL，无额外超参调优。仅用 10.6K 条高难度轨迹进行单次训练。</p>
+
+              <p><strong>评估基准</strong>：四个代表性 Agent 基准——<strong>BrowseComp</strong>（英文多步搜索）、<strong>BrowseComp-ZH</strong>（中文版）、<strong>Humanity's Last Exam（HLE）</strong>（跨领域高难度问答）、<strong>xbench-DeepSearch</strong>（深度研究能力评估）。</p>
+
+              <p><strong>对比基线</strong>：涵盖三大类——闭源专有模型（Claude-4-Opus、GPT-5-High 等）、开源大模型（DeepSeek-V3.2-671B、GLM-4.7-357B 等）、以及<strong>同规模 ~30B 的 ReAct 搜索 Agent</strong>（Tongyi DeepResearch、RedSearcher、WebSailor-V2 等），后者是论文的核心对比对象。</p>
+
+              <h2 id="main-results">主要实验结果</h2>
+
+              <p>下表展示了 OpenSeeker-v2 与各类模型的完整对比。「# Samples」表示训练样本总量，「Training」表示训练技术（CPT：持续预训练，SFT：监督微调，RL：强化学习），「Academic」表示是否由纯学术团队完成。</p>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.75em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 8px; border: 1px solid #ccc;">Model Name</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;"># Samples</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Training</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Academic</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">BrowseComp</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">BC-ZH</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">HLE</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">xbench</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="8" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;"><em>Closed-Source Proprietary Models</em></td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Claude-4-Opus</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">18.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">OpenAI-o3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">20.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.0</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">OpenAI Deep Research</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">51.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">GPT-5-High</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">54.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">63.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">41.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="8" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;"><em>Open-Source Models &gt; 30B</em></td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">DeepSeek-V3.1-671B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">30.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">71.2</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">GLM-4.6-357B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">45.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">30.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="8" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;"><em>~30B Models (ReAct-based Search Agents)</em></td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">WebSailor-V2-30B-SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">24.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">28.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">61.7</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">WebSailor-V2-30B-RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">44.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">30.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">73.7</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Tongyi DeepResearch</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">CPT+SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">43.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">32.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">75.0</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RedSearcher-30B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">?</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">CPT+SFT+RL</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">OpenSeeker-v1-30B-SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.7K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #060;">✓</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">48.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">74.0</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">OpenSeeker-v2-30B-SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">10.6K</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">SFT</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✓</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">46.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">58.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">34.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">78.0</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表1：OpenSeeker-v2 与各类搜索 Agent 的全面对比。仅用 SFT 训练的 OpenSeeker-v2 在同规模模型中全面领先，尤其在 BrowseComp-ZH 上比通义 DeepResearch 高出 11.4 个百分点</p>
+
+              <h2 id="analysis">结果分析</h2>
+
+              <h3 id="analysis-sft-vs-heavy">超越重型工业管线的 SFT</h3>
+
+              <p>OpenSeeker-v2 的核心问题是：简单 SFT 能否推动搜索 Agent 达到极限并媲美重型工业管线？答案<strong>是肯定的</strong>。</p>
+
+              <p><strong>① 全面超越同规模 CPT+SFT+RL Agent</strong>：在同为 ~30B 的 ReAct 搜索 Agent 中，OpenSeeker-v2-30B-SFT 以<strong>仅 SFT 训练</strong>取得了最强的综合性能。在 BrowseComp 和 HLE 上分别比通义 DeepResearch 和 RedSearcher 高出至少 <strong>2.6% 和 0.3%</strong>；在 BrowseComp-ZH 和 xbench 上更是分别领先通义 DeepResearch <strong>11.4% 和 3%</strong>。</p>
+
+              <p><strong>② 超越更大规模的开源模型</strong>：OpenSeeker-v2 甚至超越了参数规模大得多的模型，包括 DeepSeek-V3.1-671B、GLM-4.6-357B、Minimax-M2-230B 以及 Claude-4.5-Sonnet，充分说明<strong>数据质量可以弥补参数规模差距</strong>。</p>
+
+              <p><strong>③ v1 → v2 的显著提升</strong>：在相同模型规模和 SFT-only 训练设定下，v2 相比 v1 实现了巨大跃迁——BrowseComp 从 29.5→46.0（+56%），BrowseComp-ZH 从 48.4→58.1（+20%），xbench 从 74.0→78.0。这表明 OpenSeeker 框架在 SFT 设定下<strong>远未饱和</strong>，提升数据质量即可持续获得性能增益。</p>
+
+              <h3 id="analysis-difficulty">数据难度：v2 的长轨迹优势</h3>
+
+              <p>OpenSeeker-v2 的训练数据在难度上远超同类工作，这是其性能优势的根本来源。</p>
+
+              <figure>
+                <img src="/blogs/2026/Search-Agent/OpenSeeker-v2/image-1.svg" alt="轨迹工具调用次数对比" style="max-width: 60%;">
+                <figcaption>图2：搜索 Agent 训练数据的平均工具调用次数对比。OpenSeeker-v2 以每轨迹 64.67 步显著领先 v1 的 46.97 步和 RedSearcher 的 36.01 步</figcaption>
+              </figure>
+
+              <p>OpenSeeker-v2 的平均每轨迹工具调用次数达到 <strong>64.67 步</strong>，远超 OpenSeeker-v1 的 46.97 步和 RedSearcher 的 36.01 步。这一显著差距说明 v2 的训练数据要求<strong>更复杂的多步推理和更长程的信息搜寻</strong>。作者假设，这种长而困难的人工合成轨迹对于使模型获得更强的长程检索和搜索能力<strong>至关重要</strong>，这也解释了为何 v2 在挑战性 deep research 基准上表现优异。</p>
+
+              <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50; margin: 1em 0;">
+                <strong>关键洞察</strong>：扩大图谱 → 增加多跳依赖 → 轨迹变长 → 难度提升 → Agent 学会真正的长程搜索，而非走捷径。这一链条揭示了「数据难度驱动能力提升」的内在机制。
+              </p>
+
+              <h3 id="analysis-scaling">OpenSeeker 框架的可扩展性</h3>
+
+              <p>v1 → v2 的性能跃迁表明，通过提升合成 QA 任务的难度和丰富度、增强合成轨迹的整体质量，可以带来<strong>实质性的能力增益</strong>。这为 OpenSeeker 框架的持续发展指明了方向：<strong>可扩展的高质量数据合成是推动搜索 Agent 前进的有希望路径</strong>。</p>
+
+              <p>作者的内部观察表明，高质量合成数据展现出<strong>强大的扩展潜力</strong>。未来工作将继续沿此方向推进——扩大数据量、提升数据质量和多样性，以进一步推动搜索 Agent 的性能边界。</p>
+
+              <h2 id="conclusion">总结</h2>
+
+              <p>OpenSeeker-v2 的核心贡献可以归纳为：</p>
+
+              <p><strong>① 用简单 SFT 打破「重型训练管线」迷思</strong>：证明了当数据质量足够高时，简单 SFT 即可训练出超越 CPT+SFT+RL 重型管线的搜索 Agent。这一发现从根本上挑战了工业界对复杂多阶段训练的路径依赖。</p>
+
+              <p><strong>② 三项简单但高效的数据改进</strong>：扩大知识图谱规模以增加探索丰富度、扩展工具集以增强功能广度、严格低步数过滤以确保难度底线——三项修改的组合产生了显著的性能提升，且实现简单、易于复现。</p>
+
+              <p><strong>③ 首个纯学术 SOTA 搜索 Agent</strong>：OpenSeeker-v2 是首个在模型规模和范式（ReAct）内由纯学术团队仅用 SFT 实现的最先进搜索 Agent。团队完全开源模型权重，使前沿搜索 Agent 研究对学术界和开源社区更加可及。</p>
+
+              <p><strong>④ 数据质量 &gt; 训练复杂度</strong>：仅用 10.6K 高质量样本 + 简单 SFT，全面超越了使用 CPT+SFT+RL 训练的工业界方案。这强有力地证明了：<strong>精心设计的数据本身就足以解锁巨大的性能增益</strong>。</p>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                <strong>核心启示</strong>：在搜索 Agent 领域，<strong>数据质量可能是训练智能长程搜索 Agent 的关键路径</strong>。与其堆叠复杂的多阶段训练管线（CPT → SFT → RL），不如将精力集中在提升训练数据的难度和信息丰富度上。OpenSeeker-v2 用事实证明：<strong>数据质量优先于训练规模</strong>。
+              </p>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2605.04036" target="_blank" rel="noopener">OpenSeeker-v2: Pushing the Limits of Search Agents with Informative and High-Difficulty Trajectories</a> — Yuwen Du, Rui Ye, Shuo Tang, Keduan Huang, Xinyu Zhu, Yuzhu Cai, Siheng Chen. arXiv:2605.04036, 2026.</p>
+              <p>[2] <a href="https://github.com/PolarSeeker/OpenSeeker" target="_blank" rel="noopener">OpenSeeker GitHub Repository</a></p>
+              <p>[3] <a href="https://huggingface.co/PolarSeeker/OpenSeeker-v2-30B-SFT" target="_blank" rel="noopener">OpenSeeker-v2 Model Weights on Hugging Face</a></p>
+              <p>[4] <a href="https://arxiv.org/abs/2603.15594" target="_blank" rel="noopener">OpenSeeker-v1: Democratizing Frontier Search Agents by Fully Open-Sourcing Training Data</a> — arXiv:2603.15594, 2026.</p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+
+            </div>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
