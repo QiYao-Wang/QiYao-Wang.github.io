@@ -1,0 +1,486 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+
+            <div class="blog-post-header">
+              <h1>DV-World：面向真实场景的全面数据可视化 Agent 评测基准</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 07, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-tag">#Working Agent</span>
+                <span class="meta-tag">#Paper</span>
+                <span class="meta-tag">#Benchmark</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+
+              <p>数据可视化（Data Visualization, DV）是将抽象数据转化为决策洞见的关键桥梁。然而，现有的 DV Agent 评测基准普遍脱离真实工作流：要么局限于代码沙箱中的单次图表生成，要么假设用户需求完美明确。来自<strong>中科院自动化所</strong>等机构的研究团队提出了 <strong>DV-World</strong>——一个包含 <strong>260 个任务</strong>、覆盖<strong>三大真实场景</strong>的全面 DV Agent 评测基准。实验表明，即便是最先进模型（如 Gemini-3-Pro、GPT-5.2）的整体得分也不足 <strong>50%</strong>，在原生电子表格操控、跨范式可视化演进和主动交互对齐方面暴露出显著短板。</p>
+
+              <ul>
+                <li><strong>三大真实DV场景</strong>：DV-Sheet（原生电子表格操控，含创建/修复/仪表盘）、DV-Evol（跨范式可视化演进，含5种编程框架）、DV-Inter（模糊需求下的主动交互对齐）</li>
+                <li><strong>260个高质量任务</strong>：由18位可视化专家通过严格流程标注构建，数据源自 ExcelForum、Kaggle 等真实社区，覆盖51种图表类型</li>
+                <li><strong>SOTA模型整体不足50%</strong>：Gemini-3-Pro 在 DV-Sheet 仅 40.48%、DV-Evol 仅 51.44%、DV-Inter 仅 40.43%，与人类基准（80%+）存在巨大差距</li>
+                <li><strong>混合评估框架</strong>：融合基于 Rubric 的 MLLM-as-a-Judge（语义-视觉质量）与 Table-value Alignment（数值精度），Pearson 相关系数达 0.86</li>
+                <li><strong>交互质量 &gt; 交互数量</strong>：主动交互能带来最高23%的性能增益，但关键瓶颈在于提问质量而非交互频率——针对性不强的交互反而引入噪声</li>
+                <li><strong>数据准确度是首要瓶颈</strong>：在 DV-Sheet 的错误中，数据准确度占比超50%（创建）至69%（修复），说明数据绑定的可靠性是当前模型最核心的短板</li>
+              </ul>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/main.svg" alt="DV-World 总览" style="max-width: 95%;">
+                <figcaption>图1：DV-World 总览。面向数据可视化 Agent 的全生命周期评测，涵盖原生电子表格操控（DV-Sheet）、跨模态逻辑演进（DV-Evolution）和主动迭代交互（DV-Interact）三大场景</figcaption>
+              </figure>
+
+              <h2 id="motivation">Motivation：现有 DV 基准的三大断层</h2>
+
+              <p>LLM 和 MLLM 的快速发展推动了 DV Agent 的涌现，它们在标准化代码沙箱中展示出令人印象深刻的图表生成能力。然而，现有基准仍然被限制在<strong>理想化、简化</strong>的设定中，无法捕捉真实世界数据可视化的复杂性和模糊性。</p>
+
+              <p>具体而言，当前 Agent 面临三个根本性断层：</p>
+
+              <p><strong>断层一——环境脱耦（Environmental Decoupling）</strong>：大多数基准强调开发者风格的代码生成，<strong>绕过</strong>了以电子表格为中心的可视化工作流——忽略了原生图表对象模型、数据到图表的动态绑定以及 GUI 约束，而这些正是实际电子表格可视化分析的核心。</p>
+
+              <p><strong>断层二——仅创建短视（Creation-Only Myopia）</strong>：现有基准评估的是一次性的图表构建，<strong>缺乏对演进式工作</strong>的测试——即 Agent 需要在新数据和新需求下修改可视化，同时在跨框架场景中保持结构和美学的一致性。</p>
+
+              <p><strong>断层三——完美意图假设（Perfect-Intent Assumptions）</strong>：评测基于完全明确的指令，<strong>忽略了用户需求中的模糊性</strong>。真实场景中，用户请求往往不明确、不完整，需要 Agent 主动澄清和对话式对齐，而非盲目执行命令。</p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800; margin: 1em 0;">
+                <strong>核心困境</strong>：这三个断层共同导致了一个根本性问题——当前的 DV Agent 评测完全脱离企业级工作流实际。要真正衡量和推动 DV Agent 能力进步，需要一个覆盖<strong>原生环境操作、演进式迭代和主动意图对齐</strong>全生命周期的评测基准。
+              </p>
+
+              <h2 id="benchmark-overview">DV-World 基准总览</h2>
+
+              <p>DV-World 由 <strong>18 位可视化专家</strong>通过严格流程构建，包含 <strong>260 个任务</strong>，覆盖三大领域：</p>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.82em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 8px; border: 1px solid #ccc;">基准</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">任务数</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">环境</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">输入格式</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">交互性</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">开放性</th>
+                    <th style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">评估方法</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="7" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">其他数据可视化基准</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">SpreadsheetBench</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">912</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">原生</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">表格+文本</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">规则</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">ChartMimic</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">4,800</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">编程</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">图像+文本</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">多级</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">VisEval</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">2,524</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">编程</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">表格+文本</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">✗</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">多级</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">DV-World (Ours)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">260</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">原生 + N种编程</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">表格+I+文本</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #060;">✓</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #060;">Both</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">规则+Rubric</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表1：DV-World 与现有基准对比。DV-World 是首个同时覆盖原生电子表格环境、跨编程范式和交互式场景的评测基准</p>
+
+              <h2 id="task-definition">任务定义</h2>
+
+              <h3 id="task-dvsheet">DV-Sheet：原生电子表格操控</h3>
+
+              <p>Agent \(\pi^{\text{sheet}}\) 在电子表格软件中执行端到端的原生可视化编辑：</p>
+
+              \[
+              \mathcal{E}_{\star} = \pi^{\text{sheet}}(\mathcal{I}, \mathcal{E}_{0})
+              \]
+
+              <p>其中 \(\mathcal{I}\) 为用户指令，\(\mathcal{E}_{0}\) 为初始工作簿。包含三个子任务：</p>
+              <ul>
+                <li><strong>DVSheet-Crea（50题）</strong>：从数据生成<strong>原生图表</strong>，使用<strong>动态范围绑定</strong> \(f\)（非硬编码值），放置到新工作表中</li>
+                <li><strong>DVSheet-Fix（50题）</strong>：诊断并修复一个<strong>有缺陷的图表</strong> \(C_{\text{err}}\) 为正确图表 \(C_{\text{fix}}\)，涵盖12种常见错误类型（坐标轴缩放、编码错误、过滤逻辑等）</li>
+                <li><strong>DVSheet-Dash（30题）</strong>：将多个图表 \(\{C_i\}\) 和表格 \(\{T_j\}\) 编排为<strong>专业化分析仪表盘</strong></li>
+              </ul>
+
+              <h3 id="task-dvevol">DV-Evol：跨范式可视化演进</h3>
+
+              <p>Agent \(\pi^{evol}\) 将视觉资产进化为可执行代码，通过逻辑合成实现：</p>
+
+              \[
+              \sigma = \pi^{evol}(\mathcal{I}, V, D, \mathcal{L})
+              \]
+
+              <p>给定参考图像 \(V\)、新数据集 \(D\) 和修改需求 \(\mathcal{I}\)，Agent 必须逆向理解 \(V\) 的视觉语义，在目标语言 \(\mathcal{L}\) 中生成功能性的绘图代码 \(C_{\star}\) 和结果表格 \(T_{\star}\)。覆盖 <strong>5 种框架</strong>：Python（Matplotlib/Seaborn）、Apache ECharts、Vega-Lite、D3.js、Plotly.js。</p>
+
+              <h3 id="task-dvinter">DV-Inter：模糊需求下的主动交互对齐</h3>
+
+              <p>给定一个<strong>故意模糊</strong>的可视化任务 \(q_0\)，Agent \(\pi_{\text{int}}\) 通过 <strong>ask_user</strong> 工具与<strong>双阶段用户模拟器</strong>交互：</p>
+              <ul>
+                <li><strong>阶段一——交互守门员</strong>：检测并拒绝作弊行为（如索要实现代码或内部 Schema 细节）</li>
+                <li><strong>阶段二——响应生成器</strong>：基于<strong>真实意图和反应规则</strong>提供反馈，确保通过真实推理实现意图对齐，而非信息泄露</li>
+              </ul>
+
+              <p>每个任务平均包含 <strong>3.17 个歧义点</strong>，涵盖 15 种歧义类型。</p>
+
+              <h2 id="eval-metrics">评估指标体系</h2>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/eval.svg" alt="评估框架" style="max-width: 90%;">
+                <figcaption>图2：DV-World 混合评估框架。融合基于 Rubric 的 MLLM 评分（语义-视觉质量）与 Table Coverage（数值精度），覆盖可靠性、恰当性、美学、交互质量等多维度</figcaption>
+              </figure>
+
+              <h3 id="eval-rubric">基于 Rubric 的 MLLM 评分</h3>
+
+              <p>由专家标注的多维度 Rubric 指导 MLLM 评测：</p>
+              <ul>
+                <li><strong>DVSheet-Crea</strong>：可靠性（Reliability, 40%）、恰当性（Appropriateness, 32%）、美学（Aesthetics, 28%）</li>
+                <li><strong>DV-Evol</strong>：完整性（Integrity, 25%）、一致性（Consistency, 37%）、美学（Aesthetics, 38%）</li>
+                <li><strong>DV-Inter</strong>：交互（Interaction, 24%）、准确性（Accuracy, 41%）、美学（Aesthetics, 35%）</li>
+              </ul>
+
+              \[
+              \mathrm{S}_{\text{rubric}}(\mathcal{O},\mathcal{R}) = \frac{\sum_{k=1}^N s_k}{\sum_{k=1}^N w_k}, \quad s_k = \Lambda(c_k, \mathcal{O}) \in [0, w_k]
+              \]
+
+              <h3 id="eval-table">Table Coverage（表格覆盖率）</h3>
+
+              \[
+              \mathrm{S}_{\text{TC}} = \frac{1}{N_{\text{valid}}}\sum_{c \in \mathcal{C}} \mathbb{I}\big(\mathrm{match}(v_{\text{gen}}, v_{\text{gt}})\big)
+              \]
+
+              <p>对非数值单元格使用精确匹配，浮点数使用容差匹配 \((\epsilon, \delta)\)。</p>
+
+              <h3 id="eval-final">最终评分与特殊指标</h3>
+
+              <p><strong>DVSheet-Crea &amp; DV-Evol 最终分</strong>（\(w=0.5\)）：</p>
+              \[
+              S_{crea/evol} = w \cdot S_{rubric} + (1 - w) \cdot S_{\text{TC}}
+              \]
+
+              <p><strong>DVSheet-Fix 成功率（SR）</strong>：\(\mathrm{SR} = \mathbb{I}\big[ \forall f \in \mathcal{F}_{\text{must}} : \mathrm{Sim}(C_f, G_f) \geq \tau \big], \tau \geq 0.95\)</p>
+
+              <p><strong>DV-Inter 交互成功率（ISR）</strong>：</p>
+              \[
+              ISR = (1 - \lambda) + \lambda \cdot \frac{N_{success} - N_{ref}}{N_{req} + 1}, \quad \lambda = 0.5
+              \]
+
+              <p>最终分：\(S_{\text{final}} = S_{\text{rubric}} \cdot ISR\)</p>
+
+              <h2 id="annotation">标注流程与数据统计</h2>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/pic_type.svg" alt="图表类型分布" style="max-width: 55%; display: inline-block; vertical-align: top;">
+                <figcaption>图3：DV-World 图表类型分布，共覆盖 51 种图表类型</figcaption>
+              </figure>
+
+              <p><strong>数据来源</strong>：从 ExcelForum、Kaggle 等真实社区整理超 <strong>800 个问题线程</strong>，收集电子表格、表格、绘图代码和参考可视化。</p>
+
+              <p><strong>三步适配协议</strong>：(i) 结构保留——保留合并单元格和不规则布局；(ii) 数值扰动——在保持分布的情况下重新归一化数值；(iii) 元数据匿名化——将可识别实体替换为通用实体。</p>
+
+              <p><strong>任务设计</strong>：对于生成型任务，采用<strong>双阶段工作流</strong>减少标注者偏差——五名专家标准化用户问题，七名其他人完成基于精炼提示的任务。对于 DVSheet-Fix，专家向健康工作簿中注入常见真实错误。对于 DV-Inter，从无歧义任务出发<strong>系统性引入受控歧义</strong>，记录问题-答案模式和修正策略。</p>
+
+              <p><strong>关键统计</strong>：DV-Sheet 工作簿平均 36.53 列 × 11,583 行（Fix 任务含 74.5% 噪声数据）；DV-Evol 平均 52,585 行、73 行起始代码、31 种图表类型；DV-Inter 每任务 3.17 个歧义点、734.54 用户 tokens。</p>
+
+              <h2 id="experiments">实验</h2>
+
+              <h3 id="exp-setup">实验设置</h3>
+
+              <p><strong>评测模型</strong>：涵盖开源模型（Qwen3、Qwen3VL、GLM-4.7、DeepSeek-V3.1/3.2、Kimi-K2）和闭源模型（Gemini 系列、GPT 系列、Grok-4）。</p>
+
+              <p><strong>基线</strong>：DV-Sheet 使用 SheetCopilot 作为电子表格 Agent 基线；DV-Evol 使用 OpenHands 作为主基线。同时开发了统一的 <strong>DV-World-Agent</strong>——一个基于 ReAct 范式的基线，编排 bash、load_image、render_chart、ask_user 等工具。</p>
+
+              <p><strong>评估配置</strong>：每个 Agent 在 4 次独立运行中评估取平均；\(w=0.5\) 用于 DVSheet-Crea 和 DV-Evol 以平衡视觉质量与数据保真度；使用 Gemini-2.5-Flash 作为 MLLM 评委。</p>
+
+              <h3 id="main-results-dvsheet">DV-Sheet 主要结果</h3>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.72em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc;">模型</th>
+                    <th colspan="5" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Create</th>
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Fix SR</th>
+                    <th colspan="5" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Dashboards</th>
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">总分</th>
+                  </tr>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">Reli.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Appro.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Aesth.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">TC</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">Insight.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Acc.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Prof.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Aesth.</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="12" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">SheetCopilot 基线</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Gemini-3-Pro</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">24.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">44.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">27.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.0</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="12" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">DV-World-Agent</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">Gemini-3-Pro (Preview)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">27.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">36.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">48.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">39.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">36.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">40.48</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">GPT-5.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">32.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.2</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">DeepSeek-V3.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">30.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">25.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">28.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">36.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">36.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.1</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Qwen3-235B-A22B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">14.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">13.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">16.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">14.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">22.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">19.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">22.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.9</td></tr>
+                  <tr style="background: #f5f5f5; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">Human</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;" colspan="4">80.81</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">88.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;" colspan="4">87.34</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表2：DV-Sheet 主要结果。Gemini-3-Pro 以 40.48 领跑，但远低于人类 80%+ 的基准</p>
+
+              <h3 id="main-results-dvevol">DV-Evol 主要结果</h3>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.72em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc;">模型</th>
+                    <th colspan="3" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Python</th>
+                    <th colspan="3" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">ECharts</th>
+                    <th colspan="3" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Vega-Lite</th>
+                    <th colspan="3" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">D3.js</th>
+                    <th colspan="3" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">Plotly.js</th>
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">总分</th>
+                  </tr>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">MS</th><th style="padding: 4px 6px; border: 1px solid #ccc;">TC</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">MS</th><th style="padding: 4px 6px; border: 1px solid #ccc;">TC</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">MS</th><th style="padding: 4px 6px; border: 1px solid #ccc;">TC</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">MS</th><th style="padding: 4px 6px; border: 1px solid #ccc;">TC</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">MS</th><th style="padding: 4px 6px; border: 1px solid #ccc;">TC</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Overall</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="17" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">OpenHands 基线</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Gemini-3-Pro</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">64.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">57.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">47.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">22.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">57.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">39.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">34.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">67.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">50.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">28.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">64.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">48.3</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="17" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">DV-World-Agent</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">Gemini-3-Pro (Preview)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">52.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">60.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">27.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">61.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">44.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">72.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">56.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">70.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">51.44</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Gemini-3-Flash</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">47.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">69.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">58.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">25.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">45.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">69.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">47.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.5</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Qwen3-VL-8B</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">32.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">9.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">15.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">14.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">6.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">16.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.1</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表3：DV-Evol 主要结果。跨5种框架的性能差异显著——Python 最强，D3.js 和 Plotly.js 的复杂性暴露了跨范式语义迁移的瓶颈</p>
+
+              <h3 id="main-results-dvinter">DV-Inter 主要结果</h3>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 65%; font-size: 0.82em; border-collapse: collapse; margin: 0 auto;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">模型</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">MLLM-Score Overall</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">ISR</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Score</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">User Cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 10px; border: 1px solid #ccc;">Grok-4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">51.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">79.6</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">40.43</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">$0.051</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">DeepSeek-V3.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">51.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">74.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">37.9</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">$0.032</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">GPT-5.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">50.6</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">69.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">35.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">$0.021</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">Gemini-3-Pro</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">50.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">66.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">34.4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">$0.017</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">Qwen3-235B</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">29.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">74.6</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">20.9</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">$0.032</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表4：DV-Inter 主要结果。顶配模型 Grok-4 仅 40.43，ISR 和 MLLM-Score 共同构成瓶颈</p>
+
+              <h2 id="analysis">深度分析</h2>
+
+              <h3 id="analysis-sheet">原生电子表格操控分析</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/dvsheet_analysis.svg" alt="DV-Sheet 分析" style="max-width: 85%;">
+                <figcaption>图4：DV-Sheet 分析。(a) Table Coverage 与 Visual Aesthetics 呈正相关——数据越准确，视觉质量越高；(b) Fix 任务中不同错误类型的修复成功率——过滤逻辑修复最强，坐标轴缩放和编码错误修复最弱</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/dvsheet_error.svg" alt="DV-Sheet 错误分析" style="max-width: 85%;">
+                <figcaption>图5：DV-Sheet 错误分类。(a) Create 中 Data Accuracy 占超50%错误；(b) Fix 中数据准确度占69%；(c) Dash 中数据准确度占近46%。数据绑定的可靠性是首要瓶颈</figcaption>
+              </figure>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/dashboard_and_avol.svg" alt="Dashboard 和大表格分析" style="max-width: 85%;">
+                <figcaption>图6：(a) DVSheet-Dash 性能随表格规模（单元格数）增加而下降——大数据集带来显著的推理挑战；(b) DV-Evol 中五种框架的性能分布——Python 最强、D3.js 最弱</figcaption>
+              </figure>
+
+              <p><strong>关键发现一——数据准确度是核心瓶颈</strong>：在 DVSheet-Crea 中，<strong>数据准确度错误占超 50%</strong>；在 DVSheet-Fix 中更是高达 <strong>69%</strong>。说明当前模型在管理可靠的数据到图表的动态绑定方面存在<strong>根本性缺陷</strong>。</p>
+
+              <p><strong>关键发现二——修复能力与错误类型强相关</strong>：Agent 在过滤逻辑修复上表现较好，但在坐标轴缩放和编码错误上<strong>显著挣扎</strong>——这些错误需要精确的几何映射，而非简单的规则调整。</p>
+
+              <p><strong>关键发现三——数据规模对性能形成系统性压力</strong>：随着表格规模增大，仪表盘（Dashboard）性能持续下降，证实大数据集对推理稳定性和布局一致性构成实质性挑战。</p>
+
+              <h3 id="analysis-evol">跨范式可视化演进分析</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/evol_loc_any.svg" alt="LOC 性能衰减" style="max-width: 80%;">
+                <figcaption>图7：DV-Evol 性能随代码行数（LOC）增加而持续衰减——D3.js 等语法密度高的框架产生显著的"冗长度惩罚"</figcaption>
+              </figure>
+
+              <table style="width: 70%; font-size: 0.82em; border-collapse: collapse; margin: 1em auto;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">模型设置</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Python</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">ECharts</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Vega-Lite</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">D3.js</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Plotly.js</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 10px; border: 1px solid #ccc;">Gemini-3-Pro</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">60.4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">44.5</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">46.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">56.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">49.8</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">&nbsp;&nbsp;- w/o load_image</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">58.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">41.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">46.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">48.7</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">48.4</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">GPT-5.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">55.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">39.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">42.3</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">38.5</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">38.8</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">&nbsp;&nbsp;- w/o load_image</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">54.6</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">39.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">40.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">37.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">35.3</td></tr>
+                </tbody>
+              </table>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表5：load_image 工具消融实验。移除该工具导致 D3.js 上 Gemini-3-Pro 下降 7.69%，证明视觉反馈对高复杂度可视化演进的必要性</p>
+
+              <p><strong>关键发现一——load_image 是语义保真度的关键</strong>：消融实验中，移除 load_image 工具导致跨模型性能<strong>全面下降</strong>，Gemini-3-Pro 在 D3.js 上损失高达 <strong>7.69%</strong>。说明在高复杂度可视化演进中，视觉反馈是不可或缺的补偿机制。</p>
+
+              <p><strong>关键发现二——框架特定的错误模式</strong>：D3.js 等底层库引发高<strong>视觉样式错误率</strong>（Gemini-3-Flash 达 40.96%），而 ECharts/Vega-Lite 等声明式框架则暴露<strong>数据映射和组织</strong>的弱点（Gemini-3-Pro 在 ECharts 的数据一致性错误达 45.20%）。</p>
+
+              <h3 id="analysis-inter">交互主动性与对齐分析</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/inter.svg" alt="交互策略分析" style="max-width: 85%;">
+                <figcaption>图8：交互策略与性能分析。(a) 有效提问率 vs. 无效提问率及任务质量——Gemini-3-Pro 有效提问与任务质量的关联最强；(b) 有/无交互的性能对比——交互带来最高 23% 增益，但弱模型可能因低质量提问而性能下降</figcaption>
+              </figure>
+
+              <p><strong>关键发现——提问质量 &gt; 提问数量</strong>：转为交互式对齐后，Gemini-3-Pro 获得最高 <strong>23.0%</strong> 的性能增益，且其有效提问与任务质量的关联最强。而 Grok-4 和 DeepSeek-V3.2 虽然交互频率高，但并非总能转化为有效结果——<strong>针对性不强的交互反而引入噪声</strong>，甚至导致弱模型性能下降。识别关键歧义是达成专业级可视化的核心挑战。</p>
+
+              <h2 id="meta-eval">元评估：框架可靠性验证</h2>
+
+              <h3 id="simulator">用户模拟器分析</h3>
+
+              <figure>
+                <img src="/blogs/2026/Working-Agent/DV-World/user.svg" alt="用户模拟器分析" style="max-width: 85%;">
+                <figcaption>图9：Agent 能力与交互成本对比。GPT-5 系列领先，GPT-5-mini 处于效率前沿——在提供最高指令保真度的同时降低运营成本</figcaption>
+              </figure>
+
+              <table style="width: 55%; font-size: 0.85em; border-collapse: collapse; margin: 1em auto;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">模拟器模型</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">保真度 ↑</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Pearson ρ ↑</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">p-value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 10px; border: 1px solid #ccc;">GPT-5-mini (Ours)</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">88.67</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">0.86</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">&lt; 0.04</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">&nbsp;&nbsp;- w/o Reaction Rules</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">84.00</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.78</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">&lt; 0.05</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">&nbsp;&nbsp;- w/o Stage 1 Filtering</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">85.33</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.80</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">&lt; 0.05</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">Gemini-3-Flash</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">86.00</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.81</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">&lt; 0.02</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">O4-mini</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">85.33</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.83</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">&lt; 0.03</td></tr>
+                </tbody>
+              </table>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表6：用户模拟器消融实验。GPT-5-mini 达到 88.67% 保真度和 0.86 Pearson 相关系数，与人类行为高度一致。移除 Reaction Rules 或 Stage 1 过滤显著降低对齐度</p>
+
+              <h3 id="judge">MLLM 评委验证</h3>
+
+              <table style="width: 70%; font-size: 0.85em; border-collapse: collapse; margin: 1em auto;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">评委模型</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Item-level (Weighted κ)</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Case-level (ICC(A,1))</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">Model-level (Kendall's τ)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc; font-weight: bold;">Human-Human</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">0.903</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">0.932</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">1.000</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 10px; border: 1px solid #ccc;">Gemini-2.5-Flash</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.821</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.850</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">1.000</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">Gemini-3-Flash</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.815</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.842</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">1.000</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">GPT-4.1</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.791</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.831</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">1.000</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">GPT-4o</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.778</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.799</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">0.800</td></tr>
+                </tbody>
+              </table>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表7：MLLM 评委与人类评分的对齐度。Gemini-2.5-Flash 在 item-level（κ=0.821）和 case-level（ICC=0.850）上与人类专家对齐度最高。跨评委模型排名保持稳定</p>
+
+              <p>在 210 个任务的验证集上，人类评审间一致性达到 ICC(A,1) = <strong>0.932</strong>（加权 κ = 0.903），为自动化评审提供了实用上界。Gemini-2.5-Flash 在所有 MLLM 评委中与人类评分对齐度最高（κ=0.821, ICC=0.850），且跨评委模型的相对排名保持稳定，排除了评委家族偏差。</p>
+
+              <h2 id="conclusion">总结</h2>
+
+              <p>DV-World 的核心贡献可以归纳为：</p>
+
+              <p><strong>① 首个全生命周期 DV Agent 评测基准</strong>：覆盖从<strong>原生电子表格操控</strong>（创建、修复、仪表盘）、<strong>跨范式可视化演进</strong>（5种编程框架）到<strong>模糊需求下的主动交互对齐</strong>的完整 DV 工作流，填补了现有基准脱离真实场景的断层。</p>
+
+              <p><strong>② 高质量数据构建体系</strong>：由 18 位可视化专家通过严格的双阶段标注流程构建，数据源自真实社区，覆盖 51 种图表类型。三步适配协议确保数据的功能真实性和语义精确性。</p>
+
+              <p><strong>③ 混合评估框架</strong>：创新性地将基于 Rubric 的 MLLM-as-a-Judge（语义-视觉质量）与 Table-value Alignment（数值精度）相结合，Pearson 相关系数达 0.86，与人类判断高度一致。</p>
+
+              <p><strong>④ 揭示关键能力缺口</strong>：实验表明，即便是最强的 Gemini-3-Pro 和 GPT-5.2 整体得分也不足 50%，与人类 80%+ 存在巨大差距。数据准确度是首要瓶颈（占 50-69% 错误），交互质量比交互数量更重要。</p>
+
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                <strong>核心启示</strong>：DV-World 为社区提供了<strong>标准化的标尺</strong>来量化和加速可靠 DV Agent 的进展。未来的发展方向清晰：从一次性代码生成转向<strong>涵盖环境掌控、语义可迁移和主动意图对齐</strong>的综合生命周期管理。要突破当前的性能瓶颈，Agent 必须在数据绑定可靠性、误差诊断推理和上下文感知的主动交互方面取得实质性进步。
+              </p>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2604.25914" target="_blank" rel="noopener">DV-World: Benchmarking Data Visualization Agents in Real-World Scenarios</a> — Jinxiang Meng, Shaoping Huang, Fangyu Lei, et al. arXiv:2604.25914, 2026.</p>
+              <p>[2] <a href="https://dv-world-project.github.io" target="_blank" rel="noopener">DV-World Project Page</a></p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+
+            </div>
+
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+
+          if (!header.id) {
+            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          }
+
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
