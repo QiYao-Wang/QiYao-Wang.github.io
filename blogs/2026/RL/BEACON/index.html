@@ -1,0 +1,478 @@
+---
+layout: compress
+---
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <link rel="stylesheet" href="/assets/css/blog.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>hljs.highlightAll();</script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <div class="masthead">
+      <div class="masthead__inner-wrap">
+        <div class="masthead__menu">
+          <nav id="site-nav" class="greedy-nav">
+            <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div id="main" role="main">
+      <div class="sidebar sticky">
+        <div id="toc"></div>
+      </div>
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        <div class="page__inner-wrap">
+          <section class="page__content" itemprop="text">
+            <div class="blog-post-header">
+              <h1>BEACON：基于里程碑锚定的长程语言 Agent 策略学习方法</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 June 08, 2026 · AI-assistanted Qiyao Wang</span>
+                <span class="meta-topic">#RL</span>
+                <span class="meta-topic">#Credit Assignment</span>
+                <span class="meta-topic">#Paper</span>
+              </div>
+            </div>
+            <div class="blog-content">
+
+              <p>
+                本文介绍浙江大学与百度合作的论文 <strong>BEACON</strong>（<strong>B</strong>EACON: Mileston<strong>e</strong>-Guid<strong>e</strong>d Policy Le<strong>a</strong>rning for Long-Horizon Language Agents），发表于 ICML 2026。
+                该工作直击长程语言 Agent 强化学习中的两大顽疾——<strong>信用分配错位</strong>与<strong>样本效率低下</strong>，提出了一种基于里程碑分割的轨迹分段优化框架。在 ALFWorld 长程任务上，BEACON 以 <strong>92.9%</strong> 的成功率近乎翻倍于 GRPO 的 53.5%，有效样本利用率从 23.7% 跃升至 <strong>82.0%</strong>。
+              </p>
+
+              <h2 id="key-takeaways">Key Takeaways</h2>
+              <ul>
+                <li><strong>核心发现</strong>：轨迹级 RL（如 GRPO）在长程任务中因信用分配错位导致超 40% 的梯度更新包含矛盾信号，严重崩溃</li>
+                <li><strong>方法亮点</strong>：将轨迹按里程碑边界切分为段，段内做时序奖励衰减，段间做双尺度优势估计——轨迹级保全局、段级隔离下游方差</li>
+                <li><strong>SOTA 结果</strong>：ALFWorld 长程 92.9%（GRPO 53.5%），WebShop 75.6%，ScienceWorld 45.3%，1.5B 模型超越 GPT-4o</li>
+                <li><strong>样本效率</strong>：有效样本利用率从 23.7% → 82.0%，3.5 倍提升；零优势样本比例从 ~100% 降至 ~10%</li>
+                <li><strong>理论保证</strong>：基于「里程碑马尔可夫性」假设，证明了段级优势与下游回报的协方差近似为零（方差隔离定理）</li>
+                <li><strong>跨范式对比</strong>：超越 SFT 行为克隆（43% → 91.4%），证明方法并非简单模仿，而是通过信用锚定发现更优策略</li>
+              </ul>
+
+              <h2 id="motivation">Motivation：长程 Agent 训练的困境</h2>
+
+              <h3 id="background">背景：为什么长程任务如此困难</h3>
+              <p>
+                语言 Agent 需要在环境中执行几十步的顺序决策。以 ALFWorld 为例，一个典型的「加热苹果并放在桌子上」任务涉及导航到厨房、找到苹果、拿起苹果、走到微波炉、加热、取出、放到桌子上等多步操作。这类任务的特点是 <strong>奖励极其稀疏</strong>——只有任务全部完成时才获得正向信号。当前主流的策略优化方法（PPO、GRPO、RLOO）将轨迹视为平坦的动作序列，仅依赖终端奖励来分配信用。这种 <strong>轨迹级优化</strong> 在任务步数较少时尚可工作，但当步数超过某个阈值后，性能出现系统性崩塌。
+              </p>
+
+              <p style="background: #fff8e1; padding: 12px 16px; border-left: 4px solid #ff9800;">
+                <strong>核心困境：</strong>GRPO 在 ALFWorld 短任务（\(L^* \leq 4\) 步）上可达 76.7%，但在长任务（\(L^* > 7\) 步）上骤降至 53.5%。这种 <strong>30% 的相对衰减</strong> 揭示了一个根本性的优化瓶颈——问题不在模型容量，而在信用分配机制本身。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image.svg" alt="BEACON overview" style="max-width: 95%;">
+                <figcaption>图1：GRPO（左）将终端结果均匀分配给所有动作，惩罚错误的早期动作；BEACON（右）按里程碑切分轨迹，在双尺度上估计优势。右侧条形图展示了各方法在不同任务长度下的表现对比。</figcaption>
+              </figure>
+
+              <h3 id="root-causes">两大根本病因</h3>
+
+              <p><strong>病因一：信用分配错位（Credit Misattribution）</strong></p>
+              <p>
+                在轨迹级优化中，一条轨迹内的所有动作根据终端结果获得 <strong>相同符号的优势信号</strong>。考虑一个典型场景：Agent 正确地完成了前三个子目标（拿起物品、加热、取出），但在最后一步「放置物品」时犯了错误。GRPO 会给整条轨迹分配负优势，导致那三个正确的早期动作受到惩罚。更为严重的是，同一状态-动作对在不同轨迹中会收到相反的梯度信号——当后续动作恰好成功时获得正梯度，后续动作失败时获得负梯度。论文用 <strong>Contradictory Action Ratio（CAR）</strong> 量化这一现象：在训练高峰期，超过 <strong>40%</strong> 的重复状态-动作对收到矛盾信号。
+              </p>
+              <p>
+                从数学角度看，设共享状态-动作集为 \(\mathcal{S}_{\text{shared}}\)，对每个 \((s,a) \in \mathcal{S}_{\text{shared}}\)，定义 \(A^+\) 和 \(A^-\) 分别为该对获得正、负优势的轨迹数，则：
+                \[
+                \text{CAR} = \frac{1}{|\mathcal{S}_{\text{shared}}|} \sum_{(s,a) \in \mathcal{S}_{\text{shared}}} \mathbb{I}[A^+ > 0 \land A^- > 0]
+                \]
+                更致命的是，定义 <strong>Effective Gradient Ratio（EGR）</strong> 来度量梯度抵消后的残余信号：
+                \[
+                \text{EGR} = \frac{\sum_{(s,a) \in \mathcal{S}_{\text{shared}}} |g^+ - g^-|}{\sum_{(s,a) \in \mathcal{S}_{\text{shared}}} (g^+ + g^-)}
+                \]
+                其中 \(g^+\) 和 \(g^-\) 分别为正、负优势幅度的总和。EGR = 1 表示完全一致的梯度，越低表示抵消越严重。实验中 EGR 在峰值低于 20%，意味着 <strong>超过 80% 的梯度信号在抵消中消失</strong>。
+              </p>
+
+              <p><strong>病因二：样本效率低下（Sample Inefficiency）</strong></p>
+              <p>
+                随着任务长度增加，成功轨迹愈发稀少。更重要的是，大量轨迹完成了若干子目标但最终失败——这些「部分成功」轨迹包含宝贵的学习信号，但在轨迹级优化中 <strong>与完全失败获得相同的零奖励</strong>。论文统计显示，训练过程中部分成功轨迹占比稳定在 39%-47%，但没有任何学习信号被利用。成功的全样本不足 27%，意味着超过 73% 的采样被浪费。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-2.svg" alt="Diagnosis" style="max-width: 85%;">
+                <figcaption>图2：轨迹级优化的缺陷诊断。(a) 训练中轨迹分布：部分成功（橙色）占 39-47% 但获得零梯度。(b) 矛盾信号分析：CAR 峰值超 40%，有效学习信号塌缩至 20% 以下。</figcaption>
+              </figure>
+
+              <h3 id="existing-limits">现有方案及其局限</h3>
+              <p>
+                已有几种尝试提供更密集信用分配的方案，但各有不足：
+              </p>
+              <ul>
+                <li><strong>Process Reward Model（PRM）</strong>：需要昂贵的步骤级标注，且有 reward hacking 风险</li>
+                <li><strong>Monte Carlo Value Estimation（VinePPO）</strong>：每个决策点需要多次 rollout，计算成本成倍增长</li>
+                <li><strong>GiGPO</strong>：通过识别轨迹间重复出现的状态来构造步骤级比较组，但其有效性依赖于状态重复频率——当策略改善、轨迹多样化后，状态重复减少，效果退化</li>
+              </ul>
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;">
+                <strong>核心洞察：</strong>长程任务本身具有可利用的结构——它们天然分解为以 <strong>里程碑（milestone）</strong> 为边界的若干阶段。里程碑是表示子目标完成的状态转换，具有一个关键性质：一旦到达里程碑状态，后续轨迹的分布几乎只取决于剩余子目标，而与如何到达该里程碑无关。这一 <strong>近似马尔可夫性</strong> 使得信用可以在不同段之间解耦，而轨迹级方法完全忽略了这一结构。
+              </p>
+
+              <h2 id="method">方法：BEACON 框架</h2>
+
+              <p>
+                BEACON 的核心思想是 <strong>利用任务的组合结构来同时解决信用错位和样本低效</strong>。框架分为三个阶段：轨迹分割、段内奖励塑形、双尺度优势估计。给定一条轨迹，首先通过里程碑检测器识别出子目标完成的时间点，将轨迹划分为多个段；然后在每个段内为接近里程碑完成的动作分配更高信用；最后在轨迹级和段级两个尺度上分别计算优势并组合。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-3.svg" alt="BEACON method" style="max-width: 95%;">
+                <figcaption>图3：BEACON 框架全景。顶部：轨迹按里程碑边界分割，段内用时序衰减因子 γ 为靠近里程碑的动作分配更高信用。底部：双尺度优势估计——左侧为轨迹级比较，中间为段级比较（仅在到达同一里程碑的轨迹组内），右侧为两者组合。</figcaption>
+              </figure>
+
+              <h3 id="preliminaries">数学预备</h3>
+              <p>
+                考虑标准 MDP \((\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)\)，语言 Agent 策略 \(\pi_\theta\) 通过与环境交互产生轨迹 \(\tau = \{(s_t, a_t)\}_{t=1}^{T}\)。环境提供稀疏终端奖励 \(R(\tau) \in \{0, 1\}\) 指示任务是否成功。
+              </p>
+              <p>
+                假定存在一个 <strong>里程碑检测器</strong> \(\Phi: \mathcal{S} \times \mathcal{A} \times \mathcal{S} \rightarrow \{0, 1\}\)，当状态转移完成一个语义子目标时返回 1。关键是 \(\Phi\) <strong>不需要学习模型或人工标注</strong>——它从环境反馈中检测可观测的状态变化。例如在 ALFWorld 中检测物品状态变化（成功拿起、加热完成），在 WebShop 中检测页面跳转，在 ScienceWorld 中直接使用环境提供的显式子目标信号。
+              </p>
+
+              <h3 id="trajectory-partitioning">阶段一：轨迹分割与里程碑马尔可夫性</h3>
+              <p>
+                给定轨迹 \(\tau\)，对每个转移应用 \(\Phi\) 得到里程碑时间戳 \(\mathcal{M} = \{t_1, \ldots, t_K\}\)，其中 \(K\) 为完成的里程碑数。设 \(t_0 = 0\)、\(t_{K+1} = T\)，将轨迹分割为 \(K+1\) 个段：
+                \[
+                \text{Seg}_k = \{(s_t, a_t) : t_{k-1} < t \leq t_k\}, \quad k \in \{1, \ldots, K+1\}
+                \]
+              </p>
+              <p>
+                这一分割基于一个重要的结构假设：
+              </p>
+              <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;">
+                <strong>里程碑马尔可夫性（Milestone Markov Property）：</strong>对里程碑状态 \(s_{t_k}\)：
+                \[
+                P(\text{Seg}_{k+1}, \ldots, \text{Seg}_{K+1} \mid s_{t_k}, \text{Seg}_1, \ldots, \text{Seg}_k) \approx P(\text{Seg}_{k+1}, \ldots, \text{Seg}_{K+1} \mid s_{t_k})
+                \]
+                即给定到达里程碑状态的条件，未来轨迹分布几乎只取决于剩余子目标，而与历史执行细节无关。这在组合任务中十分自然：一旦物品被拿起，后续的成功取决于接下来要做什么，而不是物品是如何被找到的。
+              </p>
+              <p>
+                这一假设是后续方差隔离定理的基础。即使假设不完全满足（如存在跨段资源约束），BEACON 仍能提供经验收益：部分成功通过奖励塑形贡献梯度信号，段级比较即使不完全消除下游方差也能显著降低其影响。
+              </p>
+
+              <h3 id="temporal-reward-shaping">阶段二：时序奖励塑形</h3>
+              <p>
+                仅分割轨迹并不能解决样本低效的问题——失败轨迹中的段仍然获得零奖励。BEACON 引入 <strong>时序奖励塑形</strong> 来表彰部分进展。
+              </p>
+              <p>
+                对轨迹 \(\tau_i\) 中段 \(\text{Seg}_k\) 内的动作 \(a_t\)，设该轨迹完成了 \(K_i\) 个里程碑：
+                \[
+                r_t = \begin{cases} R_{\text{ms}} \cdot \gamma^{\,t_k - t} & \text{if } k \leq K_i \\ 0 & \text{if } k = K_i + 1 \end{cases}
+                \]
+                其中 \(R_{\text{ms}} > 0\) 是里程碑奖励常数，\(\gamma \in (0, 1)\) 是时序衰减因子。
+              </p>
+              <p>
+                这一设计有两个性质：(1) 所有已完成段中的动作获得正奖励，使 <strong>部分成功产生学习信号</strong>；(2) 越靠近里程碑完成的动作获得越高的信用，<strong>鼓励高效执行</strong>——因为时序衰减 \(\gamma^{t_k - t}\) 意味着距离完成步数越少，权重越大。
+              </p>
+              <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50;">
+                <strong>关键洞察：</strong>这一定义使得动作的奖励仅依赖于其在段内的位置和该段是否完成，而与该段之后的任何事件无关。这是后续方差隔离的数学基础。
+              </p>
+
+              <h3 id="dual-scale-advantage">阶段三：双尺度优势估计</h3>
+
+              <p>时序奖励塑形提供了稠密信号，但仍未完全解决信用错位：早期段中的动作仍可能通过轨迹级比较被后续结果所污染。BEACON 通过双尺度优势估计来解决这一问题。</p>
+
+              <h4>轨迹级优势</h4>
+              <p>
+                对于同一任务的 \(G\) 条轨迹 \(\{\tau_i\}_{i=1}^{G}\)，轨迹级优势沿用 GRPO 的标准化形式：
+                \[
+                A^{\text{traj}}_i = \frac{R(\tau_i) - \mu}{\sigma + \epsilon}
+                \]
+                其中 \(\mu = \frac{1}{G}\sum_i R(\tau_i)\)，\(\sigma\) 为终端奖励的标准差。这保留了 <strong>全局任务性能信号</strong>，确保策略朝着任务成功方向优化。
+              </p>
+
+              <h4>段级优势</h4>
+              <p>
+                轨迹级比较将所有动作等权对待，无法区分段内动作质量。BEACON 的创新在于 <strong>仅在到达相同里程碑的轨迹之间比较段表现</strong>。定义里程碑 \(k\) 的比较组：
+                \[
+                \mathcal{G}_k = \{i : K_i \geq k\}
+                \]
+                即所有至少完成了 \(k\) 个里程碑的轨迹。段的回报为：
+                \[
+                R_k^{(i)} = \sum_{t \in \text{Seg}_k^{(i)}} r_t
+                \]
+                段级优势将单步奖励与该组平均每步回报进行比较：
+                \[
+                A^{\text{seg}}_{i,t} = r_t - \frac{1}{|\mathcal{G}_k|} \sum_{j \in \mathcal{G}_k} \frac{R_k^{(j)}}{|\text{Seg}_k^{(j)}|}, \quad t \in \text{Seg}_k^{(i)}
+                \]
+              </p>
+              <p>
+                这一设计的核心保障来自以下定理：
+              </p>
+              <div style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9; margin: 1em 0;">
+                <strong>命题 1（方差隔离，Variance Isolation）：</strong><br>
+                在里程碑马尔可夫性假设下，对比较组 \(\mathcal{G}_k\) 中的轨迹：
+                \[
+                \text{Cov}_{i \in \mathcal{G}_k}\left(A^{\text{seg}}_{i,t}, R_{k'}^{(i)}\right) \approx 0, \quad \forall t \in \text{Seg}_k^{(i)}, \forall k' > k
+                \]
+              </div>
+              <p><strong>证明概要：</strong></p>
+              <p>
+                对 \(t \in \text{Seg}_k^{(i)}\)，塑形奖励 \(r_t\) 仅取决于段内位置（通过 \(t_k^{(i)} - t\)）和段 \(k\) 内的动作——这些发生在里程碑 \(k\) 到达之前。对 \(k' > k\)，段回报 \(R_{k'}^{(i)}\) 仅取决于段 \(k'\) 内的动作——这些发生在里程碑 \(k\) 到达之后。
+              </p>
+              <p>
+                由里程碑马尔可夫性，给定里程碑状态 \(s_{t_k}\)，段 \(k\) 和段 \(k'\) 中的动作条件独立：
+                \[
+                \mathbb{E}[r_t \cdot R_{k'}^{(i)} \mid i \in \mathcal{G}_k] \approx \mathbb{E}[r_t \mid i \in \mathcal{G}_k] \cdot \mathbb{E}[R_{k'}^{(i)} \mid i \in \mathcal{G}_k]
+                \]
+                因此：
+                \[
+                \text{Cov}(A^{\text{seg}}_{i,k}, R_{k'}^{(i)}) = \text{Cov}(R_k^{(i)} - \bar{R}_k, R_{k'}^{(i)}) = \text{Cov}(R_k^{(i)}, R_{k'}^{(i)}) \approx 0
+                \]
+              </p>
+              <p>
+                这一结果意味着 \(\text{Seg}_k\) 中动作的梯度 <strong>不受后续段结果的影响</strong>，从根本上解决了信用分配错位问题。值得注意的是，GiGPO 通过状态重复来构造组，无法提供这种保证——因为状态级分组仍然混合了来自不同后续结果的动作。
+              </p>
+
+              <h4>组合优势</h4>
+              <p>
+                最终，轨迹 \(\tau_i\) 的段 \(\text{Seg}_k\) 中动作 \(a_t\) 的优势为：
+                \[
+                \hat{A}_{i,t} = A^{\text{traj}}_i + \lambda \cdot A^{\text{seg}}_{i,t}
+                \]
+                其中 \(\lambda > 0\) 平衡全局任务性能与局部段质量。消融实验表明，单独使用段级优势在不同任务上表现差异巨大（ALFWorld 上仅 23.4%，WebShop 上 67.9%），而双尺度组合在所有任务上均稳健。
+              </p>
+
+              <h3 id="optimization">策略优化目标</h3>
+              <p>
+                使用标准的 PPO 裁剪替代目标进行策略更新：
+                \[
+                \mathcal{J}(\theta) = \mathbb{E}\left[\sum_{t} \min\left(\rho_t \hat{A}_{i,t}, \ \text{clip}\left(\rho_t, 1-\epsilon, 1+\epsilon\right) \hat{A}_{i,t}\right)\right]
+                \]
+                其中 \(\rho_t = \pi_\theta(a_t|s_t) / \pi_{\theta_{\text{old}}}(a_t|s_t)\) 是重要性采样比。
+              </p>
+
+              <h2 id="experiments">实验</h2>
+
+              <h3 id="exp-setup">实验设置</h3>
+              <p>
+                <strong>基座模型：</strong>Qwen2.5-1.5B-Instruct 和 Qwen2.5-7B-Instruct。所有 RL 方法使用完全相同的训练配置以保证公平对比。BEACON 特有参数 \(\gamma=0.95\)、\(\lambda=1.0\) 在所有 benchmark 上固定不做调优。
+              </p>
+              <p>
+                <strong>评测基准：</strong>
+              </p>
+              <ul>
+                <li><strong>ALFWorld</strong>：文本式具身推理，6 类家务任务，按最优轨迹长度分 Short（≤4）、Medium（5-7）、Long（>7）</li>
+                <li><strong>WebShop</strong>：118 万商品的网页导航环境，评测 Score（属性匹配的部分分）和 Success Rate</li>
+                <li><strong>ScienceWorld</strong>：30 类科学推理任务，需进行虚拟实验，步数常超 30 步</li>
+              </ul>
+              <p>
+                <strong>基线方法：</strong>(1) 闭源模型 GPT-4o、Gemini-2.5-Pro (ReAct)；(2) Prompting 方法 ReAct、Reflexion；(3) RL 方法 PPO、RLOO、GRPO、GiGPO。
+              </p>
+
+              <h3 id="main-results">主要结果</h3>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 100%; font-size: 0.75em; border-collapse: collapse;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: left;">类型</th>
+                    <th rowspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: left;">方法</th>
+                    <th colspan="4" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">ALFWorld</th>
+                    <th colspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">SciWorld</th>
+                    <th colspan="2" style="padding: 6px 8px; border: 1px solid #ccc; text-align: center;">WebShop</th>
+                  </tr>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">Short</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Medium</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Long</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Avg</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">Score</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Succ</th>
+                    <th style="padding: 4px 6px; border: 1px solid #ccc;">Score</th><th style="padding: 4px 6px; border: 1px solid #ccc;">Succ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #ebf0f5;"><td colspan="10" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">闭源模型</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">GPT-4o (ReAct)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">71.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">33.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">48.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">54.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">45.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.7</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">Gemini-2.5-Pro (ReAct)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">84.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">50.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">58.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">60.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">47.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">36.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.9</td></tr>
+
+                  <tr style="background: #ebf0f5;"><td colspan="10" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">基座：Qwen2.5-1.5B-Instruct</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">Direct Prompt</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">4.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">0.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">5.2</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">ReAct</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">18.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">10.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">2.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">12.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">9.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">1.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">40.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.3</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">Reflexion</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">18.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">3.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">3.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">55.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.9</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">PPO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">58.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">54.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">47.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">54.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">29.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">10.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">73.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">51.5</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">RLOO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">78.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">67.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">56.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">69.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">73.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">52.1</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">GRPO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">76.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">73.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">53.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">72.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">21.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">75.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">56.8</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">GiGPO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">90.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">84.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">79.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">86.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">35.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">25.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">83.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.0</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">BEACON (Ours)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">96.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">87.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">92.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">91.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">58.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">45.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">86.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">75.6</td></tr>
+
+                  <tr style="background: #ebf0f5;"><td colspan="10" style="padding: 4px 8px; font-weight: bold; border: 1px solid #ccc;">基座：Qwen2.5-7B-Instruct</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">Direct Prompt</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">30.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">10.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">3.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">14.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">4.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">26.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.8</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">ReAct</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">45.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">31.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">17.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">7.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">46.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">19.5</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">Prompting</td><td style="padding: 5px 8px; border: 1px solid #ccc;">Reflexion</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">56.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">38.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">42.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">23.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">11.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">58.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">28.8</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">PPO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">84.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">87.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">80.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">37.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">24.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">81.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">68.7</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">RLOO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">85.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">80.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">48.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">75.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">-</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">80.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">65.7</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">GRPO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">84.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">79.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">64.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">77.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">61.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">49.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">79.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">66.1</td></tr>
+                  <tr><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">GiGPO</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">93.6</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">91.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">79.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">90.8</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">69.2</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">53.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">84.4</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center;">72.8</td></tr>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 8px; border: 1px solid #ccc;">RL Training</td><td style="padding: 5px 8px; border: 1px solid #ccc;">BEACON (Ours)</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">95.1</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">94.9</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">90.0</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">94.5</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">83.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">64.3</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">87.7</td><td style="padding: 5px 6px; border: 1px solid #ccc; text-align: center; color: #c00;">79.7</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表1：主要结果。BEACON 在所有 benchmark 和模型规模上均取得最优。1.5B BEACON 超越 GPT-4o 和 Gemini-2.5-Pro 等闭源大模型。</p>
+
+              <h3 id="horizon-analysis">长程鲁棒性分析</h3>
+              <p>
+                BEACON 最显著的增益体现在长程任务上。对于 1.5B 模型，GRPO 从 Short 的 76.7% 骤降至 Long 的 53.5%（<strong>相对衰减 30%</strong>），GiGPO 从 90.7% 降至 79.5%（衰减 12.4%），而 BEACON 在 Short/Medium/Long 上分别达到 <strong>96.8%/87.0%/92.9%</strong>——几乎不受任务长度影响。
+              </p>
+              <p>
+                在 7B 模型上，相对 GRPO 的增益从 Short 的 +13% 增长到 Long 的 <strong>+39%</strong>，而 GiGPO 从 +11% 到 +22% 趋于饱和。GiGPO 依赖状态重复来构造步骤级比较组，当策略改善、轨迹多样化后状态重复减少，其效果退化。相比之下，BEACON 的里程碑锚定机制不依赖状态重复，收益随任务长度增长。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-5.svg" alt="Horizon scaling" style="max-width: 85%;">
+                <figcaption>图4：学习信号与长程扩展。(a) 零优势比（ZAR）变化；(b) 不同任务长度下相对 GRPO 的增益。BEACON 的增益随任务长度扩展，GiGPO 趋于饱和。</figcaption>
+              </figure>
+
+              <h3 id="sample-efficiency">样本效率：部分成功变为学习信号</h3>
+              <p>
+                在 ALFWorld 训练的第 150 轮，GRPO 有 39% 的轨迹是部分成功（完成至少一个里程碑但最终失败），这些轨迹获得零奖励。GiGPO 通过状态分组将比例降至 28%。BEACON 的时序奖励塑形为里程碑完成提供正奖励，将部分成功率降至 <strong>13%</strong>，有效样本利用率从 23.7% 提升至 <strong>82.0%——3.5 倍增长</strong>。
+              </p>
+              <p>
+                梯度饥饿度量（ZAR，零优势比）进一步证实：GRPO 训练起始时 ZAR 接近 100%，150 轮后仍约 55%。BEACON 起始 ZAR 仅 45%，并迅速降至约 <strong>10%</strong>——里程碑奖励从部分成功中提取信号，大幅缓解梯度饥饿。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-4.svg" alt="Sample efficiency" style="max-width: 85%;">
+                <figcaption>图5：样本效率对比。绿色为完全成功，橙色为部分成功（至少完成 1 个里程碑），灰色为完全失败。BEACON 大幅减少被浪费的部分成功轨迹。</figcaption>
+              </figure>
+
+              <h3 id="credit-concentration">信用集中度分析</h3>
+              <p>
+                定义 <strong>信用集中比（CCR）</strong> 为里程碑动作的平均优势幅度除以非里程碑动作的平均优势幅度。CCR=1 表示均匀信用，CCR>1 表示集中于里程碑。
+              </p>
+              <p>
+                GiGPO 的 CCR 最高（2.36），意味着里程碑动作获得的信用是非里程碑动作的 <strong>2.36 倍</strong>——这看似合理却有问题：过度集中惩罚了到达里程碑所必需的中间动作。GRPO 中等集中（1.37）。BEACON 的 CCR 最低（<strong>0.84</strong>），非里程碑动作反而获得略多信用，这是因为时序衰减为段内所有动作分配了梯度化的正信用，保留了探索性步骤的信号。尽管集中度最低，BEACON 却取得了最高性能——这一反直觉发现表明 <strong>信用应该奖励过程而非仅奖励结果</strong>。
+              </p>
+
+              <h3 id="beyond-bc">超越行为克隆</h3>
+              <p>
+                一个合理的质疑是 BEACON 是否退化为了行为克隆。实验给出了否定的答案：在 oracle 轨迹上做监督微调仅取得 43% 的成功率。BEACON 即使去掉时序衰减（\(\gamma=0\)，仅里程碑奖励）仍达到 81%，加入时序衰减（\(\gamma=0.95\)）进一步提升至 <strong>91.4%</strong>。这表明里程碑结构提供了信用分配的锚点，但策略通过 RL 发现了 <strong>超越 oracle 的执行策略</strong>。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-6.svg" alt="CCR and Oracle comparison" style="max-width: 85%;">
+                <figcaption>图6：信用分布与策略优化。(a) 各方法的信用集中比；(b) 与行为克隆（SFT）的对比——BEACON 即使无时序衰减也远超 SFT。</figcaption>
+              </figure>
+
+              <h3 id="training-dynamics">训练动态</h3>
+              <p>
+                BEACON 收敛速度显著快于 GRPO：在第 50 轮即达到 60% 成功率，而 GRPO 需要 120 轮才能达到相同水平。策略熵的分析更具启发性：BEACON 的熵平滑下降，反映稳定的策略精化过程；GRPO 在整个训练中保持高熵，反映梯度质量差带来的探索-利用困境。
+              </p>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-7.svg" alt="Training dynamics" style="max-width: 85%;">
+                <figcaption>图7：训练动态。(a) 成功率曲线——BEACON 收敛速度远快于 GRPO；(b) 策略熵演化——BEACON 平滑下降，GRPO 持续高熵。</figcaption>
+              </figure>
+
+              <h2 id="ablation">消融实验</h2>
+
+              <div style="overflow-x: auto; margin: 1em 0;">
+              <table style="width: 70%; font-size: 0.85em; border-collapse: collapse; margin: 0 auto;">
+                <thead>
+                  <tr style="background: #e8ecf1;">
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: left;">变体</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">ALFWorld</th>
+                    <th style="padding: 6px 10px; border: 1px solid #ccc; text-align: center;">WebShop</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="background: #dce8fa; font-weight: bold;"><td style="padding: 5px 10px; border: 1px solid #ccc;">BEACON（完整）</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">91.4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center; color: #c00;">75.6</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="3" style="padding: 4px 10px; font-weight: bold; border: 1px solid #ccc;">轨迹分割</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">  50% 里程碑随机丢弃</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">82.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">68.3</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">  随机分割（5 个任意位置）</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">74.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">57.6</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="3" style="padding: 4px 10px; font-weight: bold; border: 1px solid #ccc;">奖励塑形</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">  无时序衰减（\(\gamma=0\)）</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">81.2</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">62.1</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">  均匀塑形（\(\gamma=1\)）</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">71.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">64.1</td></tr>
+                  <tr style="background: #ebf0f5;"><td colspan="3" style="padding: 4px 10px; font-weight: bold; border: 1px solid #ccc;">优势估计</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">  无段级优势（=GRPO）</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">72.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">56.8</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">  无轨迹级优势</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">23.4</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">67.9</td></tr>
+                  <tr><td style="padding: 5px 10px; border: 1px solid #ccc;">GRPO</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">72.8</td><td style="padding: 5px 10px; border: 1px solid #ccc; text-align: center;">56.8</td></tr>
+                </tbody>
+              </table>
+              </div>
+              <p style="text-align: center; font-size: 0.85em; color: #666;">表2：消融实验（Qwen2.5-1.5B）。三大组件各自贡献显著，双尺度优势在不同任务上呈现互补效应。</p>
+
+              <p><strong>关键发现汇总：</strong></p>
+              <ul>
+                <li><strong>分割质量 > 分割本身：</strong>随机分割仅比 GRPO 高 1.4%，但完整里程碑比随机高 17.2%——证明收益来自利用任务固有结构，而非简单分段</li>
+                <li><strong>时序衰减不可或缺：</strong>移除衰减（\(\gamma=0\)）从 91.4% 降至 81.2%，而均匀塑形（\(\gamma=1\)）更差（71.8%）——因为不加区分的均匀奖励模糊了关键动作与准备动作的界限</li>
+                <li><strong>双尺度互补：</strong>仅用段级优势在 ALFWorld 上仅 23.4%（段级优化可能强化「到达里程碑但最终失败」的行为），而在 WebShop 上达 67.9%（里程碑完成与任务成功更一致）。轨迹级反馈提供必要的全局校正</li>
+                <li><strong>鲁棒性：</strong>50% 里程碑丢弃后仍达 82.8%，仍超 GRPO 10%，表明 BEACON 对不完美里程碑检测具有容忍度</li>
+              </ul>
+
+              <h2 id="case-study">案例分析：信用分配的可视化</h2>
+
+              <figure>
+                <img src="/blogs/2026/RL/BEACON/image-8.svg" alt="Case study" style="max-width: 95%;">
+                <figcaption>图8：代表性轨迹上的信用分配。(a) 失败轨迹——GRPO 统一惩罚，GiGPO 错误惩罚里程碑，BEACON 精确奖励里程碑并惩罚错误。(b) 成功但有迂回——GRPO 统一奖励，GiGPO 最重奖励迂回，BEACON 惩罚迂回并奖励里程碑。</figcaption>
+              </figure>
+
+              <p>
+                在失败轨迹中，Agent 完成 S3 和 S4 后失败。GRPO 分配统一负优势（\(A=-2.50\)），GiGPO 因状态匹配将里程碑 S3 与成功轨迹比较而给出 <strong>最低</strong> 优势（\(A=-4.00\)）——这是反直觉的错误分配。BEACON 正确地为里程碑分配正优势（\(A=+0.51\)）并惩罚错误动作。
+              </p>
+              <p>
+                在成功但包含不必要迂回的轨迹中，GRPO 给所有动作统一正优势（\(A=+7.50\)），GiGPO 对迂回部分给予 <strong>最重</strong> 奖励（\(A=+8.10\)）。BEACON 精确地 <strong>惩罚迂回</strong>（\(A=-1.10\)）同时奖励里程碑完成——体现了细粒度信用分配的能力。
+              </p>
+
+              <h2 id="discussion">讨论与展望</h2>
+              <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50;">
+                <strong>BEACON 打破的障碍：</strong>首次通过利用任务的组合结构，在理论上（方差隔离）和实验上（样本利用率 3.5× 提升）系统性地解决了长程 RL 的信用分配问题。1.5B 小模型经 BEACON 训练后超越 GPT-4o 和 Gemini-2.5-Pro，表明 <strong>恰当的训练方法可以弥补模型规模的不足</strong>。
+              </p>
+              <p>
+                <strong>局限与未来方向：</strong>
+              </p>
+              <ul>
+                <li><strong>里程碑检测：</strong>当前依赖领域知识设计模式匹配规则（如环境响应中的状态变化关键词）。开发自动化的里程碑发现方法——通过 LLM 识别语义上有意义的进展——是重要的开放问题</li>
+                <li><strong>里程碑粒度：</strong>过稀疏则逼近轨迹级优化，过密集则段级优势可能噪声过大。自适应或层次化的里程碑结构可能进一步提升性能</li>
+                <li><strong>应用范围：</strong>当前评测限于离散动作空间和文本式交互。里程碑锚定信用分配在连续控制、多智能体或低组合性任务上的适用性有待探索</li>
+              </ul>
+
+              <h2 id="conclusion">总结</h2>
+              <p>本文的核心贡献可归纳为：</p>
+              <ol>
+                <li><strong>问题诊断：</strong>通过 CAR、EGR、ZAR 等定量指标，首次系统性地揭示了轨迹级 RL 在长程任务中的信用错位（>40% 矛盾信号）和样本低效（>73% 采样浪费）双重危机</li>
+                <li><strong>方法论：</strong>提出 BEACON 框架，包含三个关键组件——轨迹按里程碑边界分割（利用任务的组合结构）、段内时序奖励衰减（将稀疏奖励转化为稠密反馈）、双尺度优势估计（轨迹级保全局方向 + 段级隔离下游方差）</li>
+                <li><strong>理论保证：</strong>在里程碑马尔可夫性假设下，证明了方差隔离定理——段级优势与后续段回报的协方差近似为零，从理论上保证了信用分配的独立性</li>
+                <li><strong>实验验证：</strong>在 ALFWorld（长程 92.9% vs GRPO 53.5%）、WebShop（75.6% vs 56.8%）、ScienceWorld（45.3% vs 21.1%）三个基准上的全面验证，展现出随任务长度增长的增益效应</li>
+              </ol>
+
+              <h2 id="reference">Reference</h2>
+              <p>[1] <a href="https://arxiv.org/abs/2605.06078" target="_blank" rel="noopener">Milestone-Guided Policy Learning for Long-Horizon Language Agents</a></p>
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </article>
+    </div>
+    {% include scripts.html %}
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toc = document.getElementById('toc');
+        toc.innerHTML = '<strong>Table of Contents</strong>';
+        const ul = document.createElement('ul');
+        toc.appendChild(ul);
+        const headers = document.querySelectorAll('h2, h3, h4');
+        headers.forEach(header => {
+          const li = document.createElement('li');
+          const level = parseInt(header.tagName[1]);
+          li.style.paddingLeft = `${(level - 2) * 12}px`;
+          const a = document.createElement('a');
+          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
+          a.textContent = header.innerText;
+          a.target = "_self";
+          if (!header.id) header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>
