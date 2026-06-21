@@ -314,9 +314,9 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
   - ***Law Intelligence***: LLMs for Law (there are some excellent works of SIAT-NLP, such as <a href="https://github.com/siat-nlp/HanFei">HanFei</a> and <a href="https://arxiv.org/abs/2408.08089">AgentCourt</a>)
   - ***Biomedical Intelligence***: AI for Biomedical.
 
-<p align="center">
+<!-- <p align="center">
   <img src="/images/research-focus.png" alt="Research Focus: Advancing LLMs and Agentic AI for Complex Reasoning, Retrieval, and Domain-Specific Intelligence" style="max-width: 100%; height: auto;">
-</p>
+</p> -->
  
 # 🔥 News
 
