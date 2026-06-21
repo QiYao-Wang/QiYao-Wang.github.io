@@ -295,7 +295,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 
 <hr>
 
-I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Wechat official account, <strong>Taibao-IP</strong>.
+I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Wechat official account, <strong>Taibao-IP</strong> [[Github Organization](https://github.com/AIforIP)].
 
 <hr>
 <p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
