@@ -339,7 +339,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </ul>
 </div>
 
-# Manuscripts
+# 📄 Manuscripts
 <div>
 <ul>
 <li>
