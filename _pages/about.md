@@ -505,19 +505,31 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 - Method, Apparatus, Computer Device, and Storage Medium for Recommending Procurement Evaluation Experts in Universities. *Rong Cao, Xinzhuo Wu, Yuan Lin, **Qiyao Wang**, Kan Xu, Wenfei Liu, Hongbo Wang*. 202511277799.3. 2025.09.29. DUT. Pending. (Main Member)
 - Method for Audio Transcription Annotation and Analysis Based on Multi-Agent Collaboration Mechanism. *Hongbo Wang, Yuan Lin, **Qiyao Wang**, Huanming Wang*. CN120492633A. 2025.05.30. DUT. Pending. (Main Member)
 - Method, Apparatus, Electronic Device, and Storage Medium for Generating a Patent Application Document. *Shiwen Ni, Min Yang, **Qiyao Wang***. CN202411824533.1. 2024.12.12 CAS-SIAT. Pending. (Sole Student Member)
+
+<details>
+<summary style="color:gray; cursor:pointer;">Show more patents (2)</summary>
+
 - A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. DUT. Licensed.
 - A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. DUT. Pending.
+
+</details>
 
 <p><strong>Software Copyrights</strong></p>
 
 - Intelligent Patent Examination Assistance System. *Yanchao Jian, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Hongbo Wang, Xufeng Chen, Kan Xu, Yuan Lin*. 2025SR1158441. 2025.07.03. DUT. Licensed. (Supervisor)
 - IntelliPatent: Chinese Patent Document Generation System. *Chenxing Li, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Shiqiang Wang, Haoran Hu, Hongbo Wang, Kan Xu, Yuan Lin*. 2025SR1158561. 2025.07.03. DUT. Licensed. (Supervisor)
 - IntelliCode Document Assistant System. *Haoran Hu, **Qiyao Wang**, Hongbo Wang, Zhifei Qin, Huaren Liu, Shiqiang Wang, Chenxing Li, Kan Xu and Yuan Lin.* 2025SR0724402. 2025.05.06. DUT. Licensed. (Supervisor)
+
+<details>
+<summary style="color:gray; cursor:pointer;">Show more software copyrights (5)</summary>
+
 - Automated Patent Drafting System. *Rong Cao, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Boyu Ma, Jingru Sun, Hongbo Wang, Kan Xu and Yuan Lin.* 2025SR0675652. 2025.04.24. DUT. Licensed. (Supervisor)
 - Smart Technology Contract Generation System. *Shiqiang Wang, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Hongbo Wang, Haoran Hu, Chenxing Li, Kan Xu and Yuan Lin*. 2025SR0674957. 2025.04.24. DUT. Licensed. (Supervisor)
 - Multimodal Smart Home System. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971269. 2024.07.10. DUT. Licensed.
 - Intellectual Property Intelligent Information Service Platform. ***Qiyao Wang**, Yuan Lin et.al.*. 2024SR0971263. 2024.07.10. DUT. Licensed.
 - Technology Integration Opportunity Discovery System. ***Qiyao Wang**, Yuan Lin et.al.* 2024SR0681926. 2024.05.20. DUT. Licensed.
+
+</details>
 
 # 🎖 Honors and Awards
 <p><strong>Academic Awards</strong></p>
@@ -534,13 +546,21 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
-- ***2025.11***: The 19th “Challenge Cup” National College Students’ Extracurricular Academic Science and Technology Competition —— <span style="color:darkred">***First Prize***</span> at the National level. (Supervisor)
+<!-- ⬇️ Update counts here when adding new awards ⬇️ -->
+<p style="color:gray; font-size:0.95em;">National: <strong style="color:#2c3e50;">10</strong> &nbsp;|&nbsp; Provincial: <strong style="color:#2c3e50;">12</strong></p>
+<!-- ⬆️ Update counts here when adding new awards ⬆️ -->
+
+- ***2025.11***: The 19th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Competition —— <span style="color:darkred">***First Prize***</span> at the National level. (Supervisor)
 - ***2025.10***：The 11th Liaoning Province TRIZ Cup College Student Innovation Method Competition —— *First Prize* in Liaoning Province. (Supervisor)
-- ***2025.08***：The 17th “Challenge Cup” Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province. (Supervisor)
+- ***2025.08***：The 17th "Challenge Cup" Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province. (Supervisor)
+
+<details>
+<summary style="color:gray; cursor:pointer;">Show more competition awards (17)</summary>
+
 - ***2025.08***：The 13th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Supervisor)
-- ***2025.08***：The 2025 China International College Students Innovation Competition **($\times 2$)** —— *Silver Prize* in Liaoning Province. (Supervisor)
+- ***2025.08***：The 2025 China International College Students Innovation Competition **(×2)** —— *Silver Prize* in Liaoning Province. (Supervisor)
 - ***2025.07***：The 18th China College Students' Computer Design Competition —— ***Third Prize*** at the National level. (Supervisor)
-- ***2025.06***: 2025 University Computer Competition, Internet Technology Challenge **($\times 2$)** —— *Third Prize* in Northeast Regional. (Supervisor)
+- ***2025.06***: 2025 University Computer Competition, Internet Technology Challenge **(×2)** —— *Third Prize* in Northeast Regional. (Supervisor)
 - ***2025.06***: The 12th College Students Innovation and Entrepreneurship Annual Meeting —— *Second Prize* in Liaoning Province. (Leader)
 - ***2025.05***: The 18th China College Students' Computer Design Competition —— *First Prize* in Liaoning Province. (Supervisor)
 - ***2024.12***: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (Leader)
@@ -554,6 +574,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 - ***2023.06***: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
 - ***2023.03***: U.S. National College Mathematics Competition —— ***Honorable Prize*** at the National level. (Leader)
 - ***2022.11***: The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
+
+</details>
 
 # 📖 Educations
 - ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
