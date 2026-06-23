@@ -520,7 +520,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Wechat official account, <strong>Taibao-IP</strong> [[Github Organization](https://github.com/AIforIP)].
 
 <hr>
-<p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right; opacity: 0.85;">—— Alan · Mathison · Turing</span></p>
+<p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
 
 # 📌 Research Interests  
 
@@ -542,7 +542,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
  
 # 🔥 News
 
-<div style="max-height: 200px; overflow-y: auto; padding-right: 6px;">
+<div style="max-height: 200px; overflow-y: auto;">
 <ul>
   <li><em><strong>2026.04.06:</strong></em> Two papers accepted by ACL 2026.</li>
   <li><em><strong>2025.12.02:</strong></em> One <a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">paper</a> published by <i>Library Theory and Practice</i> (CSSCI). </li>
