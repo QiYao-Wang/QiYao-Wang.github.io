@@ -385,6 +385,68 @@ redirect_from:
     background-color: rgba(233, 236, 239, 0.6);
     transform: translateX(4px);
   }
+
+  /* Card list for publications, manuscripts, projects */
+  .card-list > ul {
+    padding-left: 20px;
+  }
+
+  .card-list > ul > li {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: rgba(248, 249, 250, 0.5);
+    border-radius: 8px;
+    border-left: 3px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .card-list > ul > li:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-left-color: #3498db;
+  }
+
+  /* Timeline for education, internships, talks */
+  .timeline-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .timeline-list > li {
+    padding: 14px 18px;
+    margin-bottom: 10px;
+    background: rgba(248, 249, 250, 0.5);
+    border-radius: 8px;
+    border-left: 3px solid #2ecc71;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .timeline-list > li:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Service card */
+  .service-card {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .service-card > li {
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    background: rgba(248, 249, 250, 0.5);
+    border-radius: 6px;
+    border-left: 3px solid #9b59b6;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .service-card > li:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
 </style>
 
 {% if site.google_scholar_stats_use_cdn %}
@@ -464,7 +526,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div>
 
 # 📄 Manuscripts
-<div>
+<div class="card-list">
 <ul>
 <li>
      PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
@@ -503,7 +565,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p><strong>2026 and Earlier</strong></p>
 
-<div>
+<div class="card-list">
   <ul>
     <li>
     Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice. <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.
@@ -551,7 +613,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <hr>
 
 <p><strong>Survey</strong></p>
-<div>
+<div class="card-list">
   <ul>
     <li>
      A Survey on Large Language Model Benchmarks. <em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong>Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em>.
@@ -565,7 +627,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p><strong>Chinese Papers</strong></p>
 
-<div>
+<div class="card-list">
   <ul>
     <li>
       <span>AutoPatent: 基于多智能体的自动专利生成框架.</span>
@@ -601,7 +663,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 # 🔧 Projects
 
 <p><strong>Research Projects</strong></p>
-<div>
+<div class="card-list">
   <ul>
     <li>大语言模型技术对知识产权数据开放和使用的影响研究：以专利为例. 国家知识产权战略实施研究基地专项研究. ZX250602. (Student Member)</li>
     <li>融合多源信息的学术推荐研究. 国家自然科学基金面上项目. 61976036. (Student Member)</li>
@@ -708,12 +770,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div>
 
 # 📖 Educations
-- ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
-- ***2021.09 - 2025.06***, Bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
+<ul class="timeline-list">
+  <li><strong><em>2025.09 - (5 years)</em></strong>, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.</li>
+  <li><strong><em>2021.09 - 2025.06</em></strong>, Bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.</li>
+</ul>
   
 # 💬 Academic Services
 <p><strong>Reviewer</strong></p>
-<ul>
+<ul class="service-card">
 <li>
 Conference Reviewer of NeurIPS 2026.
 </li>
@@ -723,13 +787,16 @@ Journal Reviewer of Expert Systems
 </ul>
 
 <p><strong>Talks</strong></p>
-
-- ***2024.12.09***: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a>
-- ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
+<ul class="timeline-list">
+  <li><strong><em>2024.12.09</em></strong>: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a></li>
+  <li><strong><em>2024.11.20</em></strong>: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a></li>
+</ul>
 
 # 💻 Internships
-- ***2025.10 - 2026.03***: Tongyi Lab, Alibaba, Beijing
-- ***2022.12 - 2025.09***: DUTIR, Dalian
+<ul class="timeline-list">
+  <li><strong><em>2025.10 - 2026.03</em></strong>: Tongyi Lab, Alibaba, Beijing</li>
+  <li><strong><em>2022.12 - 2025.09</em></strong>: DUTIR, Dalian</li>
+</ul>
 
 <div style="width: 300px; height: auto;">
   <script type="text/javascript" id="clustrmaps" 
