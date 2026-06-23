@@ -514,6 +514,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </ul>
 </details>
 
+<br>
+
 <p><strong>Software Copyrights</strong></p>
 
 - Intelligent Patent Examination Assistance System. *Yanchao Jian, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Hongbo Wang, Xufeng Chen, Kan Xu, Yuan Lin*. 2025SR1158441. 2025.07.03. DUT. Licensed. (Supervisor)
