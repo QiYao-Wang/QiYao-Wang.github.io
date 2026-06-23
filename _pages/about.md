@@ -650,13 +650,13 @@ Updated at April, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color
 
 <script>
     // Dynamically count competition awards by keywords
-    (function() {
+    function countAwards() {
         var container = document.getElementById('competition-awards-list');
         if (!container) return;
         var items = container.querySelectorAll('li');
         var national = 0, provincial = 0;
-        items.forEach(function(li) {
-            var text = li.textContent;
+        for (var i = 0; i < items.length; i++) {
+            var text = items[i].textContent;
             var m = text.match(/\u00d7\s*(\d+)/);
             var mult = m ? parseInt(m[1]) : 1;
             if (text.indexOf('National level') !== -1) {
@@ -664,10 +664,15 @@ Updated at April, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color
             } else if (text.indexOf('Province') !== -1 || text.indexOf('Provincial') !== -1 || text.indexOf('Regional') !== -1) {
                 provincial += mult;
             }
-        });
+        }
         var el = document.getElementById('award-counts');
         if (el) {
             el.innerHTML = 'National: <strong style="color:#2c3e50;">' + national + '</strong> &nbsp;|&nbsp; Provincial: <strong style="color:#2c3e50;">' + provincial + '</strong>';
         }
-    })();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', countAwards);
+    } else {
+        countAwards();
+    }
 </script>
