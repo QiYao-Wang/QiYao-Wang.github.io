@@ -549,32 +549,33 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <p style="color:gray; font-size:0.95em;" id="award-counts">Counting...</p>
 
 <div id="competition-awards-list">
-
-- ***2025.11***: The 19th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Competition —— <span style="color:darkred">***First Prize***</span> at the National level. (Supervisor)
-- ***2025.10***：The 11th Liaoning Province TRIZ Cup College Student Innovation Method Competition —— *First Prize* in Liaoning Province. (Supervisor)
-- ***2025.08***：The 17th "Challenge Cup" Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province. (Supervisor)
+<ul>
+  <li><strong><em>2025.11</em></strong>: The 19th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Competition —— <span style="color:darkred"><strong><em>First Prize</em></strong></span> at the National level. (Supervisor)</li>
+  <li><strong><em>2025.10</em></strong>: The 11th Liaoning Province TRIZ Cup College Student Innovation Method Competition —— <em>First Prize</em> in Liaoning Province. (Supervisor)</li>
+  <li><strong><em>2025.08</em></strong>: The 17th "Challenge Cup" Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— <em>Grand Prize</em> in Liaoning Province. (Supervisor)</li>
+</ul>
 
 <details>
 <summary style="color:gray; cursor:pointer;">Show more</summary>
-
-- ***2025.08***：The 13th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Supervisor)
-- ***2025.08***：The 2025 China International College Students Innovation Competition **(×2)** —— *Silver Prize* in Liaoning Province. (Supervisor)
-- ***2025.07***：The 18th China College Students' Computer Design Competition —— ***Third Prize*** at the National level. (Supervisor)
-- ***2025.06***: 2025 University Computer Competition, Internet Technology Challenge **(×2)** —— *Third Prize* in Northeast Regional. (Supervisor)
-- ***2025.06***: The 12th College Students Innovation and Entrepreneurship Annual Meeting —— *Second Prize* in Liaoning Province. (Leader)
-- ***2025.05***: The 18th China College Students' Computer Design Competition —— *First Prize* in Liaoning Province. (Supervisor)
-- ***2024.12***: The 18th iCAN Innovation Contest —— ***Third Prize*** at the National level. (Leader)
-- ***2024.11***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <span style="color:darkred">***Second Prize***</span> at the National level. (Leader)
-- ***2024.10***: The 18th iCAN Innovation Contest —— *Second Prize* in Liaoning Province. (Supervisor)
-- ***2024.09***: 2024 University Computer Competition, Internet Technology Challenge —— ***Third Prize*** at the National level. (Leader)
-- ***2024.09***: The 12th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Leader)
-- ***2024.08***: The 2024 China International College Students Innovation Competition —— *Gold Prize* in Liaoning Province. (Leader)
-- ***2024.07***: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— *Grand Prize* in Liaoning Province. (Leader)
-- ***2024.07***: The 17th China College Students' Computer Design Competition —— ***Second Prize*** at the National level. (Leader)
-- ***2023.06***: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— *Grand Prize* in Liaoning Province. (Main Member)
-- ***2023.03***: U.S. National College Mathematics Competition —— ***Honorable Prize*** at the National level. (Leader)
-- ***2022.11***: The 14th National College Students' Mathematics Competition —— ***First Prize*** at the National level. (Single Member)
-
+<ul>
+  <li><strong><em>2025.08</em></strong>: The 13th China TRIZ Cup College Students' Innovation Method Competition —— <strong><em>Second Prize</em></strong> at the National level. (Supervisor)</li>
+  <li><strong><em>2025.08</em></strong>: The 2025 China International College Students Innovation Competition <strong>(×2)</strong> —— <em>Silver Prize</em> in Liaoning Province. (Supervisor)</li>
+  <li><strong><em>2025.07</em></strong>: The 18th China College Students' Computer Design Competition —— <strong><em>Third Prize</em></strong> at the National level. (Supervisor)</li>
+  <li><strong><em>2025.06</em></strong>: 2025 University Computer Competition, Internet Technology Challenge <strong>(×2)</strong> —— <em>Third Prize</em> in Northeast Regional. (Supervisor)</li>
+  <li><strong><em>2025.06</em></strong>: The 12th College Students Innovation and Entrepreneurship Annual Meeting —— <em>Second Prize</em> in Liaoning Province. (Leader)</li>
+  <li><strong><em>2025.05</em></strong>: The 18th China College Students' Computer Design Competition —— <em>First Prize</em> in Liaoning Province. (Supervisor)</li>
+  <li><strong><em>2024.12</em></strong>: The 18th iCAN Innovation Contest —— <strong><em>Third Prize</em></strong> at the National level. (Leader)</li>
+  <li><strong><em>2024.11</em></strong>: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <span style="color:darkred"><strong><em>Second Prize</em></strong></span> at the National level. (Leader)</li>
+  <li><strong><em>2024.10</em></strong>: The 18th iCAN Innovation Contest —— <em>Second Prize</em> in Liaoning Province. (Supervisor)</li>
+  <li><strong><em>2024.09</em></strong>: 2024 University Computer Competition, Internet Technology Challenge —— <strong><em>Third Prize</em></strong> at the National level. (Leader)</li>
+  <li><strong><em>2024.09</em></strong>: The 12th China TRIZ Cup College Students' Innovation Method Competition —— <strong><em>Second Prize</em></strong> at the National level. (Leader)</li>
+  <li><strong><em>2024.08</em></strong>: The 2024 China International College Students Innovation Competition —— <em>Gold Prize</em> in Liaoning Province. (Leader)</li>
+  <li><strong><em>2024.07</em></strong>: The 14th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <em>Grand Prize</em> in Liaoning Province. (Leader)</li>
+  <li><strong><em>2024.07</em></strong>: The 17th China College Students' Computer Design Competition —— <strong><em>Second Prize</em></strong> at the National level. (Leader)</li>
+  <li><strong><em>2023.06</em></strong>: The 18th "Challenge Cup" College Students' Extracurricular Academic Science and Technology Works Competition —— <em>Grand Prize</em> in Liaoning Province. (Main Member)</li>
+  <li><strong><em>2023.03</em></strong>: U.S. National College Mathematics Competition —— <strong><em>Honorable Prize</em></strong> at the National level. (Leader)</li>
+  <li><strong><em>2022.11</em></strong>: The 14th National College Students' Mathematics Competition —— <strong><em>First Prize</em></strong> at the National level. (Single Member)</li>
+</ul>
 </details>
 
 </div>
