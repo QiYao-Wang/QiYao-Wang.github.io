@@ -57,7 +57,7 @@ redirect_from:
     border-radius: 6px;
     font-size: 0.93em;
     font-weight: 600;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.5px;
     box-shadow: 0 3px 8px rgba(44, 62, 80, 0.3);
     z-index: 1;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -182,7 +182,7 @@ redirect_from:
     font-size: 1.2em;
     margin-bottom: 8px;
     color: #2c3e50;
-    letter-spacing: 0.2px;
+
   }
 
   .experience-title a, .education-title a {
@@ -389,7 +389,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Wechat official account, <strong>Taibao-IP</strong> [[Github Organization](https://github.com/AIforIP)].
 
 <hr>
-<p style="font-family: 'Times New Roman', sans-serif; font-size: 1.02em; line-height: 1.9; letter-spacing: 0.2px;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right; opacity: 0.85;">—— Alan · Mathison · Turing</span></p>
+<p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right; opacity: 0.85;">—— Alan · Mathison · Turing</span></p>
 
 # 📌 Research Interests  
 
