@@ -8,7 +8,7 @@ redirect_from:
 ---
 
 <style>
-  /* === Global Typography & Rendering === */
+  /* === Global Rendering === */
   body {
     color: #333;
     background-image: url('../images/bg.jpg');
@@ -17,8 +17,24 @@ redirect_from:
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    line-height: 1.7;
+  }
+
+  /* === Main Content Frosted Glass === */
+  .page__content {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 36px 40px !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  @media screen and (max-width: 768px) {
+    .page__content {
+      padding: 20px 16px !important;
+      border-radius: 10px;
+    }
   }
 
   dl {
@@ -29,11 +45,7 @@ redirect_from:
   /* Links */
   a {
     color: #0066cc;
-    transition: color 0.25s ease, text-shadow 0.25s ease;
-  }
-
-  a:hover {
-    text-shadow: 0 0 0.5px rgba(0, 102, 204, 0.3);
+    transition: color 0.25s ease;
   }
 
   /* Author name color */
@@ -44,6 +56,48 @@ redirect_from:
   /* Year title color */
   .year-title {
     color: #666;
+  }
+
+  /* === Section Headings (h1 with emoji) === */
+  .page__content h1 {
+    position: relative;
+    padding-left: 18px;
+    padding-bottom: 14px;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+    border-bottom: none;
+  }
+
+  .page__content h1::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 4px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #2c3e50, #3498db);
+  }
+
+  .page__content h1::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(to right, rgba(52, 152, 219, 0.4), rgba(235, 235, 235, 0.3), transparent);
+  }
+
+  /* === Sub-section Titles (Spotlight Models, Survey, etc.) === */
+  .page__content > p > strong:first-child:only-child,
+  .page__content > div > p > strong:first-child:only-child {
+    display: inline-block;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-weight: 500;
   }
 
   /* === Conference Label === */
@@ -105,7 +159,7 @@ redirect_from:
   hr {
     border: 0;
     height: 1px;
-    background: linear-gradient(to right, rgba(235, 235, 235, 0), rgba(235, 235, 235, 0.8), rgba(235, 235, 235, 0));
+    background: linear-gradient(to right, rgba(235, 235, 235, 0), rgba(180, 180, 180, 0.5), rgba(235, 235, 235, 0));
     margin: 1.5em 0;
     clear: both;
   }
@@ -182,7 +236,6 @@ redirect_from:
     font-size: 1.2em;
     margin-bottom: 8px;
     color: #2c3e50;
-
   }
 
   .experience-title a, .education-title a {
@@ -213,6 +266,60 @@ redirect_from:
     margin: 40px 0 20px;
     padding-bottom: 12px;
     border-bottom: 2px solid #ecf0f1;
+  }
+
+  /* === Publication List Items as Cards === */
+  .page__content > div > ul,
+  .page__content > ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .page__content > div > ul > li,
+  .page__content > ul > li {
+    background: rgba(248, 250, 252, 0.8);
+    border: 1px solid rgba(230, 234, 238, 0.6);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  }
+
+  .page__content > div > ul > li:hover,
+  .page__content > ul > li:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+    border-color: rgba(52, 152, 219, 0.3);
+    transform: translateX(3px);
+  }
+
+  /* === Manuscripts section specific === */
+  .page__content > div:first-of-type ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  /* === News Scroll Container === */
+  div[style*="max-height"] {
+    background: rgba(248, 250, 252, 0.7);
+    border: 1px solid rgba(230, 234, 238, 0.5);
+    border-radius: 12px;
+    padding: 16px 20px 16px 16px;
+    scrollbar-width: thin;
+    scrollbar-color: #c4c4c4 transparent;
+  }
+
+  div[style*="max-height"]::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  div[style*="max-height"]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  div[style*="max-height"]::-webkit-scrollbar-thumb {
+    background-color: #c4c4c4;
+    border-radius: 10px;
   }
 
   /* === Honors & Awards === */
@@ -292,35 +399,36 @@ redirect_from:
     color: #2980b9;
   }
 
-  /* === Publication List Refinement === */
-  .page__content ul li {
-    margin-bottom: 0.7em;
-    line-height: 1.75;
+  /* === Education Timeline === */
+  .page__content h1 + ul {
+    list-style: none;
+    padding-left: 20px;
+    border-left: 2px solid #ecf0f1;
   }
 
-  /* === News Scroll Container === */
-  div[style*="max-height: 200px"] {
-    scrollbar-width: thin;
-    scrollbar-color: #c4c4c4 transparent;
+  .page__content h1 + ul > li {
+    position: relative;
+    padding: 8px 0 8px 20px;
+    margin-bottom: 8px;
   }
 
-  div[style*="max-height: 200px"]::-webkit-scrollbar {
-    width: 5px;
+  .page__content h1 + ul > li::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
   }
 
-  div[style*="max-height: 200px"]::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  div[style*="max-height: 200px"]::-webkit-scrollbar-thumb {
-    background-color: #c4c4c4;
-    border-radius: 10px;
-  }
-
-  /* === Heading Refinement === */
-  .page__content h1 {
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(235, 235, 235, 0.7);
+  /* === Internship Timeline === */
+  .page__content h1 + ul + ul,
+  .page__content h1 ~ ul:not(.honors-list):not(.service-list) {
+    list-style: none;
   }
 
   /* === Details/Summary Polish === */
@@ -329,10 +437,16 @@ redirect_from:
     border: 1px solid rgba(233, 236, 239, 0.6);
     padding: 0 16px;
     transition: all 0.3s ease;
+    background: rgba(248, 250, 252, 0.5);
+  }
+
+  details:hover {
+    border-color: rgba(52, 152, 219, 0.3);
   }
 
   details[open] {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    background: rgba(248, 250, 252, 0.8);
   }
 
   details summary {
@@ -343,12 +457,31 @@ redirect_from:
   img[src*="shields.io"] {
     vertical-align: middle;
     margin-left: 4px;
-    opacity: 0.9;
-    transition: opacity 0.2s ease;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, transform 0.2s ease;
   }
 
   img[src*="shields.io"]:hover {
     opacity: 1;
+    transform: scale(1.05);
+  }
+
+  /* === Email Line Accent === */
+  .page__content p em strong {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-style: normal;
+  }
+
+  /* === Quote Block Refinement === */
+  .page__content p[style*="Times New Roman"] {
+    background: rgba(248, 250, 252, 0.6);
+    border-left: 3px solid #2c3e50;
+    padding: 16px 20px;
+    border-radius: 0 10px 10px 0;
+    margin: 1em 0;
   }
 </style>
 
