@@ -213,7 +213,6 @@ redirect_from:
     margin: 40px 0 20px;
     padding-bottom: 12px;
     border-bottom: 2px solid #ecf0f1;
-    letter-spacing: 0.3px;
   }
 
   /* === Honors & Awards === */
@@ -320,7 +319,6 @@ redirect_from:
 
   /* === Heading Refinement === */
   .page__content h1 {
-    letter-spacing: 0.3px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(235, 235, 235, 0.7);
   }
