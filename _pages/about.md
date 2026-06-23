@@ -552,14 +552,15 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <div id="competition-awards-list">
 <ul>
+  <li><strong><em>2026.06</em></strong>: 2026 "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <em>Grand Prize</em> in Liaoning Province. (Supervisor)</li>
   <li><strong><em>2025.11</em></strong>: The 19th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Competition —— <span style="color:darkred"><strong><em>First Prize</em></strong></span> at the National level. (Supervisor)</li>
   <li><strong><em>2025.10</em></strong>: The 11th Liaoning Province TRIZ Cup College Student Innovation Method Competition —— <em>First Prize</em> in Liaoning Province. (Supervisor)</li>
-  <li><strong><em>2025.08</em></strong>: The 17th "Challenge Cup" Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— <em>Grand Prize</em> in Liaoning Province. (Supervisor)</li>
 </ul>
 
 <details>
 <summary style="color:gray; cursor:pointer;">Show more</summary>
 <ul>
+  <li><strong><em>2025.08</em></strong>: The 17th "Challenge Cup" Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— <em>Grand Prize</em> in Liaoning Province. (Supervisor)</li>
   <li><strong><em>2025.08</em></strong>: The 13th China TRIZ Cup College Students' Innovation Method Competition —— <strong><em>Second Prize</em></strong> at the National level. (Supervisor)</li>
   <li><strong><em>2025.08</em></strong>: The 2025 China International College Students Innovation Competition <strong>(×2)</strong> —— <em>Silver Prize</em> in Liaoning Province. (Supervisor)</li>
   <li><strong><em>2025.07</em></strong>: The 18th China College Students' Computer Design Competition —— <strong><em>Third Prize</em></strong> at the National level. (Supervisor)</li>
