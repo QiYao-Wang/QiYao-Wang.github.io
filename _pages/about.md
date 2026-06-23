@@ -261,6 +261,130 @@ redirect_from:
   .service-list li a:hover {
     color: #2980b9;
   }
+
+  /* Details/Summary Enhancement */
+  details {
+    margin: 12px 0;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: rgba(248, 249, 250, 0.5);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  details:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    border-color: #ced4da;
+  }
+
+  details summary {
+    padding: 10px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s ease;
+    list-style: none;
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details summary::before {
+    content: '\25B6';
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #7a8288;
+    font-size: 0.75em;
+  }
+
+  details[open] summary {
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  details[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  details summary:hover {
+    background-color: rgba(233, 236, 239, 0.5);
+  }
+
+  details > ul,
+  details > div {
+    padding: 8px 16px 12px 16px;
+    margin: 0;
+  }
+
+  details[open] > ul,
+  details[open] > div {
+    animation: detailsFadeIn 0.3s ease;
+  }
+
+  @keyframes detailsFadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Award stat badges */
+  .award-stats {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+
+  .award-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .award-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .award-badge.national {
+    background: linear-gradient(135deg, #e8f4fd, #d1ecf9);
+    border: 1px solid #b3d7f2;
+    color: #1a5276;
+  }
+
+  .award-badge.provincial {
+    background: linear-gradient(135deg, #fef9e7, #fcf3cf);
+    border: 1px solid #f5cba7;
+    color: #7d6608;
+  }
+
+  /* News section enhancement */
+  .news-container {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 8px 12px;
+    background: rgba(248, 249, 250, 0.5);
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+  }
+
+  .news-container ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .news-container li {
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .news-container li:hover {
+    background-color: rgba(233, 236, 239, 0.6);
+    transform: translateX(4px);
+  }
 </style>
 
 {% if site.google_scholar_stats_use_cdn %}
@@ -320,7 +444,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
  
 # 🔥 News
 
-<div style="max-height: 200px; overflow-y: auto;">
+<div class="news-container">
 <ul>
   <li><em><strong>2026.04.06:</strong></em> Two papers accepted by ACL 2026.</li>
   <li><em><strong>2025.12.02:</strong></em> One <a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">paper</a> published by <i>Library Theory and Practice</i> (CSSCI). </li>
@@ -548,7 +672,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
-<p style="color:gray; font-size:0.95em;" id="award-counts">Counting...</p>
+<div class="award-stats" id="award-counts">Counting...</div>
 
 <div id="competition-awards-list">
 <ul>
@@ -668,7 +792,7 @@ Updated at April, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color
         }
         var el = document.getElementById('award-counts');
         if (el) {
-            el.innerHTML = 'National: <strong style="color:#2c3e50;">' + national + '</strong> &nbsp;|&nbsp; Provincial: <strong style="color:#2c3e50;">' + provincial + '</strong>';
+            el.innerHTML = '<span class="award-badge national">\uD83C\uDFC6 National: <strong>' + national + '</strong></span><span class="award-badge provincial">\uD83C\uDFC5 Provincial: <strong>' + provincial + '</strong></span>';
         }
     }
     if (document.readyState === 'loading') {
