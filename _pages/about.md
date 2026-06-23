@@ -507,7 +507,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 - Method, Apparatus, Electronic Device, and Storage Medium for Generating a Patent Application Document. *Shiwen Ni, Min Yang, **Qiyao Wang***. CN202411824533.1. 2024.12.12 CAS-SIAT. Pending. (Sole Student Member)
 
 <details>
-<summary style="color:gray; cursor:pointer;">Show more patents (2)</summary>
+<summary style="color:gray; cursor:pointer;">Show more</summary>
 
 - A query expansion method based on collaborative enhancement at the term level. ***Qiyao Wang**, Shule Lu, Yang Yang, Yuan Lin et.al.*. CN118467708A. 2024.08.09. DUT. Licensed.
 - A Technology Integration Opportunity Prediction Method Based on Large Language Models. ***Qiyao Wang**, Kan Xu, Shule Lu et.al.*. CN118246534A. 2024.06.25. DUT. Pending.
@@ -521,7 +521,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 - IntelliCode Document Assistant System. *Haoran Hu, **Qiyao Wang**, Hongbo Wang, Zhifei Qin, Huaren Liu, Shiqiang Wang, Chenxing Li, Kan Xu and Yuan Lin.* 2025SR0724402. 2025.05.06. DUT. Licensed. (Supervisor)
 
 <details>
-<summary style="color:gray; cursor:pointer;">Show more software copyrights (5)</summary>
+<summary style="color:gray; cursor:pointer;">Show more</summary>
 
 - Automated Patent Drafting System. *Rong Cao, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Boyu Ma, Jingru Sun, Hongbo Wang, Kan Xu and Yuan Lin.* 2025SR0675652. 2025.04.24. DUT. Licensed. (Supervisor)
 - Smart Technology Contract Generation System. *Shiqiang Wang, **Qiyao Wang**, Huaren Liu, Zhifei Qin, Hongbo Wang, Haoran Hu, Chenxing Li, Kan Xu and Yuan Lin*. 2025SR0674957. 2025.04.24. DUT. Licensed. (Supervisor)
@@ -555,7 +555,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 - ***2025.08***：The 17th "Challenge Cup" Liaoning Province College Student Extracurricular Academic and Technological Works Competition —— *Grand Prize* in Liaoning Province. (Supervisor)
 
 <details>
-<summary style="color:gray; cursor:pointer;">Show more competition awards (17)</summary>
+<summary style="color:gray; cursor:pointer;">Show more</summary>
 
 - ***2025.08***：The 13th China TRIZ Cup College Students' Innovation Method Competition —— ***Second Prize*** at the National level. (Supervisor)
 - ***2025.08***：The 2025 China International College Students Innovation Competition **(×2)** —— *Silver Prize* in Liaoning Province. (Supervisor)
