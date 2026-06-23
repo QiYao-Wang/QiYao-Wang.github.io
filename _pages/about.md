@@ -8,143 +8,75 @@ redirect_from:
 ---
 
 <style>
-  /* === Global Rendering === */
-  body {
-    color: #333;
-    background-image: url('../images/bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  /* === Main Content Frosted Glass === */
-  .page__content {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 16px;
-    padding: 36px 40px !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-  }
-
-  @media screen and (max-width: 768px) {
-    .page__content {
-      padding: 20px 16px !important;
-      border-radius: 10px;
-    }
-  }
-
   dl {
-    margin-bottom: 60px;
+    margin-bottom: 60px; /* 调整这个值以获得合适的间距 */
     clear: both;
   }
 
-  /* Links */
+  /* 全局文本颜色 */
+  body {
+    color: #333; /* 主要文本颜色 */
+    background-image: url('../images/bg.jpg'); /* 背景图片 */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  /* 链接颜色 */
   a {
-    color: #0066cc;
-    transition: color 0.25s ease;
+    color: #0066cc; /* 链接颜色 */
   }
 
-  /* Author name color */
+  /* 作者名字颜色 */
   strong {
-    color: #000;
+    color: #000; /* 作者名字颜色 */
   }
 
-  /* Year title color */
+  /* 年份标题颜色 */
   .year-title {
     color: #666;
   }
 
-  /* === Section Headings (h1 with emoji) === */
-  .page__content h1 {
-    position: relative;
-    padding-left: 18px;
-    padding-bottom: 14px;
-    margin-top: 2em;
-    margin-bottom: 0.8em;
-    border-bottom: none;
-  }
-
-  .page__content h1::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 6px;
-    bottom: 6px;
-    width: 4px;
-    border-radius: 4px;
-    background: linear-gradient(180deg, #2c3e50, #3498db);
-  }
-
-  .page__content h1::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: linear-gradient(to right, rgba(52, 152, 219, 0.4), rgba(235, 235, 235, 0.3), transparent);
-  }
-
-  /* === Sub-section Titles (Spotlight Models, Survey, etc.) === */
-  .page__content > p > strong:first-child:only-child,
-  .page__content > div > p > strong:first-child:only-child {
-    display: inline-block;
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    color: white;
-    padding: 4px 16px;
-    border-radius: 20px;
-    font-weight: 500;
-  }
-
-  /* === Conference Label === */
+  /* 会议标签样式 */
   .conference-label {
     position: absolute;
     top: 10px;
     left: -5px;
-    background-color: #2c3e50;
-    color: white;
-    padding: 6px 14px;
+    background-color: #2c3e50;  /* 深蓝色背景 */
+    color: white;  /* 白色文字 */
+    padding: 6px 12px;
     border-radius: 6px;
-    font-size: 0.93em;
+    font-size: 0.95em;
     font-weight: 600;
     letter-spacing: 0.5px;
-    box-shadow: 0 3px 8px rgba(44, 62, 80, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 1;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-style: italic;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-style: italic;  /* 添加斜体 */
   }
 
+  /* 鼠标悬停效果 */
   .conference-label:hover {
-    background-color: #34495e;
-    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.4);
-    transform: translateY(-1px);
+    background-color: #34495e;  /* 悬停时稍微变亮 */
+    transition: background-color 0.2s ease;
   }
 
-  /* === Publication Images === */
   dl dt img {
-    width: 100%;
-    aspect-ratio: 2/1;
-    object-fit: cover;
+    width: 100%; /* 在移动端默认占满宽度 */
+    aspect-ratio: 2/1; /* 设置宽高比为2:1，即高度为宽度的一半 */
+    object-fit: cover; /* 确保图片不会被裁剪 */
     display: block;
-    margin: 10px 10px 10px 0px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-    padding: 5px;
-    background-color: #fff;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    margin: 10px 10px 10px 0px; /* 适当的间距 */
+    
+    /* 添加美化效果 */
+    border-radius: 8px; /* 让图片有轻微的圆角 */
+    border: 2px solid #ddd; /* 添加淡灰色的边框 */
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); /* 添加轻微阴影 */
+    padding: 5px; /* 给图片一些内边距，让它不贴着边框 */
+    background-color: #fff; /* 设置背景色，让图片更加干净 */
   }
 
-  dl dt img:hover {
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08);
-    transform: translateY(-3px);
-  }
-
+  /* 在桌面端（宽度大于768px）时固定宽度 */
   @media screen and (min-width: 768px) {
     dl dt img {
       width: 350px;
@@ -155,23 +87,20 @@ redirect_from:
     position: relative;
   }
 
-  /* === Horizontal Rule === */
   hr {
-    border: 0;
-    height: 1px;
-    background: linear-gradient(to right, rgba(235, 235, 235, 0), rgba(180, 180, 180, 0.5), rgba(235, 235, 235, 0));
-    margin: 1.5em 0;
-    clear: both;
+    border: 1px solid #ebebeb; /* 调整分隔线的颜色和样式 */
+    /* margin: 10px;  */
+    clear: both; 
   }
 
   dl dd {
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
+  margin-top: 5px; 
+  margin-bottom: 5px;
+}
 
   dl dd strong {
-    font-weight: bold;
-    color: black;
+  font-weight: bold;
+  color: black;
   }
 
   .co-first {
@@ -182,25 +111,23 @@ redirect_from:
     transform: rotate(180deg);
   }
 
-  /* === Experience & Education Cards === */
+  /* 教育和工作经历卡片样式 */
   .experience-card, .education-card {
     display: flex;
     align-items: center;
     gap: 25px;
     margin-bottom: 30px;
-    padding: 22px 24px;
-    background: rgba(248, 249, 250, 0.85);
-    backdrop-filter: blur(4px);
-    border-radius: 14px;
-    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    border: 1px solid rgba(233, 236, 239, 0.7);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
   }
 
   .experience-card:hover, .education-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
-    border-color: rgba(222, 226, 230, 0.9);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: #dee2e6;
   }
 
   .experience-info, .education-info {
@@ -215,15 +142,9 @@ redirect_from:
     align-items: center;
     justify-content: center;
     background: white;
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
-  }
-
-  .experience-card:hover .experience-logo,
-  .education-card:hover .education-logo {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   }
 
   .experience-logo img, .education-logo img {
@@ -259,88 +180,32 @@ redirect_from:
     font-style: italic;
   }
 
-  /* === Section Titles === */
   .section-title {
     font-size: 1.8em;
     color: #2c3e50;
     margin: 40px 0 20px;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     border-bottom: 2px solid #ecf0f1;
   }
 
-  /* === Publication List Items as Cards === */
-  .page__content > div > ul,
-  .page__content > ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .page__content > div > ul > li,
-  .page__content > ul > li {
-    background: rgba(248, 250, 252, 0.8);
-    border: 1px solid rgba(230, 234, 238, 0.6);
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 12px;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-  }
-
-  .page__content > div > ul > li:hover,
-  .page__content > ul > li:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-    border-color: rgba(52, 152, 219, 0.3);
-    transform: translateX(3px);
-  }
-
-  /* === Manuscripts section specific === */
-  .page__content > div:first-of-type ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  /* === News Scroll Container === */
-  div[style*="max-height"] {
-    background: rgba(248, 250, 252, 0.7);
-    border: 1px solid rgba(230, 234, 238, 0.5);
-    border-radius: 12px;
-    padding: 16px 20px 16px 16px;
-    scrollbar-width: thin;
-    scrollbar-color: #c4c4c4 transparent;
-  }
-
-  div[style*="max-height"]::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  div[style*="max-height"]::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  div[style*="max-height"]::-webkit-scrollbar-thumb {
-    background-color: #c4c4c4;
-    border-radius: 10px;
-  }
-
-  /* === Honors & Awards === */
+  /* 奖学金和荣誉部分样式 */
   .honors-list {
     list-style: none;
     padding: 0;
   }
 
   .honors-list li {
-    margin-bottom: 14px;
-    padding: 16px 20px;
-    background: rgba(248, 249, 250, 0.85);
-    border-radius: 10px;
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
     border-left: 4px solid #3498db;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
   .honors-list li:hover {
-    transform: translateX(6px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .honors-list li strong {
@@ -357,7 +222,7 @@ redirect_from:
     color: #2980b9;
   }
 
-  /* === Service Section === */
+  /* 服务部分样式 */
   .service-section {
     margin-bottom: 30px;
   }
@@ -377,16 +242,14 @@ redirect_from:
 
   .service-list li {
     margin-bottom: 12px;
-    padding: 13px 16px;
-    background: rgba(248, 249, 250, 0.85);
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: transform 0.3s ease;
   }
 
   .service-list li:hover {
-    transform: translateX(6px);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    transform: translateX(5px);
   }
 
   .service-list li a {
@@ -397,91 +260,6 @@ redirect_from:
 
   .service-list li a:hover {
     color: #2980b9;
-  }
-
-  /* === Education Timeline === */
-  .page__content h1 + ul {
-    list-style: none;
-    padding-left: 20px;
-    border-left: 2px solid #ecf0f1;
-  }
-
-  .page__content h1 + ul > li {
-    position: relative;
-    padding: 8px 0 8px 20px;
-    margin-bottom: 8px;
-  }
-
-  .page__content h1 + ul > li::before {
-    content: '';
-    position: absolute;
-    left: -7px;
-    top: 16px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: white;
-    border: 3px solid #3498db;
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-  }
-
-  /* === Internship Timeline === */
-  .page__content h1 + ul + ul,
-  .page__content h1 ~ ul:not(.honors-list):not(.service-list) {
-    list-style: none;
-  }
-
-  /* === Details/Summary Polish === */
-  details {
-    border-radius: 10px;
-    border: 1px solid rgba(233, 236, 239, 0.6);
-    padding: 0 16px;
-    transition: all 0.3s ease;
-    background: rgba(248, 250, 252, 0.5);
-  }
-
-  details:hover {
-    border-color: rgba(52, 152, 219, 0.3);
-  }
-
-  details[open] {
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-    background: rgba(248, 250, 252, 0.8);
-  }
-
-  details summary {
-    padding: 10px 0;
-  }
-
-  /* === Badge/Star Shield Refinement === */
-  img[src*="shields.io"] {
-    vertical-align: middle;
-    margin-left: 4px;
-    opacity: 0.85;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-
-  img[src*="shields.io"]:hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  /* === Email Line Accent === */
-  .page__content p em strong {
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    color: white;
-    padding: 2px 10px;
-    border-radius: 4px;
-    font-style: normal;
-  }
-
-  /* === Quote Block Refinement === */
-  .page__content p[style*="Times New Roman"] {
-    background: rgba(248, 250, 252, 0.6);
-    border-left: 3px solid #2c3e50;
-    padding: 16px 20px;
-    border-radius: 0 10px 10px 0;
-    margin: 1em 0;
   }
 </style>
 
