@@ -8,75 +8,89 @@ redirect_from:
 ---
 
 <style>
-  dl {
-    margin-bottom: 60px; /* 调整这个值以获得合适的间距 */
-    clear: both;
-  }
-
-  /* 全局文本颜色 */
+  /* === Global Typography & Rendering === */
   body {
-    color: #333; /* 主要文本颜色 */
-    background-image: url('../images/bg.jpg'); /* 背景图片 */
+    color: #333;
+    background-image: url('../images/bg.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: 1.7;
   }
 
-  /* 链接颜色 */
+  dl {
+    margin-bottom: 60px;
+    clear: both;
+  }
+
+  /* Links */
   a {
-    color: #0066cc; /* 链接颜色 */
+    color: #0066cc;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
   }
 
-  /* 作者名字颜色 */
+  a:hover {
+    text-shadow: 0 0 0.5px rgba(0, 102, 204, 0.3);
+  }
+
+  /* Author name color */
   strong {
-    color: #000; /* 作者名字颜色 */
+    color: #000;
   }
 
-  /* 年份标题颜色 */
+  /* Year title color */
   .year-title {
     color: #666;
   }
 
-  /* 会议标签样式 */
+  /* === Conference Label === */
   .conference-label {
     position: absolute;
     top: 10px;
     left: -5px;
-    background-color: #2c3e50;  /* 深蓝色背景 */
-    color: white;  /* 白色文字 */
-    padding: 6px 12px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 6px 14px;
     border-radius: 6px;
-    font-size: 0.95em;
+    font-size: 0.93em;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.6px;
+    box-shadow: 0 3px 8px rgba(44, 62, 80, 0.3);
     z-index: 1;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-style: italic;  /* 添加斜体 */
+    font-style: italic;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  /* 鼠标悬停效果 */
   .conference-label:hover {
-    background-color: #34495e;  /* 悬停时稍微变亮 */
-    transition: background-color 0.2s ease;
+    background-color: #34495e;
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.4);
+    transform: translateY(-1px);
   }
 
+  /* === Publication Images === */
   dl dt img {
-    width: 100%; /* 在移动端默认占满宽度 */
-    aspect-ratio: 2/1; /* 设置宽高比为2:1，即高度为宽度的一半 */
-    object-fit: cover; /* 确保图片不会被裁剪 */
+    width: 100%;
+    aspect-ratio: 2/1;
+    object-fit: cover;
     display: block;
-    margin: 10px 10px 10px 0px; /* 适当的间距 */
-    
-    /* 添加美化效果 */
-    border-radius: 8px; /* 让图片有轻微的圆角 */
-    border: 2px solid #ddd; /* 添加淡灰色的边框 */
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2); /* 添加轻微阴影 */
-    padding: 5px; /* 给图片一些内边距，让它不贴着边框 */
-    background-color: #fff; /* 设置背景色，让图片更加干净 */
+    margin: 10px 10px 10px 0px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    padding: 5px;
+    background-color: #fff;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
-  /* 在桌面端（宽度大于768px）时固定宽度 */
+  dl dt img:hover {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+  }
+
   @media screen and (min-width: 768px) {
     dl dt img {
       width: 350px;
@@ -87,20 +101,23 @@ redirect_from:
     position: relative;
   }
 
+  /* === Horizontal Rule === */
   hr {
-    border: 1px solid #ebebeb; /* 调整分隔线的颜色和样式 */
-    /* margin: 10px;  */
-    clear: both; 
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, rgba(235, 235, 235, 0), rgba(235, 235, 235, 0.8), rgba(235, 235, 235, 0));
+    margin: 1.5em 0;
+    clear: both;
   }
 
   dl dd {
-  margin-top: 5px; 
-  margin-bottom: 5px;
-}
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 
   dl dd strong {
-  font-weight: bold;
-  color: black;
+    font-weight: bold;
+    color: black;
   }
 
   .co-first {
@@ -111,23 +128,25 @@ redirect_from:
     transform: rotate(180deg);
   }
 
-  /* 教育和工作经历卡片样式 */
+  /* === Experience & Education Cards === */
   .experience-card, .education-card {
     display: flex;
     align-items: center;
     gap: 25px;
     margin-bottom: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    border: 1px solid #e9ecef;
+    padding: 22px 24px;
+    background: rgba(248, 249, 250, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 14px;
+    transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 1px solid rgba(233, 236, 239, 0.7);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .experience-card:hover, .education-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-color: #dee2e6;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+    border-color: rgba(222, 226, 230, 0.9);
   }
 
   .experience-info, .education-info {
@@ -142,9 +161,15 @@ redirect_from:
     align-items: center;
     justify-content: center;
     background: white;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+  }
+
+  .experience-card:hover .experience-logo,
+  .education-card:hover .education-logo {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   }
 
   .experience-logo img, .education-logo img {
@@ -157,6 +182,7 @@ redirect_from:
     font-size: 1.2em;
     margin-bottom: 8px;
     color: #2c3e50;
+    letter-spacing: 0.2px;
   }
 
   .experience-title a, .education-title a {
@@ -180,32 +206,35 @@ redirect_from:
     font-style: italic;
   }
 
+  /* === Section Titles === */
   .section-title {
     font-size: 1.8em;
     color: #2c3e50;
     margin: 40px 0 20px;
-    padding-bottom: 10px;
+    padding-bottom: 12px;
     border-bottom: 2px solid #ecf0f1;
+    letter-spacing: 0.3px;
   }
 
-  /* 奖学金和荣誉部分样式 */
+  /* === Honors & Awards === */
   .honors-list {
     list-style: none;
     padding: 0;
   }
 
   .honors-list li {
-    margin-bottom: 15px;
-    padding: 15px 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
+    margin-bottom: 14px;
+    padding: 16px 20px;
+    background: rgba(248, 249, 250, 0.85);
+    border-radius: 10px;
     border-left: 4px solid #3498db;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
   }
 
   .honors-list li:hover {
-    transform: translateX(5px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(6px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   }
 
   .honors-list li strong {
@@ -222,7 +251,7 @@ redirect_from:
     color: #2980b9;
   }
 
-  /* 服务部分样式 */
+  /* === Service Section === */
   .service-section {
     margin-bottom: 30px;
   }
@@ -242,14 +271,16 @@ redirect_from:
 
   .service-list li {
     margin-bottom: 12px;
-    padding: 12px 15px;
-    background: #f8f9fa;
-    border-radius: 6px;
-    transition: transform 0.3s ease;
+    padding: 13px 16px;
+    background: rgba(248, 249, 250, 0.85);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
   }
 
   .service-list li:hover {
-    transform: translateX(5px);
+    transform: translateX(6px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
   }
 
   .service-list li a {
@@ -260,6 +291,66 @@ redirect_from:
 
   .service-list li a:hover {
     color: #2980b9;
+  }
+
+  /* === Publication List Refinement === */
+  .page__content ul li {
+    margin-bottom: 0.7em;
+    line-height: 1.75;
+  }
+
+  /* === News Scroll Container === */
+  div[style*="max-height: 200px"] {
+    scrollbar-width: thin;
+    scrollbar-color: #c4c4c4 transparent;
+  }
+
+  div[style*="max-height: 200px"]::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  div[style*="max-height: 200px"]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  div[style*="max-height: 200px"]::-webkit-scrollbar-thumb {
+    background-color: #c4c4c4;
+    border-radius: 10px;
+  }
+
+  /* === Heading Refinement === */
+  .page__content h1 {
+    letter-spacing: 0.3px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(235, 235, 235, 0.7);
+  }
+
+  /* === Details/Summary Polish === */
+  details {
+    border-radius: 10px;
+    border: 1px solid rgba(233, 236, 239, 0.6);
+    padding: 0 16px;
+    transition: all 0.3s ease;
+  }
+
+  details[open] {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  details summary {
+    padding: 10px 0;
+  }
+
+  /* === Badge/Star Shield Refinement === */
+  img[src*="shields.io"] {
+    vertical-align: middle;
+    margin-left: 4px;
+    opacity: 0.9;
+    transition: opacity 0.2s ease;
+  }
+
+  img[src*="shields.io"]:hover {
+    opacity: 1;
   }
 </style>
 
@@ -298,7 +389,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Wechat official account, <strong>Taibao-IP</strong> [[Github Organization](https://github.com/AIforIP)].
 
 <hr>
-<p style="font-family: 'Times New Roman', sans-serif;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right;">—— Alan · Mathison · Turing</span></p>
+<p style="font-family: 'Times New Roman', sans-serif; font-size: 1.02em; line-height: 1.9; letter-spacing: 0.2px;">Those who can imagine anything, can create the impossible.<br>Sometimes it is the people who no one imagines anything of, that do the things that no one can imagine.<br><span style="font-style: italic; float: right; opacity: 0.85;">—— Alan · Mathison · Turing</span></p>
 
 # 📌 Research Interests  
 
@@ -320,7 +411,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
  
 # 🔥 News
 
-<div style="max-height: 200px; overflow-y: auto;">
+<div style="max-height: 200px; overflow-y: auto; padding-right: 6px;">
 <ul>
   <li><em><strong>2026.04.06:</strong></em> Two papers accepted by ACL 2026.</li>
   <li><em><strong>2025.12.02:</strong></em> One <a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">paper</a> published by <i>Library Theory and Practice</i> (CSSCI). </li>
