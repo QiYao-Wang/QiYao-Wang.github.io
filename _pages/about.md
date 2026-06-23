@@ -261,192 +261,6 @@ redirect_from:
   .service-list li a:hover {
     color: #2980b9;
   }
-
-  /* Details/Summary Enhancement */
-  details {
-    margin: 12px 0;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    background: rgba(248, 249, 250, 0.5);
-    overflow: hidden;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
-  }
-
-  details:hover {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    border-color: #ced4da;
-  }
-
-  details summary {
-    padding: 10px 16px;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.2s ease;
-    list-style: none;
-  }
-
-  details summary::-webkit-details-marker {
-    display: none;
-  }
-
-  details summary::before {
-    content: '\25B6';
-    display: inline-block;
-    margin-right: 8px;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #7a8288;
-    font-size: 0.75em;
-  }
-
-  details[open] summary {
-    border-bottom: 1px solid #e9ecef;
-  }
-
-  details[open] summary::before {
-    transform: rotate(90deg);
-  }
-
-  details summary:hover {
-    background-color: rgba(233, 236, 239, 0.5);
-  }
-
-  details > ul,
-  details > div {
-    padding: 8px 16px 12px 16px;
-    margin: 0;
-  }
-
-  details[open] > ul,
-  details[open] > div {
-    animation: detailsFadeIn 0.3s ease;
-  }
-
-  @keyframes detailsFadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Award stat badges */
-  .award-stats {
-    display: flex;
-    gap: 12px;
-    margin: 12px 0;
-    flex-wrap: wrap;
-  }
-
-  .award-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 16px;
-    border-radius: 20px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .award-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .award-badge.national {
-    background: linear-gradient(135deg, #e8f4fd, #d1ecf9);
-    border: 1px solid #b3d7f2;
-    color: #1a5276;
-  }
-
-  .award-badge.provincial {
-    background: linear-gradient(135deg, #fef9e7, #fcf3cf);
-    border: 1px solid #f5cba7;
-    color: #7d6608;
-  }
-
-  /* News section enhancement */
-  .news-container {
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 8px 12px;
-    background: rgba(248, 249, 250, 0.5);
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
-  }
-
-  .news-container ul {
-    margin: 0;
-    padding-left: 20px;
-  }
-
-  .news-container li {
-    padding: 6px 8px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-  }
-
-  .news-container li:hover {
-    background-color: rgba(233, 236, 239, 0.6);
-    transform: translateX(4px);
-  }
-
-  /* Card list for publications, manuscripts, projects */
-  .card-list > ul {
-    padding-left: 20px;
-  }
-
-  .card-list > ul > li {
-    padding: 12px 16px;
-    margin-bottom: 8px;
-    background: rgba(248, 249, 250, 0.5);
-    border-radius: 8px;
-    border-left: 3px solid transparent;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  .card-list > ul > li:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    border-left-color: #3498db;
-  }
-
-  /* Timeline for education, internships, talks */
-  .timeline-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .timeline-list > li {
-    padding: 14px 18px;
-    margin-bottom: 10px;
-    background: rgba(248, 249, 250, 0.5);
-    border-radius: 8px;
-    border-left: 3px solid #2ecc71;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .timeline-list > li:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
-
-  /* Service card */
-  .service-card {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .service-card > li {
-    padding: 10px 16px;
-    margin-bottom: 8px;
-    background: rgba(248, 249, 250, 0.5);
-    border-radius: 6px;
-    border-left: 3px solid #9b59b6;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .service-card > li:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  }
 </style>
 
 {% if site.google_scholar_stats_use_cdn %}
@@ -506,7 +320,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
  
 # 🔥 News
 
-<div class="news-container">
+<div style="max-height: 200px; overflow-y: auto;">
 <ul>
   <li><em><strong>2026.04.06:</strong></em> Two papers accepted by ACL 2026.</li>
   <li><em><strong>2025.12.02:</strong></em> One <a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">paper</a> published by <i>Library Theory and Practice</i> (CSSCI). </li>
@@ -526,7 +340,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div>
 
 # 📄 Manuscripts
-<div class="card-list">
+<div>
 <ul>
 <li>
      PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
@@ -565,7 +379,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p><strong>2026 and Earlier</strong></p>
 
-<div class="card-list">
+<div>
   <ul>
     <li>
     Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice. <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.
@@ -613,7 +427,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <hr>
 
 <p><strong>Survey</strong></p>
-<div class="card-list">
+<div>
   <ul>
     <li>
      A Survey on Large Language Model Benchmarks. <em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong>Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em>.
@@ -627,7 +441,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p><strong>Chinese Papers</strong></p>
 
-<div class="card-list">
+<div>
   <ul>
     <li>
       <span>AutoPatent: 基于多智能体的自动专利生成框架.</span>
@@ -663,7 +477,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 # 🔧 Projects
 
 <p><strong>Research Projects</strong></p>
-<div class="card-list">
+<div>
   <ul>
     <li>大语言模型技术对知识产权数据开放和使用的影响研究：以专利为例. 国家知识产权战略实施研究基地专项研究. ZX250602. (Student Member)</li>
     <li>融合多源信息的学术推荐研究. 国家自然科学基金面上项目. 61976036. (Student Member)</li>
@@ -734,7 +548,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <p style="color:gray"><strong>Bold text</strong> indicates national level.</p>
 
-<div class="award-stats" id="award-counts">Counting...</div>
+<p style="color:gray; font-size:0.95em;" id="award-counts">Counting...</p>
 
 <div id="competition-awards-list">
 <ul>
@@ -770,14 +584,12 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div>
 
 # 📖 Educations
-<ul class="timeline-list">
-  <li><strong><em>2025.09 - (5 years)</em></strong>, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.</li>
-  <li><strong><em>2021.09 - 2025.06</em></strong>, Bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.</li>
-</ul>
+- ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
+- ***2021.09 - 2025.06***, Bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academic Services
 <p><strong>Reviewer</strong></p>
-<ul class="service-card">
+<ul>
 <li>
 Conference Reviewer of NeurIPS 2026.
 </li>
@@ -787,16 +599,13 @@ Journal Reviewer of Expert Systems
 </ul>
 
 <p><strong>Talks</strong></p>
-<ul class="timeline-list">
-  <li><strong><em>2024.12.09</em></strong>: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a></li>
-  <li><strong><em>2024.11.20</em></strong>: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a></li>
-</ul>
+
+- ***2024.12.09***: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a>
+- ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 
 # 💻 Internships
-<ul class="timeline-list">
-  <li><strong><em>2025.10 - 2026.03</em></strong>: Tongyi Lab, Alibaba, Beijing</li>
-  <li><strong><em>2022.12 - 2025.09</em></strong>: DUTIR, Dalian</li>
-</ul>
+- ***2025.10 - 2026.03***: Tongyi Lab, Alibaba, Beijing
+- ***2022.12 - 2025.09***: DUTIR, Dalian
 
 <div style="width: 300px; height: auto;">
   <script type="text/javascript" id="clustrmaps" 
@@ -804,7 +613,7 @@ Journal Reviewer of Expert Systems
   </script>
 </div>
 
-Updated at June, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
+Updated at April, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
 
 <script>
@@ -859,7 +668,7 @@ Updated at June, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=
         }
         var el = document.getElementById('award-counts');
         if (el) {
-            el.innerHTML = '<span class="award-badge national">\uD83C\uDFC6 National: <strong>' + national + '</strong></span><span class="award-badge provincial">\uD83C\uDFC5 Provincial: <strong>' + provincial + '</strong></span>';
+            el.innerHTML = 'National: <strong style="color:#2c3e50;">' + national + '</strong> &nbsp;|&nbsp; Provincial: <strong style="color:#2c3e50;">' + provincial + '</strong>';
         }
     }
     if (document.readyState === 'loading') {
