@@ -596,7 +596,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 Conference Reviewer of NeurIPS 2026.
 </li>
 <li>
-Journal Reviewer of Expert Systems
+Journal Reviewer of Expert Systems. 
 </li>
 </ul>
 
