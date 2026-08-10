@@ -272,9 +272,9 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Hello, my name is Qiyao Wang (王琪尧). I am a first year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), starting in Fall 2025, supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.<br>
+Hello, my name is Qiyao Wang (王琪尧). I am a second year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), starting in Fall 2025, supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.<br>
 I obtained my Bachelor's degree in Artificial Intelligence from Dalian University of Technology (2021-2025).
-During my undergraduate studies, I worked in the Dalian University of Technology <em>Information Retrieval Laboratory</em>
+During my undergraduate studies, I worked in the Dalian University of Technology <em>Information Retrieval Laboratory (DUT-IR)</em>
 and <em>Public Service Science and Engineering Laboratory</em>, supervised by Prof. <a href="http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm">Yuan Lin</a>,
 Prof. <a href="http://faculty.dlut.edu.cn/2004012069/en/index.htm">Kan Xu</a>
 and Prof. <a href="https://faculty.dlut.edu.cn/linhongfei/zh_CN/index/789935/list/index.htm">Hongfei Lin</a>.
