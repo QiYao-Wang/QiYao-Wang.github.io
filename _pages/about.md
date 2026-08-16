@@ -615,7 +615,7 @@ Journal Reviewer of Expert Systems.
   </script>
 </div>
 
-Updated at July, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
+Updated at August, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
 
 <script>
