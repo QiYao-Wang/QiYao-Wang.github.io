@@ -502,7 +502,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
-- Method and System for Generating Patent Dependent Claims Based on Reasoning-Aware Evaluation and Iterative Feedback.* **Qiyao Wang**, Hongbo Wang, Yuan Lin, Hanyu Kang, Xinhao Gao, Kan Xu, Wenfei Liu, Yilin Yue, Zhifei Qin, Yihang Wu*. CN122491216A. 2026.7.31. DUT. Pending.
+- Method and System for Generating Patent Dependent Claims Based on Reasoning-Aware Evaluation and Iterative Feedback.***Qiyao Wang**, Hongbo Wang, Yuan Lin, Hanyu Kang, Xinhao Gao, Kan Xu, Wenfei Liu, Yilin Yue, Zhifei Qin, Yihang Wu*. CN122491216A. 2026.7.31. DUT. Pending.
 - Flow-Guided Scientific Idea Evolution Generation Method, Electronic Device, and Computer-Readable Storage Medium. *Hongbo Wang, **Qiyao Wang**, Yuan Lin, Xinhao Gao, Kan Xu, Wenfei Liu, Yihang Wu*. CN122332541A. 2026.07.03. DUT. Pending. (Supervisor)
 - Method, Apparatus, Computer Device, and Storage Medium for Recommending Procurement Evaluation Experts in Universities. *Rong Cao, Xinzhuo Wu, Yuan Lin, **Qiyao Wang**, Kan Xu, Wenfei Liu, Hongbo Wang*. 202511277799.3. 2025.09.29. DUT. Pending. (Main Member)
 
