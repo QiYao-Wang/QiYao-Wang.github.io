@@ -607,6 +607,7 @@ Journal Reviewer of Expert Systems.
 - ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 
 # 💻 Internships
+- ***2026.06 - now***: Ubiquant, iQuest, Beijing
 - ***2025.10 - 2026.03***: Tongyi Lab, Alibaba, Beijing
 - ***2022.12 - 2025.09***: DUTIR, Dalian
 
