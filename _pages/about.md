@@ -295,6 +295,7 @@ And if you are interested in my research, <strong style="color: darkred">feel fr
 
 <hr>
 
+My primary research interests include <strong>Post-Training, General Agents, Working Agents, and Domain-Specific Agents</strong>.
 I am currently leading the Taibao-IP team, focusing on developing advanced IP intelligence services and building LLM-based algorithms and models. More details can be found on our Wechat official account, <strong>Taibao-IP</strong> [[Github Organization](https://github.com/AIforIP)].
 
 <hr>
@@ -302,17 +303,13 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 # 📌 Research Interests  
 
-- ***General LLMs and MLLMs***: Exploring the underlying mechanisms of LLMs and MLLMs, and researching improved fine-tuning methods to enhance their understanding, reasoning, and generation capabilities.
-  - ***Reinforcement Learning***: RL for LLMs Reasoning, Reward Modeling. [[Topic Homepage](https://wangqiyao.me/RL/)]
-  - ***Multi-Modal LLMs***: [[MLLMs Topic Homepage](https://wangqiyao.me/MLLMs/)]
-  - ***Information Retrieval (IR)***: Exploring improved <em>generative IR (GenIR)</em> approaches to enhance the capabilities of LLMs, and leveraging LLMs to improve IR performance.
-- ***Agentic AI***: Developing general-purpose and code-oriented Agentic AI models through the synthesis of large-scale agentic datasets and the application of agentic reinforcement learning.
-  - ***General Agentic AI***: [[Topic Homepage](https://wangqiyao.me/General-Agentic-AI/)]
-  - ***Agentic Coding***: [[Topic Homepage](https://wangqiyao.me/Agentic-Coding/)]
-- ***AI for Science and Social Science***: Developing domain-specific applications using LLMs and MLLMs to empower research in sciences and social sciences.
-  - ***IP Intelligence***: Research on AI for IP service and IP of AI. [[Topic Homepage](https://wangqiyao.me/IPIntelligence/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
-  - ***Law Intelligence***: LLMs for Law (there are some excellent works of SIAT-NLP, such as <a href="https://github.com/siat-nlp/HanFei">HanFei</a> and <a href="https://arxiv.org/abs/2408.08089">AgentCourt</a>)
-  - ***Biomedical Intelligence***: AI for Biomedical.
+- ***Post-Training***: Developing scalable and data-efficient methods—including supervised fine-tuning, reinforcement learning, reward modeling, and preference optimization—to improve the reasoning, generation, retrieval, and multimodal capabilities of LLMs and MLLMs. [[RL](https://wangqiyao.me/RL/)] [[MLLMs](https://wangqiyao.me/MLLMs/)]
+- ***General Agents***: Building general-purpose agents through large-scale agentic data synthesis, agentic post-training, and reinforcement learning. [[Topic Homepage](https://wangqiyao.me/General-Agentic-AI/)]
+- ***Working Agents***: Developing reliable agents that can plan, use tools, maintain memory, and complete long-horizon tasks in real-world work environments.
+- ***AI for Science and Social Science***: Developing domain-specific LLM and MLLM applications to accelerate research and discovery across the natural and social sciences.
+  - ***IP Intelligence***: Advancing AI for intellectual property services and studying intellectual property issues surrounding AI. [[Topic Homepage](https://wangqiyao.me/IPIntelligence/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
+  - ***Legal Intelligence***: Developing LLMs for legal reasoning and applications, including SIAT-NLP projects such as <a href="https://github.com/siat-nlp/HanFei">HanFei</a> and <a href="https://arxiv.org/abs/2408.08089">AgentCourt</a>.
+  - ***Biomedical Intelligence***: Applying AI to biomedical research and healthcare applications.
 
 <!-- <p align="center">
   <img src="/images/research-focus.png" alt="Research Focus: Advancing LLMs and Agentic AI for Complex Reasoning, Retrieval, and Domain-Specific Intelligence" style="max-width: 100%; height: auto;">
