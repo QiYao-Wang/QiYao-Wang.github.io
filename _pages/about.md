@@ -284,7 +284,7 @@ I warmly welcome undergraduates (any major) from DUT to join our research group 
 And if you are interested in my research, <strong style="color: darkred">feel free to collaborate with me</strong>!
 </p>
 <p>
-作为项目负责人和指导者，带领团队获得 10 项国家级奖项（包括 2024 年挑战杯国家银奖和 2025 年挑战杯国家级一等奖）和 13 项省级奖项。
+作为项目负责人和指导者，带领团队获得 10 项国家级奖项（包括 2024 年挑战杯国家银奖和 2025 年挑战杯国家级一等奖）和 13 项省级奖项。指导多名大连理工大学计算机、人工智能、公共管理、知识产权等专业本科生前往中国科学院大学、中国科学技术大学、复旦大学及大连理工大学等国内名校深造。
 </p>
 
 <p>本科期间，发表《中文信息学报》(CCF-T1) 一作两篇。主导研发的知识产权服务大模型“太保”于第十四届中国国际专利技术与产品交易会发布。学术服务与研究成果受"光明日报"等主流媒体及"新智元"等媒体报道。</p>
