@@ -366,7 +366,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </ul>
 </div>
 
-# Spotlight Models
+# 🤖 Spotlight Models
 
 <p><strong>General Base Model</strong></p>
 - IQuest-Q1: Open-source agentic foundation model for CLI systems.
