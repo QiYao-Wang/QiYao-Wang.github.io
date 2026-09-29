@@ -366,13 +366,22 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </ul>
 </div>
 
-# 📚 Publications
-<sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
+# Spotlight Models
 
-<p><strong>Spotlight Models</strong></p>
+<p><strong>General Base Model</strong></p>
+- IQuest-Q1: Open-source agentic foundation model for CLI systems.
+  [<a href="https://iquestlab.github.io/">Website</a>]
+  [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
+  [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
+  <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
+
+<p><strong>Domain-Specific Model</strong></p>
 - Taibao(太保): Intellectual Property Service Large Language Model, published by <a href="https://spap.dlut.edu.cn/info/1123/4095.htm">School of Public Administration and Policy, DUT</a>, <a href="https://ir.dlut.edu.cn/">DUTIR Lab</a> and <a href="https://www.dlcipf.cn/">CNIPA-CIPF</a> (Leader) <a href="https://github.com/QiYao-Wang/Taibao"><img src="https://img.shields.io/github/stars/QiYao-Wang/Taibao" alt="Taibao"></a>
 
 <hr>
+
+# 📚 Publications
+<sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
 
 <p><strong>2026 and Earlier</strong></p>
 
