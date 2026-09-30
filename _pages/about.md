@@ -340,6 +340,13 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
+     APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang, Jinming Liu, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
+     [<a href="https://arxiv.org/abs/2609.37559">Arxiv</a>]
+     [<a href="https://huggingface.co/papers/2609.37559">HuggingFace Paper</a>]
+     [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]
+     <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
+</li>
+<li>
      PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="https://patre.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2605.03571">Arxiv</a>]
