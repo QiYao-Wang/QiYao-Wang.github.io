@@ -387,8 +387,13 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <hr>
 
+
 # 📚 Publications
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
+
+<p><strong>Technical Report</strong></p>
+
+<hr>
 
 <p><strong>2026 and Earlier</strong></p>
 
