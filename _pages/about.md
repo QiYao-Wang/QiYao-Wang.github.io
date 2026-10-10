@@ -376,7 +376,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 # 🤖 Spotlight Models
 
 <p><strong>General Base Model</strong></p>
-- IQuest-Q1: Open-source agentic foundation model for CLI systems.
+- IQuest-Q1: Open-source agentic foundation model for CLI systems. (Core Contributor)
   [<a href="https://iquestlab.github.io/">Website</a>]
   [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
   [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
@@ -392,6 +392,18 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
 
 <p><strong>Technical Report</strong></p>
+
+<div>
+<ul>
+<li>
+     IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems. (Core Contributor)
+     [<a href="https://iquestlab.github.io/">Website</a>]
+     [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
+     [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
+     <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
+</li>
+</ul>
+</div>
 
 <hr>
 
