@@ -319,6 +319,10 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
+  <li><em><strong>2026.10.10:</strong></em> &nbsp;🧠 <a href="https://iquestlab.github.io/">IQuest-Q1</a>, an open-source agentic foundation model for CLI systems, is now available.</li>
+  <li><em><strong>2026.09.29:</strong></em> &nbsp;🧠 Our <a href="https://arxiv.org/abs/2609.37559">APM-Bench</a>, a benchmark for cross-session persistent memory in egocentric streaming video assistants, is now available. [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]</li>
+  <li><em><strong>2026.05.05:</strong></em> &nbsp;🧠 Our <a href="https://arxiv.org/abs/2605.03571">PatRe</a> benchmark for full-stage patent examination and rebuttal generation is now available. [<a href="https://patre.wangqiyao.me/">Website</a>] [<a href="https://github.com/AIforIP/PatRe">Github</a>]</li>
+  <li><em><strong>2026.04.30:</strong></em> &nbsp;🧠 Our <a href="https://arxiv.org/abs/2604.27419">InteractWeb-Bench</a> for interactive website generation is now available. [<a href="https://interactweb-bench.wangqiyao.me/">Website</a>] [<a href="https://github.com/AIforIP/InteractWeb-Bench">Github</a>]</li>
   <li><em><strong>2026.04.06:</strong></em> Two papers accepted by ACL 2026.</li>
   <li><em><strong>2025.12.02:</strong></em> One <a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">paper</a> published by <i>Library Theory and Practice</i> (CSSCI). </li>
   <li><em><strong>2025.11.03:</strong></em> &nbsp;🎉 As the Team Supervisor, I successfully guided my team to win the Third Prize at the national level in the 19th “Challenge Cup” National College Students’ Extracurricular Academic Science and Technology Competition! </li>
