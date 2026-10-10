@@ -2,7 +2,7 @@
 layout: compress
 ---
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="zh-CN" class="no-js">
 
   <head>
     {% include head.html %}
@@ -10,20 +10,22 @@ layout: compress
     <base target="_self">
     <link rel="stylesheet" href="/assets/css/blog.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>html { scroll-behavior: smooth; }</style>
   </head>
   <body>
     {% include browser-upgrade.html %}
-    <div class="masthead">
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
     <div class="masthead__inner-wrap">
       <div class="masthead__menu">
         <nav id="site-nav" class="greedy-nav">
           <ul class="visible-links">
-            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
-            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+            <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
           </ul>
         </nav>
       </div>
@@ -32,13 +34,13 @@ layout: compress
     <div id="main" role="main">
 
       <div class="sidebar sticky">
-        <div id="toc"></div>
+        <nav id="toc" aria-label="Table of contents"></nav>
       </div>
 
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
-          <section class="page__content" itemprop="text">
+          <section id="blog-content" class="page__content blog-content" itemprop="text" tabindex="-1">
 
             <h1 id="cmu-dlsys-course-homework-0:-implementation-and-reflection">CMU DLSys Course Homework 1: Implementation and Reflection (Part1)</h1>
             <p style="color:gray">Jan. 08, 2025 - Jan. 10, 2025 · Qiyao Wang · Topic #MLSys</p>
@@ -46,7 +48,7 @@ layout: compress
             <p>本周看完了课程的 Lecture 3/4/5，这几节课程是对自动求导（Automatic Differentiation）的讲解，其中反向传播、计算图是重点。本文针对 <a href="https://github.com/dlsyscourse/hw1">Homework 1</a> 进行实践与思考，其中 Part 1 中包含了 needle 的基本信息和 Question 1 和 Question 2 的内容。</p>
 
             <h1>Introduction of Homework 1</h1>
-            <p>通过 Homework 1 自己实践构建一个 needle（Necessary Elements of Deep Learning） 库，其中本文最关键的是自动求导框架的构建，并在 <a href="https://qiyao-wang.github.io/blogs/2025/CMU_DLSys_Hw0/">Homework 0</a> 中的双层神经网络上进行应用。</p>
+            <p>通过 Homework 1 自己实践构建一个 needle（Necessary Elements of Deep Learning） 库，其中本文最关键的是自动求导框架的构建，并在 <a href="https://wangqiyao.me/blogs/2025/CMU_DLSys_Hw0/">Homework 0</a> 中的双层神经网络上进行应用。</p>
             <p>本文对于 needle 的构建是建立在 numpy 库和 CPU 基础上的，后续的作业也会实现相应的底层多维数组以及应用到 GPU 节点上。</p>
             <p>Homework 1 的 needle 库包含两个重要的文件，即 autograd.py 和 ops_mathematic.py，其中前者定义了计算图框架以及自动求导框架，后者包含在计算图中会用到的运算符（compute function），及运算符对应的求导函数（gradient function）。</p>
             <h2>Basic Concept of Needle</h2>
@@ -444,57 +446,8 @@ x_{13} & x_{13} & x_{13} & x_{13} & x_{13} \end{bmatrix}
         </div>
       </article>
     </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include scripts.html %}
-    <script>
-    // 动态生成目录
-    const toc = document.getElementById('toc');
-    toc.innerHTML = '<strong>Table of Contents</strong>';
-
-    const ul = document.createElement('ul');
-    toc.appendChild(ul);
-
-    // 获取所有标题
-    const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    headers.forEach(header => {
-        // 忽略 h1，不添加到目录中
-        if (header.tagName === 'H1') return;
-
-        const li = document.createElement('li');
-        li.style.marginLeft = `${(parseInt(header.tagName[1]) - 1) * 10}px`;
-
-        const a = document.createElement('a');
-        a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
-        a.textContent = header.innerText;
-        a.target = "_self";
-
-        // 如果是 h2，使用黑色实心点
-        if (header.tagName === 'H2') {
-            li.style.listStyleType = 'disc';  // 黑色实心圆点
-            a.style.color = 'black';  // h2 为黑色
-        }
-        // 如果是 h3，使用空心圆点
-        else if (header.tagName === 'H3') {
-            li.style.listStyleType = 'circle';  // 空心圆点
-            a.style.color = 'gray';  // h3 为灰色
-        }
-        // 如果是 h4，使用方块
-        else if (header.tagName === 'H4') {
-            li.style.listStyleType = 'square';  // 方块
-            a.style.color = 'gray';  // h4 为灰色
-        }
-        // 如果是 h5 和 h6，使用方块
-        else {
-            li.style.listStyleType = 'square';  // 方块
-            a.style.color = 'gray';  // h5 和 h6 为灰色
-        }
-
-        if (!header.id) {
-            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
-        }
-
-        li.appendChild(a);
-        ul.appendChild(li);
-    });
-</script>
+    <script src="/assets/js/blog-enhancements.js" defer></script>
   </body>
 </html>

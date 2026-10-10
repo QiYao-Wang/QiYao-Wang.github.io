@@ -2,7 +2,7 @@
 layout: compress
 ---
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="zh-CN" class="no-js">
   
   <head>
     {% include head.html %}
@@ -10,20 +10,22 @@ layout: compress
     <base target="_self">
     <link rel="stylesheet" href="/assets/css/blog.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>html { scroll-behavior: smooth; }</style>
   </head>
   <body>
     {% include browser-upgrade.html %}
-    <div class="masthead">
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
     <div class="masthead__inner-wrap">
       <div class="masthead__menu">
         <nav id="site-nav" class="greedy-nav">
           <ul class="visible-links">
             <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
             <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
           </ul>
         </nav>
       </div>
@@ -32,13 +34,13 @@ layout: compress
     <div id="main" role="main">
 
       <div class="sidebar sticky">
-        <div id="toc"></div>
+        <nav id="toc" aria-label="Table of contents"></nav>
       </div>
 
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
-          <section class="page__content" itemprop="text">
+          <section id="blog-content" class="page__content blog-content" itemprop="text" tabindex="-1">
 
             <div class="blog-post-header">
               <h1>ClawGym: Part I - ClawGym-SynData</h1>
@@ -363,34 +365,8 @@ layout: compress
         </div>
       </article>
     </div>
-
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include scripts.html %}
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const toc = document.getElementById('toc');
-        toc.innerHTML = '<strong>Table of Contents</strong>';
-        const ul = document.createElement('ul');
-        toc.appendChild(ul);
-
-        const headers = document.querySelectorAll('h2, h3, h4');
-        headers.forEach(header => {
-          const li = document.createElement('li');
-          const level = parseInt(header.tagName[1]);
-          li.style.paddingLeft = `${(level - 2) * 12}px`;
-
-          const a = document.createElement('a');
-          a.href = `#${header.id || header.innerText.replace(/\s+/g, '-').toLowerCase()}`;
-          a.textContent = header.innerText;
-          a.target = "_self";
-
-          if (!header.id) {
-            header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
-          }
-
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-      });
-    </script>
+    <script src="/assets/js/blog-enhancements.js" defer></script>
   </body>
 </html>

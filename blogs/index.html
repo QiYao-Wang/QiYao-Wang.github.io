@@ -2,7 +2,7 @@
 layout: compress
 ---
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="zh-CN" class="no-js">
   
   <head>
     {% include head.html %}
@@ -12,6 +12,8 @@ layout: compress
   </head>
   <body>
     {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to blog posts</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
     <div class="masthead container">
     <div class="masthead__inner-wrap">
       <div class="masthead__menu">
@@ -19,6 +21,7 @@ layout: compress
           <ul class="visible-links">
             <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
             <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+            <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
           </ul>
         </nav>
       </div>
@@ -27,8 +30,8 @@ layout: compress
     <div id="main" role="main">
 
       <div class="sidebar sticky">
-        <div id="toc"></div>
-        <div id="topics" class="blog-topics-section">
+        <nav id="toc" aria-label="Blog archive"></nav>
+        <nav id="topics" class="blog-topics-section" aria-label="Filter by topic">
           <strong>Topics</strong>
         </div>
       </div>
@@ -36,7 +39,7 @@ layout: compress
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
-          <section class="page__content" itemprop="text">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
 
             <div class="blog-index-header">
               <h1>📖 Qiyao Wang's Blog</h1>
@@ -45,9 +48,10 @@ layout: compress
 
             <!-- Search Bar -->
             <div class="blog-search-container">
-              <input type="text" id="blog-search" class="blog-search-input" placeholder="🔍  Search by title, tag or date..." autocomplete="off">
-              <span id="blog-search-clear" class="blog-search-clear" style="display:none;">&times;</span>
+              <input type="search" id="blog-search" class="blog-search-input" placeholder="Search by title, tag or date..." autocomplete="off" aria-label="Search blog posts" aria-describedby="blog-search-hint">
+              <button id="blog-search-clear" class="blog-search-clear" type="button" aria-label="Clear search" style="display:none;">&times;</button>
             </div>
+            <p id="blog-search-hint" class="blog-search-hint">Press <kbd>⌘</kbd><kbd>K</kbd> to search. Press <kbd>Esc</kbd> to clear.</p>
             <p id="blog-search-no-results" class="blog-search-no-results" style="display:none;">No matching blog posts found.</p>
 
             <!-- 2026 -->
@@ -426,9 +430,25 @@ layout: compress
         </div>
       </article>
     </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include scripts.html %}
     <script>
       document.addEventListener('DOMContentLoaded', () => {
+        const root = document.documentElement;
+        const themeToggle = document.querySelector('.blog-theme-toggle');
+        const savedTheme = localStorage.getItem('blog-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const applyTheme = (theme) => {
+          root.dataset.blogTheme = theme;
+          themeToggle?.setAttribute('aria-pressed', String(theme === 'dark'));
+        };
+        applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+        themeToggle?.addEventListener('click', () => {
+          const theme = root.dataset.blogTheme === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('blog-theme', theme);
+          applyTheme(theme);
+        });
+
         // Count blogs per year
         const yearSections = document.querySelectorAll('.blog-year-section');
         let totalBlogs = 0;
@@ -459,14 +479,30 @@ layout: compress
           topicCounts[topic] = (topicCounts[topic] || 0) + 1;
         });
 
-        const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => a.localeCompare(b));
+        const sortedTopics = Object.entries(topicCounts).sort(([a], [b]) => b[1] - a[1] || a.localeCompare(b));
         const topicsContainer = document.getElementById('topics');
         if (topicsContainer) {
-          let html = '<strong>Topics</strong>';
+          topicsContainer.replaceChildren();
+          const heading = document.createElement('strong');
+          heading.textContent = 'Topics';
+          topicsContainer.appendChild(heading);
           sortedTopics.forEach(([topic, count]) => {
-            html += `<div class="blog-topic-item"><span>${topic}</span><span class="blog-topic-count">${count}</span></div>`;
+            const item = document.createElement('div');
+            item.className = 'blog-topic-item';
+            const button = document.createElement('button');
+            button.className = 'blog-topic-filter';
+            button.type = 'button';
+            button.dataset.topic = topic;
+            button.setAttribute('aria-pressed', 'false');
+            const label = document.createElement('span');
+            label.textContent = topic;
+            const badge = document.createElement('span');
+            badge.className = 'blog-topic-count';
+            badge.textContent = count;
+            button.append(label, badge);
+            item.appendChild(button);
+            topicsContainer.appendChild(item);
           });
-          topicsContainer.innerHTML = html;
         }
 
         // Generate TOC
@@ -497,6 +533,7 @@ layout: compress
         const searchClear = document.getElementById('blog-search-clear');
         const noResultsMsg = document.getElementById('blog-search-no-results');
         const blogEntries = document.querySelectorAll('.blog-entry');
+        const topicFilters = document.querySelectorAll('.blog-topic-filter');
 
         function performSearch() {
           const query = searchInput.value.trim().toLowerCase();
@@ -543,6 +580,7 @@ layout: compress
 
         let debounceTimer;
         searchInput.addEventListener('input', () => {
+          topicFilters.forEach(button => button.setAttribute('aria-pressed', 'false'));
           clearTimeout(debounceTimer);
           debounceTimer = setTimeout(performSearch, 150);
         });
@@ -551,6 +589,17 @@ layout: compress
           searchInput.value = '';
           performSearch();
           searchInput.focus();
+        });
+
+        topicFilters.forEach(button => {
+          button.addEventListener('click', () => {
+            const isActive = button.getAttribute('aria-pressed') === 'true';
+            topicFilters.forEach(filter => filter.setAttribute('aria-pressed', 'false'));
+            searchInput.value = isActive ? '' : button.dataset.topic;
+            button.setAttribute('aria-pressed', String(!isActive));
+            performSearch();
+            searchInput.focus();
+          });
         });
 
         document.addEventListener('keydown', (e) => {
@@ -565,6 +614,22 @@ layout: compress
             searchInput.blur();
           }
         });
+
+        const progress = document.querySelector('.blog-reading-progress span');
+        const backToTop = document.getElementById('blog-back-to-top');
+        const updateReadingUI = () => {
+          const content = document.getElementById('blog-content');
+          if (!content) return;
+          const start = content.offsetTop - 96;
+          const distance = Math.max(content.offsetHeight - window.innerHeight + 96, 1);
+          const value = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+          progress.style.transform = `scaleX(${value})`;
+          backToTop.hidden = window.scrollY < 560;
+        };
+        window.addEventListener('scroll', updateReadingUI, { passive: true });
+        window.addEventListener('resize', updateReadingUI);
+        updateReadingUI();
+        backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
       });
     </script>

@@ -2,7 +2,7 @@
 layout: compress
 ---
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="zh-CN" class="no-js">
   
   <head>
     {% include head.html %}
@@ -10,22 +10,24 @@ layout: compress
     <base target="_self">
     <link rel="stylesheet" href="/assets/css/blog.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>hljs.highlightAll();</script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
       html { scroll-behavior: smooth; }
     </style>
   </head>
   <body>
     {% include browser-upgrade.html %}
-    <div class="masthead">
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
     <div class="masthead__inner-wrap">
       <div class="masthead__menu">
         <nav id="site-nav" class="greedy-nav">
           <ul class="visible-links">
-            <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://qiyao-wang.github.io/">Homepage</a></li>
-            <li class="masthead__menu-item"><a href="https://qiyao-wang.github.io/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
           </ul>
         </nav>
       </div>
@@ -34,13 +36,13 @@ layout: compress
     <div id="main" role="main">
 
       <div class="sidebar sticky">
-        <div id="toc"></div>
+        <nav id="toc" aria-label="Table of contents"></nav>
       </div>
 
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
         {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
         <div class="page__inner-wrap">
-          <section class="page__content" itemprop="text">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
 
             <div class="blog-post-header">
               <h1>Blog Post Title Here</h1>
@@ -79,16 +81,34 @@ layout: compress
         </div>
       </article>
     </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include scripts.html %}
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        // Generate TOC
+        if (window.hljs) window.hljs.highlightAll();
+
+        const root = document.documentElement;
+        const themeToggle = document.querySelector('.blog-theme-toggle');
+        const savedTheme = localStorage.getItem('blog-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const applyTheme = (theme) => {
+          root.dataset.blogTheme = theme;
+          if (themeToggle) themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+        };
+        applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+        themeToggle?.addEventListener('click', () => {
+          const theme = root.dataset.blogTheme === 'dark' ? 'light' : 'dark';
+          localStorage.setItem('blog-theme', theme);
+          applyTheme(theme);
+        });
+
+        // Generate a labelled, linkable table of contents.
         const toc = document.getElementById('toc');
-        toc.innerHTML = '<strong>Table of Contents</strong>';
+        toc.innerHTML = '<strong>On this page</strong>';
         const ul = document.createElement('ul');
         toc.appendChild(ul);
 
-        const headers = document.querySelectorAll('h2, h3, h4');
+        const headers = document.querySelectorAll('.blog-content h2, .blog-content h3, .blog-content h4');
         headers.forEach(header => {
           const li = document.createElement('li');
           const level = parseInt(header.tagName[1]);
@@ -106,6 +126,56 @@ layout: compress
           li.appendChild(a);
           ul.appendChild(li);
         });
+
+        const tocLinks = new Map(Array.from(toc.querySelectorAll('a')).map(link => [link.hash.slice(1), link]));
+        if ('IntersectionObserver' in window && tocLinks.size) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting) return;
+              toc.querySelectorAll('a').forEach(link => link.removeAttribute('aria-current'));
+              tocLinks.get(entry.target.id)?.setAttribute('aria-current', 'location');
+            });
+          }, { rootMargin: '-18% 0px -72% 0px', threshold: 0 });
+          headers.forEach(header => observer.observe(header));
+        }
+
+        document.querySelectorAll('.blog-content pre').forEach(pre => {
+          const code = pre.querySelector('code');
+          if (!code) return;
+          const language = Array.from(code.classList).find(name => name.startsWith('language-'))?.replace('language-', '');
+          if (language) pre.dataset.language = language;
+          const copy = document.createElement('button');
+          copy.className = 'blog-copy-code';
+          copy.type = 'button';
+          copy.textContent = 'Copy';
+          copy.setAttribute('aria-label', 'Copy code block');
+          copy.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(code.innerText);
+              copy.textContent = 'Copied';
+              setTimeout(() => { copy.textContent = 'Copy'; }, 1600);
+            } catch (_) {
+              copy.textContent = 'Select code';
+            }
+          });
+          pre.appendChild(copy);
+        });
+
+        const progress = document.querySelector('.blog-reading-progress span');
+        const backToTop = document.getElementById('blog-back-to-top');
+        const updateReadingUI = () => {
+          const content = document.getElementById('blog-content');
+          if (!content) return;
+          const start = content.offsetTop - 96;
+          const distance = Math.max(content.offsetHeight - window.innerHeight + 96, 1);
+          const value = Math.min(1, Math.max(0, (window.scrollY - start) / distance));
+          progress.style.transform = `scaleX(${value})`;
+          backToTop.hidden = window.scrollY < 560;
+        };
+        window.addEventListener('scroll', updateReadingUI, { passive: true });
+        window.addEventListener('resize', updateReadingUI);
+        updateReadingUI();
+        backToTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
       });
     </script>
   </body>
