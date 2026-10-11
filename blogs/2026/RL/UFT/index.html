@@ -72,7 +72,14 @@ title: "UFT：用逐渐缩短的提示连接监督学习与强化学习"
 <h2 id="method">提示课程与统一目标</h2>
 <p>把参考解分为 \(L\) 个片段，采样提示长度 \(l\sim\operatorname{Binomial}(L,p_t)\)，于是 \(\mathbb E[l]=Lp_t\)。\(p_t\) 通过余弦退火下降；实际配置前 300 步使用提示，之后强制 \(l=0\)，总共训练 500 步。要注意退火末端设置的低概率 0.05 与随后直接置零不是同一回事。</p>
 <p>令专家状态—动作前缀为 \((s_h^\star,a_h^\star)\)，学生从 \(s_l^\star\) 继续生成后缀。原目标可写为：</p>
-<p>\[J_{\mathrm{UFT}}=\mathbb E\!\left[J_{\mathrm{RL}}(\text{后缀})-\beta\sum_{h=l}^{H-1}D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})+\beta\sum_{h=0}^{l-1}\log\pi_\theta(a_h^\star\mid s_h^\star)\right].\]</p>
+\[
+\begin{aligned}
+J_{\mathrm{UFT}}=\mathbb E\Big[&J_{\mathrm{value}}(\text{学生后缀})
+-\beta\sum_{h=l}^{H-1}D_{\mathrm{KL}}\big(\pi_\theta(\cdot\mid s_h)\|\pi_{\mathrm{ref}}(\cdot\mid s_h)\big)\\
+&+\beta\sum_{h=0}^{l-1}\log\pi_\theta(a_h^\star\mid s_h^\star)\Big].
+\end{aligned}
+\]
+<p>这里的期望同时覆盖提示长度 \(l\)、专家前缀，以及学生从 \(s_l^\star\) 出发生成的后缀；\(H\) 是轨迹的总时域。\(J_{\mathrm{value}}\) 仅表示奖励或其策略优化代理项，<strong>不含下方已经显式写出的参考 KL</strong>，避免把 KL 惩罚计算两次。每个 KL 都是在对应后缀状态 \(s_h\) 上的动作分布 KL，\(\beta&gt;0\)。</p>
 <p>第一项优化探索后的收益，第二项避免后缀策略远离参考模型，第三项要求模型学会提示。\(l=0\) 时监督项消失，退化成 RFT；给出完整轨迹时自主探索部分消失，退化成 SFT 型学习。这里不是随便把两个 loss 相加：同一条解被划分成被教的前缀与自己探索的后缀。</p>
 <p>理论上第三项可视为对未知最优策略的前向 KL 的样本估计，但“参考解来自最优策略”是分析假设，不是任意现实标注都天然满足的事实。错误或冗长前缀同样会被吸收到参数中。</p>
 <h3 id="hint-example">用一条四步解，看两种信号各训练哪里</h3>
@@ -128,6 +135,6 @@ title: "UFT：用逐渐缩短的提示连接监督学习与强化学习"
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

@@ -208,7 +208,7 @@ layout: compress
 
               <figure>
                 <img src="/blogs/2026/Working-Agent/Claw-Eval/image-6.svg" alt="Rounds vs Pass^3" style="max-width: 85%;">
-                <figcaption>图7：平均对话轮次与 Pass\(^{\smallfrown}3\) — 近乎零相关（\(r = 0.07\), \(R^2 < 0.01\)）。颜色越深表示越理想区域</figcaption>
+                <figcaption>图7：平均对话轮次与 Pass\(^{\smallfrown}3\) — 近乎零相关（\(r = 0.07\), \(R^2 &lt; 0.01\)）。颜色越深表示越理想区域</figcaption>
               </figure>
 
               <figure>
@@ -216,7 +216,7 @@ layout: compress
                 <figcaption>图8：问题精确度与 Pass\(^{\smallfrown}3\) — 问题精确度解释 76% 的 Pass\(^{\smallfrown}3\) 方差（\(r = 0.87\), \(R^2 = 0.76\)）</figcaption>
               </figure>
 
-              <p>38 个多轮对话任务模拟专业咨询场景——用户画像逐步释放关键信息，Agent 必须在给出最终答案前通过澄清问题主动获取这些信息。在 13 个模型上，对话轮次与 Pass\(^{\smallfrown}3\) 呈<strong>近乎零相关</strong>（\(r = 0.07\), \(R^2 < 0.01\)）——大多数模型平均 3-5 轮，却覆盖了从 15.8% 到 68.4% 的完整 Pass\(^{\smallfrown}3\) 范围。</p>
+              <p>38 个多轮对话任务模拟专业咨询场景——用户画像逐步释放关键信息，Agent 必须在给出最终答案前通过澄清问题主动获取这些信息。在 13 个模型上，对话轮次与 Pass\(^{\smallfrown}3\) 呈<strong>近乎零相关</strong>（\(r = 0.07\), \(R^2 &lt; 0.01\)）——大多数模型平均 3-5 轮，却覆盖了从 15.8% 到 68.4% 的完整 Pass\(^{\smallfrown}3\) 范围。</p>
 
               <p><strong>真正的预测因素是问题精确度（Question Precision）</strong>，定义为澄清度（问题是否命中要害）与轨迹质量（信息收集过程是否逻辑有序）的均值。它解释了 <strong>76% 的 Pass\(^{\smallfrown}3\) 方差</strong>（\(r = 0.87\)），所有 13 个模型均位于 95% 置信区间内或附近。对比极为鲜明：轮次方差的不到 1% vs 问题质量的 76%。这与任务设计高度吻合——关键信息被隐藏在渐进式揭示之后，因此<strong>提问策略的质量而非对话长度决定了模型收集到多少上下文</strong>。这一发现对 Agent 设计有重要启示：与其盲目增加交互轮次，不如优化信息获取策略的精准度。</p>
 
@@ -264,6 +264,6 @@ layout: compress
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

@@ -158,7 +158,7 @@ layout: compress
               \mathcal{D}_{\mathrm{v2}} = \left\{ (q,\tau) \in \mathcal{D}_{\mathrm{raw}} \;\middle|\; T(\tau) \geq T_{\min} \right\}
               \]
 
-              <p>其中 \(T_{\min}\) 为预设的最低工具调用阈值。工具调用步数 \(T(\tau) < T_{\min}\) 的轨迹被<strong>直接丢弃</strong>。这一操作看似简单粗暴，但意图明确：</p>
+              <p>其中 \(T_{\min}\) 为预设的最低工具调用阈值。工具调用步数 \(T(\tau) &lt; T_{\min}\) 的轨迹被<strong>直接丢弃</strong>。这一操作看似简单粗暴，但意图明确：</p>
 
               <ul>
                 <li><strong>保证最低难度底线</strong>：每一条保留的训练样本都要求 Agent 执行不少于 \(T_{\min}\) 步的工具调用，确保模型<strong>不会学习到「走捷径」的退化策略</strong></li>
@@ -395,6 +395,6 @@ layout: compress
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

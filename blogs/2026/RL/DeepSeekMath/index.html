@@ -72,10 +72,17 @@ title: "DeepSeekMath：从数学数据到 GRPO 的完整学习链路"
 <p>数据管线进行基准去污染，但其效果仍依赖检测策略；代码预训练有助数学推理、arXiv 语料在作者的设置中收益有限，都是条件化实验发现，不是“代码永远优于论文”的普遍规律。后续 SFT 与 RL 是在这一基座上继续改善分布。</p>
 <h2 id="grpo">从 critic 到组相对优势</h2>
 <p>同题 \(x\) 从旧策略采样 \(G\) 个回答 \(y_i\)，获得奖励 \(r_i\)，终点监督下每个 token 共用 \(\hat A_i=(r_i-\bar r)/(\operatorname{std}(r)+\varepsilon)\)。这里的微小 \(\varepsilon\) 是实际处理零方差所需的数值保护；原文展示的概念公式不含这一项。</p>
-<p>令 token 概率比 \(\rho_{i,t}=\pi_\theta(y_{i,t}\mid x,y_{i,&lt;t})/\pi_{\mathrm{old}}(y_{i,t}\mid x,y_{i,&lt;t})\)。GRPO 最大化组平均的：</p>
-<p>\[J=\mathbb E\!\left[\frac1G\sum_i\frac1{|y_i|}\sum_t\left\{\min\big(\rho_{i,t}\hat A_i,\operatorname{clip}(\rho_{i,t},1-\epsilon,1+\epsilon)\hat A_i\big)-\beta D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\right\}\right].\]</p>
+<p>令 token 概率比 \(\rho_{i,t}=\pi_\theta(y_{i,t}\mid x,y_{i,&lt;t})/\pi_{\mathrm{old}}(y_{i,t}\mid x,y_{i,&lt;t})\)。再定义 \(u_{i,t}=\pi_{\mathrm{ref}}(y_{i,t}\mid x,y_{i,&lt;t})/\pi_\theta(y_{i,t}\mid x,y_{i,&lt;t})\)，以及原文使用的逐 token 估计项 \(k_{i,t}=u_{i,t}-\log u_{i,t}-1\)。GRPO 最大化：</p>
+\[
+\begin{aligned}
+J(\theta)&=\mathbb E_{\substack{x\sim\mathcal D\\y_{1:G}\sim\pi_{\mathrm{old}}(\cdot\mid x)}}
+\left[\frac1G\sum_{i=1}^G\frac1{|y_i|}\sum_{t=1}^{|y_i|}\left\{
+\min\big(\rho_{i,t}\hat A_i,\operatorname{clip}(\rho_{i,t},1-\epsilon,1+\epsilon)\hat A_i\big)
+-\beta k_{i,t}\right\}\right].
+\end{aligned}
+\]
 <p>相对优势回答“这条比同题其他样本好多少”，clipping 限制对旧数据的激进更新，KL 项约束相对初始参考模型的漂移。两种限制功能不同，不能称为完全替代。论文还讨论过程监督：在步骤边界给更细奖励，优势不再只是全序列相同的终点分数。</p>
-<p>原文 KL 采用 \(u-\log u-1\) 的非负采样形式，\(u=\pi_{\mathrm{ref}}/\pi_\theta\)。单个 token 上的这个量是估计项，不是枚举全词表后的精确 KL；讨论无偏性也必须说明采样分布。把所有实现中的 KL 日志当成同一个精确距离，会误导后续遗忘分析。</p>
+<p>\(k_{i,t}\ge0\) 来自 \(u-\log u-1\ge0\)，但一个已采样 token 的估计项不等于该前缀上的完整词表 KL。固定前缀、两策略在词表上满足相应支持条件时，只有按当前 \(\pi_\theta\) 采样下一 token，才有 \(\mathbb E_{v\sim\pi_\theta}[u(v)-\log u(v)-1]=D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\)。复用旧策略数据时，不能未经修正就沿用这个无偏结论。这里也不把序列 KL 重复塞进每个 token 的求和中；各项的单位都是该 token 的局部信号。</p>
 <h2 id="evidence">从目标到更新：理解两个参照系</h2>
 <p>读完目标函数，仍需回答两个问题：为什么相对奖励有助更新，以及为什么同一个公式同时需要旧策略和参考策略。先把这两个设计讲清，再回到论文的性能比较。</p>
 <h3 id="why-the-baseline">为什么减去 baseline：从梯度看组比较</h3>
@@ -133,6 +140,6 @@ title: "DeepSeekMath：从数学数据到 GRPO 的完整学习链路"
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

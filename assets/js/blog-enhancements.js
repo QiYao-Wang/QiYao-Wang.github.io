@@ -56,7 +56,7 @@
       });
     }
 
-    const tocLinks = new Map(Array.from(toc?.querySelectorAll('a') || []).map((link) => [link.hash.slice(1), link]));
+    const tocLinks = new Map(Array.from(toc?.querySelectorAll('a') || []).map((link) => [decodeURIComponent(link.hash.slice(1)), link]));
     if ('IntersectionObserver' in window && tocLinks.size) {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {

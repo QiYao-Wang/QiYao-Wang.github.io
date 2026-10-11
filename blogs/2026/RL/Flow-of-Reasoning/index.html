@@ -79,6 +79,7 @@ title: "Flow of Reasoning：学习生成多条正确推理路径"
 
 <h2 id="log-variance">为什么让隐式归一化值一致？</h2>
 <p>定义 \(\Phi(\tau)=\log R(s_n)+\sum_t\log P_B-\sum_t\log P_F\)。满足平衡时所有同条件轨迹都给出同一个 \(\log Z\)。于是论文最小化：</p>
+<p>这个 log 形式要求参与计算的奖励与路径概率严格为正。零奖励轨迹不能直接代入 \(\log R\)；若实现采用正下界或奖励塑形，必须按处理后的奖励理解目标。若不满足这些条件，原式并不是一个有限的训练损失。</p>
 <p>\[\mathcal L_V=\mathbb E_\tau[(\Phi(\tau)-\mathbb E_\tau\Phi)^2].\]</p>
 <p>它省去了单独学习条件归一化网络。但只在被访问的轨迹上方差很小，不等于整个空间已经正确：如果某些高奖励路径一直没被采到，训练没有检查过它们。理想结论要求足够覆盖、可表达的策略和全局优化；现实中探索策略因此不是可有可无的补丁。</p>
 <h2 id="exploration-and-reward">探索与奖励不是中性的配套</h2>
@@ -144,6 +145,6 @@ title: "Flow of Reasoning：学习生成多条正确推理路径"
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

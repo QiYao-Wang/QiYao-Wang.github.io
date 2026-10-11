@@ -76,9 +76,9 @@ title: "GFlowRL：归一化网络真的必要吗？从诊断到轻量分布匹�
 <p>它是这个组内量的 Monte Carlo 均值，不是在任意训练阶段都无偏估计真实 \(\log Z\)。当目标分布与策略在理想固定点上满足平衡时，各轨迹的隐式值相同，才与真正归一化常数一致。把“在最优点正确”误写为“全程精确”，会夸大方法。</p>
 <p>长度为 \(T_i\) 时，旧策略的 flow gap 为：</p>
 <p>\[g_i=\operatorname{sg}(\widehat z)+\frac1{T_i}\log\frac{\pi_{\mathrm{old}}(y_i\mid x)}{\pi_{\mathrm{ref}}(y_i\mid x)}-\beta r_i.\]</p>
-<p>将其非对称截断为 \(\tilde g_i\)，加上当前与旧策略的长度归一化 log 比值：</p>
+<p>原文将其非对称截断为 \(\tilde g_i=\operatorname{clip}(g_i,-\epsilon_{\mathrm{low}},\epsilon_{\mathrm{high}})\)，其中 \(0&lt;\epsilon_{\mathrm{low}}&lt;\epsilon_{\mathrm{high}}\)。重要性权重写为 \(w_i=\min(\pi_\theta(y_i\mid x)/\pi_{\mathrm{old}}(y_i\mid x),1+\epsilon)\)，只截断上界，不能与 FlowRL 的双边截断混写。再加上当前与旧策略的长度归一化 log 比值：</p>
 <p>\[\mathcal L=\frac1G\sum_iw_i\left[\tilde g_i+\frac1{T_i}\log\frac{\pi_\theta(y_i\mid x)}{\pi_{\mathrm{old}}(y_i\mid x)}\right]^2.\]</p>
-<p>这把信号拆成“采样时已经观察到的偏差”与“这次更新造成的变化”。clipping 限制异常轨迹支配梯度；它不是 GRPO 的奖励去均值，也不是简单增加 KL penalty。检查符号时，正残差在梯度下降下倾向减少该轨迹概率，负残差倾向增加；应直接从损失推导，不能把边界名称误当成更新方向。</p>
+<p>这把信号拆成“采样时已经观察到的偏差”与“这次更新造成的变化”。clipping 限制异常轨迹支配梯度；它不是 GRPO 的奖励去均值，也不是简单增加 KL penalty。<strong>只考察平方残差项，并将权重视为常量时</strong>，正残差的局部更新倾向减少该轨迹概率，负残差倾向增加。若代码让 \(w_i\) 对当前参数求导，完整梯度还包含 \((\nabla_\theta w_i)D_i^2\)，其中 \(D_i\) 是方括号内残差；不能仅用残差符号概括整个更新，也不能把截断边界名称误当成概率增减方向。</p>
 <h3 id="mean-is-not-log-partition">组均值离真正的 log Z 有多远？</h3>
 <p>暂时不做长度归一化、clip 或奖励组标准化。令真实目标 \(p^*(y)=\pi_{\mathrm{ref}}(y)e^{\beta r(y)}/Z\)。对旧策略采样，组估计的无限样本期望为：</p>
 \[
@@ -138,6 +138,6 @@ title: "GFlowRL：归一化网络真的必要吗？从诊断到轻量分布匹�
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

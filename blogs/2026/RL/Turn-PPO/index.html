@@ -130,7 +130,7 @@ layout: compress
 
               <p><strong>Turn-MDP 定义：</strong></p>
               <ul>
-                <li><strong>状态 \(s_n\)</strong>：在当前轮次之前的所有交互历史，concat 上当前轮次的 query。即 \(s_n := \left(\oplus_{n'<n}(Q_{n'}, R_{n'})\right) \oplus Q_n\)。</li>
+                <li><strong>状态 \(s_n\)</strong>：在当前轮次之前的所有交互历史，concat 上当前轮次的 query。即 \(s_n := \left(\oplus_{n'&lt;n}(Q_{n'}, R_{n'})\right) \oplus Q_n\)。</li>
                 <li><strong>动作 \(a_n\)</strong>：当前轮次 LLM 的完整响应 token 序列，即 \(a_n := R_n\)。</li>
               </ul>
 
@@ -173,7 +173,7 @@ layout: compress
 
               <figure>
                 <img src="/blogs/2026/RL/Turn-PPO/image.svg" alt="GRPO vs Token-PPO vs Turn-PPO" style="max-width:95%;">
-                <figcaption>图1：GRPO、token-PPO 和 turn-PPO 的优势计算对比。在 turn-PPO 中，状态定义为 \(s_n := \left(\oplus_{n'<n}(Q_{n'}, R_{n'})\right) \oplus Q_n\)，动作为 \(a_n := R_n\)。\(\hat{V}_h\) 的位置表示 critic 以所有到该位置为止的 token 为条件进行价值预测。</figcaption>
+                <figcaption>图1：GRPO、token-PPO 和 turn-PPO 的优势计算对比。在 turn-PPO 中，状态定义为 \(s_n := \left(\oplus_{n'&lt;n}(Q_{n'}, R_{n'})\right) \oplus Q_n\)，动作为 \(a_n := R_n\)。\(\hat{V}_h\) 的位置表示 critic 以所有到该位置为止的 token 为条件进行价值预测。</figcaption>
               </figure>
 
               <p style="background: #f0f7ff; padding: 12px 16px; border-left: 4px solid #4a90d9;"><strong>核心洞察：</strong>Turn-PPO 的"turn 级别 clipping"带来了更高的 clipping 比例——当策略分布在某个 turn 上变化过大时，整个 turn 被 clip，阻止不稳定梯度更新。这相当于在 turn 级别施加了更强的信任域约束，使训练更加平滑可控。</p>
@@ -442,6 +442,6 @@ layout: compress
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

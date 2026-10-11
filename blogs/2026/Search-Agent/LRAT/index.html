@@ -226,21 +226,21 @@ layout: compress
 
               <h3 id="naive-mining">第一步：从 Search-Browse 转换中挖掘朴素相关性信号</h3>
 
-              <p>首先从 Agent 的 <strong>[Search] → [Browse] 转换</strong>中构建粗粒度监督。考虑一个搜索轮次 (t)，Agent 发出中间查询 (q_t) 并收到 Top-(K) 候选集 (\mathcal{D}_t = \{d_{t,i}\}_{i=1}^{K})。如果 Agent 在下一轮对某个候选执行了 [Browse] 动作，则被浏览的文档 (d_{t+1}) 被视为<strong>朴素正样本</strong>（naive positive）。</p>
+              <p>首先从 Agent 的 <strong>[Search] → [Browse] 转换</strong>中构建粗粒度监督。考虑一个搜索轮次 \(t\)，Agent 发出中间查询 \(q_t\) 并收到 Top-\(K\) 候选集 \(\mathcal{D}_t = \{d_{t,i}\}_{i=1}^{K}\)。如果 Agent 在下一轮对某个候选执行了 [Browse] 动作，则被浏览的文档 \(d_{t+1}\) 被视为<strong>朴素正样本</strong>（naive positive）。</p>
 
-              <p>对于负样本：基于发现二的洞察，Agent 的浏览决策表现出弱位置依赖性，未浏览的候选更可能反映<strong>明确的拒绝</strong>而非缺乏曝光。因此，对于每个被浏览的文档 (d_{t+1})，同一检索集中的<strong>所有其他未被浏览的候选</strong>都被视为朴素负样本：</p>
+              <p>对于负样本：基于发现二的洞察，Agent 的浏览决策表现出弱位置依赖性，未浏览的候选更可能反映<strong>明确的拒绝</strong>而非缺乏曝光。因此，对于每个被浏览的文档 \(d_{t+1}\)，同一检索集中的<strong>所有其他未被浏览的候选</strong>都被视为朴素负样本：</p>
 
               \[
               \mathcal{N}_t = \mathcal{D}_t \setminus \{d_{t+1}\}
               \]
 
-              <p>这产生了形式为 ((q_t, d_{t+1}, \mathcal{N}_t)) 的粗粒度训练实例。</p>
+              <p>这产生了形式为 \((q_t, d_{t+1}, \mathcal{N}_t)\) 的粗粒度训练实例。</p>
 
               <h3 id="reasoning-filter">第二步：基于推理的正样本过滤</h3>
 
               <p>浏览动作仍是相关性的不完美代理——Agent 基于粗粒度摘要选择文档浏览，之后可能判断某浏览过的文档<strong>并无帮助</strong>。基于发现三，浏览后推理痕迹能可靠地指示文档效用，通常明确陈述浏览内容是否解决了信息缺口。</p>
 
-              <p>因此，LRAT 引入了一个<strong>推理感知的 LLM-as-Judge 过滤器</strong>。对每个被浏览的文档 (d_{t+1})，收集 Agent 紧随其后的推理痕迹 (r_{t+2})，使用 Qwen3-30B-A3B-Thinking-2507 作为判断器，根据推理痕迹判定文档是 <code>Relevant</code> 还是 <code>Irrelevant</code>。</p>
+              <p>因此，LRAT 引入了一个<strong>推理感知的 LLM-as-Judge 过滤器</strong>。对每个被浏览的文档 \(d_{t+1}\)，收集 Agent 紧随其后的推理痕迹 \(r_{t+2}\)，使用 Qwen3-30B-A3B-Thinking-2507 作为判断器，根据推理痕迹判定文档是 <code>Relevant</code> 还是 <code>Irrelevant</code>。</p>
 
               <p style="background: #f0fff0; padding: 12px 16px; border-left: 4px solid #4caf50; margin: 1em 0;">
                 <strong>过滤效果验证</strong>：在 BrowseComp-Plus 证据标注上，该过滤器能保留 <strong>97.2%</strong> 的 ground-truth 证据文档（几乎完美的正样本召回），同时保留 <strong>74.8%</strong> 的浏览过但非证据的文档——说明过滤器移除了明显噪声，同时捕获了可能超出刚性数据集证据标签的 Agent 特定效用。
@@ -257,11 +257,11 @@ layout: compress
 
               <p>受时间感知点击模型（time-aware click model）的饱和原理启发，LRAT 将推理长度映射为有界效用分数，使用<strong>指数饱和函数</strong>来捕捉日益增长的推理痕迹所带来的边际收益递减效应。</p>
 
-              <p>在时间感知点击模型中，停留长度 (x) 处的边际增益遵循指数衰减函数：</p>
+              <p>在时间感知点击模型中，停留长度 \(x\) 处的边际增益遵循指数衰减函数：</p>
               \[
               g(x) = \exp\left(-\frac{\ln 2}{\beta} x \right)
               \]
-              <p>其中 (\beta) 是累积增益的半衰期。对 Agent 轨迹中浏览后推理长度的分析（图 6）显示了类似的指数衰减模式。将边际增益从 0 积分到观测的推理长度 (l) 得到累积相关性效用：</p>
+              <p>其中 \(\beta\) 是累积增益的半衰期。对 Agent 轨迹中浏览后推理长度的分析（图 6）显示了类似的指数衰减模式。将边际增益从 0 积分到观测的推理长度 \(l\) 得到累积相关性效用：</p>
 
               \[
               u(l) = \int_0^l g(x)\, dx
@@ -272,13 +272,13 @@ layout: compress
               \[
               w = \frac{1}{\mu_{\text{raw}}} \left( 1 - \exp\left(-\frac{\ln 2 \cdot l}{\beta}\right) \right)
               \]
-              <p>其中 (\beta) 设为所有轨迹中推理长度的中位数，\(\mu_{\text{raw}}\) 为全局未归一化分数的均值，确保 \(\mathbb{E}[w] \approx 1\)，同时为触发更深 Agent 推理和更大任务进展的文档分配更高重要性。</p>
+              <p>其中 \(\beta\) 设为所有轨迹中推理长度的中位数，\(\mu_{\text{raw}}\) 为全局未归一化分数的均值，确保 \(\mathbb{E}[w] \approx 1\)，同时为触发更深 Agent 推理和更大任务进展的文档分配更高重要性。</p>
 
               <h3 id="weighted-contrastive">第四步：加权对比学习</h3>
 
-              <p>LRAT 使用标准的双编码器稠密检索器（bi-encoder）。每个查询 (q) 和文档 (d) 被独立编码为向量表示 \(\mathbf{e}_q, \mathbf{e}_d \in \mathbb{R}^h\)。相关性分数通过相似度函数计算：\(s(q,d) = \mathrm{sim}(\mathbf{e}_q, \mathbf{e}_d)\)。</p>
+              <p>LRAT 使用标准的双编码器稠密检索器（bi-encoder）。每个查询 \(q\) 和文档 \(d\) 被独立编码为向量表示 \(\mathbf{e}_q, \mathbf{e}_d \in \mathbb{R}^h\)。相关性分数通过相似度函数计算：\(s(q,d) = \mathrm{sim}(\mathbf{e}_q, \mathbf{e}_d)\)。</p>
 
-              <p>为将相关性强度纳入优化，LRAT 修改了标准 InfoNCE 损失，引入<strong>样本级加权</strong>。对大小为 (N) 的 mini-batch，加权对比目标定义为：</p>
+              <p>为将相关性强度纳入优化，LRAT 修改了标准 InfoNCE 损失，引入<strong>样本级加权</strong>。对大小为 \(N\) 的 mini-batch，加权对比目标定义为：</p>
 
               \[
               \mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N} 
@@ -288,7 +288,7 @@ layout: compress
               \sum_{d^- \in \mathcal{N}_i} \exp\left(s(q_i, d^-) / \tau\right)}
               \]
 
-              <p>其中 \(\tau\) 为温度参数，(d_i^+\) 为查询 (q_i\) 的正文档，(w_i\) 为推理长度导出的权重。权重 (w_i\) 缩放每个实例的梯度贡献，使得与更深推理相关联的文档在训练中发挥<strong>更强的影响力</strong>。</p>
+              <p>其中 \(\tau\) 为温度参数，\(d_i^+\) 为查询 \(q_i\) 的正文档，\(w_i\) 为推理长度导出的权重。权重 \(w_i\) 缩放每个实例的梯度贡献，使得与更深推理相关联的文档在训练中发挥<strong>更强的影响力</strong>。</p>
 
               <p>负样本集 \(\mathcal{N}_i\) 由两个互补来源构建：<strong>(1)</strong> 来自 Agent 轨迹的同一检索候选集中未被浏览的文档（轨迹导出负样本），<strong>(2)</strong> 同一 mini-batch 中与其他查询配对的文档（in-batch negatives）。这种混合负采样策略提高了区分能力，同时避免表示坍缩。</p>
 
@@ -461,7 +461,7 @@ layout: compress
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>
 

@@ -122,7 +122,7 @@ D_{\mathrm{KL}}(q\|p_{\mathrm{ref}})
 \ell_{\mathrm{TB}}(y)=
 \big[z_\tau+\log q_\phi(y\mid x,\tau)-\log R_\tau(y)\big]^2.
 \]
-<p>\(\phi\) 是采样器参数，\(z_\tau\) 是归一化常数的对数偏移。若所有有效回答上残差都为零，归一化会要求 \(z_\tau=\log Z_\tau\)。这里“所有”很重要：有限训练组上的拟合不能证明全局覆盖。</p>
+<p>\(\phi\) 是采样器参数，\(z_\tau\) 是共享的对数偏移。在这个理想推导中，假定 \(q_\phi\) 是<strong>只支持有效集合的归一化分布</strong>；若所有有效回答上残差都为零，才有 \(z_\tau=\log Z_\tau\)。这里“所有”很重要：有限训练组上的拟合不能证明全局覆盖。允许原始生成器输出无效回答时，偏移含义还要按下文的接受率修正。</p>
 <h3 id="group-centering">把归一化常数变成组内中心化</h3>
 <p>为什么必须匹配概率比，而不是直接让采样器生成学生分数最高的答案？假设有效解法只有代数法和几何法，学生偏好前者，但后者也占有实质概率。最大化学生分数会把质量集中在单个最优解上；条件采样则希望在过滤错误答案后，仍保留两种解法之间的比例。这是<strong>优化一个样本</strong>与<strong>学习一个分布</strong>的差别，也是这里使用 GFlowNet 的理由。</p>
 <p>对同一 \(x,\tau\)，收集 \(K\ge2\) 个有效回答，定义：</p>
@@ -147,6 +147,7 @@ a_i=\log q_\phi(y_i\mid x,\tau)-\log p_{\mathrm{ref}}(y_i\mid x),
 <p>这也解释了两个容易被忽略的条件。第一，若每题只有一条有效回答，方差恒为零，根本没有比例信息。第二，若每组总是同一类答案，低损失只能说明这类答案内部的比例一致，不能告诉我们另一种解法在哪里。增加组大小能改善比较机会，却不能凭空保证搜索覆盖。实际训练要同时监测组内不同回答数、不同推理簇数，以及跨轮次的覆盖变化。</p>
 <h3 id="acceptance-and-scoring">有效集合之外的成本去了哪里？</h3>
 <p>原始采样器可能生成无效回答。设它的有效输出概率为 \(A_\phi&gt;0\)，则有效回答的条件分布为 \(q_\phi^+(y)=q_\phi(y)/A_\phi\)。改用 \(\log q_\phi^+\) 会给每个 \(a_i\) 减去同一个 \(\log A_\phi\)，所以组内中心化把这项抵消了。</p>
+<p>但 TB 偏移不能因此混用：有效条件分布精确匹配时，它的偏移为 \(\log Z_\tau\)；若直接使用原始 \(q_\phi\) 的 log 分数，则对应偏移为 \(\log Z_\tau-\log A_\phi\)。中心化后的残差相同，并不意味着两种分布的归一化常数相同。</p>
 <p><strong>被抵消的是未知常数，不是无效输出的成本。</strong>如果采样器只有很低接受率，这个损失本身没有直接要求它消除无效概率质量；正确性检查仍决定哪些样本进入 SFT。实现时应记录原始生成数、接受数、验证成本，而不能只报告保留下来的样本数。</p>
 <p>同样，必须使用与实际采样分布一致的完整序列分数。平均 token log-probability、改变温度或 top-p 截断都可能改变目标；不能把它们作为“无害的打分优化”混用。</p>
 
@@ -257,6 +258,6 @@ p_{t+1}=(1-\eta)p_t+\eta p_t(\cdot\mid C),\qquad 0&lt;\eta\le1.
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>

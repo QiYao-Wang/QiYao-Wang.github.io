@@ -89,6 +89,7 @@ title: "Retaining by Doing：遗忘差异究竟来自目标，还是训练数据
 <p>“由我自己生成”是<strong>模型来源</strong>，而“on-policy”还涉及<strong>检查点与时间</strong>。一批数据即使来自学生，一旦学生连续更新，它也不再严格来自当前分布。这正是 Offline 与 Online E2S 的分界之一。</p>
 <h2 id="why-modes-matter">三、mode-seeking 为什么可能反而保留更多？</h2>
 <p>SFT 相当于最小化示范分布到学生的前向 KL；带参考策略 KL 正则的 RL 则可写成对奖励倾斜目标的反向 KL：</p>
+<p>下式固定输入 \(x\)，并令 \(J(\pi)=\mathbb E_{y\sim\pi}[r(x,y)]-\beta D_{\mathrm{KL}}(\pi\|\pi_0)\)，其中 \(\beta&gt;0\) 是 KL 惩罚系数，\(Z(x)\) 是目标的有限归一化常数。</p>
 \[
 \pi^*(y\mid x)=\frac{\pi_0(y\mid x)e^{r(x,y)/\beta}}{Z(x)},\qquad
 J(\pi)=-\beta D_{\mathrm{KL}}(\pi\|\pi^*)+\beta\log Z(x).
@@ -156,6 +157,6 @@ J(\pi)=-\beta D_{\mathrm{KL}}(\pi\|\pi^*)+\beta\log Z(x).
     </div>
     <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
     {% include analytics.html %}
-    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+    <script src="/assets/js/blog-enhancements.js?v=20261011-4" defer></script>
   </body>
 </html>
