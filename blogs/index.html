@@ -8,7 +8,7 @@ layout: compress
     {% include head.html %}
     {% include head/custom.html %}
     <base target="_self">
-    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-3">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-4">
   </head>
   <body>
     {% include browser-upgrade.html %}
@@ -46,15 +46,37 @@ layout: compress
               <p id="total_blogs" class="blog-stats">Total Blogs</p>
             </div>
 
+            <nav class="blog-category-nav" aria-label="内容分类">
+              <button class="blog-category-button" type="button" data-category="original" aria-pressed="true">原创文章 <span class="blog-category-count"></span></button>
+              <button class="blog-category-button" type="button" data-category="learning" aria-pressed="false">学习笔记 <span class="blog-category-count"></span></button>
+            </nav>
+
             <!-- Search Bar -->
             <form id="blog-search-form" class="blog-search-container" role="search">
               <div class="blog-search-field">
-                <input type="search" id="blog-search" class="blog-search-input" placeholder="Search by title, tag or date..." autocomplete="off" aria-label="Search blog posts">
+                <input type="search" id="blog-search" class="blog-search-input" placeholder="搜索标题、标签或日期…" autocomplete="off" aria-label="搜索当前分类的文章">
                 <button id="blog-search-clear" class="blog-search-clear" type="button" aria-label="Clear search" style="display:none;">&times;</button>
               </div>
-              <button class="blog-search-submit" type="submit">搜索</button>
+              <button class="blog-search-submit" type="submit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path></svg><span>搜索</span></button>
             </form>
-            <p id="blog-search-no-results" class="blog-search-no-results" style="display:none;">No matching blog posts found.</p>
+            <p id="blog-search-no-results" class="blog-search-no-results" role="status" style="display:none;">当前分类下没有匹配的文章。</p>
+
+            <div class="blog-year-section blog-original-section">
+              <h2 class="blog-year-title" id="original-articles">原创文章 <span class="year-count"></span></h2>
+              <ul class="blog-list" data-year="original">
+                <li class="blog-entry" data-kind="original">
+                  <a class="blog-entry-link" href="https://lab.wangqiyao.me/large-models-and-ip.html">
+                    <div class="blog-entry-title">Large Models and IP: Domain Practice Across the Full Lifecycle</div>
+                    <p class="blog-entry-description">大模型与知识产权：围绕创造、专利性评估与保护，讨论领域实践、研究路线和开放问题。</p>
+                    <div class="blog-entry-meta">
+                      <span class="blog-entry-date">2026 · Taibao-IP Team</span>
+                      <div class="blog-tags"><span class="blog-tag">#IPIntelligence</span><span class="blog-tag">#Perspective</span></div>
+                    </div>
+                  </a>
+                  <div class="blog-entry-editions"><a href="https://mp.weixin.qq.com/s/RaHIqe2wVMPfmvSzAYfahA">中文原文 ↗</a><a href="https://lab.wangqiyao.me/large-models-and-ip.html">English ↗</a></div>
+                </li>
+              </ul>
+            </div>
 
             <!-- 2026 -->
             <div class="blog-year-section">
@@ -537,6 +559,23 @@ layout: compress
         const noResultsMsg = document.getElementById('blog-search-no-results');
         const blogEntries = document.querySelectorAll('.blog-entry');
         const topicFilters = document.querySelectorAll('.blog-topic-filter');
+        const categoryButtons = document.querySelectorAll('.blog-category-button');
+        const requestedCategory = new URL(window.location.href).searchParams.get('category');
+        let activeCategory = requestedCategory === 'learning' ? 'learning' : 'original';
+        const entryCategory = entry => entry.dataset.kind || 'learning';
+        categoryButtons.forEach(button => {
+          button.querySelector('.blog-category-count').textContent = Array.from(blogEntries).filter(entry => entryCategory(entry) === button.dataset.category).length;
+          button.addEventListener('click', () => {
+            clearTimeout(debounceTimer);
+            activeCategory = button.dataset.category;
+            searchInput.value = '';
+            topicFilters.forEach(filter => filter.setAttribute('aria-pressed', 'false'));
+            const url = new URL(window.location.href);
+            url.searchParams.set('category', activeCategory);
+            window.history.replaceState(null, '', url);
+            performSearch();
+          });
+        });
 
         function performSearch() {
           const query = searchInput.value.trim().toLowerCase();
@@ -544,26 +583,25 @@ layout: compress
 
           let totalVisible = 0;
 
-          if (query.length === 0) {
-            blogEntries.forEach(entry => entry.classList.remove('search-hidden'));
-            yearSections.forEach(section => section.classList.remove('search-hidden'));
-            noResultsMsg.style.display = 'none';
-          } else {
+          {
             yearSections.forEach(section => {
               const entries = section.querySelectorAll('.blog-entry');
               let sectionVisible = false;
 
               entries.forEach(entry => {
                 const title = (entry.querySelector('.blog-entry-title')?.textContent || '').toLowerCase();
+                const description = (entry.querySelector('.blog-entry-description')?.textContent || '').toLowerCase();
                 const tags = Array.from(entry.querySelectorAll('.blog-tag'))
                   .map(tag => tag.textContent.toLowerCase());
                 const date = (entry.querySelector('.blog-entry-date')?.textContent || '').toLowerCase();
                 const lang = (entry.querySelector('.blog-entry-lang')?.textContent || '').toLowerCase();
 
-                const matches = title.includes(query) ||
+                const matchesQuery = title.includes(query) ||
+                  description.includes(query) ||
                   tags.some(tag => tag.includes(query)) ||
                   date.includes(query) ||
                   lang.includes(query);
+                const matches = entryCategory(entry) === activeCategory && matchesQuery;
 
                 if (matches) {
                   entry.classList.remove('search-hidden');
@@ -575,13 +613,28 @@ layout: compress
               });
 
               section.classList.toggle('search-hidden', !sectionVisible);
+              const count = section.querySelectorAll('.blog-entry:not(.search-hidden)').length;
+              section.querySelector('.year-count').textContent = `(${count})`;
             });
 
             noResultsMsg.style.display = totalVisible === 0 ? 'block' : 'none';
           }
+          categoryButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === activeCategory)));
+          const categoryEntries = Array.from(blogEntries).filter(entry => entryCategory(entry) === activeCategory);
+          totalBlogsElement.textContent = `${activeCategory === 'original' ? '原创文章' : '学习笔记'} · ${categoryEntries.length} 篇`;
+          topicFilters.forEach(button => {
+            const count = categoryEntries.filter(entry => Array.from(entry.querySelectorAll('.blog-tag')).some(tag => tag.textContent.trim() === button.dataset.topic)).length;
+            button.querySelector('.blog-topic-count').textContent = count;
+            button.parentElement.style.display = count ? '' : 'none';
+          });
+          toc.querySelectorAll('a').forEach(link => {
+            const heading = document.getElementById(link.hash.slice(1));
+            link.parentElement.style.display = heading?.closest('.blog-year-section').classList.contains('search-hidden') ? 'none' : '';
+          });
         }
 
         let debounceTimer;
+        performSearch();
         document.getElementById('blog-search-form').addEventListener('submit', (event) => {
           event.preventDefault();
           clearTimeout(debounceTimer);
