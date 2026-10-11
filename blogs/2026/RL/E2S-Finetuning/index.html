@@ -50,7 +50,7 @@ title: "E2S Finetuning：学习一个贴近学生的正确轨迹采样器"
               <h1>E2S Finetuning：学习一个贴近学生的正确轨迹采样器</h1>
               <div class="blog-post-meta">
                 <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
-                <span class="meta-topic">#ResearchBlog · #RL · #Sampling</span>
+                <span class="meta-topic">#RL</span>
               </div>
             </div>
 
@@ -69,6 +69,8 @@ title: "E2S Finetuning：学习一个贴近学生的正确轨迹采样器"
 </ul>
 
 <h2 id="distribution-mismatch">一、为什么“给正确示范”仍可能不好学？</h2>
+<p>先想一件很普通的事：老师用一个巧妙代换解出方程，学生却更习惯逐项消元。老师的答案当然正确，但让学生逐字复述那份证明，会同时提出两个要求：学会方程的知识，以及学会老师组织这段证明的方式。若学生缺少代换背后的中间概念，背下答案甚至可能让他在换一道题后更容易卡住。这个类比只是理解问题的入口；语言模型的可学习性最终仍要通过训练和测试来判断。</p>
+<p>E2S 把这两个要求拆开了。我们真正不能丢掉的，是专家解中的有效信息；至于它必须以哪个中间步骤、记号或句子出现，可以留给学生的分布选择。因此首先要问的不是“怎样把专家答案拟合得更好”，而是<strong>“满足专家要求的所有表达中，哪一个分布最值得让这个学生学习？”</strong>后面的采样器是这个问题的实现，而不是故事的起点。</p>
 <p>设问题为 \(x\)，专家回答分布为 \(q_{\mathrm{data}}(y\mid x)\)，学生为 \(p_\theta(y\mid x)\)。SFT 对专家回答做最大似然训练：</p>
 \[
 \mathcal L_{\mathrm{SFT}}
@@ -122,6 +124,7 @@ D_{\mathrm{KL}}(q\|p_{\mathrm{ref}})
 \]
 <p>\(\phi\) 是采样器参数，\(z_\tau\) 是归一化常数的对数偏移。若所有有效回答上残差都为零，归一化会要求 \(z_\tau=\log Z_\tau\)。这里“所有”很重要：有限训练组上的拟合不能证明全局覆盖。</p>
 <h3 id="group-centering">把归一化常数变成组内中心化</h3>
+<p>为什么必须匹配概率比，而不是直接让采样器生成学生分数最高的答案？假设有效解法只有代数法和几何法，学生偏好前者，但后者也占有实质概率。最大化学生分数会把质量集中在单个最优解上；条件采样则希望在过滤错误答案后，仍保留两种解法之间的比例。这是<strong>优化一个样本</strong>与<strong>学习一个分布</strong>的差别，也是这里使用 GFlowNet 的理由。</p>
 <p>对同一 \(x,\tau\)，收集 \(K\ge2\) 个有效回答，定义：</p>
 \[
 a_i=\log q_\phi(y_i\mid x,\tau)-\log p_{\mathrm{ref}}(y_i\mid x),
@@ -133,7 +136,16 @@ a_i=\log q_\phi(y_i\mid x,\tau)-\log p_{\mathrm{ref}}(y_i\mid x),
 \]
 <p>这里调节的是<strong>概率比的相对失衡</strong>：相对组平均偏高的回答被采样器过度表示，偏低的回答则表示不足。它与 GRPO 都使用组内信息，但优化对象不同：GRPO 通常中心化结果奖励，E2S 中心化的是采样器与学生之间的序列 log-probability 差。</p>
 <p>固定组内样本时，是否对 \(\bar a\) 停止梯度不改变该平方损失的梯度，因为 \(\sum_i(a_i-\bar a)=0\)。不过，这不意味着可以忽略采样策略的变化：博客算法每次用新采样组做一步更新，把采到的回答视为固定；复用旧 rollout 需要另行处理 off-policy 偏差。</p>
-<h3 id="acceptance-and-scoring">中心化可以消去接受率，不能提高接受率</h3>
+<h3 id="pairwise-matching-example">把组损失展开：它究竟在教什么？</h3>
+<p>下面是独立构造的教学例子，不是作者实验。固定学生在两个有效回答上的概率为 0.08、0.02，正确条件分布就是 0.8、0.2。若采样器已经只输出有效回答，却给它们各 0.5，两个 log gap 分别为 \(\log(0.5/0.08)\) 与 \(\log(0.5/0.02)\)。第二条回答的 gap 更大：采样器给了它相对学生偏好过多的质量，所以平方残差的下降方向会降低它的相对概率，并提高第一条。</p>
+<p>在同一组固定样本上，方差损失还能写成：</p>
+\[
+\frac1K\sum_i(a_i-\bar a)^2
+=\frac1{2K^2}\sum_{i,j}(a_i-a_j)^2.
+\]
+<p>因此它比较的是两条回答之间的 log 概率比：\(a_i-a_j=\log(q_i/q_j)-\log(p_i/p_j)\)。等式通过展开平方、利用 \(\sum_i a_i=K\bar a\) 直接得到。未知常数消失，是因为目标只要求相对比例一致；不是因为真实归一化常数已经被精确算出来。</p>
+<p>这也解释了两个容易被忽略的条件。第一，若每题只有一条有效回答，方差恒为零，根本没有比例信息。第二，若每组总是同一类答案，低损失只能说明这类答案内部的比例一致，不能告诉我们另一种解法在哪里。增加组大小能改善比较机会，却不能凭空保证搜索覆盖。实际训练要同时监测组内不同回答数、不同推理簇数，以及跨轮次的覆盖变化。</p>
+<h3 id="acceptance-and-scoring">有效集合之外的成本去了哪里？</h3>
 <p>原始采样器可能生成无效回答。设它的有效输出概率为 \(A_\phi&gt;0\)，则有效回答的条件分布为 \(q_\phi^+(y)=q_\phi(y)/A_\phi\)。改用 \(\log q_\phi^+\) 会给每个 \(a_i\) 减去同一个 \(\log A_\phi\)，所以组内中心化把这项抵消了。</p>
 <p><strong>被抵消的是未知常数，不是无效输出的成本。</strong>如果采样器只有很低接受率，这个损失本身没有直接要求它消除无效概率质量；正确性检查仍决定哪些样本进入 SFT。实现时应记录原始生成数、接受数、验证成本，而不能只报告保留下来的样本数。</p>
 <p>同样，必须使用与实际采样分布一致的完整序列分数。平均 token log-probability、改变温度或 top-p 截断都可能改变目标；不能把它们作为“无害的打分优化”混用。</p>
@@ -145,7 +157,7 @@ a_i=\log q_\phi(y_i\mid x,\tau)-\log p_{\mathrm{ref}}(y_i\mid x),
 </figure>
 <p><strong>Offline：</strong>冻结起始学生 \(\theta_0\)，训练采样器，生成固定数据集 \(D^*\)，最后对学生做 SFT。优点是数据和训练容易分离、重现；缺点是学生更新后，固定数据仍匹配旧学生。</p>
 <p><strong>Online：</strong>每轮先冻结当前学生，适配采样器并生成新数据；再关闭采样器，对学生做 SFT；下一轮重新适配更新后的学生。它解决的是<strong>目标分布随学生变化</strong>的问题，而不是把 SFT 换成新的 RL 损失。</p>
-<p>实现上，作者使用学生骨干加 <a href="/blogs/2026/Model-Adaptation/LoRA/">LoRA</a> 适配器。启用适配器时，采样器看见 \(x,\tau\)；禁用适配器时，学生只看 \(x\)。采样器训练冻结骨干，学生 SFT 禁用适配器。因此<strong>训练时的专家信息不是测试时学生额外拥有的信息</strong>。Online 改动骨干后，同一组 LoRA 参数所定义的采样分布也会受影响，继续适配是算法的一部分。</p>
+<p>实现上，作者使用学生骨干加 <a href="https://arxiv.org/abs/2106.09685">LoRA</a> 适配器。启用适配器时，采样器看见 \(x,\tau\)；禁用适配器时，学生只看 \(x\)。采样器训练冻结骨干，学生 SFT 禁用适配器。因此<strong>训练时的专家信息不是测试时学生额外拥有的信息</strong>。Online 改动骨干后，同一组 LoRA 参数所定义的采样分布也会受影响，继续适配是算法的一部分。</p>
 <pre><code class="language-python"># 解释性伪代码；不是可直接运行的官方实现。
 for expert_batch in schedule:
     freeze(student)
@@ -197,14 +209,29 @@ for expert_batch in schedule:
 </ol>
 <p>最有判别力的后续实验，应同时控制总训练预算和有效样本数，比较专家 SFT、MCMC + SFT、Offline 和 Online，再测接受率、序列概率差、推理模式覆盖和逐项保留。这比继续增加一个准确率均值更能回答“为什么有效”。</p>
 
-<h2 id="reading-map">九、怎么读这条研究线？</h2>
+<h2 id="beyond-the-method">九、延伸：数据生成不再是训练之前的一次性工作</h2>
+<p>以下是基于这些方法的延伸分析，不是 E2S 已经完成的实验。传统流程往往先收集一个“高质量数据集”，再问应该用什么算法训练。E2S 提醒我们，数据质量还含有一个相对量：<strong>对哪一个学生、在什么训练阶段高质量？</strong>同一份正确示范，对较强学生可能提供一个新技巧，对较弱学生却可能是一串难以连接到已有行为的符号。专家是否正确与学生是否容易吸收，是两个不同评价轴。</p>
+<h3 id="conditional-bootstrap">理想 Online 更新为什么能看作自举？</h3>
+<p>固定问题，令 \(C\) 是有效回答集合、\(Z_t=p_t(C)\)。假设采样器精确生成 \(p_t(\cdot\mid C)\)，学生又有足够表达能力，完成下面这个解释性的分布混合：</p>
+\[
+p_{t+1}=(1-\eta)p_t+\eta p_t(\cdot\mid C),\qquad 0&lt;\eta\le1.
+\]
+<p>那么 \(p_{t+1}(C)=(1-\eta)Z_t+\eta\)，正确质量增加 \(\eta(1-Z_t)\)。这个简单计算说明：即使没有增加新专家题，也可能通过把现有分布的正确部分反复放大而改善单次成功率。它<strong>不是实际 Transformer 的更新公式或收敛证明</strong>：真实 SFT 在共享参数中发生，一题的改变会影响其他题，采样器也有偏差。</p>
+<p>更关键的是，这个理想过程保持有效集合内部的概率比。若一种正确解法起初几乎没有质量，它不会仅因为重复条件化就自动变成主要模式。于是“提高正确概率”与“扩展可用知识或解法范围”需要分开测量。专家条件化可能帮助找到难以采到的模式，但它能否改变学生真正掌握的组合能力，要看无专家输入的新题测试，而不能只看训练题的过滤后正确率。</p>
+<h3 id="amortization-budget">摊销何时值得：把直觉写成成本账</h3>
+<p>设训练采样器一次需要成本 \(C_{\mathrm{fit}}\)，之后每个有效样本的生成、拒绝和验证成本合计为 \(c_E\)，MCMC 每个有效样本的搜索成本为 \(c_M\)。在两者样本质量和后续 SFT 条件可比的前提下，生成 \(N\) 个有效样本时，E2S 的数据准备更便宜需要 \(C_{\mathrm{fit}}+Nc_E&lt;Nc_M\)。若 \(c_M&gt;c_E\)，分界是 \(N&gt;C_{\mathrm{fit}}/(c_M-c_E)\)；否则仅靠增加样本数也不会获得这种成本优势。</p>
+<p>这不是博客报告的测量，而是一份实验应填写的账单。它还忽略了 Online 每轮重新适配、模型骨干改变后的采样器维护，以及不同方法的验证器调用。把这些补齐，才知道“搜索经验变成参数”在什么数据规模上真正合算。可复用性是一种潜在资产，不是免费的效率结论。</p>
+<h3 id="learning-curriculum">从重写数据到课程学习，还差什么？</h3>
+<p>可以进一步设想一个同时选择“教哪道题”与“怎样表达答案”的课程。E2S 当前的条件目标主要解决后一个问题；前一个问题还需要估计题目可学性、生成成本和预期迁移收益。只挑学生最容易接受的题可能限制成长，只挑最难的题又可能浪费采样。因此下一步不应仅优化接受率，而应在等预算下测量每个有效样本带来的无提示泛化增益。</p>
+<p>这把 E2S 与 <a href="/blogs/2026/RL/UFT/">UFT</a>、<a href="/blogs/2026/RL/Self-Distilled-Reasoner/">OPSD</a> 接起来：UFT 用提示改变学生进入的状态，OPSD 在学生状态上改变监督，E2S 改变最终供学生学习的轨迹分布。三者可以有互补空间，但组合必须检查信息泄漏、额外计算与信号冲突，不能把各自的提升直接相加。</p>
+
+<h2 id="reading-map">十、怎么读这条研究线？</h2>
 <p>这些工作不是同一种算法的不同名字。可以按“分布偏移的原因 → 学习目标 → 如何采样 → 如何实现”来读：</p>
 <ul>
 <li><strong>为什么遗忘：</strong><a href="/blogs/2026/RL/RLs-Razor/">RL’s Razor</a>、<a href="/blogs/2026/RL/Retaining-by-Doing/">Retaining by Doing</a>。</li>
 <li><strong>原来的训练路线：</strong><a href="/blogs/2026/RL/DeepSeekMath/">DeepSeekMath / GRPO</a>、<a href="/blogs/2026/RL/Self-Distilled-Reasoner/">Self-Distilled Reasoner</a>、<a href="/blogs/2026/RL/UFT/">UFT</a>；另读 <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines 的 OPD 博客</a>。</li>
 <li><strong>把数据变得可学习：</strong><a href="/blogs/2026/RL/Finetuning-with-Sampling/">Finetuning with Sampling</a>。</li>
 <li><strong>从最优奖励转向匹配分布：</strong><a href="/blogs/2026/RL/Flow-of-Reasoning/">Flow of Reasoning</a>、<a href="/blogs/2026/RL/GFlowVLM/">GFlowVLM</a>、<a href="/blogs/2026/RL/FlowRL/">FlowRL</a>、<a href="/blogs/2026/RL/GFlowRL/">GFlowRL</a>；概念背景见 <a href="https://yoshuabengio.org/en/blog/generative-flow-networks">Bengio 的 GFlowNet 博客</a>。</li>
-<li><strong>参数共享如何落地：</strong><a href="/blogs/2026/Model-Adaptation/LoRA/">LoRA</a>。</li>
 </ul>
 
 <h2 id="conclusion">结语：先定义该教的分布，再选择学习算法</h2>
