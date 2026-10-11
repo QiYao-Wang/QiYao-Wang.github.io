@@ -62,8 +62,8 @@ layout: compress
             <p id="blog-search-no-results" class="blog-search-no-results" role="status" style="display:none;">当前分类下没有匹配的文章。</p>
 
             <div class="blog-year-section blog-original-section">
-              <h2 class="blog-year-title" id="original-articles">原创文章 <span class="year-count"></span></h2>
-              <ul class="blog-list" data-year="original">
+              <h2 class="blog-year-title" id="original-2026">2026 <span class="year-count"></span></h2>
+              <ul class="blog-list" data-year="2026">
                 <li class="blog-entry" data-kind="original">
                   <a class="blog-entry-link" href="/blogs/2026/Original/IPIntelligenceArena/">
                     <div class="blog-entry-title">IPIntelligenceArena：面向知识产权智能的可信开放评测平台</div>
@@ -550,9 +550,10 @@ layout: compress
 
           const headers = document.querySelectorAll('.blog-year-title');
           headers.forEach(header => {
-            const year = header.textContent.trim().split(' ')[0];
+            const section = header.closest('.blog-year-section');
+            const year = section.querySelector('.blog-list').dataset.year;
             if (!header.id) {
-              header.id = year;
+              header.id = section.classList.contains('blog-original-section') ? `original-${year}` : year;
             }
             const li = document.createElement('li');
             const a = document.createElement('a');
