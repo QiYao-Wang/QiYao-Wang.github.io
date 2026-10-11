@@ -8,7 +8,7 @@ layout: compress
     {% include head.html %}
     {% include head/custom.html %}
     <base target="_self">
-    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-2">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-3">
   </head>
   <body>
     {% include browser-upgrade.html %}
@@ -47,11 +47,13 @@ layout: compress
             </div>
 
             <!-- Search Bar -->
-            <div class="blog-search-container">
-              <input type="search" id="blog-search" class="blog-search-input" placeholder="Search by title, tag or date..." autocomplete="off" aria-label="Search blog posts" aria-describedby="blog-search-hint">
-              <button id="blog-search-clear" class="blog-search-clear" type="button" aria-label="Clear search" style="display:none;">&times;</button>
-            </div>
-            <p id="blog-search-hint" class="blog-search-hint">Press <kbd>⌘</kbd><kbd>K</kbd> to search. Press <kbd>Esc</kbd> to clear.</p>
+            <form id="blog-search-form" class="blog-search-container" role="search">
+              <div class="blog-search-field">
+                <input type="search" id="blog-search" class="blog-search-input" placeholder="Search by title, tag or date..." autocomplete="off" aria-label="Search blog posts">
+                <button id="blog-search-clear" class="blog-search-clear" type="button" aria-label="Clear search" style="display:none;">&times;</button>
+              </div>
+              <button class="blog-search-submit" type="submit">搜索</button>
+            </form>
             <p id="blog-search-no-results" class="blog-search-no-results" style="display:none;">No matching blog posts found.</p>
 
             <!-- 2026 -->
@@ -580,6 +582,18 @@ layout: compress
         }
 
         let debounceTimer;
+        document.getElementById('blog-search-form').addEventListener('submit', (event) => {
+          event.preventDefault();
+          clearTimeout(debounceTimer);
+          topicFilters.forEach(button => button.setAttribute('aria-pressed', 'false'));
+          performSearch();
+        });
+        searchInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' && !event.isComposing) {
+            event.preventDefault();
+            document.getElementById('blog-search-form').requestSubmit();
+          }
+        });
         searchInput.addEventListener('input', () => {
           topicFilters.forEach(button => button.setAttribute('aria-pressed', 'false'));
           clearTimeout(debounceTimer);
