@@ -71,8 +71,8 @@
     document.querySelectorAll('.blog-content pre').forEach((pre) => {
       const code = pre.querySelector('code');
       if (!code) return;
-      const language = Array.from(code.classList).find((name) => name.startsWith('language-'))?.replace('language-', '');
-      if (language) pre.dataset.language = language;
+      const language = Array.from(code.classList).find((name) => name.startsWith('language-') && name !== 'language-undefined')?.replace('language-', '');
+      pre.dataset.language = language || 'code';
       const copy = document.createElement('button');
       copy.className = 'blog-copy-code';
       copy.type = 'button';
