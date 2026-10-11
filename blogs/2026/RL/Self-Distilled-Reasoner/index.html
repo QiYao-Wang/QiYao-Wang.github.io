@@ -1,0 +1,124 @@
+---
+layout: compress
+title: "Self-Distilled Reasoner：用答案条件化教师监督学生自己的轨迹"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="全词表蒸馏、信息不对称、clipping 和短 rollout；分清前向 KL 与采样 token 的反向 KL。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>Self-Distilled Reasoner：用答案条件化教师监督学生自己的轨迹</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #Distillation</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>Self-Distilled Reasoner 研究的不是“让模型相信自己”，而是让同一个模型在获得参考解后，为看不到参考解的自己提供更密集的训练信号。关键差别在于信息条件：学生沿自己的轨迹生成，教师在同一个前缀上额外读取正确解；在 Qwen3-1.7B 的三个数学基准上，论文报告的平均 Avg@12 从 37.1 提升到 43.4，但这不是无监督学习，也不是每一道题都超越 GRPO。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：SFT 学的是参考解的前缀，推理时却遇到自己的前缀；仅有最终正确性奖励的 RL 又可能在整组回答同对或同错时失去区分信号。</li>
+<li>机制：对学生实际走过的前缀，让拥有参考解的教师输出全词表分布，再做逐 token 蒸馏；主要实验采用前向 KL。</li>
+<li>证据：1.7B、4B、8B 的跨任务平均分均超过同表的 SFT 和 GRPO；8B 的 HMMT25 则是 GRPO 46.7 高于 OPSD 45.8。</li>
+<li>实践：每题一次短 rollout 能获得密集反馈；参考答案既可以引导教师，不一定必须作为学生直接模仿的全文。</li>
+<li>代价：需要正确参考解、额外教师前向和全词表 logits；较少的生成 token 不能直接等同于较少的端到端 GPU 时间。</li>
+<li>开放问题：教师能否识别学生已经出错的推理，并提供有效纠正，而不是仅把已知答案合理化？</li>
+</ul>
+<h2 id="information-asymmetry">同一模型为什么能成为教师</h2>
+<p>令问题为 \(x\)，参考解为 \(y^\star\)，学生已生成的前缀为 \(\hat y_{&lt;t}\)。学生分布是 \(p_S(\cdot\mid x,\hat y_{&lt;t})\)，教师分布则是 \(p_T(\cdot\mid x,y^\star,\hat y_{&lt;t})\)。教师的优势来自额外上下文，而非一定更多的参数。这个设定与答案条件化的 rationalization 有关：已知目标答案，可以帮助模型判断接下来应该走向哪里。</p>
+<p>重要的实现细节：论文概念上讨论同模型不同上下文，<em>实际实验将教师冻结为初始策略</em>，学生随后继续更新。因此不能把结果解释成“教师与学生永远共享当前权重”的在线自改进。模型规模相同，也不意味着训练信息相同。</p>
+<h2 id="token-distillation">蒸馏的对象不是参考轨迹，而是学生状态</h2>
+<p>从学生采样 \(\hat y\sim p_S(\cdot\mid x)\)，在每个访问到的状态上计算：</p>
+<p>\[\mathcal L_{\mathrm{FKL}}=\mathbb E_{x,\hat y}\!\left[\frac1{|\hat y|}\sum_t\sum_{v\in\mathcal V}p_T(v\mid x,y^\star,\hat y_{&lt;t})\log\frac{p_T(v\mid x,y^\star,\hat y_{&lt;t})}{p_S(v\mid x,\hat y_{&lt;t})}\right].\]</p>
+<p>教师分布停止梯度，采样出的前缀作为训练数据处理。这里的 on-policy 是指<em>状态由学生产生</em>，不意味着必须对整个采样过程求导。前向 KL 的 soft targets 同时告诉学生哪些 token 应被增加、哪些应被减少；这与只给最终答案一个二元奖励不同，也与照抄参考解不同。</p>
+<p>论文还对逐词表的散度贡献做 clipping，以限制少数强烈的风格信号。它不是 PPO 的概率比 clipping，也不是“所有 KL 小于某个阈值”的硬约束。截断会改变优化信号：稳定性收益以失去部分大误差纠正信号为代价，阈值应被当成建模选择，而非纯数值技巧。</p>
+<h3 id="forward-versus-reverse">全词表前向 KL 不等于采样 token 的反向 KL</h3>
+<p>另一种实现只对已采到的 token 计算 \(A_t=\log p_T(\hat y_t)-\log p_S(\hat y_t)\)，将停止梯度的 \(A_t\) 用作策略梯度系数。它更接近反向 KL 的采样估计，和全词表前向 KL 并非同一损失。以 Qwen3-1.7B、AIME25 Avg@12 为例，前向 KL 在 50/100 步为 43.9/41.1，反向 KL 为 37.5/35.0，JSD（权重 0.5）为 36.9/39.0。这支持当前配置选择前向 KL，不能证明所有蒸馏任务都应如此。</p>
+<h2 id="experimental-evidence">主表：平均胜出不代表每项胜出</h2>
+<p>训练数据取自 OpenThoughts 数学部分。下表完整保留主表的三个模型、四种方法；指标为 Avg@12，即每题重复采样后的平均正确率，而非“十二次有一次正确”的 Pass@12。评估温度 1.0、最大生成长度约 38k，启用 thinking mode。OPSD 在 100 步内每 20 步选最优检查点，GRPO 报告 500 步内峰值，因此不是固定最终检查点的比较。</p>
+<table><thead><tr><th>模型</th><th>方法</th><th>AIME24</th><th>AIME25</th><th>HMMT25</th><th>平均（%）</th></tr></thead><tbody>
+<tr><td>Qwen3-8B</td><td>Base Instruct</td><td>75.8</td><td>65.6</td><td>43.9</td><td>61.8</td></tr>
+<tr><td>8B</td><td>SFT</td><td>72.3</td><td>64.2</td><td>42.9</td><td>59.8</td></tr>
+<tr><td>8B</td><td>GRPO</td><td>76.4</td><td>68.9</td><td>46.7</td><td>64.0</td></tr>
+<tr><td>8B</td><td>OPSD</td><td>77.8</td><td>70.8</td><td>45.8</td><td>64.8</td></tr>
+<tr><td>Qwen3-4B</td><td>Base Instruct</td><td>74.9</td><td>66.4</td><td>42.2</td><td>61.2</td></tr>
+<tr><td>4B</td><td>SFT</td><td>70.2</td><td>62.3</td><td>43.4</td><td>58.6</td></tr>
+<tr><td>4B</td><td>GRPO</td><td>75.6</td><td>68.1</td><td>44.4</td><td>62.7</td></tr>
+<tr><td>4B</td><td>OPSD</td><td>76.4</td><td>68.3</td><td>46.1</td><td>63.6</td></tr>
+<tr><td>Qwen3-1.7B</td><td>Base Instruct</td><td>51.5</td><td>36.7</td><td>23.1</td><td>37.1</td></tr>
+<tr><td>1.7B</td><td>SFT</td><td>48.4</td><td>36.3</td><td>22.7</td><td>35.8</td></tr>
+<tr><td>1.7B</td><td>GRPO</td><td>51.1</td><td>38.3</td><td>23.7</td><td>37.7</td></tr>
+<tr><td>1.7B</td><td>OPSD</td><td>57.2</td><td>43.9</td><td>29.2</td><td>43.4</td></tr>
+</tbody></table>
+<p>训练比较采用相同学习率与有效 batch size，并都使用 rank 64 的 LoRA。但 GRPO 每题 8 个、最长 16,000 token 的 rollout，OPSD 每题 1 个、最长 1,024 token；SFT 使用同数量样本。于是论文提供的是不同信号机制的样本效率证据，不是严格匹配 wall-clock、教师计算或实际生成总 token 的算法排名。最长上限也不是每次实际生成长度。</p>
+<h2 id="ablations-and-boundaries">消融揭示什么，又没有揭示什么</h2>
+<p>Qwen3-4B 的 full-logit / sampled-token 对比采用 2,048 token 的训练生成预算，AIME25 Pass@8 为 84.1/82.1，HMMT25 为 60.0/57.3。这个消融支持软分布监督更有效，但它采用的 Pass@8 不能与主表 Avg@12 直接比较。</p>
+<p>教师开启 thinking、学生关闭 thinking 的组合，在作者的 token 类别诊断中提供较强数学信号；这些类别由关键词划分，而且只在少量题目上统计，不是精确的“数学知识”测量。论文认为早期 token 可能是关键分叉点，短 rollout 因此有效：这是合理解释，仍需位置消融来验证。</p>
+<p>SFT 的下降也可能与简短参考解和推理风格的冲突有关。一个更强的控制是对长度、格式和可读性匹配后的 SFT 再比较，而不是将当前下降概括成“SFT 无法训练推理”。教师已知正确答案，却未必知道正确的中间步骤；错误前缀、超出其理解范围的难题和参考解噪声，都可能产生自信但不可靠的分布监督。</p>
+<h2 id="next-experiment">最值得做的后续实验</h2>
+<p>固定初始模型、参考解和总 GPU 小时，对比冻结教师、周期刷新教师与强外部教师；同时把学生前缀按“正确、可恢复错误、不可恢复错误”分层，测量教师下一步建议的可验证正确率。这样才能分清收益来自额外答案信息、教师能力，还是更贴合学生状态的监督。检查点只在独立验证集上选择，并报告多随机种子与实际 token、教师 prefill、logit 通信成本。</p>
+<h2 id="conclusion">结论与系列定位</h2>
+<p>OPSD 把专家信息转化为学生当前状态上的软监督，解决的是“在哪里教”和“教得多细”。<a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 则试图学习适合学生且正确的完整轨迹分布，两者不能仅因都使用答案条件化而混为同一种算法。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2601.18734">Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models</a>：方法、主表、目标函数消融及实验配置附录；<a href="https://github.com/siyan-zhao/OPSD">作者代码</a>。本篇为基于论文 TeX 的中文解读，不是作者博客的翻译。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

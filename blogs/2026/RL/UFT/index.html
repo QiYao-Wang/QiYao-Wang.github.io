@@ -1,0 +1,118 @@
+---
+layout: compress
+title: "UFT：用逐渐缩短的提示连接监督学习与强化学习"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="拆开探索与知识注入，推导前缀监督加后缀强化，并审查样本复杂度与完整实验结果。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>UFT：用逐渐缩短的提示连接监督学习与强化学习</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #Curriculum</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>当模型从来采不到正确解，稀疏奖励就难以告诉它该往哪里走；但直接做 SFT 又可能把已有推理分布压成有限示范的风格。Unified Fine-Tuning（UFT）把这两件事拆开处理：用逐渐缩短的解题提示帮助探索，并对提示本身施加监督。它的价值不是证明 RL 或 SFT 谁更高级，而是展示额外轨迹信息如何改变学习难度。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：较弱模型在长推理树上极少命中正确叶子，奖励只能确认失败，不能充分提供缺失知识。</li>
+<li>机制：从参考解前缀开始采样后半段，结合 RL 后缀目标和提示前缀的 log-likelihood，再逐渐消除提示。</li>
+<li>证据：跨任务平均的 Qwen2.5-0.5B 得分为 UFT 9.45、RFT 3.25、SFT-RFT 7.28；3B 上则 RFT 32.15 高于 UFT 30.93。</li>
+<li>实践：专家轨迹既是训练标签，也可以是探索课程；二者的作用必须分别消融。</li>
+<li>代价：需要完整解和可靠的前缀切分；有提示的训练状态不等同于无提示部署状态。</li>
+<li>开放问题：超出当前模型能力的任务上，应该给多少提示，才能学会而不是形成提示依赖？</li>
+</ul>
+<h2 id="exploration-versus-learning">把“能碰到答案”和“能学到答案”分开</h2>
+<p>论文中的 RFT 指 reinforcement fine-tuning，不是某些文献中 rejection sampling fine-tuning 的缩写。朴素 RFT 从问题根节点开始，直到终点才获得奖励。UFT 从专家路径的某个中间状态开始，相当于减少要自主解决的剩余深度。但只改变起点并不保证模型会学会被跳过的前半段，因此还需要提示前缀的监督项。</p>
+<h2 id="method">提示课程与统一目标</h2>
+<p>把参考解分为 \(L\) 个片段，采样提示长度 \(l\sim\operatorname{Binomial}(L,p_t)\)，于是 \(\mathbb E[l]=Lp_t\)。\(p_t\) 通过余弦退火下降；实际配置前 300 步使用提示，之后强制 \(l=0\)，总共训练 500 步。要注意退火末端设置的低概率 0.05 与随后直接置零不是同一回事。</p>
+<p>令专家状态—动作前缀为 \((s_h^\star,a_h^\star)\)，学生从 \(s_l^\star\) 继续生成后缀。原目标可写为：</p>
+<p>\[J_{\mathrm{UFT}}=\mathbb E\!\left[J_{\mathrm{RL}}(\text{后缀})-\beta\sum_{h=l}^{H-1}D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})+\beta\sum_{h=0}^{l-1}\log\pi_\theta(a_h^\star\mid s_h^\star)\right].\]</p>
+<p>第一项优化探索后的收益，第二项避免后缀策略远离参考模型，第三项要求模型学会提示。\(l=0\) 时监督项消失，退化成 RFT；给出完整轨迹时自主探索部分消失，退化成 SFT 型学习。这里不是随便把两个 loss 相加：同一条解被划分成被教的前缀与自己探索的后缀。</p>
+<p>理论上第三项可视为对未知最优策略的前向 KL 的样本估计，但“参考解来自最优策略”是分析假设，不是任意现实标注都天然满足的事实。错误或冗长前缀同样会被吸收到参数中。</p>
+<h2 id="evidence">完整方法对照：先看跨任务平均</h2>
+<p>作者分别在 Countdown、MATH 难度 3–5、Knights and Knaves 逻辑题上训练，并在九个基准上报告结果。下表保留附录综合表的全部六种方法、五个模型，列出其跨训练任务聚合后的九基准平均（%）。它不是“只在 MATH 训练”的专门模型成绩，也不能与 E2S 的四数学基准均值直接相比。</p>
+<table><thead><tr><th>方法</th><th>Qwen 0.5B</th><th>Qwen 1.5B</th><th>Qwen 3B</th><th>Llama 1B</th><th>Llama 3B</th></tr></thead><tbody>
+<tr><td>Base</td><td>1.55</td><td>14.29</td><td>17.13</td><td>0.01</td><td>0.00</td></tr>
+<tr><td>SFT</td><td>4.46</td><td>9.36</td><td>15.25</td><td>2.49</td><td>3.85</td></tr>
+<tr><td>RFT</td><td>3.25</td><td>16.08</td><td>32.15</td><td>0.80</td><td>0.01</td></tr>
+<tr><td>SFT-RFT</td><td>7.28</td><td>11.70</td><td>17.34</td><td>3.29</td><td>4.79</td></tr>
+<tr><td>R³</td><td>7.36</td><td>18.65</td><td>28.02</td><td>2.20</td><td>5.03</td></tr>
+<tr><td>UFT</td><td>9.45</td><td>22.23</td><td>30.93</td><td>3.52</td><td>3.72</td></tr>
+</tbody></table>
+<p>R³ 使用整个训练期间的均匀提示长度，SFT-RFT 先监督再强化。UFT 在 Qwen 0.5B、1.5B 和 Llama 1B 上平均最好，但没有统治 Qwen 3B 或 Llama 3B。跨任务平均会掩盖特定任务的收益，Llama 3B 尤其提醒我们不要把“引入专家提示”写成无条件优势。</p>
+<p>主要配置为每题 4 次 rollout、回答上限 1,024 token、\(\beta=0.001\)。作者展示 UFT 因提示减少生成后缀，单步成本低于 RFT；然而 SFT-RFT 还多出 SFT 阶段，严格效率对比应把所有阶段的 GPU 时间与专家数据成本一并计入，不能只比较 RL 步数。</p>
+<h2 id="ablation">消融：提示之外的监督确实重要</h2>
+<p>只用余弦提示课程的 RFT 仍不及加入提示监督后的 UFT，说明“更容易碰到正确答案”不足以解释全部收益。Qwen2.5-0.5B、Countdown 上 \(\beta=0.0005/0.001/0.002\) 的准确率分别为 46.09/50.39/59.95；这表明监督权重有实质影响，不能称为完全免调参。MATH(3,4,5) 的提示片段数 \(L=4/5/6\) 对应 27.44/27.15/25.20，也只能支持该局部范围内相对稳健。</p>
+<h2 id="theory-boundary">指数改进的理论，改进了哪一个问题</h2>
+<p>在分支因子 \(B\)、高度 \(H\) 的构造搜索树上，稀疏终点奖励可能要求探索至少 \(B^H/(4K)\) 个叶子，\(K\) 是正确叶子数。使用额外专家路径的理论版本，在适当参数条件下给出 \(O(BH^5(\log B)^2/\Delta^2)\) 级别的界，\(\Delta\) 是奖励间隔。</p>
+<p>这个对照说明专家信息能绕开纯黑箱探索的困难，不是证明实际神经网络训练遵循该速率。上界使用论文附录的理论更新规则，和实践中的 GRPO 配置不应直接等同；有专家路径与没有专家路径也不是信息预算相同的两种算法。理论的正确阅读方式是识别瓶颈和额外信息价值，而非估算真实 GPU 加速倍数。</p>
+<h2 id="next-experiment">实践建议与下一步</h2>
+<p>先诊断失败来自极低命中率还是示范分布冲突。前者适合提示课程，后者需要更贴合学生的轨迹，例如 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a>。最有辨别力的实验是固定总 token/GPU 预算，交叉比较“有无提示课程”与“有无提示监督”，并让各组最终经历相同数量的无提示更新；另外在新组合题上测量泛化，以排除单纯记忆参考前缀。</p>
+<h2 id="conclusion">结论</h2>
+<p>UFT 的深层启示是：示范可以同时改变访问到的状态和参数更新携带的信息。它提供了连接探索与监督的可实现路径，但“学到新知识”的宽泛说法仍应以无提示、分布外、等预算的实验来检验。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2505.16984">UFT: Unifying Supervised and Reinforcement Fine-Tuning</a>：方法目标、理论两类界、实验与附录完整结果表。本篇数值取自下载的 TeX，不使用不同版本或不同聚合条件的结果互相替代。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

@@ -1,0 +1,235 @@
+---
+layout: compress
+title: "E2S Finetuning：学习一个贴近学生的正确轨迹采样器"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="从受约束信息投影到组内中心化，重建 Offline / Online E2S 的算法、实验和失效边界。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>E2S Finetuning：学习一个贴近学生的正确轨迹采样器</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#ResearchBlog · #RL · #Sampling</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>专家能给出正确答案，不等于专家的表达方式就是学生最容易学会的训练数据。Haoqiang（Murray）Kang 的研究博客提出 <strong>E2S Finetuning</strong>：先学习一个受专家信息约束、又尽量贴近学生分布的采样器，再用它生成监督微调（SFT）数据。在博客公布的 Qwen2.5-3B 数学实验中，Offline / Online 的四项数学平均准确率为 <strong>55.5% / 59.4%</strong>；这是完整训练流程的比较，并不是等总计算量的速度结论。本文以论文阅读的方式重建这个想法，区分理论目标、实际训练算法和实验能够支持的判断。</p>
+<blockquote><p><strong>来源说明：</strong>E2S 的直接来源是作者的研究博客，不是本文已核实的独立 arXiv 论文。它承接 <em>Finetuning with Sampling</em> 的受约束采样目标，并借助 GFlowNet 学习可复用采样器。下文凡称“E2S 实验”，均指作者博客公布的项目结果；相关论文的结果会单独标注。</p></blockquote>
+
+<h2 id="key-takeaways">先记住六件事</h2>
+<ul>
+<li><strong>问题：</strong>普通 SFT 不仅传递专家知识，也要求学生模仿专家的具体轨迹；这两件事并不等价，后者可能带来额外分布偏移。</li>
+<li><strong>机制：</strong>专家定义“哪些回答可以接受”，学生定义这些回答之间的相对概率；GFlowNet 负责学习从这个条件分布中采样。</li>
+<li><strong>证据：</strong>同一数学评价套件上，MCMC + SFT、E2S-Offline、E2S-Online 的 Math avg. 分别为 53.4%、55.5%、59.4%，但基线引用自另一项研究，未做等总计算量对照。</li>
+<li><strong>实践：</strong>当正确答案已经有了、学生却难以自行采到正确轨迹时，可以改造训练数据的生成分布，而不必首先改造 SFT 损失。</li>
+<li><strong>代价：</strong>采样器训练、参考模型打分、有效性验证和被拒绝的输出都要付费；“摊销搜索”不自动意味着总成本更低。</li>
+<li><strong>开放问题：</strong>有限采样器究竟保留了多少正确解法？Online 的收益来自分布跟踪、更多训练，还是更好的覆盖？需要预算匹配和模式覆盖实验区分。</li>
+</ul>
+
+<h2 id="distribution-mismatch">一、为什么“给正确示范”仍可能不好学？</h2>
+<p>设问题为 \(x\)，专家回答分布为 \(q_{\mathrm{data}}(y\mid x)\)，学生为 \(p_\theta(y\mid x)\)。SFT 对专家回答做最大似然训练：</p>
+\[
+\mathcal L_{\mathrm{SFT}}
+=\mathbb E_{y\sim q_{\mathrm{data}}}[-\log p_\theta(y\mid x)]
+=H(q_{\mathrm{data}})+D_{\mathrm{KL}}(q_{\mathrm{data}}\|p_\theta).
+\]
+<p>固定数据下，第一项不随学生参数变化。也就是说，SFT 要求学生向<strong>专家的数据分布</strong>靠近，而不仅是让“最终答案正确”。若专家喜欢很长的证明、特殊的记号或学生几乎不会产生的中间步骤，这些表达习惯也一起进入监督信号。</p>
+<p>在 token 层面，这个差异更具体：训练时 \(p_\theta(y_t\mid x,y_{&lt;t})\) 接收到的是<strong>专家写出的前缀</strong>；推理时接收到的却是学生自己写出的前缀。示范越偏离学生，训练与实际执行之间的上下文差异就可能越大。</p>
+<p>但不要把这条 KL 恒等式直接读成“偏移必然导致遗忘”。学习新能力本来就需要改变分布；不同方向的变化也可能影响不同能力。<a href="/blogs/2026/RL/RLs-Razor/">RL’s Razor</a> 与 <a href="/blogs/2026/RL/Retaining-by-Doing/">Retaining by Doing</a> 为这一动机提供分析和实验，结论仍依赖模型、任务及其假设。</p>
+
+<h2 id="two-routes">二、两条路线：移动监督，还是移动数据？</h2>
+<table>
+<caption>把“学生和专家不在同一个分布上”拆成不同干预位置。</caption>
+<thead><tr><th>路线</th><th>谁产生训练轨迹？</th><th>专家信息如何进入？</th><th>主要困难</th></tr></thead>
+<tbody>
+<tr><td>RL / GRPO</td><td>学生</td><td>答案或奖励评估学生轨迹</td><td>全错组可能没有相对优势；正确轨迹稀少</td></tr>
+<tr><td>On-policy distillation</td><td>学生</td><td>教师在学生前缀上给出下一 token 分布</td><td>教师打分成本及教师—学生能力差异</td></tr>
+<tr><td>MCMC + SFT</td><td>从专家轨迹出发反复改写</td><td>验证改写是否保留专家信息</td><td>每个样本重新运行搜索链</td></tr>
+<tr><td>E2S + SFT</td><td>学到的条件采样器</td><td>专家轨迹作为采样器输入，验证输出</td><td>学习近似采样器及保持分布覆盖</td></tr>
+</tbody>
+</table>
+<p>前两条路线把监督移到学生已经走出的轨迹上；后两条路线把示范改造成学生更容易吸收的轨迹。E2S 与 MCMC 的目标接近，关键区别是<strong>是否把搜索经验保存在共享参数中</strong>。MCMC 为每一道题重新搜索，E2S 则希望一题上的训练能改善其他题上的采样。</p>
+<p>还需要区分参考论文中的理想 MCMC 与实际基线：<em>Finetuning with Sampling</em> 的附录为了省去反向提议打分，使用“高似然候选优先替换”的近似，生成数据正确率也不是 100%。因此两种方法共享理论动机，不等于实验中都精确采到了同一个受约束分布。</p>
+
+<h2 id="constrained-target">三、真正的目标不是“最可能的正确答案”</h2>
+<p>令 \(\tau\) 为专家轨迹，\(C_\tau\) 为满足其语义约束的回答集合。数学题可以要求最终答案正确；知识任务则可能要求保留关键事实，后者更依赖评估器。固定学生检查点的分布记为 \(p_{\mathrm{ref}}(y\mid x)\)。希望找到：</p>
+\[
+q^*=\arg\min_{\operatorname{supp}(q)\subseteq C_\tau}
+D_{\mathrm{KL}}(q\|p_{\mathrm{ref}}).
+\]
+<p>在 \(Z_\tau=\sum_{y\in C_\tau}p_{\mathrm{ref}}(y\mid x)&gt;0\) 时，解为：</p>
+\[
+q^*(y\mid x,\tau)=
+\frac{p_{\mathrm{ref}}(y\mid x)\mathbf 1[y\in C_\tau]}{Z_\tau}.
+\]
+<p>这来自 <a href="/blogs/2026/RL/Finetuning-with-Sampling/">Finetuning with Sampling</a> 的信息投影。对任何满足约束、且 KL 有限的 \(q\)，有：</p>
+\[
+D_{\mathrm{KL}}(q\|p_{\mathrm{ref}})
+=D_{\mathrm{KL}}(q\|q^*)-\log Z_\tau.
+\]
+<p>第二项是常数，第一项在 \(q=q^*\) 时取最小值。这个推导说明：<strong>专家筛选支持集，学生保留支持集内部的偏好</strong>。例如，学生原本给两个正确方案分配 6% 和 3% 的概率，受约束分布会把它们变成 \(2/3\) 和 \(1/3\)，而不是只保留概率最高的方案。这里的数值是解释性例子，不是实验结果。</p>
+<p>因此，“更 on-policy”要精确理解为<strong>受约束的学生分布</strong>，并非完全不加条件的原始学生采样。即使匹配完全成功，距离原学生仍有 \(-\log Z_\tau\) 的最小 KL。若正确解极少，所需变化可能依然很大。</p>
+<p>这也揭示一个边界：若学生对所有有效答案都给零概率，\(Z_\tau=0\)，该条件分布无法定义。实际语言模型通常给许多 token 序列非零概率，但“非零”不等于计算上容易发现；采样器和专家提示负责跨越的是这个实际困难。</p>
+
+<h2 id="gflownet-sampler">四、用 GFlowNet 学习未知归一化常数的分布</h2>
+<p>我们可以给某个回答计算 \(R_\tau(y)=p_{\mathrm{ref}}(y\mid x)\mathbf1[y\in C_\tau]\)，却不能穷举所有回答算出 \(Z_\tau\)。GFlowNet 的用途是：学习一条逐步生成策略，让完整结果的概率与给定的非归一化奖励成比例，而不是只寻找最高奖励结果。</p>
+<p>对自回归文本，一个完整 token 序列对应一条生成路径，序列概率是各 token 概率的乘积，包含终止 token。有效回答上的 trajectory balance（TB）残差可以写成：</p>
+\[
+\ell_{\mathrm{TB}}(y)=
+\big[z_\tau+\log q_\phi(y\mid x,\tau)-\log R_\tau(y)\big]^2.
+\]
+<p>\(\phi\) 是采样器参数，\(z_\tau\) 是归一化常数的对数偏移。若所有有效回答上残差都为零，归一化会要求 \(z_\tau=\log Z_\tau\)。这里“所有”很重要：有限训练组上的拟合不能证明全局覆盖。</p>
+<h3 id="group-centering">把归一化常数变成组内中心化</h3>
+<p>对同一 \(x,\tau\)，收集 \(K\ge2\) 个有效回答，定义：</p>
+\[
+a_i=\log q_\phi(y_i\mid x,\tau)-\log p_{\mathrm{ref}}(y_i\mid x),
+\qquad \bar a=\frac1K\sum_i a_i.
+\]
+<p>固定这些回答，最小化 \(\frac1K\sum_i(z+a_i)^2\) 时有 \(z=-\bar a\)。代入得到：</p>
+\[
+\mathcal L_{\mathrm{sampler}}=\frac1K\sum_i(a_i-\bar a)^2.
+\]
+<p>这里调节的是<strong>概率比的相对失衡</strong>：相对组平均偏高的回答被采样器过度表示，偏低的回答则表示不足。它与 GRPO 都使用组内信息，但优化对象不同：GRPO 通常中心化结果奖励，E2S 中心化的是采样器与学生之间的序列 log-probability 差。</p>
+<p>固定组内样本时，是否对 \(\bar a\) 停止梯度不改变该平方损失的梯度，因为 \(\sum_i(a_i-\bar a)=0\)。不过，这不意味着可以忽略采样策略的变化：博客算法每次用新采样组做一步更新，把采到的回答视为固定；复用旧 rollout 需要另行处理 off-policy 偏差。</p>
+<h3 id="acceptance-and-scoring">中心化可以消去接受率，不能提高接受率</h3>
+<p>原始采样器可能生成无效回答。设它的有效输出概率为 \(A_\phi&gt;0\)，则有效回答的条件分布为 \(q_\phi^+(y)=q_\phi(y)/A_\phi\)。改用 \(\log q_\phi^+\) 会给每个 \(a_i\) 减去同一个 \(\log A_\phi\)，所以组内中心化把这项抵消了。</p>
+<p><strong>被抵消的是未知常数，不是无效输出的成本。</strong>如果采样器只有很低接受率，这个损失本身没有直接要求它消除无效概率质量；正确性检查仍决定哪些样本进入 SFT。实现时应记录原始生成数、接受数、验证成本，而不能只报告保留下来的样本数。</p>
+<p>同样，必须使用与实际采样分布一致的完整序列分数。平均 token log-probability、改变温度或 top-p 截断都可能改变目标；不能把它们作为“无害的打分优化”混用。</p>
+
+<h2 id="offline-online">五、Offline 与 Online：固定学生，还是跟踪学生？</h2>
+<figure>
+<img src="/blogs/2026/RL/E2S-Finetuning/training-loops.svg" width="960" height="360" alt="E2S Offline 固定学生训练一次采样器；Online 交替更新采样器和学生">
+<figcaption>根据作者算法重新绘制。Offline 的数据适配固定检查点；Online 的数据随学生更新重新生成。两者最终对学生使用的仍是 SFT。</figcaption>
+</figure>
+<p><strong>Offline：</strong>冻结起始学生 \(\theta_0\)，训练采样器，生成固定数据集 \(D^*\)，最后对学生做 SFT。优点是数据和训练容易分离、重现；缺点是学生更新后，固定数据仍匹配旧学生。</p>
+<p><strong>Online：</strong>每轮先冻结当前学生，适配采样器并生成新数据；再关闭采样器，对学生做 SFT；下一轮重新适配更新后的学生。它解决的是<strong>目标分布随学生变化</strong>的问题，而不是把 SFT 换成新的 RL 损失。</p>
+<p>实现上，作者使用学生骨干加 <a href="/blogs/2026/Model-Adaptation/LoRA/">LoRA</a> 适配器。启用适配器时，采样器看见 \(x,\tau\)；禁用适配器时，学生只看 \(x\)。采样器训练冻结骨干，学生 SFT 禁用适配器。因此<strong>训练时的专家信息不是测试时学生额外拥有的信息</strong>。Online 改动骨干后，同一组 LoRA 参数所定义的采样分布也会受影响，继续适配是算法的一部分。</p>
+<pre><code class="language-python"># 解释性伪代码；不是可直接运行的官方实现。
+for expert_batch in schedule:
+    freeze(student)
+    sampler = fit_sampler(
+        sampler, student, expert_batch, fresh_valid_groups=True
+    )
+    targets = generate_and_validate(sampler, expert_batch)
+    disable_sampler_adapter()
+    student = sft(student, prompts_and_targets(targets))
+    # Offline: 所有 targets 先生成完，再训练固定学生。
+    # Online: 下一轮对更新后的 student 重新适配 sampler。</code></pre>
+
+<h2 id="experimental-evidence">六、实验究竟比较了什么？</h2>
+<p>博客使用 Qwen2.5-3B、MATH level 3–5 的 8,230 道训练题和 1,024 道留出 MATH 题。Math avg. 是 MATH、AMC、MATH500、GSM8K 四项准确率的等权均值；Prior avg. 是 Chemistry、MMLU、GPQA 三项的等权均值。不是把所有测试样本混在一起计算的准确率。</p>
+<table>
+<caption>作者博客的完整逐项比较；全部为准确率（%，越高越好）。非 E2S 基线引用自 Finetuning with Sampling；E2S 行为博客项目结果。</caption>
+<thead><tr><th>方法</th><th>MATH</th><th>AMC</th><th>MATH500</th><th>GSM8K</th><th>Chemistry</th><th>MMLU</th><th>GPQA</th></tr></thead>
+<tbody>
+<tr><td>Base</td><td>31.5</td><td>13.3</td><td>24.5</td><td>57.9</td><td>28.3</td><td>65.1</td><td>33.3</td></tr>
+<tr><td>Expert SFT</td><td>24.3</td><td>10.0</td><td>16.8</td><td>45.5</td><td>22.2</td><td>64.8</td><td>29.8</td></tr>
+<tr><td>OPSD</td><td>26.7</td><td>8.4</td><td>33.2</td><td>52.4</td><td>24.2</td><td>65.2</td><td>31.3</td></tr>
+<tr><td>GRPO</td><td>45.7</td><td>24.9</td><td>31.3</td><td>80.8</td><td>27.8</td><td>65.2</td><td>31.3</td></tr>
+<tr><td>UFT</td><td>47.0</td><td>29.3</td><td>29.7</td><td>74.6</td><td>28.3</td><td>65.3</td><td>32.8</td></tr>
+<tr><td>MCMC + SFT</td><td>49.5</td><td>27.7</td><td>58.2</td><td>78.2</td><td>26.6</td><td>65.1</td><td>34.3</td></tr>
+<tr><td>E2S-Offline</td><td>51.5</td><td>28.9</td><td>61.0</td><td>80.6</td><td>28.0</td><td>65.1</td><td>33.3</td></tr>
+<tr><td>E2S-Online</td><td>56.3</td><td>32.5</td><td>65.4</td><td>83.2</td><td>28.2</td><td>65.1</td><td>33.3</td></tr>
+</tbody>
+</table>
+<p>Math avg. 中，Offline 相对 MCMC + SFT 增加 <strong>2.1 个百分点</strong>（55.5−53.4），Online 增加 <strong>6.0 个百分点</strong>（59.4−53.4）；后者约为 11.2% 的相对增幅。不要把百分点与相对百分比混为一谈。</p>
+<p>Online 的 Prior avg. 显示为 42.2%，与起始模型相同，但逐项 Chemistry 从 28.3 到 28.2，GPQA 从 MCMC 的 34.3 到 33.3。<strong>均值相同不等于每项能力完全不变</strong>，三项基准也不能代表全部知识、指令遵循、安全性或语言能力。</p>
+<p>比较支持“这个流程在该设置下改善了学习—保留权衡”，但还没有隔离采样器机制。基线不是作者逐项在统一框架中重跑；博客没有给出等总计算量对照、接受率、误差条或重复种子分析。不能据此断言 E2S 必然更快、对所有模型都更有效，或者提高来自某个唯一组件。</p>
+
+<h2 id="diversity-scaling">七、多采样的收益，是否就是多样性的收益？</h2>
+<p>另一组 Offline 扩展实验固定 8,230 道专家题和已训练采样器，分别为每题生成 1、2、4 个有效回答：</p>
+<table>
+<caption>独立的样本量扫描，不能与主表中的 Offline 55.5% 当作同一实验点。</caption>
+<thead><tr><th>每题回答数</th><th>SFT 回答数</th><th>Math avg.（%）</th></tr></thead>
+<tbody><tr><td>1</td><td>8,230</td><td>55.0</td></tr><tr><td>2</td><td>16,460</td><td>56.3</td></tr><tr><td>4</td><td>32,920</td><td>57.2</td></tr></tbody>
+</table>
+<p>1× 到 4× 提高 2.2 个百分点，说明不增加专家题目也能从额外生成回答中获益。<strong>一种合理的解读是</strong>，专家信息可以通过多种学生友好的表达进入训练；但数据量与 SFT 计算也同时增加，因此这不是对“解法多样性”的单独测量。</p>
+<p>我会优先补一个对照：同样 4× 的 token 预算，一组重复同一回答，另一组使用四次采样；再比较不同推理簇的覆盖率、正确率和迁移。如果复制控制也获得同样收益，“多样性”就不是必要解释；如果多样样本在等预算下仍更强，因果故事才更有说服力。</p>
+
+<h2 id="critical-reading">八、阅读时要守住的四条边界</h2>
+<ol>
+<li><strong>语义约束不是无误的神谕。</strong>最终答案验证可能放过错误推理，LLM 事实评估器可能漏掉关键内容；此时采样器忠实匹配的只是评估器允许的集合。</li>
+<li><strong>分布目标不等于训练结果。</strong>正确的目标具有多个模式，有限采样器仍可能只覆盖容易到达的模式。低组内损失不能证明没有模式坍缩。</li>
+<li><strong>低偏移不是永远应当坚持的目标。</strong>若原学生恰好偏好错误结构，保留其偏好可能限制新技能学习；需要检查约束能否纠正实质错误，而不是只过滤答案。</li>
+<li><strong>摊销优势需要足够多的后续采样。</strong>应把适配器训练、学生打分、生成、拒绝和验证统一换算成 token / GPU 时间，并报告生成数据被多少次复用。</li>
+</ol>
+<p>最有判别力的后续实验，应同时控制总训练预算和有效样本数，比较专家 SFT、MCMC + SFT、Offline 和 Online，再测接受率、序列概率差、推理模式覆盖和逐项保留。这比继续增加一个准确率均值更能回答“为什么有效”。</p>
+
+<h2 id="reading-map">九、怎么读这条研究线？</h2>
+<p>这些工作不是同一种算法的不同名字。可以按“分布偏移的原因 → 学习目标 → 如何采样 → 如何实现”来读：</p>
+<ul>
+<li><strong>为什么遗忘：</strong><a href="/blogs/2026/RL/RLs-Razor/">RL’s Razor</a>、<a href="/blogs/2026/RL/Retaining-by-Doing/">Retaining by Doing</a>。</li>
+<li><strong>原来的训练路线：</strong><a href="/blogs/2026/RL/DeepSeekMath/">DeepSeekMath / GRPO</a>、<a href="/blogs/2026/RL/Self-Distilled-Reasoner/">Self-Distilled Reasoner</a>、<a href="/blogs/2026/RL/UFT/">UFT</a>；另读 <a href="https://thinkingmachines.ai/blog/on-policy-distillation/">Thinking Machines 的 OPD 博客</a>。</li>
+<li><strong>把数据变得可学习：</strong><a href="/blogs/2026/RL/Finetuning-with-Sampling/">Finetuning with Sampling</a>。</li>
+<li><strong>从最优奖励转向匹配分布：</strong><a href="/blogs/2026/RL/Flow-of-Reasoning/">Flow of Reasoning</a>、<a href="/blogs/2026/RL/GFlowVLM/">GFlowVLM</a>、<a href="/blogs/2026/RL/FlowRL/">FlowRL</a>、<a href="/blogs/2026/RL/GFlowRL/">GFlowRL</a>；概念背景见 <a href="https://yoshuabengio.org/en/blog/generative-flow-networks">Bengio 的 GFlowNet 博客</a>。</li>
+<li><strong>参数共享如何落地：</strong><a href="/blogs/2026/Model-Adaptation/LoRA/">LoRA</a>。</li>
+</ul>
+
+<h2 id="conclusion">结语：先定义该教的分布，再选择学习算法</h2>
+<p>E2S 最值得带走的不是“GFlowNet 又赢了一次”，而是把<strong>知识内容</strong>与<strong>传授形式</strong>分开：专家负责确定不能丢掉的信息，学生分布负责确定可以怎样表达，采样器负责把这个要求变成训练数据。它让“数据生成”成为模型适配的一部分；现有结果值得跟进，但效率、覆盖与广泛保留还需要更严格的证据。</p>
+
+<h2 id="reference">参考与核对位置</h2>
+<p>[1] Haoqiang（Murray）Kang. <a href="https://mk322.github.io/blog/learned-on-policy-sampler/">E2S Finetuning: From Expert Demonstrations to On-Policy Learning</a>, 2026。核对位置：Target distribution、Amortize the target、Implementation details、Experiments、Diversity scaling。本文两张结果表均依据该博客，不是独立复现实验。</p>
+<p>[2] Aayush Karan, Sitan Chen, Yilun Du. <a href="https://arxiv.org/abs/2610.02140v1">Finetuning with Sampling: SFT Learns Better Than You Think</a>。信息投影、MH 采样和被引用基线的原始论文；其他文献见上方独立解读及原文参考列表。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

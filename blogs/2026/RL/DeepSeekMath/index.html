@@ -1,0 +1,117 @@
+---
+layout: compress
+title: "DeepSeekMath：从数学数据到 GRPO 的完整学习链路"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="推导组相对优势，区分工具与投票预算，并用 Pass@K / Maj@K 检查能力覆盖。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>DeepSeekMath：从数学数据到 GRPO 的完整学习链路</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #GRPO</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>DeepSeekMath 经常被简化成 GRPO 的出处，但其成绩来自一条完整链路：筛选数学预训练数据、在代码模型上继续训练、监督微调，再做强化学习。真正值得理解的是 GRPO 如何用同题多次回答替代 critic，以及论文为什么认为 RL 更多是在重排已有正确答案的概率，而不是已经证明创造了全新能力。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：数学能力既受预训练覆盖限制，也受正确轨迹的采样概率限制；后训练算法不能脱离基座讨论。</li>
+<li>机制：GRPO 通过同一问题的一组奖励构造相对优势，移除单独训练的价值网络，保留概率比 clipping 与参考模型约束。</li>
+<li>证据：7B Instruct 到 RL，MATH 无工具 Top1 从 46.8% 到 51.7%，GSM8K 从 82.9% 到 88.2%。</li>
+<li>实践：省去 critic 不等于省去 rollout；组大小和组内奖励差异决定信号质量与采样成本。</li>
+<li>代价：终点奖励难以定位中间错误；整组同对或同错时，相对优势缺少有效差异。</li>
+<li>开放问题：准确率增加究竟是正确轨迹更常出现，还是覆盖了原本不会解决的新问题？</li>
+</ul>
+<h2 id="training-pipeline">先有数学分布，后有策略优化</h2>
+<p>作者从 Common Crawl 筛选数学网页，以种子语料训练分类器、识别高质量站点、补充人工规则并迭代；最终数学语料约 120B token。DeepSeek-Coder-Base-v1.5 7B 是起点，继续训练总量约 500B token，除了数学还有代码与自然语言数据。因此 120B 数学 token 不是完整训练量，也不是 RL 的数据规模。</p>
+<p>数据管线进行基准去污染，但其效果仍依赖检测策略；代码预训练有助数学推理、arXiv 语料在作者的设置中收益有限，都是条件化实验发现，不是“代码永远优于论文”的普遍规律。后续 SFT 与 RL 是在这一基座上继续改善分布。</p>
+<h2 id="grpo">从 critic 到组相对优势</h2>
+<p>同题 \(x\) 从旧策略采样 \(G\) 个回答 \(y_i\)，获得奖励 \(r_i\)，终点监督下每个 token 共用 \(\hat A_i=(r_i-\bar r)/(\operatorname{std}(r)+\varepsilon)\)。这里的微小 \(\varepsilon\) 是实际处理零方差所需的数值保护；原文展示的概念公式不含这一项。</p>
+<p>令 token 概率比 \(\rho_{i,t}=\pi_\theta(y_{i,t}\mid x,y_{i,&lt;t})/\pi_{\mathrm{old}}(y_{i,t}\mid x,y_{i,&lt;t})\)。GRPO 最大化组平均的：</p>
+<p>\[J=\mathbb E\!\left[\frac1G\sum_i\frac1{|y_i|}\sum_t\left\{\min\big(\rho_{i,t}\hat A_i,\operatorname{clip}(\rho_{i,t},1-\epsilon,1+\epsilon)\hat A_i\big)-\beta D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\right\}\right].\]</p>
+<p>相对优势回答“这条比同题其他样本好多少”，clipping 限制对旧数据的激进更新，KL 项约束相对初始参考模型的漂移。两种限制功能不同，不能称为完全替代。论文还讨论过程监督：在步骤边界给更细奖励，优势不再只是全序列相同的终点分数。</p>
+<p>原文 KL 采用 \(u-\log u-1\) 的非负采样形式，\(u=\pi_{\mathrm{ref}}/\pi_\theta\)。单个 token 上的这个量是估计项，不是枚举全词表后的精确 KL；讨论无偏性也必须说明采样分布。把所有实现中的 KL 日志当成同一个精确距离，会误导后续遗忘分析。</p>
+<h2 id="evidence">分清无工具、工具和投票</h2>
+<p>以下完整保留原主表中用于判断 RL 增益的两个同基座方法，在四个基准与两种推理设置下的结果（%）。外部闭源和不同规模模型不构成等预算算法消融，故不将其排行榜名次作为本篇的因果证据。</p>
+<table><thead><tr><th>设置</th><th>7B 方法</th><th>GSM8K</th><th>MATH</th><th>MGSM-zh</th><th>CMATH</th></tr></thead><tbody>
+<tr><td>无工具 CoT / Top1</td><td>Instruct</td><td>82.9</td><td>46.8</td><td>73.2</td><td>84.6</td></tr>
+<tr><td>无工具 CoT / Top1</td><td>RL</td><td>88.2</td><td>51.7</td><td>79.6</td><td>88.8</td></tr>
+<tr><td>工具集成 / Top1</td><td>Instruct</td><td>83.7</td><td>57.4</td><td>72.0</td><td>84.3</td></tr>
+<tr><td>工具集成 / Top1</td><td>RL</td><td>86.7</td><td>58.8</td><td>78.4</td><td>87.6</td></tr>
+</tbody></table>
+<p>51.7 是单次无工具结果；工具条件下的 58.8 与 64 样本 self-consistency 的 60.9 属于不同推理预算，不能并列成同一成绩的反复提升。原 RL 配置每题采样 64 个回答、最长 1,024 token、KL 系数 0.04、学习率 \(10^{-6}\)。它明显不同于后来各种 GRPO 配方，不能直接套用后来论文的结果来解释原始实验。</p>
+<h2 id="diagnostics">数据来源与梯度系数的统一视角</h2>
+<p>原文在较小模型上比较 SFT、离线 RFT、DPO、Online RFT、PPO 和 GRPO。其中 RFT 此处是拒绝采样微调：过滤正确回答后监督学习。SFT 的样本来自人工数据，离线 RFT/DPO 来自固定策略，Online RFT/GRPO 则刷新样本。于是区别不仅是 loss：<em>训练看到哪些状态</em>同样改变。</p>
+<p>Online RFT 在后期优于固定数据的 RFT，支持持续刷新样本的价值；GRPO 的正负相对系数与过程监督又带来额外差别。但这些图中方法同时改变数据来源或奖励信号，不能把全部收益单独归于去掉 critic。</p>
+<h2 id="coverage">Maj@K 增加为何不等于覆盖增加</h2>
+<p>Pass@K 问 K 次采样中是否至少出现一个正确答案；Maj@K 问多数投票后的答案是否正确。作者温度 0.7 的诊断发现 RL 改善 Maj@K，而 Pass@K 没有同样改善，因而提出概率重排的解释。它提示正确解本已存在但频率不足，却不能证明模型在所有题目、无限采样或所有解题结构上都没有新能力。</p>
+<p>二元组奖励还带来信号枯竭：若同组全错，去均值后的奖励全零；全对也一样。提高组大小能增加遇到混合结果的机会，但采样成本同步增长；更密集的监督如 <a href="/blogs/2026/RL/Self-Distilled-Reasoner/">OPSD</a>，或学习正确采样分布如 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a>，正是在处理这个瓶颈。</p>
+<h2 id="next-experiment">如何检验“重排”这一解释</h2>
+<p>固定同一基座与题目，绘制多种 K 下的 Pass@K、Maj@K 和单次准确率；并用可验证的推理步骤聚类统计正确轨迹类型。进一步固定奖励、rollout 总 token 和更新预算，分别改变在线刷新与优势算法。若新方法主要提高频率但没有增加跨题覆盖，应避免写成能力边界已经扩大。</p>
+<h2 id="conclusion">结论</h2>
+<p>GRPO 是一种去 critic 的组相对策略优化，而 DeepSeekMath 是包括数据、预训练和后训练的系统结果。读懂它，需要同时看信息从哪里来、样本从哪里来，以及目标如何把这些信息变成梯度。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2402.03300">DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</a>：数据管线、GRPO 目标、Table sft_rl_math、统一梯度框架与 Maj@K/Pass@K 诊断。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

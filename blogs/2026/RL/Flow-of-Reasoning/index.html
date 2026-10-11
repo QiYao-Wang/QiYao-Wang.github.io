@@ -1,0 +1,132 @@
+---
+layout: compress
+title: "Flow of Reasoning：学习生成多条正确推理路径"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="读懂 DAG 流、log-variance 训练、局部搜索，以及多样性和创造性指标的真实含义。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>Flow of Reasoning：学习生成多条正确推理路径</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #GFlowNet</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>Flow of Reasoning（FoR）研究的不是只找到一条解，而是学习一个可以反复生成不同正确推理路径的策略。它用 GFlowNet 的平衡约束训练 LLM，同时结合回放、局部搜索与奖励塑形；BlocksWorld 实验显示明显收益，但“多次采样成功率”“单次速度”和“创造性”是不同指标，不能合并成模型已经拥有普遍创造力的结论。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：同一规划问题可能有多条合法路径，最大化奖励或模仿单条示范容易忽略其他路径。</li>
+<li>机制：把状态和动作组织成有向无环图，用轨迹平衡与组内 log-variance 目标匹配终态奖励。</li>
+<li>证据：六步 BlocksWorld 多次采样准确率为 78.44%，SFT+nucleus 为 42.08%，RAP 为 69.70%；o1-mini 为 93.93%，不能称为所有方法中准确率最高。</li>
+<li>实践：提高有效探索需要回放和局部重建，仅更换损失并不足以覆盖稀有成功路径。</li>
+<li>代价：训练和评估依赖状态转移、奖励与路径去重；搜索的收益不能免费归入语言模型本身。</li>
+<li>开放问题：收益来自平衡目标，还是局部搜索和额外奖励？如何在同预算下分离？</li>
+</ul>
+<h2 id="graph-and-flow">一张图里，路径和终态不是同一个对象</h2>
+<p>轨迹 \(\tau=(s_0\to\cdots\to s_n)\) 由前向策略 \(P_F\) 生成，不同路径可能到达同一个状态。因此 GFlowNet 的标准目标是终态边缘概率 \(P(s_n)\propto R(s_n)\)，不是不管有多少入路径都给每条路径相同概率。</p>
+<p>后向策略 \(P_B\) 分配到达某个状态的流量来源。轨迹平衡要求：</p>
+<p>\[Z(s_0,g)\prod_tP_F(s_t\mid s_{t-1},g)=R(s_n)\prod_tP_B(s_{t-1}\mid s_t,g).\]</p>
+<p>\(g\) 是任务目标，\(Z\) 是初始总流量。论文采用父节点上的均匀后向策略；若把完整历史作为状态形成一棵树，每个节点只有一个父节点，\(P_B=1\)。如果真正合并相同环境状态形成 DAG，则不能随意丢掉后向项，否则路径数量会改变终态概率。</p>
+<h2 id="log-variance">用共同的隐式归一化值训练</h2>
+<p>定义 \(\Phi(\tau)=\log R(s_n)+\sum_t\log P_B-\sum_t\log P_F\)。满足平衡时所有同条件轨迹都给出同一个 \(\log Z\)。于是论文最小化：</p>
+<p>\[\mathcal L_V=\mathbb E_\tau[(\Phi(\tau)-\mathbb E_\tau\Phi)^2].\]</p>
+<p>它省去了单独学习条件归一化网络。但只在被访问的轨迹上方差很小，不等于整个空间已经正确：如果某些高奖励路径一直没被采到，训练没有检查过它们。理想结论要求足够覆盖、可表达的策略和全局优化；现实中探索策略因此不是可有可无的补丁。</p>
+<h2 id="exploration-and-reward">探索与奖励不是中性的配套</h2>
+<p>训练混合当前策略、温度变体、随机动作、优先回放与局部搜索。局部搜索从 batch 中高奖励轨迹撤回若干步，以随机合法动作重建后缀，再保留更高奖励候选。这是一种贪心数据增强，不是具有精确目标平稳分布的 Metropolis–Hastings 采样。</p>
+<p>BlocksWorld 奖励除成功终态外，还加上 LLM 动作置信度的变换 \(-1/\log P(a_t\mid s_{t-1},g)\)。这是奖励塑形，会偏向模型认为合理的动作；它可能帮助探索，也可能强化先验偏见。末态符号若汇总完整历史，这些路径相关信息可以进入目标；若不汇总，必须明确为何称作只依赖终态的奖励。</p>
+<h2 id="experimental-evidence">六步 BlocksWorld：把所有比较方法列出来</h2>
+<p>主实验使用 Llama-3-8B；每种步数各取前 15 个问题训练，其余测试。六步评估每题采样 40 条，准确率定义为至少一条正确。下表保留六步主表的全部方法，括号为原表可用的三次运行标准差；不是置信区间。速度为生成一条解的平均秒数，不是解决整题或完成训练的总时间。</p>
+<table><thead><tr><th>方法</th><th>准确率（%）</th><th>Diversity</th><th>Creativity（%）</th><th>单解秒数</th></tr></thead><tbody>
+<tr><td>CoT 1-shot</td><td>15.82 (2.08)</td><td>1.05</td><td>0.00</td><td>3.57</td></tr>
+<tr><td>CoT 5-shot</td><td>29.63 (1.72)</td><td>1.02</td><td>0.00</td><td>3.68</td></tr>
+<tr><td>CoT 15-shot</td><td>19.53 (1.26)</td><td>1.03</td><td>0.00</td><td>5.32</td></tr>
+<tr><td>GPT-4o CoT</td><td>67.67</td><td>1.06</td><td>0.79</td><td>3.92</td></tr>
+<tr><td>ToT DFS</td><td>8.08</td><td>—</td><td>—</td><td>48.91</td></tr>
+<tr><td>ToT DFS 多运行</td><td>31.31</td><td>1.06</td><td>1.58</td><td>44.41</td></tr>
+<tr><td>ToT BFS</td><td>5.05</td><td>—</td><td>—</td><td>398.74</td></tr>
+<tr><td>RAP</td><td>69.70</td><td>—</td><td>—</td><td>466.09</td></tr>
+<tr><td>o1-mini</td><td>93.93</td><td>1.05</td><td>2.38</td><td>10.38</td></tr>
+<tr><td>o1-preview</td><td>78.79</td><td>—</td><td>—</td><td>36.61</td></tr>
+<tr><td>SFT 温度 1.0</td><td>34.68 (2.52)</td><td>1.04</td><td>4.76</td><td>4.05</td></tr>
+<tr><td>SFT 温度 0.5</td><td>29.63 (1.90)</td><td>1.02</td><td>0.79</td><td>4.07</td></tr>
+<tr><td>SFT 温度 0.1</td><td>17.51 (1.26)</td><td>1.00</td><td>0.00</td><td>4.08</td></tr>
+<tr><td>SFT + diverse beam</td><td>18.85 (1.25)</td><td>1.00</td><td>0.00</td><td>15.71</td></tr>
+<tr><td>SFT + nucleus</td><td>42.08 (1.71)</td><td>1.12</td><td>0.00</td><td>4.21</td></tr>
+<tr><td>SFT + typical</td><td>37.71 (2.38)</td><td>1.08</td><td>0.00</td><td>3.65</td></tr>
+<tr><td>SFT + PPO</td><td>24.58 (1.72)</td><td>1.08</td><td>3.17</td><td>4.03</td></tr>
+<tr><td>SFT + GFN-CoT</td><td>40.73 (1.25)</td><td>1.05</td><td>0.00</td><td>4.08</td></tr>
+<tr><td>FoR</td><td>78.44 (4.54)</td><td>1.33</td><td>9.52</td><td>13.98</td></tr>
+</tbody></table>
+<p>FoR 比同基座 SFT 变体强，但 13.98 秒并不等于 CoT 的约 4 秒。相对重型搜索更快，也不等于相对直接生成无成本。闭源模型参数、数据和服务环境不同，不能作为平衡目标的等算力消融。</p>
+<h2 id="metrics-and-ablation">多样性与消融要读清口径</h2>
+<p>Diversity 只在至少找到一条正确解的题上，统计不同正确轨迹的平均数量；它会随成功题目的选择而变。Creativity 衡量某方法找到而其他参评方法没找到的成功路径比例，它依赖对照方法集合，不是人类意义上的创造力，也不是新知识的直接测量。</p>
+<p>六步准确率移除局部搜索为 53.90，移除增强奖励为 47.10，移除回放为 72.38，移除随机探索为 73.39。按表格直接相减，局部搜索对应 24.54 个百分点下降；不能照搬正文将其写成 31.3 个百分点。它也说明收益有相当部分来自探索与奖励组合，不宜全部归于 log-variance loss。</p>
+<h2 id="next-experiment">最有用的边界检验</h2>
+<p>为 PPO、SFT 和 FoR 提供相同局部搜索、回放和奖励，然后匹配总环境调用与 GPU 时间；同时在更长规划、新目标组合和可靠环境转移下评估。逐题报告单次正确率、覆盖率与正确路径数量，能分清更广探索和更强直接生成。训练中若由 LLM 模拟转移，应另用真实环境验证，排除模型自洽但实际不可执行的路径。</p>
+<h2 id="conclusion">结论</h2>
+<p>FoR 展示了“学习一个能产生多解的策略”的可行性，其重要前提是有效探索和可检查的环境结构。与 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 对读时，需区分环境状态的 DAG 和完整文本历史的树，也需区分终态奖励分布与学生概率加权的正确轨迹分布。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2406.05673v6">Flow of Reasoning: Efficient Divergent Reasoning with Generative Flow Networks</a>：v6 方法、BlocksWorld 全表、指标定义、局部搜索与消融附录。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

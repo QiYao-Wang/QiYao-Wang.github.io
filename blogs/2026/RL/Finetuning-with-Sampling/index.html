@@ -1,0 +1,171 @@
+---
+layout: compress
+title: "Finetuning with Sampling：把专家轨迹改造成学生友好的数据"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="信息投影、MH 接受率与近似改写实现；完整对照数学、化学和医疗的学习—保留结果。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>Finetuning with Sampling：把专家轨迹改造成学生友好的数据</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #Sampling</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p><strong>SFT 与 RL 的差异，有多少来自学习目标，有多少来自喂给它们的数据？</strong>Aayush Karan、Sitan Chen 与 Yilun Du 的 <em>Finetuning with Sampling</em> 把问题推向数据侧：从专家轨迹出发，用 MCMC 生成语义等价、但对目标学生更“自然”的轨迹，再照常做 SFT。Qwen2.5-3B 数学实验中，四项数学平均准确率从专家 SFT 的 24.2% 提高到 Sampling SFT 的 53.4%；这是特定数据、采样预算与超参数搜索下的结果，不是对所有 SFT 的否定。</p>
+<h2 id="key-takeaways">六个核心判断</h2>
+<ul>
+<li><strong>问题：</strong>专家拥有学生缺少的信息，但专家的完整写作轨迹可能离学生分布很远。</li>
+<li><strong>机制：</strong>先定义“保留信息且最接近学生”的条件分布，再用 Metropolis–Hastings 近似采样。</li>
+<li><strong>证据：</strong>数学、化学和医疗实验呈现不同的学习—保留权衡；医疗任务中方法并未超过 OPSD 的新任务准确率。</li>
+<li><strong>实践：</strong>训练数据不是与模型无关的固定教材，应按准备学习它的检查点进行适配。</li>
+<li><strong>代价：</strong>搜索发生在训练数据准备阶段，但长序列和多步重采样可能非常昂贵。</li>
+<li><strong>开放问题：</strong>有限步、分块近似与不完美语义验证距离理论条件分布有多远，需要独立测量。</li>
+</ul>
+<h2 id="why-shape-data">一、把“新知识”与“专家写法”分开</h2>
+<p>普通 SFT 对完整示范做最大似然；GRPO 等方法则从学生轨迹中寻找可奖励的行为。前者容易获得专家信息，却承受分布偏移；后者贴近学生，但在学生很少采到正确答案时缺少信号。作者没有把两种损失简单相加，而是问：能否保留示范的重要信息，同时重新选择承载它的轨迹？</p>
+<p>这不是让专家答案“更口语化”。同一句改写对不同模型可能具有不同概率。方法使用<strong>将接受训练的那个学生</strong>来打分，使“可学习性”成为模型相关的属性。</p>
+<h2 id="information-projection">二、信息投影：最小变化必须满足什么约束？</h2>
+<p>固定问题，学生序列分布为 \(p(y)\)，语义上与专家等价的轨迹集合为 \(C\)。在只支持有效轨迹的分布中求最小 KL：</p>
+\[
+p_C=\arg\min_{\operatorname{supp}(q)\subseteq C}D_{\mathrm{KL}}(q\|p)
+=\frac{p(y)\mathbf1[y\in C]}{Z},\quad Z=\sum_{y\in C}p(y)&gt;0.
+\]
+<p>因为 \(D_{\mathrm{KL}}(q\|p)=D_{\mathrm{KL}}(q\|p_C)-\log Z\)，最优分布保留有效轨迹之间的原始相对概率。它不是“选概率最大的正确答案”，也不是把所有正确答案变成均匀分布。</p>
+<p>数学与科学任务主要以正确结果定义约束；事实任务则要求保留事实内容，可能由 LLM 评估器判断。两种约束的可靠性并不相同。该形式化把<strong>目标分布是什么</strong>与<strong>如何判断有效</strong>分成两个问题，不能用漂亮的目标公式掩盖后者的不确定性。</p>
+<h2 id="metropolis-hastings">三、MH 为什么不能只保留概率更高的改写？</h2>
+<p>从当前有效轨迹 \(y\) 提出候选 \(y'\)，提议分布记为 \(\kappa(y'\mid y,\tau)\)，其中 \(\tau\) 是专家信息。标准 MH 的接受概率为：</p>
+\[
+A(y',y)=\min\left(1,\frac{p(y')\,\mathbf1[y'\in C]\,\kappa(y\mid y',\tau)}
+{p(y)\,\kappa(y'\mid y,\tau)}\right).
+\]
+<p>候选无效时拒绝；有效时，不仅比较学生概率，还要修正<strong>提议过程本来偏爱哪些候选</strong>。如果把提议比率删掉，通常就不再是同一个目标分布。偶尔接受较低概率候选也不是浪费，它使搜索有机会跨越不同模式，而非退化成贪心优化。</p>
+<p>当正确 MH 转移核以 \(p_C\) 为平稳分布，且满足相应条件时，数据处理不等式给出：</p>
+\[
+D_{\mathrm{KL}}(\pi_{k+1}\|p_C)\le D_{\mathrm{KL}}(\pi_k\|p_C).
+\]
+<p>由于有效支持集上的 KL 相差常数 \(-\log Z\)，相对原学生的 KL 也不增。这是<strong>分布层面的结论</strong>，不是“链上每条新轨迹的概率都增大”，更不是“每增加一步搜索，下游准确率一定增大”。收敛还需要不可约性、非周期性及足够的混合。</p>
+<h2 id="practical-projection-sampling">四、语言模型里怎样运行这条链？</h2>
+<p>Algorithm 1 按 block 逐步扩展序列。每个阶段随机选切点，保留前缀，再把问题、专家轨迹与当前部分回答共同送入提议模型，让它在专家信息帮助下续写后缀；理论算法随后使用学生分数和提议分数接受或拒绝候选。这比每一步都从头生成完整回答便宜。</p>
+<blockquote><p><strong>必须读附录的原因：</strong>Further Experimental Details / Sampling 明确说，为避免每次迭代额外估计反向转移概率，实验把交换条件近似为“候选的学生似然更高就交换”。这不是前文完整 MH 接受率。因此论文实际上同时提供了一个清晰的目标理论与一个有用的高似然改写启发式；不能把理想 MH 的精确分布匹配保证直接贴到这个实现上。</p></blockquote>
+<p>论文使用 block size \(B=32\)、最大长度 \(T=1856\)、每阶段 \(N_{\mathrm{MCMC}}=10\) 次 MCMC。SFT 的 epoch、学习率和 batch size 在给定网格中调优；医疗还扩展了 epoch 搜索范围。搜索和超参数选择都是完整流程的一部分。</p>
+<p>论文近似的生成 token 成本是：</p>
+\[
+\mathbb E[\mathrm{cost}]
+\approx |D|\frac{N_{\mathrm{MCMC}}T^2}{4B}.
+\]
+<p>它表达了长轨迹为什么昂贵：重采样后缀的累积成本近似随长度平方增长。这里是生成 token 估算，不是完整 GPU 时间；打分、长专家提示 prefill 和验证仍应计入。实际平均长度小于上限时，也不能直接把 \(T=1856\) 的代入结果当作实测消耗。</p>
+<p><strong>理论—实现边界：</strong>分块固定前缀是计算上的近似；“请保持信息”这样的提示不是语义保持证明。理想核的单调 KL 定理不能未经核对就扩大到所有提示、截断、温度和有限步实现。</p>
+<p>附录的有效性检查也量化了这种差距：生成数据的正确率为化学 Qwen 94.33%、化学 Olmo 93.94%、数学 95.33%、医疗 95.86%。这些是处理后数据的正确率，不是下游模型测试准确率；它们说明实际数据并没有严格落在 100% 有效的支持集里。</p>
+<h2 id="evaluation-setup">五、训练、测试与基线要分开读</h2>
+<table>
+<thead><tr><th>新任务</th><th>训练 / 测试</th><th>模型</th><th>评价重点</th></tr></thead>
+<tbody>
+<tr><td>Chemistry L-3</td><td>1,800 / 600</td><td>Qwen2.5-7B-Instruct；另有 Olmo-3-7B-Instruct</td><td>科学技能；GPT-5 生成专家轨迹</td></tr>
+<tr><td>MATH level 3–5</td><td>8,230 / 1,024</td><td>Qwen2.5-3B</td><td>留出 MATH 与 AMC、MATH500、GSM8K 迁移</td></tr>
+<tr><td>Medical</td><td>HuatuoGPT-o1 SFT 的 19,704 题；另抽 1,000 测试题</td><td>Qwen2.5-7B-Instruct</td><td>GPT-5-mini 自动判断回答正确性</td></tr>
+</tbody>
+</table>
+<p>评价使用 single-shot accuracy。医疗评分不是临床验证，这里只讨论模型学习实验，不能把分数读成可部署的医疗可靠性。各任务的“旧能力”集合也不同：数学任务的旧能力是 Chemistry、MMLU、GPQA；化学与医疗则包含五项旧任务。</p>
+<h2 id="math-results">六、完整的数学方法比较</h2>
+<table>
+<caption>论文 Table mega_results 的数学部分，全部方法行；数值统一为准确率（%）。Math avg. 等权平均四个数学基准，Prior avg. 等权平均 Chemistry、MMLU、GPQA。</caption>
+<thead><tr><th>方法</th><th>MATH</th><th>AMC</th><th>MATH500</th><th>GSM8K</th><th>Math avg.</th><th>Prior avg.</th></tr></thead>
+<tbody>
+<tr><td>Base</td><td>31.5</td><td>13.3</td><td>24.5</td><td>57.9</td><td>31.8</td><td>42.2</td></tr>
+<tr><td>Expert SFT</td><td>24.3</td><td>10.0</td><td>16.8</td><td>45.5</td><td>24.2</td><td>38.9</td></tr>
+<tr><td>OPSD</td><td>26.7</td><td>8.4</td><td>33.2</td><td>52.4</td><td>30.2</td><td>40.4</td></tr>
+<tr><td>GRPO</td><td>45.7</td><td>24.9</td><td>31.3</td><td>80.8</td><td>45.7</td><td>41.4</td></tr>
+<tr><td>UFT</td><td>47.0</td><td>29.3</td><td>29.7</td><td>74.6</td><td>45.2</td><td>42.1</td></tr>
+<tr><td>Sampling SFT</td><td>49.5</td><td>27.7</td><td>58.2</td><td>78.2</td><td>53.4</td><td>42.0</td></tr>
+<tr><td>Sampling SFT + RL</td><td>54.5</td><td>24.1</td><td>65.2</td><td>83.0</td><td>56.7</td><td>43.0</td></tr>
+</tbody>
+</table>
+<p>Sampling SFT 在 MATH500 上比 GRPO 高 26.9 个百分点，但在 AMC 上低于 UFT，在 GSM8K 上低于 GRPO。先 Sampling SFT 再 RL 又进一步提升平均值，说明这些学习方式可以互补，而不是非此即彼。</p>
+<h3 id="cross-domain-results">跨领域的结果并非同一种故事</h3>
+<table>
+<caption>同一主表的 Qwen2.5-7B-Instruct 化学与医疗部分，保留全部比较方法；旧能力均值使用对应五项基准。</caption>
+<thead><tr><th>方法</th><th>Chemistry</th><th>化学实验 Prior avg.</th><th>Medical</th><th>医疗实验 Prior avg.</th></tr></thead>
+<tbody>
+<tr><td>Base</td><td>34.3</td><td>59.7</td><td>35.3</td><td>59.7</td></tr>
+<tr><td>Expert SFT</td><td>61.8</td><td>52.0</td><td>44.8</td><td>35.3</td></tr>
+<tr><td>Rewrite SFT</td><td>61.3</td><td>55.8</td><td>45.7</td><td>51.2</td></tr>
+<tr><td>OPSD</td><td>61.8</td><td>56.8</td><td>46.6</td><td>50.1</td></tr>
+<tr><td>Sampling SFT</td><td>66.0</td><td>58.6</td><td>45.8</td><td>51.6</td></tr>
+</tbody>
+</table>
+<p>化学中，采样方法同时改善新任务和保留；医疗中，新任务分数仍低于 OPSD，优势主要在保留。医疗的旧能力均值从 Base 59.7% 降到 51.6%，仍有 8.1 个百分点损失。<strong>“忘得更少”不能改写成“完全不忘”。</strong></p>
+<h2 id="diagnostics-and-limits">七、诊断支持了什么，又留下什么？</h2>
+<p>论文比较原示范与处理后示范在学生下的长度平均 log-likelihood，后者更高；比较 0、2、4、6、8、10 步搜索，数据更贴近学生且下游准确率总体提高。Rewrite SFT 是重要对照，因为它检验“只改写一次”能否解释全部收益，化学结果显示不能。</p>
+<p>附录还把适配 Olmo 的数据喂给 Qwen，表现变差，支持“数据适配具有学生特异性”。不过，多步搜索也带来额外计算和潜在的数据质量选择，现有诊断不能完全把这些因素分离。</p>
+<p>作者用 Olmo 化学 pass@k 曲线及原模型在有限采样下从未解出的题，论证收益不只是概率锐化。<strong>更保守的解读</strong>是：这显示有限采样预算下可达解题能力拓展；“一次也没采对”不等于数学上正确解概率为零，不能据此证明支持集凭空增加。</p>
+<p>我最希望补的实验是：等有效训练 token、等总预算下比较专家重复数据、一次改写、多步 MH 与近似条件采样；同时检查语义判定误差和独立推理模式的覆盖。否则，数据更贴近学生与性能更好仍可能只是多个共同变化的相关性。</p>
+<h2 id="e2s-connection">八、它为何是 E2S 的直接前提？</h2>
+<p>这篇论文首先把问题从“选择 SFT 还是 RL”改成“应该给学生什么分布”。<a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 接受这个目标，却不愿为每个样本重复搜索：它用 GFlowNet 学习跨样本共享的采样器。两者应比较目标逼近、覆盖和总成本，而不能只比较下游准确率。</p>
+<h2 id="conclusion">结语</h2>
+<p>值得学习的是一种研究顺序：先形式化信息必须保留到什么程度，再定义最小分布变化，最后选采样算法。理论目标清晰，使得“为什么改写有效”成为可检验的问题；有限计算下能逼近多少，才是下一个真正困难的研究问题。</p>
+<h2 id="reference">参考与核对位置</h2>
+<p>Aayush Karan, Sitan Chen, Yilun Du. <a href="https://arxiv.org/abs/2610.02140v1">Finetuning with Sampling: SFT Learns Better Than You Think</a>。核对版本：v1。重点位置：§4 信息投影与 Projection Sampling，§5 Experimental Setup / Table mega_results / Analysis，附录 Olmo。<a href="https://arxiv.org/src/2610.02140v1">TeX 源码</a>；<a href="https://github.com/aakaran/finetuning-with-sampling">作者代码</a>。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

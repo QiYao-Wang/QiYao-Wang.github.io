@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+<title id="title">E2S 的 Offline 与 Online 训练循环</title><desc id="desc">Offline 冻结起始学生，训练采样器并生成固定数据，然后 SFT。Online 每轮重新适配采样器，生成新数据，SFT 更新学生后再次进入循环。</desc>
+<rect width="960" height="360" rx="16" fill="#f7f9fd"/>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#365fc8"/></marker></defs>
+<g font-family="system-ui,sans-serif" text-anchor="middle" fill="#172033">
+<text x="100" y="57" font-size="22" font-weight="700">Offline</text><text x="100" y="210" font-size="22" font-weight="700">Online</text>
+<g fill="#fff" stroke="#cad5ec" stroke-width="2"><rect x="200" y="25" width="175" height="90" rx="12"/><rect x="435" y="25" width="175" height="90" rx="12"/><rect x="670" y="25" width="240" height="90" rx="12"/><rect x="200" y="178" width="175" height="90" rx="12"/><rect x="435" y="178" width="175" height="90" rx="12"/><rect x="670" y="178" width="240" height="90" rx="12"/></g>
+<g font-size="20"><text x="288" y="61">适配采样器</text><text x="288" y="90" font-size="16" fill="#637083">学生 θ₀ 固定</text><text x="523" y="61">生成有效数据</text><text x="523" y="90" font-size="16" fill="#637083">数据集固定</text><text x="790" y="61">SFT 更新学生</text><text x="790" y="90" font-size="16" fill="#637083">只输入原问题</text><text x="288" y="215">适配采样器</text><text x="288" y="244" font-size="16" fill="#637083">本轮学生固定</text><text x="523" y="215">生成有效数据</text><text x="523" y="244" font-size="16" fill="#637083">每轮重新生成</text><text x="790" y="215">SFT 更新学生</text><text x="790" y="244" font-size="16" fill="#637083">得到下一轮学生</text></g>
+<text x="555" y="329" font-size="17" fill="#365fc8">下一轮重新匹配更新后的学生分布</text>
+</g>
+<g fill="none" stroke="#365fc8" stroke-width="3" marker-end="url(#arrow)"><path d="M375 70H430"/><path d="M610 70H665"/><path d="M375 223H430"/><path d="M610 223H665"/><path d="M790 269V292H288V273"/></g>
+</svg>

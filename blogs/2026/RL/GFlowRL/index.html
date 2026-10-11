@@ -1,0 +1,123 @@
+---
+layout: compress
+title: "GFlowRL：归一化网络真的必要吗？从诊断到轻量分布匹配"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="随机替换、组内估计与 flow-gap clipping；检查固定点结论、长度偏置和数值口径。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>GFlowRL：归一化网络真的必要吗？从诊断到轻量分布匹配</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #GFlowNet</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>GFlowRL 提出一个比“换一个 RL loss”更有辨别力的问题：在仅有几百步的后训练中，一个从零初始化的归一化网络，真的学会了应该归一化什么吗？论文用随机替换实验挑战这一设计，再以组内估计和 flow-gap clipping 重构 TB 型训练；数学平均分提升明确，但关于分布匹配和稳定性的解释仍需要与实现近似分开。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：预训练策略只需细调，归一化网络却从零学起；两者的学习时间尺度可能不匹配。</li>
+<li>机制：从同题 rollout 估计一个停止梯度的基线，截断异常 flow gap，再用旧策略样本更新策略。</li>
+<li>证据：Qwen2.5-7B 数学 Avg@16 均值为 40.92，对照 GRPO 32.48、FlowRL 35.63；AIME25 并未超过 FlowRL。</li>
+<li>实践：辅助网络是否真的提供信息，应通过替换和消融检验，而不能仅因理论存在归一化常数就必须学习一个网络。</li>
+<li>代价：有限组、长度归一化、权重与 flow-gap clipping 都引入工程近似，理想固定点不等于实际训练收敛保证。</li>
+<li>开放问题：去掉网络与增加 clipping 的收益各占多少，是否跨配置稳定成立？</li>
+</ul>
+<h2 id="diagnostic">随机替换是一个机制检验</h2>
+<p>作者把 FlowRL 的学得 \(\log Z_\phi(x)\) 换为均值 0.5、标准差 1 的独立高斯噪声，其他设置保持不变。数学平均为 36.19，而主表中的原 FlowRL 为 35.63，未明显受损。方法节另写为 35.61，存在轻微文本—表格不一致；本文采用完整主表的 35.63，不凭空补出一个新结果。</p>
+<p>这支持“该配置下网络没有提供明显额外信息”，而非“归一化项在任何问题上都无用”。论文还引用 FlowRL 的训练日志诊断巨大梯度；若要把其因果归于特定模块，应在同硬件、精度、梯度统计位置和优化配置下复现，跨实验日志不能当成已经排除所有混杂因素的证据。</p>
+<h2 id="method">组内估计与 flow gap</h2>
+<p>理想目标仍为 \(p^\star(y\mid x)\propto\pi_{\mathrm{ref}}(y\mid x)e^{\beta r(x,y)}\)。对同题 \(G\) 个旧策略回答，论文定义：</p>
+<p>\[\widehat z=\frac1G\sum_i\left[\beta r_i+\log\pi_{\mathrm{ref}}(y_i\mid x)-\log\pi_{\mathrm{old}}(y_i\mid x)\right].\]</p>
+<p>它是这个组内量的 Monte Carlo 均值，不是在任意训练阶段都无偏估计真实 \(\log Z\)。当目标分布与策略在理想固定点上满足平衡时，各轨迹的隐式值相同，才与真正归一化常数一致。把“在最优点正确”误写为“全程精确”，会夸大方法。</p>
+<p>长度为 \(T_i\) 时，旧策略的 flow gap 为：</p>
+<p>\[g_i=\operatorname{sg}(\widehat z)+\frac1{T_i}\log\frac{\pi_{\mathrm{old}}(y_i\mid x)}{\pi_{\mathrm{ref}}(y_i\mid x)}-\beta r_i.\]</p>
+<p>将其非对称截断为 \(\tilde g_i\)，加上当前与旧策略的长度归一化 log 比值：</p>
+<p>\[\mathcal L=\frac1G\sum_iw_i\left[\tilde g_i+\frac1{T_i}\log\frac{\pi_\theta(y_i\mid x)}{\pi_{\mathrm{old}}(y_i\mid x)}\right]^2.\]</p>
+<p>这把信号拆成“采样时已经观察到的偏差”与“这次更新造成的变化”。clipping 限制异常轨迹支配梯度；它不是 GRPO 的奖励去均值，也不是简单增加 KL penalty。检查符号时，正残差在梯度下降下倾向减少该轨迹概率，负残差倾向增加；应直接从损失推导，不能把边界名称误当成更新方向。</p>
+<h2 id="length-and-theory">长度归一化究竟改变了什么</h2>
+<p>附录的固定点命题在不做长度归一化、clip 不激活、策略类能够表达目标以及零残差的自洽条件下成立。它是目标固定点的刻画，不是非凸训练必然到达它的证明。</p>
+<p>若使用长度归一化，零残差导出 \(\pi_\theta(y\mid x)=\pi_{\mathrm{ref}}(y\mid x)\exp[T_y(\beta r_y-z)]\)。当长度相同，奖励温度变为 \(T\beta\)；长度不同时，\(\exp(-T_yz)\) 也不再是所有序列共享的归一化因子。更需注意原文 \(\widehat z\) 估计式用未归一化 log 概率，残差却用了归一化值；两式的尺度关系需要对照代码检验，不能将其无条件称为精确组中心化。</p>
+<h2 id="experimental-evidence">7B 数学完整主表</h2>
+<p>数学训练数据在附录列为 DAPO-Math-17K；六个表格任务是评估基准，不应因为主文简写而说成在测试集上训练。下表是 Qwen2.5-7B 的 Avg@16 平均正确率（%），保留所有方法。</p>
+<table><thead><tr><th>方法</th><th>AIME24</th><th>AIME25</th><th>AMC23</th><th>MATH500</th><th>Minerva</th><th>Olympiad</th><th>平均</th></tr></thead><tbody>
+<tr><td>Base</td><td>4.38</td><td>2.08</td><td>30.78</td><td>54.47</td><td>22.38</td><td>24.03</td><td>23.02</td></tr>
+<tr><td>R++</td><td>11.04</td><td>5.41</td><td>66.71</td><td>54.25</td><td>24.37</td><td>27.33</td><td>31.52</td></tr>
+<tr><td>PPO</td><td>9.38</td><td>7.29</td><td>63.43</td><td>57.98</td><td>26.53</td><td>27.25</td><td>31.98</td></tr>
+<tr><td>GRPO</td><td>13.54</td><td>9.79</td><td>64.53</td><td>57.05</td><td>23.06</td><td>26.88</td><td>32.48</td></tr>
+<tr><td>FlowRL</td><td>15.41</td><td>10.83</td><td>54.53</td><td>66.96</td><td>31.41</td><td>34.61</td><td>35.63</td></tr>
+<tr><td>FlowRL RandomLogZ</td><td>12.08</td><td>9.38</td><td>62.66</td><td>69.44</td><td>26.29</td><td>37.30</td><td>36.19</td></tr>
+<tr><td>GFlowRL</td><td>17.29</td><td>9.79</td><td>67.66</td><td>76.89</td><td>33.62</td><td>40.25</td><td>40.92</td></tr>
+</tbody></table>
+<p>相对 GRPO 提高 8.44 个百分点，相对 FlowRL 为 5.29 个百分点，不能混成相对百分比。论文还展示代码、安全红队和 MoE 的扩展；其中 235B MoE 使用 30 步，对照 GRPO 为 100 步，所以它是不同更新预算的可行性结果，不是严格等算力规模律。</p>
+<h2 id="ablation">消融与公平性边界</h2>
+<p>去掉 flow-gap clipping 后，平均从 40.92 降至 37.02；对应梯度均值从 0.095 到 0.601。额外对比 ConstantLogZ 25.34、FOR 型方差目标 29.53，说明并非任何移除网络的目标都一样有效。但这些变体共同涉及基线、截断和数据更新，应进一步用组件交叉实验识别原因。</p>
+<p>作者用评审模型评估多样性，得分尺度是 1–5；它不是实际目标分布的距离。主表缺少逐格置信区间，且包含来自既有方法的对照结果，不应把小差距都解释为统计显著。红队 ASR 更高体现攻击评测能力，不直接代表模型更安全。</p>
+<h2 id="next-experiment">最重要的复现步骤</h2>
+<p>先检查代码中组估计、概率比和长度归一化的确切位置，以及权重是否停止梯度。然后固定同一训练预算，做“学习/随机/组均值归一化项 × 有无 flow-gap clip”的交叉消融，记录多种子准确率、长度分布、梯度异常比例与实际分布误差。它比继续扩大排行榜更能回答论文的核心机制问题。</p>
+<h2 id="conclusion">结论</h2>
+<p>GFlowRL 的重要贡献是用诊断实验审查辅助网络，并给出更轻量的替代；对 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 而言，组内中心化很有启发，但奖励目标、长度处理和严格 on-policy 条件仍应逐项对照。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2607.13394v1">GFlowRL</a>：v1 方法、7B 主表、flow-gap 与归一化项消融、固定点证明、训练设置附录；前置阅读：<a href="/blogs/2026/RL/FlowRL/">FlowRL 中文笔记</a>。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

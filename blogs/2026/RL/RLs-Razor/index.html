@@ -1,0 +1,150 @@
+---
+layout: compress
+title: "RL’s Razor：为什么在线强化学习可能遗忘更少"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="分布距离、学习—保留前沿与信息投影：把经验相关性和理论保证分开读。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>RL’s Razor：为什么在线强化学习可能遗忘更少</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #Forgetting</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>强化学习微调为什么常常比专家 SFT 忘得少？<em>RL’s Razor</em> 把解释从“RL 是特殊的学习算法”移到“模型最终选择了哪一个高奖励分布”：同样能解决新任务的策略很多，on-policy 更新往往偏向离起始模型更近的解。在 ParityMNIST 玩具实验里，新任务上的前向 KL 对遗忘的二次拟合 \(R^2\) 达到 0.96；LLM 实验中的对应值为 0.71。这个差别本身提醒我们：它首先是有适用范围的经验关系，不是普适遗忘定律。</p>
+<h2 id="key-takeaways">六个核心判断</h2>
+<ul>
+<li><strong>问题：</strong>只比较新任务分数，无法判断一种微调方法是否以牺牲旧能力为代价。</li>
+<li><strong>机制：</strong>on-policy 样本让更新从学生现有行为出发，而专家 SFT 可以把模型拉向远处的任意示范分布。</li>
+<li><strong>证据：</strong>四类目标的学习—保留曲线及 ParityMNIST 对照支持这一解释；前向 KL 的预测力在玩具任务更强。</li>
+<li><strong>实践：</strong>应记录分布变化，并按相同新任务水平比较旧能力，而不只看训练结束的一个检查点。</li>
+<li><strong>代价与边界：</strong>准确 KL 估计和超参数前沿都需要计算；小 KL 也不是“所有旧任务都安全”的证书。</li>
+<li><strong>开放问题：</strong>新任务 KL 为什么影响旧任务，需要更具体的表示干扰机制及跨域因果对照。</li>
+</ul>
+<h2 id="pareto-question">一、正确的比较单位是权衡曲线</h2>
+<p>设模型起点为 \(\pi_0\)，微调后为 \(\pi\)。若 SFT 在新任务得到更高分，但旧能力损失更多，而 RL 新任务略低、旧能力更好，直接说谁更强没有意义。作者对两类方法进行超参数扫描，在“新任务表现—旧任务表现”的二维空间比较 Pareto 前沿。</p>
+<p>LLM 使用 Qwen2.5-3B-Instruct，学习数学、化学问答或工具调用；旧能力覆盖 HellaSwag、TruthfulQA、MMLU、IFEval、WinoGrande、HumanEval。机器人则以 OpenVLA-7B 学习 SimplerEnv 抓罐任务，检查抽屉开关任务。RL 采用二元奖励，并<strong>不使用显式 KL 正则</strong>。</p>
+<p>需要记住前沿也是估计：附录先保留距经验前沿 2 个准确率点以内的模型，再拟合指数曲线。它不是所有可能超参数下的数学最优边界，也不是等总算力的效率比较。</p>
+<h2 id="kl-direction">二、哪一个 KL？方向不能省略</h2>
+<p>经验预测器是对新任务输入取平均的：</p>
+\[
+F(\pi)=\mathbb E_{x\sim\mathcal T_{\mathrm{new}}}
+D_{\mathrm{KL}}\big(\pi_0(\cdot\mid x)\|\pi(\cdot\mid x)\big).
+\]
+<p>它用起始策略作为第一项，处罚微调后模型把原先较有概率的输出压得太低。这与只看参数欧氏距离不同：参数可改变很多而输出不变，也可改变少量关键参数而严重损害行为。</p>
+<p><strong>一个容易读错的细节：</strong>论文的最小变化投影写的是 \(D_{\mathrm{KL}}(\pi\|\pi_0)\)，而经验预测器写的是 \(D_{\mathrm{KL}}(\pi_0\|\pi)\)。两者方向相反，不能把经验拟合和理论目标视作同一个量，也不能因为它们都叫 KL 就交换使用。</p>
+<h2 id="controlled-parity-task">三、ParityMNIST 为什么有解释力？</h2>
+<p>新任务不是识别唯一正确数字，而是判断奇偶：偶数图像输出任意偶数标签都算正确，奇数同理。这刻意制造了<strong>多个同样正确的输出分布</strong>。旧任务为 FashionMNIST，模型是联合预训练的三层 MLP。</p>
+<p>普通 SFT 选择一套外部标签分布；RL 只要求奇偶正确，让模型自由选择正确标签之间的比例。再构造一个已知的、与起始模型最接近的 oracle SFT 分布，就可以检验“不是 SFT 损失天生有问题，而是示范分布选得不好”。论文中 oracle SFT 的权衡优于 RL，另一个把 RL 模型输出蒸馏成 SFT 数据的对照也接近 RL 的权衡。</p>
+<p>这些对照比简单的 RL—SFT 两条曲线更有判别力，但 oracle 依赖玩具任务中可解析的分布，不能直接迁移成大语言模型上的免费数据生成器。</p>
+<h2 id="predictor-comparison">四、其他解释变量也要一起看</h2>
+<table>
+<caption>论文 Table kl_vs_alt：ParityMNIST 上用二次多项式预测遗忘的 \(R^2\)，越高表示该拟合更有解释力。保留全部变量；± 项按原表报告，不自行解释成置信区间。</caption>
+<thead><tr><th>预测变量</th><th>\(R^2\)</th></tr></thead>
+<tbody>
+<tr><td>前向 KL</td><td>0.96 ± 0.01</td></tr>
+<tr><td>反向 KL</td><td>0.93 ± 0.01</td></tr>
+<tr><td>Total variation</td><td>0.80 ± 0.01</td></tr>
+<tr><td>输出分布 L2 变化</td><td>0.56 ± 0.02</td></tr>
+<tr><td>参数 L1 变化</td><td>0.34 ± 0.02</td></tr>
+<tr><td>Fisher 加权参数 L2 变化</td><td>0.58 ± 0.02</td></tr>
+<tr><td>参数谱范数变化</td><td>0.58 ± 0.02</td></tr>
+<tr><td>参数变化稀疏度</td><td>N/A</td></tr>
+<tr><td>参数变化秩</td><td>N/A</td></tr>
+<tr><td>激活 L1 变化</td><td>0.52 ± 0.02</td></tr>
+<tr><td>激活 L2 变化</td><td>0.55 ± 0.02</td></tr>
+</tbody>
+</table>
+<p>前向 KL 在这张表里最好，但反向 KL 的 0.93 也很强，不能说“其他分布距离完全没用”。LLM 拟合的 0.71 又低于玩具任务的 0.96，因此实践中它更适合作为监测信号，而非单独决定是否可以上线。</p>
+<p>另一个重要诊断是精度：论文观察到 bfloat16 下很小的更新可能没有越过数值表示阈值，表现为稀疏参数变化；换成 float32 后稀疏性消失，而性能相近。因此“RL 更新更稀疏，所以忘得少”可能混入了数值精度因素。</p>
+<h2 id="on-policy-versus-negative">五、关键是 on-policy，还是负样本？</h2>
+<table>
+<caption>论文四象限对照。这里比较设计及观察到的曲线关系，不从图中捏造精确准确率。</caption>
+<thead><tr><th>方法</th><th>采样来源</th><th>是否使用负更新</th><th>论文观察</th></tr></thead>
+<tbody>
+<tr><td>GRPO</td><td>当前学生</td><td>是</td><td>较低 KL，较好保留</td></tr>
+<tr><td>1–0 REINFORCE</td><td>当前学生</td><td>否；错误样本权重为 0</td><td>更接近 GRPO 的权衡</td></tr>
+<tr><td>SFT</td><td>固定外部数据</td><td>否</td><td>较高偏移、更多遗忘</td></tr>
+<tr><td>SimPO</td><td>固定正负数据</td><td>是</td><td>更接近 SFT 的权衡</td></tr>
+</tbody>
+</table>
+<p>这一设计把采样来源与负梯度分离，支持 on-policy 数据是重要因素。但不同损失仍有优化稳定性和有效训练量差异，且论文没有研究所有在线 off-policy 方法。合理结论是排除了“负样本本身足以解释优势”，不是证明任何形式的 on-policy 更新都安全。</p>
+<h2 id="projection-theory">六、投影解释：直觉在哪里，保证止于哪里？</h2>
+<p>对二元奖励 \(R(y)\)，只保留正确回答的拒绝采样分布为：</p>
+\[
+q_t(y)=\frac{\pi_t(y)R(y)}{\sum_{y'}\pi_t(y')R(y')}.
+\]
+<p>它是当前策略在正确集合上的信息投影。固定采样分布时，奖励加权的 policy-gradient 方向与对 \(q_t\) 做最大似然的梯度方向对应。于是可以把过程理解为“先形成奖励重加权目标，再将目标投影回可表示的模型族”。</p>
+<p>附录的最小 KL 收敛结果要求有限输出空间、可实现的最优解、适当的指数族几何，以及精确投影或可求和的近似误差。<strong>一步梯度下降不等于完成一次精确投影，神经网络策略族也不天然满足这些假设。</strong>因此这是理解偏好的理论模型，不是给任意 PPO / GRPO 训练流程的全局收敛证书。</p>
+<h2 id="limitations-and-followup">七、还不能说 KL “导致”遗忘</h2>
+<p>新任务 KL 与旧任务损失之间的稳定关系是重要发现，但二者也可能受共同的优化变量驱动。论文自己承认，表示干扰、容量限制或其他机制尚未解释清楚；中等规模模型和玩具分布也不能覆盖前沿模型、多轮 agent 或长时间持续学习。</p>
+<p>一个有判别力的实验，是构造相近新任务准确率且相近新任务 KL、但改变更新方向或旧知识与新任务重叠程度的模型，比较旧任务损失是否仍相近。如果同 KL 的方向导致不同遗忘，就需要在标量距离之外加入结构信息。</p>
+<p>与 <a href="/blogs/2026/RL/Retaining-by-Doing/">Retaining by Doing</a> 合读尤其有用：后者在实际模型上发现 KL 与遗忘的 Pearson 相关为 0.52，并不总是单调。这不是互相推翻，而是说明不同实验对“KL 是多强的代理”给出不同边界。</p>
+<h2 id="conclusion">结语：剃掉不必要的分布变化</h2>
+<p>这篇论文值得学习的，是把新任务的众多高奖励解视作一个选择空间：学习不仅要找到正确解，也要问哪一个解最少破坏现有行为。它为 <a href="/blogs/2026/RL/Finetuning-with-Sampling/">采样后 SFT</a> 和 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 提供动机；但把“近”落实成可靠数据和可验证保留，仍需要后续算法与实验。</p>
+<h2 id="reference">参考与核对位置</h2>
+<p>Idan Shenfeld, Jyothish Pari, Pulkit Agrawal. <a href="https://arxiv.org/abs/2509.04259v1">RL’s Razor: Why Online Reinforcement Learning Forgets Less</a>。核对版本：v1。重点：§3–6、Table kl_vs_alt、Appendix A 的投影假设与 Practical considerations、Training and Evaluation Details。<a href="https://arxiv.org/src/2509.04259v1">TeX 源码</a>。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

@@ -1,0 +1,136 @@
+---
+layout: compress
+title: "GFlowVLM：视觉交互中的轨迹平衡、终止建模与多路径学习"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="对照三种平衡目标，检查历史、奖励塑形、SFT 初始化与离线高质量轨迹各自的贡献。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>GFlowVLM：视觉交互中的轨迹平衡、终止建模与多路径学习</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #GFlowNet · #VLM</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>GFlowVLM 把 GFlowNet 的多路径学习扩展到视觉—语言交互：模型看图、读取历史、生成推理，再选环境动作。论文在 NumberLine、Blackjack 与 ALFWorld 展示了正确率和路径多样性的收益；但真正决定效果的不只是一个平衡损失，终止动作、SFT 初始化、奖励塑形与离线高质量轨迹同样关键。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：视觉决策需要感知、记忆与合法动作约束，多步推理不能只根据当前图像判断。</li>
+<li>机制：让 VLM 成为历史条件化的前向策略，比较 Var-TB、SubTB 与 DB 三种平衡目标。</li>
+<li>证据：ALFWorld 的 SubTB 平均成功率 26.1%，对照含历史的 RL4VLM 为 22.1%；OOD 分别为 12.3% 和 6.1%。</li>
+<li>实践：[DONE] 与正确终止示范影响局部流的估计；只替换 loss 而不处理终止机制可能失效。</li>
+<li>代价：更多历史与 CoT 增加上下文成本，外部成功轨迹和奖励塑形也改变训练信息预算。</li>
+<li>开放问题：视觉感知误差与策略探索误差，哪一个是真正的瓶颈？改进能否转移到更开放的真实环境？</li>
+</ul>
+<h2 id="history-policy">把历史写进状态，不是推翻 Markov 方法</h2>
+<p>策略条件包括图像 \(o_t\)、任务目标 \(g\)、历史状态与动作，以及环境给出的可执行动作集合。只看当前图像时，某些信息不可观察；把历史加入输入，可以缓解这一问题。论文称其为 non-Markovian 提示，但完整历史本身也可以作为增广的 Markov 状态，因此不能推出“PPO 天生不能处理长历史”。公平对照必须让 PPO 基线也获得相同历史。</p>
+<p>动作集合还提供了强约束：在 ALFWorld 中模型从可执行动作中选择，而非完全自由地生成任何指令。将这种环境条件下的成功率外推到无约束真实机器人控制，缺少证据。</p>
+<h2 id="method">CoT、动作与三种平衡目标</h2>
+<p>VLM 先生成推理 \(c_t\)，再生成动作 \(a_t\)。原文用加权 log 分数：</p>
+<p>\[\log P_F=\log P_{\mathrm{Action}}(a_t\mid c_t,\text{历史},g)+\lambda\log P_{\mathrm{CoT}}(c_t\mid\text{历史},g),\quad\lambda=0.4.\]</p>
+<p>这是将行动学习与推理文本学习结合的工程权重。当 \(\lambda\ne1\) 时，该乘积并非自动归一化的联合采样概率；要严格使用 GFlowNet 的概率保证，必须明确实际概率、分数与归一化的关系，不能仅凭符号 \(P_F\) 就认定其满足所有假设。</p>
+<p>Var-TB 让不同完整轨迹的隐式流量值保持一致：在完整历史组成的树上，\(P_B=1\)，可定义 \(\zeta(\tau)=\log P_F(\tau)-\log R(\tau)\)，最小化其组内方差。其正负号不影响方差，但与常见“隐式 \(\log Z\)”定义差一个符号，读附录时应留意。</p>
+<p>SubTB 在若干连续子轨迹上检查平衡，DB 在单步检查平衡，监督更局部，却需要额外的中间流与终止概率估计。作者加入 [DONE] token，并用正确结束示范做 SFT 初始化。这里三种目标的差别，是监督范围与额外估计对象的差别，不只是三个名称。</p>
+<h2 id="reward-and-offline-data">奖励与离线数据改变了什么</h2>
+<p>GFlowNet 需要非负奖励，计算 log 时通常还要严格正值。NumberLine 使用 \(R=100/(|c-y|+1)\)，Blackjack 把环境奖励平移缩放并设置正值下界。奖励塑形改变目标偏好；作者因而提供使用相同奖励的 RL4VLM 对照。</p>
+<p>离线数据也不是固定存储的普通随机 rollout。NumberLine 在策略失败时补充正确路径，Blackjack 使用“17 点及以上 stand，否则 hit”的规则策略。因此其收益同时包含额外行为知识，不能单独解释成“off-policy 优于 on-policy”。</p>
+<h2 id="experimental-evidence">NumberLine 与 Blackjack 完整对照</h2>
+<p>共同基座为 LLaVA-v1.6-Mistral-7B。NL 训练范围 0–5，OOD 范围 10–50；下表列出原主表全部方法及消融的成功率（%）。M 表示只用当前状态，NM 表示加入历史；原文称四个独立种子运行，但此主表未逐格给标准差，因此不自行添加显著性判断。</p>
+<table><thead><tr><th>方法 / 条件</th><th>NL</th><th>NL-OOD</th><th>BJ</th></tr></thead><tbody>
+<tr><td>SFT 无 DONE</td><td>24.8</td><td>0.0</td><td>23.1</td></tr>
+<tr><td>SFT 有 DONE</td><td>24.0</td><td>0.0</td><td>20.2</td></tr>
+<tr><td>RL4VLM M / 原奖励</td><td>89.4</td><td>3.1</td><td>40.2</td></tr>
+<tr><td>RL4VLM NM / 原奖励</td><td>90.3</td><td>4.4</td><td>41.0</td></tr>
+<tr><td>RL4VLM M / 改写奖励</td><td>34.8</td><td>1.9</td><td>23.5</td></tr>
+<tr><td>Var-TB on-policy</td><td>100.0</td><td>6.2</td><td>41.4</td></tr>
+<tr><td>SubTB on-policy</td><td>100.0</td><td>7.0</td><td>41.7</td></tr>
+<tr><td>DB on-policy</td><td>100.0</td><td>9.1</td><td>42.2</td></tr>
+<tr><td>Var-TB off-policy</td><td>100.0</td><td>17.3</td><td>43.0</td></tr>
+<tr><td>SubTB off-policy</td><td>100.0</td><td>16.7</td><td>42.4</td></tr>
+<tr><td>DB off-policy</td><td>100.0</td><td>18.6</td><td>43.8</td></tr>
+<tr><td>SubTB on / 无 SFT 初始化</td><td>23.0</td><td>0.0</td><td>8.4</td></tr>
+<tr><td>DB on / 无 SFT 初始化</td><td>24.3</td><td>0.0</td><td>6.8</td></tr>
+<tr><td>SubTB off / 无 SFT 初始化</td><td>34.4</td><td>0.0</td><td>17.4</td></tr>
+<tr><td>DB off / 无 SFT 初始化</td><td>33.1</td><td>0.0</td><td>13.8</td></tr>
+</tbody></table>
+<p>NL 的 100% 是小范围、受动作约束的任务成功率，不是视觉算术已经解决。扩展范围的 OOD 仍很低；同时动作每次只改变数值 1、步数有限，测试题目可达性和距离分布也应检查。Blackjack 的随机发牌意味着合理策略也不可能保证每局都赢，成功率应结合环境最优或规则策略上限解读。</p>
+<h2 id="alfworld">ALFWorld：收益有范围</h2>
+<p>以下保留 ALFWorld 全部方法的总体、未见场景与多样性指标。SubTB 和 RL4VLM 使用 SFT 初始化；Var-TB 在此任务不依赖相同初始化，因此不是所有训练条件完全一致。</p>
+<table><thead><tr><th>方法</th><th>平均成功率（%）</th><th>OOD（%）</th><th>Div@16</th></tr></thead><tbody>
+<tr><td>SFT 无 DONE</td><td>17.1</td><td>3.3</td><td>1.06</td></tr>
+<tr><td>SFT 有 DONE</td><td>15.9</td><td>3.0</td><td>1.02</td></tr>
+<tr><td>RL4VLM M</td><td>21.7</td><td>4.8</td><td>1.12</td></tr>
+<tr><td>RL4VLM NM</td><td>22.1</td><td>6.1</td><td>1.11</td></tr>
+<tr><td>GFlowVLM SubTB</td><td>26.1</td><td>12.3</td><td>1.40</td></tr>
+<tr><td>GFlowVLM Var-TB</td><td>25.7</td><td>10.9</td><td>1.41</td></tr>
+</tbody></table>
+<p>Div@16 只在已成功题上统计不同成功路径的数量，不等于全体题目的覆盖率。SubTB 相对含历史 PPO 对照提高 4.0 个百分点，OOD 提高 6.2 个百分点；不要把相对提升与百分点混写。某些细分任务 SFT 更高，整体平均也不意味着全部子任务领先。</p>
+<h2 id="next-experiment">最能减少不确定性的实验</h2>
+<p>使用同一奖励、历史、可执行动作集合、SFT 初始化和总环境步数，让 PPO 与各平衡目标获得同样的外部轨迹；再分别提供真实图像、正确符号状态和扰动图像。这样既能分离数据与损失贡献，也能判断收益究竟针对感知、记忆还是规划。除训练环境步数外，还应记录 CoT 长度、GPU 时间和人工示范成本。</p>
+<h2 id="conclusion">结论</h2>
+<p>GFlowVLM 展示的是一套多模态轨迹学习系统，不能简化成 TB loss 单独改善视觉理解。与 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 的共同点是重视正确轨迹分布；差别在于交互环境、终止建模与外部动作约束改变了采样和验证问题。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2503.06514">GFlowVLM</a>：主文方法、GymCards 与 ALFWorld 表格，以及 supp.tex 的终止建模、离线轨迹和训练细节。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

@@ -1,0 +1,144 @@
+---
+layout: compress
+title: "Retaining by Doing：遗忘差异究竟来自目标，还是训练数据"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="对照 SFT、Self-SFT、RL 与动态刷新，追问状态分布、优化目标和遗忘之间的因果关系。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>Retaining by Doing：遗忘差异究竟来自目标，还是训练数据</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #Forgetting</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p><em>Retaining by Doing</em> 要解释的不是“RL 比 SFT 好”，而是更具体的现象：在后训练中，为什么对新任务有相近收益的模型，会丢掉不同数量的旧能力？Howard Chen 等人跨 Llama / Qwen、指令遵循 / 知识 / 算术任务比较后，把关键因素指向<strong>训练数据是否来自正在更新的策略</strong>。论文同时保留反例：只有起始学生的自生成数据并不够，RL 也并非免疫于遗忘。</p>
+<h2 id="key-takeaways">六个核心判断</h2>
+<ul>
+<li><strong>问题：</strong>专家 SFT 和静态 Self-SFT 都可能在获取新技能时损伤旧能力。</li>
+<li><strong>机制：</strong>on-policy 更新更容易沿已有可达模式改善，而不是被外部示范拉向远处的模式。</li>
+<li><strong>证据：</strong>REINFORCE 与 GRPO 都保持较低遗忘，移除 KL 正则也往往如此；优势估计和正则不是唯一解释。</li>
+<li><strong>实践：</strong>每 epoch 刷新自生成数据的 Iterative-SFT，可以获得部分 on-policy 保留收益，不必每步重采样。</li>
+<li><strong>边界：</strong>Self-SFT 会随学生更新变成 off-policy；当新模式离起点太远，RL 也可能忘。</li>
+<li><strong>开放问题：</strong>应该多久刷新数据，才足以控制分布陈旧度？答案需要计算—收益联合评价。</li>
+</ul>
+<h2 id="measure-gain-and-drop">一、必须同时衡量 gain 和 drop</h2>
+<p>论文把新任务准确率的变化记为 gain，把其他任务平均准确率的下降记为 drop：</p>
+\[
+\Delta_g=\mathcal A(\pi_T,\mathcal T)-\mathcal A(\pi_0,\mathcal T),\qquad
+\Delta_d=\frac1M\sum_j\big[\mathcal A(\pi_0,\mathcal T'_j)-\mathcal A(\pi_T,\mathcal T'_j)\big].
+\]
+<p>gain 越高越好，drop 越低越好；负 drop 表示非目标任务均值反而上升。百分制准确率相减得到的是<strong>百分点变化</strong>，不是相对改进率。均值还可能掩盖某一旧任务特别严重的下降，因此实际部署需要逐项检查。</p>
+<p>目标任务是 IFEval、MMLU、Countdown。每次学习其中一项，检查其余项，并加入 MATH、WildJailbreak 和 WildGuardTest 作为旧能力与安全性代理。数据划分分别为 IFEval 13,000 / 1,972，MMLU 12,000 / 2,042，Countdown 10,000 / 1,000 的训练 / 测试样本。</p>
+<h2 id="data-provenance">二、不要把 Self-SFT 误叫作持续 on-policy</h2>
+<p>学生包括 Llama-3.2-1B-Instruct、Llama-3.1-8B-Instruct、Qwen2.5-1.5B-Instruct、Qwen2.5-7B-Instruct。专家 SFT 使用 Llama-3.3-70B-Instruct 的有效回答；Self-SFT 从起始学生为每题生成五个回答，保留正确者；GRPO 则用当前策略的 rollout 和二元奖励更新。</p>
+<table>
+<thead><tr><th>方法</th><th>回答来源</th><th>数据何时刷新？</th><th>学生更新后的状态</th></tr></thead>
+<tbody>
+<tr><td>Expert SFT</td><td>外部 70B 教师</td><td>训练前</td><td>与学生可能持续不匹配</td></tr>
+<tr><td>Self-SFT</td><td>起始学生</td><td>训练前</td><td>起点接近，之后逐渐陈旧</td></tr>
+<tr><td>Iterative-SFT</td><td>每 epoch 开始时的学生</td><td>每 epoch</td><td>近似 on-policy</td></tr>
+<tr><td>GRPO</td><td>当前学生</td><td>每个更新周期</td><td>更接近完全 on-policy</td></tr>
+</tbody>
+</table>
+<p>“由我自己生成”是<strong>模型来源</strong>，而“on-policy”还涉及<strong>检查点与时间</strong>。一批数据即使来自学生，一旦学生连续更新，它也不再严格来自当前分布。这正是 Offline 与 Online E2S 的分界之一。</p>
+<h2 id="why-modes-matter">三、mode-seeking 为什么可能反而保留更多？</h2>
+<p>SFT 相当于最小化示范分布到学生的前向 KL；带参考策略 KL 正则的 RL 则可写成对奖励倾斜目标的反向 KL：</p>
+\[
+\pi^*(y\mid x)=\frac{\pi_0(y\mid x)e^{r(x,y)/\beta}}{Z(x)},\qquad
+J(\pi)=-\beta D_{\mathrm{KL}}(\pi\|\pi^*)+\beta\log Z(x).
+\]
+<p>这两种 KL 的参照是<strong>目标策略</strong>，不要与衡量微调前后变化的 \(D_{\mathrm{KL}}(\pi_0\|\pi)\) 混为一谈。通常说前向 KL mode-covering、反向 KL mode-seeking，也不能直接推出谁更忘。</p>
+<p>论文用高斯混合给出直观反例。如果学生只能表示一个模式，把它挪向新模式必然伤到旧模式，此时前向 KL 的保留反而稍好：相同 0.9 新模式 gain，旧模式 drop 为 0.64 对 0.70。允许学生有两个模式后，反向 KL 可以主要调整已经存在的新模式，旧模式保持较完整，而前向 KL 的外部样本可能牵动整体混合结构。</p>
+<p>这不是 LLM 内部真的存在可逐个命名的高斯模式，而是强调<strong>起始能力结构</strong>决定更新如何传播。附录增加新旧模式距离后，RL 也开始遗忘，所以“当前策略采样”不是万能屏障。</p>
+<h2 id="reinforce-ablation">四、是优势估计在保护模型吗？</h2>
+<table>
+<caption>原论文 Table reinforce_grpo_performance，保留两种模型的全部方法与三项任务；每个单元是 gain / 非目标 drop，均为准确率百分点。</caption>
+<thead><tr><th>模型 / 方法</th><th>IFEval</th><th>MMLU</th><th>Countdown</th></tr></thead>
+<tbody>
+<tr><td>Llama-3.1-8B / SFT</td><td>25.2 / 27.8</td><td>11.1 / 38.5</td><td>25.5 / 36.4</td></tr>
+<tr><td>Llama-3.1-8B / REINFORCE</td><td>17.8 / 7.7</td><td>8.6 / −0.1</td><td>7.5 / −0.8</td></tr>
+<tr><td>Llama-3.1-8B / GRPO</td><td>18.4 / 3.4</td><td>14.6 / −0.2</td><td>60.4 / −0.5</td></tr>
+<tr><td>Qwen2.5-7B / SFT</td><td>24.2 / 5.6</td><td>9.4 / 14.6</td><td>10.4 / 29.2</td></tr>
+<tr><td>Qwen2.5-7B / REINFORCE</td><td>5.7 / 2.9</td><td>6.4 / −0.6</td><td>11.9 / −0.1</td></tr>
+<tr><td>Qwen2.5-7B / GRPO</td><td>17.0 / 0.2</td><td>8.4 / 0.2</td><td>29.2 / −0.3</td></tr>
+</tbody>
+</table>
+<p>REINFORCE 在目标任务优化上有时远弱于 GRPO，却仍出现低 drop，说明 GRPO 特定的优势估计不是保留优势的必要条件。但它们的 gain 并不处处匹配；较少学习也可能较少改变，因此该表要与其余匹配权衡和消融一起看。</p>
+<p>另一项消融去除 KL 正则后，大多数模型 / 数据仍有类似保留优势；例外包括 Llama 的 IFEval。这里排除的是“显式 KL 正则解释了全部优势”，不是说 KL 正则在任何任务都没有用。</p>
+<h2 id="refresh-frequency">五、近似 on-policy 到什么程度就够了？</h2>
+<p>Iterative-SFT 在每个 epoch 开始时重新生成并筛选有效回答，再进行该轮 SFT。论文观察它往往能接近或超过静态 SFT 的目标表现，同时明显减少遗忘。另一个用 RL 过程中收集的轨迹做 SFT 的实验，也获得较好的保留。</p>
+<p>这使“每步采样”与“完全静态数据”之间出现了实际可用的连续谱。不过，RL 日志中的回答只是对生成它们的历史检查点 on-policy；把它们重新交给起始模型训练时，不能声称全过程严格 on-policy。</p>
+<p><strong>一种合理的实践方向</strong>是同时追踪样本年龄和策略变化：当当前模型对旧数据的概率明显改变时刷新，而不是机械地按固定时间刷新。这是本文提出的方案，不是论文已经验证的算法。</p>
+<h2 id="kl-is-not-a-certificate">六、KL 是信号，不是遗忘证书</h2>
+<p>附录用 100 个评价样本估计微调前后的前向 KL，跨模型、方法和任务与 drop 的 Pearson 相关为 0.52。GRPO 总体同时具有较低 KL 和较低 drop，但 SFT 与 Self-SFT 之间并不总是单调。</p>
+<p>具体地，在 Llama-3.2-1B 的 MMLU 实验中，Self-SFT 的 KL 为 39.3、drop 为 34.6；专家 SFT 的 KL 更高（48.4），drop 却更低（28.9）。这些 KL 数值是论文对应估计流程的结果，不能跨不同长度和分布随意横向比较，更不能据此设一个全局阈值。</p>
+<p>与 <a href="/blogs/2026/RL/RLs-Razor/">RL’s Razor</a> 合读，可以得到更稳妥的判断：分布变化值得监测，但输入分布、KL 方向、序列长度、模型参数化和旧任务重叠会影响代理强度。该论文的高斯分析提供直觉，不等同于对非凸 Transformer 的完整证明。</p>
+<h2 id="followup-and-conclusion">结语：保留优势来自哪里，必须拆开测</h2>
+<p>这项工作把采样来源、采样时间、KL 正则和优势估计拆开，避免把多个共同变化统称为“RL 的魔力”。下一步最有价值的实验，是对不同刷新间隔进行等生成 token、等更新 token 的对照，同时报告目标 gain、逐项旧任务 drop、样本陈旧度与方差。</p>
+<p>对 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 而言，它解释了为什么适配一次的数据未必足够：学生改变后，数据生成分布可能也应跟着改变。但刷新本身的成本与收益，仍需测量而非凭名称判断。</p>
+<h2 id="reference">参考与核对位置</h2>
+<p>Howard Chen, Noam Razin, Karthik Narasimhan, Danqi Chen. <a href="https://arxiv.org/abs/2510.18874">Retaining by Doing: The Role of On-Policy Data in Mitigating Forgetting</a>。核对本次下载的 arXiv 源码版本。重点：§2 gain/drop 定义、§3 单模态 / 多模态分析、§4 on-policy 消融、Table reinforce_grpo_performance、Appendix A.5 的 KL 相关性。<a href="https://arxiv.org/src/2510.18874">TeX 源码</a>；<a href="https://github.com/princeton-pli/retaining-by-doing">作者代码</a>。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>

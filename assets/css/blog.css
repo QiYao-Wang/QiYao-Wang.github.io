@@ -680,6 +680,20 @@ html[data-blog-theme="dark"] .greedy-nav {
 html[data-blog-theme="dark"] .blog-content code { color: #ff9ec1; }
 .blog-content blockquote { border-color: var(--blog-accent); background: var(--blog-accent-soft); color: var(--blog-ink); }
 .blog-content table { display: block; overflow-x: auto; border-color: var(--blog-line); }
+.blog-content mjx-container[display="true"] {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.35rem;
+}
+.blog-content mjx-container:not([display="true"]) {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  vertical-align: middle;
+  padding-block: 0.1em;
+}
 .blog-content table th { background: var(--blog-subtle); }
 .blog-content table th, .blog-content table td { border-color: var(--blog-line); }
 

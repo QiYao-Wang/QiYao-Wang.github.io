@@ -1,0 +1,124 @@
+---
+layout: compress
+title: "FlowRL：从奖励最大化到轨迹分布匹配"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="TB 残差、参考分布、长度归一化和重要性权重，为什么理想目标与工程实现需要分开。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      html { scroll-behavior: smooth; }
+    </style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+    <div class="masthead__inner-wrap">
+      <div class="masthead__menu">
+        <nav id="site-nav" class="greedy-nav">
+          <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+    <div id="main" role="main">
+
+      <div class="sidebar sticky">
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </div>
+
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+
+            <div class="blog-post-header">
+              <h1>FlowRL：从奖励最大化到轨迹分布匹配</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月11日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #RL · #GFlowNet</span>
+              </div>
+            </div>
+
+            <div class="blog-content">
+<p>FlowRL 把后训练的目标从“提高平均奖励”转向“匹配一个偏好高奖励、又保留多种解法的分布”。其核心是 GFlowNet 的 trajectory balance（轨迹平衡，TB），但真正让它适用于长推理的，是参考模型、长度归一化和旧策略样本的权重修正；这些工程步骤也限制了从理想分布到实际实现的理论对应。</p>
+<h2 id="key-takeaways">六个关键结论</h2>
+<ul>
+<li>问题：只追求奖励可能强化少数常见解法；但提高采样温度也不能保证更多正确解法。</li>
+<li>机制：用 TB 残差匹配奖励倾斜的参考分布，另学一个问题条件化的归一化项。</li>
+<li>证据：Qwen2.5-32B 六数学基准 Avg@16 的平均为 48.39，高于 PPO 43.25 和 GRPO 38.34；个别任务不是最好。</li>
+<li>实践：长序列 log-probability 的规模与 rollout 的陈旧程度，需要成为损失设计的一部分。</li>
+<li>代价：额外的归一化网络、截断权重和长度偏置使理论匹配成为近似；更多多样性也不必然带来单次准确率提升。</li>
+<li>开放问题：收益究竟来自更广的正确解法覆盖、隐式 KL 约束，还是更稳定的梯度系数？</li>
+</ul>
+<h2 id="target-distribution">理想目标：奖励倾斜，而非只选最高奖励</h2>
+<p>初始表述使用 \(p^\star(y\mid x)\propto\exp(\beta r(x,y))\)。对巨大或无界序列空间，仅靠有界终点奖励不一定给出可归一化的分布；实际方法引入参考策略后得到：</p>
+<p>\[p^\star(y\mid x)=\frac{\pi_{\mathrm{ref}}(y\mid x)\exp(\beta r(x,y))}{Z(x)}.\]</p>
+<p>这里 \(\beta\) 是逆温度：越大越强调奖励，参考模型保留语言与推理先验。一个重要推论是，同样奖励的回答仍按参考概率加权，而不是全部正确轨迹均匀采样。这个目标与带参考 KL 的熵正则策略优化有关，不能把“RL”与“分布匹配”说成毫无交集的两类方法。</p>
+<h2 id="trajectory-balance">TB 如何把目标变成损失</h2>
+<p>若输出完整序列，理想平衡条件为 \(Z(x)\pi_\theta(y\mid x)=\pi_{\mathrm{ref}}(y\mid x)e^{\beta r}\)。对数后形成残差：</p>
+<p>\[\delta=\log Z_\phi(x)+\log\pi_\theta(y\mid x)-\log\pi_{\mathrm{ref}}(y\mid x)-\beta r(x,y).\]</p>
+<p>平方损失希望不同轨迹给出一致的隐式 \(\log Z\)。作者用 prompt 最后一层隐藏状态的均值，输入随机初始化的三层 MLP，预测这个标量。它不需要枚举所有答案，但也新增了一个必须在短后训练阶段学会的条件函数。</p>
+<p>论文给出的反向 KL 与 TB 梯度对应，使用从当前策略采样、但对已采样轨迹直接计算残差梯度的形式。它不是对包含参数依赖采样分布的 \(\mathbb E_{\pi_\theta}[\delta^2]\) 做完整求导；后者还会包含 score-function 项。区分这两种求导方式，才能理解“梯度等价”声称的边界。</p>
+<h2 id="engineering">实际 FlowRL 多做了什么</h2>
+<p>长序列的 log-probability 是数千个 token 的和，可能让残差与梯度随长度增大。作者将 log 概率除以回答长度 \(T\)，将奖励做组标准化 \(\hat r\)，并给旧策略采样的回答加入停止梯度的 clipping 权重：</p>
+<p>\[\mathcal L=w\left[\log Z_\phi(x)+\frac1T\log\frac{\pi_\theta(y\mid x)}{\pi_{\mathrm{ref}}(y\mid x)}-\beta\hat r\right]^2,\quad w=\operatorname{sg}\!\left[\operatorname{clip}\!\left(\frac{\pi_\theta(y\mid x)}{\pi_{\mathrm{old}}(y\mid x)},1-\epsilon,1+\epsilon\right)\right].\]</p>
+<p>这些设计解决规模与数据重用问题，但不是不改变目标的代数重写：不同长度产生不同概率尺度；组标准化后的奖励依赖同组其他样本；截断的 importance weights 会引入偏差。因此“精确匹配某个固定奖励分布”只能用于未作这些近似的理想条件。</p>
+<h2 id="experimental-evidence">数学主表：完整保留同基座比较</h2>
+<p>训练使用 DAPO 数学数据，评估六个基准；指标是 Avg@16 平均正确率（%），不是 Pass@16。训练与评估回答上限为 8,192 token，评估温度 0.6、top-p 0.95。作者统一学习率、batch size 和训练步数，并使用同类 veRL 配置，但不同算法的 critic、归一化网络和实际生成长度仍意味着总成本不完全相同。</p>
+<table><thead><tr><th>模型 / 方法</th><th>AIME24</th><th>AIME25</th><th>AMC23</th><th>MATH500</th><th>Minerva</th><th>Olympiad</th><th>平均</th></tr></thead><tbody>
+<tr><td>32B Base</td><td>4.58</td><td>2.08</td><td>28.59</td><td>52.48</td><td>26.99</td><td>21.37</td><td>22.68</td></tr>
+<tr><td>32B R++</td><td>14.79</td><td>9.17</td><td>52.65</td><td>44.35</td><td>17.37</td><td>24.52</td><td>27.14</td></tr>
+<tr><td>32B PPO</td><td>26.87</td><td>20.41</td><td>76.40</td><td>69.17</td><td>28.79</td><td>37.90</td><td>43.25</td></tr>
+<tr><td>32B GRPO</td><td>23.12</td><td>14.58</td><td>76.87</td><td>61.60</td><td>18.95</td><td>34.94</td><td>38.34</td></tr>
+<tr><td>32B FlowRL</td><td>23.95</td><td>21.87</td><td>73.75</td><td>80.75</td><td>38.21</td><td>51.83</td><td>48.39</td></tr>
+<tr><td>7B Base</td><td>4.38</td><td>2.08</td><td>30.78</td><td>54.47</td><td>22.38</td><td>24.03</td><td>23.02</td></tr>
+<tr><td>7B R++</td><td>11.04</td><td>5.41</td><td>66.71</td><td>54.25</td><td>24.37</td><td>27.33</td><td>31.52</td></tr>
+<tr><td>7B PPO</td><td>9.38</td><td>7.29</td><td>63.43</td><td>57.98</td><td>26.53</td><td>27.25</td><td>31.98</td></tr>
+<tr><td>7B GRPO</td><td>13.54</td><td>9.79</td><td>64.53</td><td>57.05</td><td>23.06</td><td>26.88</td><td>32.48</td></tr>
+<tr><td>7B FlowRL</td><td>15.41</td><td>10.83</td><td>54.53</td><td>66.96</td><td>31.41</td><td>34.61</td><td>35.63</td></tr>
+</tbody></table>
+<p>32B 平均超过 PPO 5.14、超过 GRPO 10.05 个百分点，但 AIME24 的 PPO 更高、AMC23 的 GRPO 更高；7B 的 AMC23 甚至低于多个基线。平均优势不能改写成所有单项领先。</p>
+<h2 id="ablation-and-diversity">收益和分布匹配之间还有证据距离</h2>
+<p>7B 消融移除 importance sampling 后平均从 35.63 降到 26.71，支持修正采样不匹配的重要性；作者适配的 GFlowNet/PPO 联合损失为 33.67，也说明并非只要加一个 TB 项就能复制收益。</p>
+<p>多样性由 GPT-4o-mini 按解题策略打分，而不是直接测量真实目标分布的 KL。评审模型的偏好、题目数量和正确率差异都可能影响结果。更高多样性与更高准确率一起出现，仍不证明前者是后者的唯一原因；还需要等熵、等 KL 的控制实验。</p>
+<h2 id="next-experiment">与后续方法对读</h2>
+<p><a href="/blogs/2026/RL/GFlowRL/">GFlowRL</a> 对额外归一化网络提出了诊断：随机替换该项未明显损害分数。但这是后续论文的实验，不是 FlowRL 自己的结论。最有价值的复现应在同一配置、多种随机种子下比较学得的 \(\log Z\)、组均值和固定基线，并分别测量梯度、目标分布误差与实际 GPU 成本。</p>
+<h2 id="conclusion">结论</h2>
+<p>FlowRL 证明了 TB 型残差可以成为有竞争力的后训练信号，却没有把“理想奖励分布匹配”与“实际长序列优化”之间的全部距离消除。对 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 的阅读启发是：分布目标、采样分布、梯度估计和工程归一化应分别检查。</p>
+<h2 id="references">参考资料</h2>
+<p><a href="https://arxiv.org/abs/2509.15207v3">FlowRL</a>：本文使用 v3 TeX 的方法、数学主表、IS 消融、梯度推导与多样性评估附录，不混用旧版本结果。</p>
+
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>
