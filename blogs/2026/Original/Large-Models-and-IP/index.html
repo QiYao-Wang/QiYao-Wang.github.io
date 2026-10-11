@@ -1,6 +1,6 @@
 ---
 layout: compress
-title: "大模型与知识产权：从领域知识到全生命周期的专业实践"
+title: "大模型与知识产权：从创造、确权、维权全生命周期出发的领域实践"
 ---
 <!doctype html>
 <html lang="zh-CN" class="no-js">
@@ -8,7 +8,7 @@ title: "大模型与知识产权：从领域知识到全生命周期的专业实
     {% include head.html %}
     {% include head/custom.html %}
     <base target="_self">
-    <meta name="description" content="围绕 FlowPIE、AutoPatent、PatRe、MoZIP 与 IPBench，梳理大模型在知识产权创造、专利性评估与保护中的机制、证据及开放问题。">
+    <meta name="description" content="知识产权（IP）是一个把「法律、技术与科学」深度缠绕在一起的领域。">
     <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-4">
     <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
@@ -35,138 +35,152 @@ title: "大模型与知识产权：从领域知识到全生命周期的专业实
         <div class="page__inner-wrap">
           <section id="blog-content" class="page__content blog-content" itemprop="text" tabindex="-1">
             <div class="blog-post-header">
-              <h1>大模型与知识产权：从领域知识到全生命周期的专业实践</h1>
+              <h1>大模型与知识产权：从创造、确权、维权全生命周期出发的领域实践</h1>
               <div class="blog-post-meta">
-                <span class="meta-date">2026 · Taibao-IP Team · 中文重构版</span>
+                <span class="meta-date">2026年6月30日 23:57 · Taibao-IP</span>
                 <span class="meta-topic">#IPIntelligence</span>
               </div>
               <div class="blog-entry-editions"><a href="https://lab.wangqiyao.me/large-models-and-ip.html">Lab · English ↗</a><a href="https://mp.weixin.qq.com/s/RaHIqe2wVMPfmvSzAYfahA">微信原文 ↗</a></div>
             </div>
 
-            <p>一个熟悉知识产权术语、能够回答法律常识的模型，离真正可用的知识产权系统还有多远？我们的判断是：距离不主要体现在它记住了多少条文，而在于它能否把技术事实、证据与专业工作流程组织成可检查的判断。生成一份像专利的文本，并不等于形成一份质量可靠的申请文件；找到语义相近的文献，也不等于完成新颖性判断。</p>
-            <p>知识产权（Intellectual Property，IP）恰好处在法律、技术与科学的交汇处。专利记录技术方案及其权利表达，商标以文字和视觉标识承载区别，软件相关权利又涉及代码与界面。这一领域既有高度结构化的数据，也有依赖专业语境的判断。因此，它不仅是 AI for Law 的应用场景，也是利用创新记录支持 AI for Science 与 AI for Technology 的重要入口。</p>
-            <p>本文沿着 Taibao-IP 团队的研究实践，讨论大模型如何参与创造、专利性评估和保护三个环节，并进一步解释：为什么生成能力需要判别与评价能力作为支撑，为什么专业流程往往比单纯扩大模型更值得研究。</p>
-            <blockquote><p>阅读说明：本文是研究路线与实践的综述，不是单篇论文的实验复现报告。项目事实和数值依据 <a href="https://lab.wangqiyao.me/large-models-and-ip.html">lab 英文稿</a>，相关论文入口见文末；额外的机制解读与研究建议会明确标为分析。文中的研究讨论不构成具体案件的法律意见。</p></blockquote>
+            <div id="wechat-original-content">
 
-            <h2 id="key-takeaways">核心观点</h2>
-            <ul>
-              <li><strong>问题：</strong>知识产权智能化的难点不是把通用聊天模型换成“懂 IP”的聊天模型，而是将领域知识用于有证据、有约束的专业决策。</li>
-              <li><strong>机制：</strong>创造、专利性评估、保护构成应用主线；知识注入、生成、评价、判别构成能力主线。研究应考察两者的具体交点，而不是只讨论参数规模。</li>
-              <li><strong>证据：</strong>长专利生成中的重复退化、技术匹配中的词面干扰、多轮审查中的能力不对称，分别暴露了写作、判别与论证的不同瓶颈。</li>
-              <li><strong>实践：</strong>更可行的系统形态是任务分解、检索与证据组织、逐段撰写、审查反馈，以及必要的人类复核，而不是一次性生成最终结论。</li>
-              <li><strong>代价：</strong>更多搜索、审查和模型评价会带来额外计算与共同偏差。评价模型的高分不能自动替代真实技术验证或专业判断。</li>
-              <li><strong>开放问题：</strong>如何让模型真正理解技术差异、多模态材料和不同法域的语境，同时保留通用推理能力，是比继续堆积领域语料更深的挑战。</li>
-            </ul>
+<figure><img src="/blogs/2026/Original/Large-Models-and-IP/wechat-banner.webp" width="1080" height="60" alt="Taibao-IP 原文页首标识" loading="lazy"></figure>
 
-            <h2 id="framework">一、用生命周期与模型能力建立研究地图</h2>
-            <p>从应用侧看，IP 并不是一组彼此孤立的问答任务。创造环节从技术构思出发，形成可以进一步论证的方案；专利性环节连接检索、撰写与审查；保护环节则涉及侵权分析、损害赔偿和法律咨询等工作。从模型侧看，这些环节都同时需要知识、生成、评价与判别，只是各自的组合方式不同。</p>
-            <table>
-              <caption>应用与能力的交叉地图：以下是研究问题的组织方式，不代表所有任务已被解决。</caption>
-              <thead><tr><th scope="col">应用环节</th><th scope="col">知识与证据</th><th scope="col">生成</th><th scope="col">评价与判别</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">创造</th><td>检索专利与文献</td><td>形成、组合与迭代构思</td><td>检查新颖程度、可行性与同质化</td></tr>
-                <tr><th scope="row">专利性评估</th><td>组织现有技术、技术特征与审查依据</td><td>撰写申请文件、审查意见与答辩</td><td>技术匹配、文档一致性与论证检查</td></tr>
-                <tr><th scope="row">保护</th><td>关联技术事实、权利文本与案件材料</td><td>辅助形成分析与解释</td><td>审查推理链、证据完整性与适用语境</td></tr>
-              </tbody>
-            </table>
-            <p>IPBench 将任务按信息处理、逻辑推理、判别评价和创造生成四个认知层次组织，给这张地图提供了具体落点。需要注意，这四个认知层次与上面的四类模型能力并非严格的一一对应：知识可以支持各个层次，而生成任务也需要推理和判别。分类的价值是定位瓶颈，而不是给能力强弱排一个简单序号。</p>
-            <figure>
-              <a href="/blogs/2026/Original/Large-Models-and-IP/ipbench-framework.webp"><img src="/blogs/2026/Original/Large-Models-and-IP/ipbench-framework.webp" width="1660" height="821" alt="IPBench 按四个认知层次组织法律与技术任务的体系图" loading="lazy"></a>
-              <figcaption>图 1：IPBench 将信息处理、逻辑推理、判别评价与创造生成放在同一任务体系中。领域能力不能由法律知识问答的表现单独代表。图源：lab 英文稿中的 IPBench 框架图。</figcaption>
-            </figure>
+<p>知识产权（IP）是一个把<strong>「</strong><strong>法律、技术与科学」</strong>深度缠绕在一起的领域。专利、软件著作权（代码、GUI）、商标（Logo，天然多模态）等不同客体，各自承载着技术事实与法律权利；它知识密集、强结构、强规范。这种交织恰恰带来了一个有意思的双向机会：</p>
+<ul><li>
+<p><strong>向</strong><strong>「法律」</strong><strong>看</strong>：知识产权本身就是一套较为成熟的法律体系，可以作为 <strong>AI for Law</strong> 的一个高价值切入点——专利审查、侵权判定、赔偿计算、法律问答，都是真实且高频的法律任务。</p>
+</li><li>
+<p><strong>向</strong><strong>「技术与科学」</strong><strong>看</strong>：专利是人类创新最大规模、最结构化的技术记录之一。专利数据天然是 <strong>AI for Science / AI for Technology</strong> 的优质语料——用它来生成科学 idea、抽取技术特征、组织技术演进，价值不亚于论文。</p>
+</li></ul>
+<p>本文想把我们 Taibao-IP 团队对<strong>「大模型 × IP」</strong>的整体思路讲清楚，并用几篇具体的论文，说明大模型如何与这个垂域结合、在每个真实任务上能做到什么、还差什么。</p>
 
-            <h2 id="creation">二、创造：让专利数据参与技术发现</h2>
-            <p>创造的上游问题是：给定一个研究主题，如何产生既有新意、又有可行性、还不只是重复已有工作的技术构思？这天然与知识产权相关，因为一个构思的价值，部分取决于它和现有技术之间究竟存在什么差异。</p>
-            <p>固定检索一批文献，然后让模型生成一次构思，是一个容易实现的起点，但也容易形成信息闭环：最初检索的材料限定了后续思路，模型又倾向于重组这些材料，最后得到表达不同、技术路径却高度相似的一组方案。问题并不只是“模型不够有创造力”，还在于搜索过程没有被新的构思反过来改变。</p>
-            <p><strong>FlowPIE</strong> 将构思生成视为测试时的持续演化过程。受 GFlowNets 启发的流引导蒙特卡洛树搜索在专利文档图上探索；候选构思的评价反馈影响后续检索；交叉与变异操作继续扩展构思种群；基于大模型的生成式奖励模型则评价新颖程度与可行性。检索、生成和评价因此成为一个循环，而不是三项互不相干的步骤。</p>
-            <figure>
-              <a href="/blogs/2026/Original/Large-Models-and-IP/flowpie-framework.webp"><img src="/blogs/2026/Original/Large-Models-and-IP/flowpie-framework.webp" width="1800" height="577" alt="FlowPIE 用流引导搜索初始化构思种群，再通过交叉、变异和奖励评价进行测试时演化" loading="lazy"></a>
-              <figcaption>图 2：左侧搜索决定去哪里寻找技术材料，右侧演化决定如何组合与改造已有构思，评价反馈连接两者。图源：lab 英文稿中的 FlowPIE 框架图。</figcaption>
-            </figure>
-            <p><strong>进一步看：</strong>专利的结构化技术表达为搜索和特征抽取提供了条件，但“模型认为新颖”不等于完成了穷尽的现有技术检索，“模型认为可行”也不等于经过实验验证。迭代次数越多，系统越可能优化到奖励模型的偏好，而非真实创新质量。因此，这类方法的关键研究问题还包括奖励可靠性、构思多样性和独立验证，而不只是最终评分是否升高。</p>
+<h2 id="framework"><strong>一、我们怎么看这个垂直领域：两条主线</strong></h2>
 
-            <h2 id="drafting">三、专利撰写：将生成任务改写为专业工作流程</h2>
-            <p>从技术构思到申请文件，需要的不是扩写一段摘要，而是把发明披露组织成结构一致的说明、权利要求及其他组成部分。不同部分彼此制约：术语要一致，技术细节要能够相互支持，长篇描述不能靠机械重复来填充。这使专利撰写成为法律与技术深度耦合的长文档任务。</p>
-            <p><strong>AutoPatent</strong> 围绕 Draft2Patent 任务和 D2P 基准研究这一流程。英文稿报告，完整专利平均超过 <strong>17,000 tokens</strong>，详细描述平均超过 <strong>14,000 tokens</strong>，占文档的 <strong>80% 以上</strong>。这些数字说明了长度压力，但更值得注意的是：常规微调可以得到漂亮的 BLEU、ROUGE 分数，同时生成大量重复文本。</p>
-            <p>为识别这一退化，项目使用逆重复率 IRR。英文稿给出的对照是：生成专利约为 <strong>49</strong>，真实专利约为 <strong>91</strong>。这里保留原稿的分值表达，不把它擅自改写成准确率或通过率。这个对照的意义是提醒我们：与参考文本重叠，不一定意味着完成了专业写作任务。</p>
-            <p>AutoPatent 的设计对应专利代理人的分工与审改，而不是要求一个模型一次完成整份文件：</p>
-            <ol>
-              <li><strong>先规划：</strong>规划代理构建两级撰写规划树，把详细描述拆为章节和子章节，明确每部分要完成的内容。</li>
-              <li><strong>再分工：</strong>专门的写作者处理标题、摘要、权利要求等较短部分；描述写作者逐段完成较长部分，并利用参考材料保持内容连贯。</li>
-              <li><strong>把审查纳入生成：</strong>Reference–Review–Augmented Generation（RRAG）将参考、审查与修改串联起来。审查代理提供反馈，写作者据此修订，而不是把初次输出直接视为最终稿。</li>
-            </ol>
-            <figure>
-              <a href="/blogs/2026/Original/Large-Models-and-IP/autopatent-framework.webp"><img src="/blogs/2026/Original/Large-Models-and-IP/autopatent-framework.webp" width="1800" height="741" alt="AutoPatent 通过专门写作者、两级规划树与审查反馈循环完成专利生成" loading="lazy"></a>
-              <figcaption>图 3：AutoPatent 的关键不是代理数量本身，而是明确的专业分工、结构规划和可触发修订的审查反馈。图源：lab 英文稿中的 AutoPatent 框架图。</figcaption>
-            </figure>
-            <p>英文稿报告，这一框架下的 Qwen2.5-7B 在其客观与人工评价中优于 GPT-4o、Qwen2.5-72B 和 LLaMA-3.1-70B 等更大系统，并减少了重复。<strong>一种合理的解读是：</strong>在所研究的任务设置中，工作流程设计能够补偿相当一部分模型规模差距。但这一结果不能推出“小模型普遍优于大模型”，也不能脱离推理调用次数和评价条件比较系统成本。</p>
-            <p>还有一个重要边界：减少重复并不足以证明技术内容正确，自动审查也可能漏掉跨章节的不一致。真正值得继续测量的是，系统能否在明确的技术约束下保留有效信息，并让审查意见定位到具体文本与证据。</p>
+<p>我们把「大模型 × IP」拆成两条相互咬合的主线。</p>
 
-            <h2 id="examination">四、审查：从静态分类转向多轮论证</h2>
-            <p>专利审查不只是对一份文本给出“接受”或“拒绝”。审查员引用现有技术并提出意见，申请人作出答辩、可能修改权利要求，后续意见再回应变化后的主张。真实问题包含状态演化：当前判断依赖此前哪些意见已被回应、哪些技术特征已改变、哪些证据仍然有效。</p>
-            <p>静态分类可以测量某种判断能力，却很难覆盖这一交互过程。<strong>PatRe</strong> 因而将审查意见（Office Action）与申请人答辩（Rebuttal）放入多轮任务，收集 <strong>480 个真实案例</strong>，覆盖 IPC 的 <strong>八个部</strong>，并标注法律依据、权利要求演变和被引用的现有技术文档。</p>
-            <p>PatRe 中的三种审查意见生成设置，把任务难度拆到了不同位置：</p>
-            <ul>
-              <li><strong>直接生成：</strong>主要依靠输入材料和模型已有能力，考察能否组织审查意见。</li>
-              <li><strong>理想参考条件：</strong>提供正确的参考文献，减少检索不确定性，考察模型如何使用已知证据。</li>
-              <li><strong>检索模拟条件：</strong>BM25 检索带来噪声候选，模型还要从候选中识别真正有关的现有技术，再据此形成判断。</li>
-            </ul>
-            <figure>
-              <a href="/blogs/2026/Original/Large-Models-and-IP/patre-framework.webp"><img src="/blogs/2026/Original/Large-Models-and-IP/patre-framework.webp" width="1800" height="885" alt="PatRe 组织多轮审查历史，区分三种审查生成设置，并结合客观指标与语义逻辑审计" loading="lazy"></a>
-              <figcaption>图 4：PatRe 不仅评价结论，还把参考文献、历史交互及多维审计纳入任务。理想参考与检索模拟的区别，有助于定位证据获取和证据使用的瓶颈。图源：lab 英文稿中的 PatRe 框架图。</figcaption>
-            </figure>
-            <p>英文稿指出，闭源与开放模型之间存在差距，主动提出审查意见与被动回应审查意见之间也存在能力不对称。两者并不意外：回应一个已被指出的问题，与自行发现问题、选择证据并建立论证，需要不同的能力组合。</p>
-            <p><strong>进一步看：</strong>这些条件提供了诊断思路，而不是现成的因果结论。如果理想参考条件仍表现不足，问题可能在证据使用或技术判断；如果差距主要出现在检索模拟条件，就要重点检查检索和噪声鲁棒性。要真正判断原因，还需控制参考材料长度、输入格式和评价方式。英文综述没有完整报告这些对照的数值，因此这里不补造实验表。</p>
+<p><strong>应用端，对应 IP 全生命周期的三个动作：创造 → 确权 → 维权。</strong></p>
+<ul><li>
+<p><strong>创造（Creation）：基于海量专利/文献，产生新颖 idea 与发明，进而生成专利文本。</strong></p>
+</li><li>
+<p><strong>确权（Patentability）：评估专利性（新颖性、创造性、实用性），完成专利检索与相似性判断。</strong></p>
+</li><li>
+<p><strong>维权（Enforcement）：侵权判定、赔偿计算、法律相关问答等贴近诉讼的任务。</strong></p>
+</li></ul>
+<p><strong><strong>模型/算法端，对应支撑上述应用的四种核心能力：知识注入、生成、评估、判别。</strong></strong></p>
 
-            <h2 id="similarity">五、技术相似性：共同底座，但不是法律结论的替代物</h2>
-            <p>创造中的差异判断、专利检索中的相关性判断、审查中的现有技术比较，以及保护环节中的技术分析，都部分依赖一个共同能力：识别两份材料究竟在技术上共享了什么、又差在什么地方。只看字词重叠，会错过换一种表述描述的相同机制，也会被相同术语描述的不同机制误导。</p>
-            <p><strong>MoZIP</strong> 用 PatentMatch 专门考察这一问题。给定专利摘要，模型需要从候选中选择真正相似的发明；候选构造刻意让正确答案在 BM25 下排名较低、在嵌入空间中较高，而干扰项呈相反模式。它把词面匹配与语义匹配的分歧直接暴露出来。</p>
-            <p>英文稿报告，除 ChatGPT 外，几乎所有被测模型的准确率低于 <strong>30%</strong>，部分低于随机选择水平。这个结果只应在该候选构造与被测版本下理解：原稿没有在此处展开候选数量和具体版本，不能据此推断任意模型今天的实际检索能力。MoZIP 同时覆盖 <strong>九种语言</strong>，并提出多语知识产权领域模型 MoZi，为跨语言研究提供了另一条入口。</p>
-            <p><strong>IPBench</strong> 将这种判别放入更完整的体系：覆盖 <strong>八类知识产权机制</strong>、<strong>20 项任务</strong>和 <strong>10,374 条中英双语实例</strong>。英文稿中的几个结果值得分开看，而不是合成一个笼统的“领域能力分数”：</p>
-            <ul>
-              <li><strong>层级专利分类：</strong>DeepSeek-R1 的完全匹配率为 <strong>10.8%</strong>，部分模型为零。层级完全匹配是严格指标，结果不能与只预测粗粒度类别的准确率直接比较。</li>
-              <li><strong>损害赔偿计算：</strong>DeepSeek-R1 相比 DeepSeek-V3 高约 <strong>5.7 个百分点</strong>。这里是特定任务上的百分点差，而不是整体 IP 能力的相对提升。</li>
-              <li><strong>中英数据差异：</strong>DeepSeek-V3 在中文子集表现最好，GPT-4o 在英文数据领先。语言、知识覆盖与法域语境可能共同影响结果，不能把差异简单归因于其中一个因素。</li>
-            </ul>
-            <blockquote><p>技术相似性是多个任务的必要基础之一，但不是新颖性、侵权或其他法律判断的充分条件。专业判断还需要结合具体权利文本、证据及适用语境。把一个相似度分数直接提升为最终结论，会绕过真正需要论证的部分。</p></blockquote>
+<p>这两条线不是并列清单，而是一张表：</p>
 
-            <h2 id="evaluation">六、评价不是附属指标，而是领域系统的组成部分</h2>
-            <p>在一般文本生成中，我们常把评价理解为“最后给输出打分”。但在知识产权场景中，评价会反过来塑造系统行为：FlowPIE 用它选择搜索方向，AutoPatent 用它触发修订，审查任务用它检查证据与论证。因此，评价是否可靠，直接决定生成和搜索会朝什么方向优化。</p>
-            <table>
-              <caption>不同任务需要不同诊断：单一文本相似度无法覆盖这些错误类型。</caption>
-              <thead><tr><th scope="col">研究实践</th><th scope="col">评价关注点</th><th scope="col">仍需警惕的边界</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">AutoPatent · IRR</th><td>揭示长文生成中的重复退化</td><td>不重复不等于技术正确，也不等于权利表达充分</td></tr>
-                <tr><th scope="row">IPBench · LLMScore</th><td>从准确性、相关性、完整性、一致性等维度评价摘要与权利要求</td><td>与人类评分的相关性不代表每个个案都判断可靠</td></tr>
-                <tr><th scope="row">PatRe · 分层审计</th><td>结合客观指标与语义、逻辑审计检查生成意见</td><td>正确的条款或相似措辞不能替代完整的技术论证</td></tr>
-                <tr><th scope="row">FlowPIE · 生成式奖励</th><td>为构思的新颖程度、可行性提供迭代反馈</td><td>奖励模型无法代替独立检索和真实验证</td></tr>
-              </tbody>
-            </table>
-            <p>英文稿报告，LLMScore 与人类判断的相关性高于 BLEU、ROUGE 和 BERTScore。这里的重要启示不是“让模型打分就够了”，而是评价维度必须贴近专业任务。相关性只描述整体排序的一部分特征，不能保证高风险错误都被发现。</p>
-            <p><strong>我们的分析是：</strong>如果生成者与审查者共享相似训练数据或模型家族，二者可能共享盲点；反复改写也可能让文本更符合评价者的风格偏好，却没有增加有效信息。一个更有区分力的测试，是构造措辞流畅但关键技术特征错误的材料，检查评价系统是否真的识别了错误，而不是只奖励表达质量。</p>
+<p>每个应用任务，背后都由若干模型能力支撑。IPBench 的任务分层图，正好可以看作这张表的一个具象化——它把 IP 任务分成信息处理、逻辑推理、判别评估、创造生成四个认知层级。</p>
 
-            <h2 id="open-directions">七、接下来应把研究推进到哪里？</h2>
-            <h3 id="multimodality">多模态：技术信息并不总在正文中</h3>
-            <p>专利附图记录部件关系和结构细节，商标的区别常由视觉标识承载，软件相关材料又包含代码和图形界面。只读取正文，会在任务入口就丢失关键证据。未来系统不仅要描述图里有什么，还要把图中的对象、文本中的术语和技术关系对齐，再解释哪些差异会影响当前判断。</p>
-            <p><strong>进一步看：</strong>多模态基准不应只有“给图生成说明”。更有价值的设计是控制文本保持不变、只修改关键结构，观察模型的判断是否随有效证据改变；同时加入外观变化但技术关系不变的样本，检查它是否被表面差异干扰。</p>
-            <h3 id="enforcement">保护环节：从干净题目走向真实材料</h3>
-            <p>相较于已有专利生成和审查任务，保护环节仍缺乏足够高质量、贴近真实工作流程的数据与框架。法律咨询、侵权相关分析与抗辩等任务，往往需要面对不完整甚至互相冲突的材料。研究系统不仅要给出分析，也要能够指出缺少哪些事实、哪些判断依赖额外证据，以及何时应交由专业人员确认。</p>
-            <h3 id="domain-models">领域模型：增加知识，不等于增加专业推理</h3>
-            <p>MoZi 与 IPBench 的实践提示，增加 IP 语料可能首先改善记忆和信息处理，而最难的瓶颈仍在判别、推理与生成。领域适配因此至少有两个目标：引入必要的专业知识，同时不损害已有的通用推理能力。只汇报领域问答分数，很容易忽略后一项。</p>
-            <p><strong>一个值得做的对照实验：</strong>在相同基础模型上，比较仅领域适配、仅检索增强、两者结合，以及加入专业工作流的设置；把任务区分为事实回忆、证据定位、技术判别和长文生成，并记录实际调用与推理成本。这样才能区分收益来自知识覆盖、证据获取还是流程设计。这个对照是本文提出的研究建议，并非上述项目已经完成的实验。</p>
+<figure><img src="/blogs/2026/Original/Large-Models-and-IP/wechat-ipbench.png" width="1080" height="534" alt="IPBench 四个认知层级的任务体系" loading="lazy"></figure>
 
-            <h2 id="conclusion">结语：让模型进入专业流程，而不是只进入专业词汇</h2>
-            <p>把这些项目放在一起，能够看到一条连贯路线：FlowPIE 利用专利材料演化技术构思，AutoPatent 将构思组织成完整文档，PatRe 把审查建模为多轮论证，MoZIP 与 IPBench 则暴露技术判别和专业评价的基础瓶颈。它们研究的不是同一个任务，却共同说明：领域智能需要生成、判别与评价之间的连接。</p>
-            <p>我们的目标并不是用一个更会说专业术语的模型取代知识产权从业者，而是帮助专业人员组织材料、形成可检查的解释、发现更高质量的技术方案。在这个法律、科学与技术交汇的领域，真正有价值的进步，应体现为判断质量和工作流程的改善，而不仅是文本更长、参数更多，或某一个综合分数更高。</p>
+<p>下面我们按这个<strong>「双主线」</strong>框架，把目前团队和领域的工作串起来讲。</p>
 
-            <h2 id="references">来源与延伸阅读</h2>
-            <ol>
-              <li><a href="https://lab.wangqiyao.me/large-models-and-ip.html">Taibao-IP：Large Models and IP · lab 英文稿</a>。本文的内容来源及四张框架图来源；FlowPIE、MoZIP 的介绍依据该稿。</li>
-              <li><a href="https://arxiv.org/abs/2412.09796">AutoPatent: A Multi-Agent Framework for Automatic Patent Generation</a>；<a href="https://autopatent.wangqiyao.me/">项目页</a>。</li>
-              <li><a href="https://arxiv.org/abs/2605.03571">PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination</a>；<a href="https://patre.wangqiyao.me/">项目页</a>。</li>
-              <li><a href="https://arxiv.org/abs/2504.15524">Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice</a>（IPBench）；<a href="https://ipbench.wangqiyao.me/">项目页</a>。</li>
-              <li><a href="https://mp.weixin.qq.com/s/RaHIqe2wVMPfmvSzAYfahA">微信原文</a>。该入口与 lab 英文稿对应；本站中文正文为依据英文稿重构的阅读版本，并非微信全文的逐字转载。</li>
-            </ol>
+<h2 id="creation"><strong>二、创造：用专利数据驱动技术发现</strong></h2>
+
+<p>创造端最上游的任务是<strong>「</strong><strong><strong>idea generation」</strong></strong>——给定研究主题，产出新颖、可行、有区分度的想法。这件事的难点很「知识产权」：一个 idea 值不值钱，取决于它离已有先验技术（prior art）有多远，即<strong>新颖性</strong>。这一方向上已有不少工作（如 SciPIP 和 ResearchAgent 等），但大多沿用「静态检索一批文献 → 一次性生成 idea」的范式，容易陷入信息茧房、产出同质化。</p>
+
+<p>我们的 <strong>FlowPIE</strong> 换了思路，把 idea 生成做成一个<strong>「</strong><strong>测试时（test-time）的&quot;思想进化&quot;过程」</strong>：用受 GFlowNets 启发的 flow-guided MCTS 在专利文献图谱上动态探索（idea 质量反过来引导下一步检索），再对 idea 种群施加交叉、变异等进化算子，全程由一个基于 LLM 的生成式奖励模型（GRM）对 novelty、feasibility 打分驱动。</p>
+
+<figure><img src="/blogs/2026/Original/Large-Models-and-IP/wechat-flowpie.png" width="1080" height="346" alt="FlowPIE 流引导搜索与测试时构思演化框架" loading="lazy"></figure>
+
+<p>值得强调的领域选择是：<strong>FlowPIE 用「专利作为文献源」</strong>——专利<strong>权利要求（Claims）</strong>结构清晰、范围明确、易抽取，能减少陈述歧义。这是&quot;专利数据服务 AI for Science&quot;的一个直接例证。</p>
+
+<h2 id="drafting"><strong>三、确权：把交底书翻译成规范的专利文本</strong></h2>
+
+<p>创造出 idea 后，要落地成一份能提交、能授权的专利——这是确权端最硬核的生成任务，也是<strong>「</strong><strong>法律与技术交织」最紧</strong>的地方。专利申请的本质，是把发明人模糊、发散的技术交底，凝练成一组层层嵌套的权利要求，再经受审查员以新颖性、创造性、实用性的逐条审查。</p>
+
+<figure><img src="/blogs/2026/Original/Large-Models-and-IP/wechat-draft2patent.png" width="1080" height="519" alt="Draft2Patent 任务与专利代理工作流程" loading="lazy"></figure>
+
+<p>我们的 <strong>AutoPatent </strong>面向这个真实场景。我们提出 <strong>Draft2Patent</strong> 任务和 <strong>D2P</strong> 基准，要求模型从交底书生成<strong>平均长度超过 17K token</strong> 的完整专利。这个任务暴露了大模型在专利长文档生成上的两个真实困难：</p>
+<ul><li>
+<p><strong>长度与结构</strong>：详细说明平均超 14K token，占全文 80% 以上，单次生成扛不住。</p>
+</li><li>
+<p><strong>高分幻觉</strong>：直接端到端 SFT，BLEU/ROUGE 分数很漂亮，但「人工评估和我们提出的 IRR（逆重复率）指标」戳穿了它——这些专利充斥机械重复，IRR 低到 49（真实专利约 91），权利要求段落退化成无意义循环。n-gram 指标对重复的偏好制造了能力假象。</p>
+</li></ul>
+<p>AutoPatent 的解法，是把人类专利代理的工作方式搬进一套<strong>「</strong><strong>多智能体协作流程」</strong>：</p>
+
+<figure><img src="/blogs/2026/Original/Large-Models-and-IP/wechat-autopatent.png" width="1080" height="445" alt="AutoPatent 多智能体专利撰写框架" loading="lazy"></figure>
+<ul><li>
+<p><strong>PGTree（专利写作指引树）</strong>：planner agent 把详细说明拆成两层多叉大纲，化整为零；</p>
+</li><li>
+<p><strong>RRAG（参考-审查-增强生成）</strong>：description writer 按大纲逐段写，配合 <strong>examiner agent</strong>——它在每段写完后主动介入、给修改意见、反复迭代直到通过，把「审查员」内化进写作循环；</p>
+</li><li>
+<p>短组件（标题、摘要、权利要求等）由专门的 writer agent 分别生成，兼顾各部分迥异的文体。</p>
+</li></ul>
+<p>效果很说明问题：<strong>Qwen2.5-7B 套上 AutoPatent 框架，在客观指标和人工评估上都超过了 GPT-4o、Qwen2.5-72B、LLaMA3.1-70B 这些更大的模型</strong>，重复错误也大幅下降。</p>
+
+<p>专利长文档生成不是「模型够大就行」，而是<strong>「流程够像专业代理人才行」</strong>。把审查闭环、结构化大纲、分工写作这些<strong>领域工作流</strong>显式建模，7B 也能打过 70B。</p>
+
+<h2 id="examination"><strong>四、专利审查：把「确权」建模成审查员与申请人的多轮博弈</strong></h2>
+
+<p>专利能否授权，最终取决于审查（examination）这一关。审查员依据 MPEP 等规范，结合检索到的对比文件，判断一项申请是否满足新颖性、创造性、实用性，并下发审查意见（Office Action, OA）；申请人则可以提交答辩意见（rebuttal）据理力争，往复多轮直至终局。这是确权环节中<strong>「</strong><strong>法律推理与技术新颖性判断」结合得最紧密</strong>的地方。</p>
+
+<p>已有工作大多把专利审查当成一个<strong>「</strong><strong><strong>判别式分类」</strong></strong>问题：HUPD 做「接受/驳回」的二分类预测，PANORAMA、PEDANTIC、PILOT-Bench 等进一步细化到驳回理由、法条（如 §102/§103）的识别。这些工作很有价值，但都停在「对最终版本做一次性、静态判断」，丢掉了审查真正的精髓——<strong>它是一个动态的、多轮的、对抗性的「论证—答辩」过程</strong>，很像学术论文的 peer review 与 rebuttal。</p>
+
+<p>我们的 <strong>PatRe</strong> 正是针对这一点：它是首个覆盖专利审查<strong>「</strong><strong><strong>全流程」</strong></strong>的基准，把审查重新建模为审查员 OA 生成与申请人答辩生成的多轮交互，包含 480 个真实案例、覆盖全部 8 个 IPC 大类，并配套法条、claim 演进、引用对比文件等细粒度标注。</p>
+
+<figure><img src="/blogs/2026/Original/Large-Models-and-IP/wechat-patre.png" width="1080" height="531" alt="PatRe 多轮审查与答辩任务框架" loading="lazy"></figure>
+
+<p>PatRe 在任务设计上很贴合真实审查：OA 生成区分了<strong>直接生成、给定 oracle 对比文件、以及 BM25 检索模拟</strong>三种信息条件——后者要求模型先从带噪候选中辨别出真正相关的 prior art，再据此作出新颖性判断，这正是审查员每天在做的事。实验也揭示了几个有领域意义的现象：闭源与开源模型存在明显差距；<strong>「</strong><strong><strong>主动审查（OA）」</strong>与「被动答辩（rebuttal）」之间存在任务不对称性</strong>——模型在两端的能力并不对等。这说明 LLM 距离真正胜任专利审查的法律推理与新颖性判断，还有不小距离。</p>
+
+<h2 id="similarity"><strong>五、确权与维权的共同内核：判别「技术相似性」</strong></h2>
+
+<p>确权里的专利检索、维权里的侵权判定，乃至上一节审查中的新颖性判断，看似多件事，模型层面却共享同一个内核，即<strong>判断两份技术文本到底有多相似</strong>。这是 IP 领域最普遍、也最被低估的能力，也是 <strong>AI for Law</strong> 在 IP 上的硬骨头。</p>
+
+<p>我们在 <strong>MoZIP</strong> 里最早把它单独立成任务：<strong>PatentMatch 中</strong>给定一篇专利摘要，从候选中选出技术上真正相似的那篇。我们刻意把题目设计得很「刁」：正确答案在词面重叠（BM25）上排名低、语义向量上排名高，干扰项反过来。这样才能测出模型是否真的「理解」发明，而非靠关键词蒙混。结果是：<strong>除 ChatGPT 外，几乎所有模型准确率不到 30%，个别甚至低于随机猜测</strong>。MoZIP 同时是首个覆盖 9 种语言的 IP 基准，并配套了首个 IP 垂域多语言模型 MoZi（三阶段在专利/通用/IP 指令上微调）。</p>
+
+<p>这条线上也有不少同行工作从不同侧面切入：PatentEval 关注权利要求/摘要生成的细粒度错误评估，IPEval 构建了 IP 领域的法律考试评估基准，PatentEdits、Patent-CR 研究权利要求的版本演进与修订。它们与 MoZIP/PatentMatch 一道，勾勒出<strong>「判别」</strong>在 IP 各任务中的普遍性。</p>
+
+<p>到了 <strong>IPBench</strong>，我们把这种「判别」能力放进更完整的图景。IPBench 是首个综合性 IP 基准——<strong>8 种 IP 机制、20 个任务、10,374 条双语数据</strong>，依据 Webb 的 Depth-of-Knowledge 理论分成四个认知层级。几个直接面向应用的发现：</p>
+<ul><li>
+<p><strong>专利分类（IPC/CPC）极难</strong>：把一篇专利精确落到层级化技术分类体系上，最好的 DeepSeek-R1 的 Exact Match 也只有 10.8%，多个模型 0.0%——这是确权与专利管理的底层基础设施，却是当前大模型最弱的一环。</p>
+</li><li>
+<p><strong>维权类任务需要推理</strong>：在赔偿计算（Task 2-3）上，推理模型 DeepSeek-R1 显著超过同门 chat 模型 DeepSeek-V3 约 5.7%——因为它要的不只是判别，还要「算清赔多少」的数值推理。这提示维权场景需要 System-1 与 System-2 的合流。</p>
+</li><li>
+<p><strong>跨法域差异真实存在</strong>：DeepSeek-V3 在中文子集最强，GPT-4o 在英文子集最强——IP 强烈依赖具体国家/地区的法律体系，模型需要在推理时适配。这正是 AI for Law 在 IP 上的独特挑战。</p>
+</li></ul>
+<p>创造的<strong>「新颖性」</strong>、确权的<strong>「专利性/检索」</strong>、维权的<strong>「侵权判定」</strong>，在模型层面都落到同一个<strong>技术相似性/新颖性判别</strong>问题上。与其为每个任务各训一个垂域模型，不如把这种判别能力当作可复用的基座来建设。</p>
+
+<h2 id="evaluation"><strong>六、一个绕不开的领域问题：怎么评估？</strong></h2>
+
+<p>把上面的任务串起来，会发现评估本身是 IP 领域一个需要专门考虑的问题。IP 任务的输出往往是<strong>「权利」</strong>而非单纯的<strong>「事实」</strong>，对错需要专家判断，通用指标常常不够用。我们在不同工作中也相应采用了不同的评估方式：</p>
+<ul><li>
+<p><strong>AutoPatent 的 IRR</strong>：BLEU/ROUGE 容易被重复文本骗高分，因此用逆重复率来识别长专利生成的退化；</p>
+</li><li>
+<p><strong>IPBench 的 LLMScore</strong>：摘要/权利要求生成上传统指标与人类判断相关性偏低，故采用基于 LLM-as-a-judge 的多维度评估，其与人工评分的相关性高于 BLEU/ROUGE/BERTScore；</p>
+</li><li>
+<p><strong>PatRe 与 FlowPIE</strong>：分别用分层的客观指标 + LLM auditor，以及 GRM 新颖性/可行性评判，来支撑审查与创造任务。</p>
+</li></ul>
+<p>在 IP 领域，评估能力与生成能力同等重要，可靠的评估/判别往往是生成质量的前提。这也是我们把<strong>「评估」</strong>和<strong>「判别」</strong>列为模型端核心能力的原因。</p>
+
+<h2 id="open-directions"><strong>七、还有很多研究方向可以探索</strong></h2>
+
+<p>沿着「创造 / 确权 / 维权 × 知识 / 生成 / 评估 / 判别」这张表往下看，仍有大量空白，且每一块都很有领域特色：</p>
+<ul><li>
+<p><strong>多模态是最大的待开发区</strong>。IP 天生多模态：商标就是 Logo（图形近似判别直接决定侵权），专利附图承载了文字写不全的技术细节，软著涉及代码与 GUI（InteractWeb-Bench）。专利附图的理解与解释生成（如 PatentLMM 一类多模态尝试 [6]）、商标图形近似判别，都是自然且急需的延伸。</p>
+</li><li>
+<p><strong>维权侧整体欠开发</strong>。法律 QA、侵权抗辩等，至今缺乏像 D2P 那样高质量、贴近真实场景的数据与框架——而这恰是 IP 离产业最近、最能体现 AI for Law 价值的一端。</p>
+</li><li>
+<p><strong>垂域模型的正确打开方式仍待回答</strong>。MoZi、IPBench 的经验提示：单纯灌 IP 语料做垂域微调，提升的主要是&quot;记忆/信息处理&quot;，而 IP 的硬骨头在判别、推理、生成。如何在注入领域知识的同时不牺牲通用与推理能力，是垂域大模型的共性难题，在 IP 上尤为突出。</p>
+</li></ul>
+<h2 id="conclusion"><strong>八、小结</strong></h2>
+
+<p>我们对这个方向的理解可以概括为：<strong>大模型 × 知识产权，不是再做一个「懂 IP 的聊天模型」，而是围绕「创造、确权、维权」完整 IP 生命周期的三个真实核心动作，把生成、评估、判别这些能力，按 IP 的领域工作流组织起来。</strong> 而 IP 法律、技术、科学交织的特性，又让它同时成为 AI for Law（基于知识产权法律体系）和技术发现 / AI for Science 的天然交汇点。</p>
+
+<p>我们的几篇工作各自落在这张表的不同格子里——FlowPIE 在创造端用专利数据驱动新颖 idea 的进化，AutoPatent 在确权端做完整专利的生成，PatRe 把专利审查建模为多轮博弈，MoZIP/IPBench 在判别与评估端搭基准、立任务体系。同时 HUPD、PANORAMA、PatentEval、IPEval、Pap2Pat 等则从分类、抽取、生成、修订等不同侧面共同充实了这张地图。它们共同指向同一个判断：在 IP 这种强结构、强规范、技术与法律交织的领域，<strong>领域任务的拆解、领域工作流的建模、领域评估的设计，比单纯堆参数更能决定大模型能否真正用起来。</strong></p>
+
+<p>与此同时，我们未来会继续在<strong>「大模型 × 知识产权」</strong>这个方向持续探索，架起<strong>人工智能与知识产权</strong>以及<strong>法律、技术与科学之间</strong>的桥梁。我们的目标不是破坏与改变知识产权制度或替代任何从业人员，而是基于人工智能赋能行业，提升知识产权的<strong>「法律保护」</strong>，<strong>「技术创新效率」</strong>与<strong>「高质量技术判别」等</strong>能力。希望将知识产权相关服务迈向 <strong>IP Intelligence</strong> 的新智能化水平。</p>
+
+<p>竞赛成果方面，团队在该方向与 DUT-IR 合作已获包括 2024 年挑战杯国家级银奖和2025年挑战杯国家级一等奖在内的<strong>「10 项国家级」</strong>和<strong>「13 项省级奖项」</strong>。</p>
+
+<p>科研探索方面，先前已经在本公众号<strong>「Taibao-IP」</strong>介绍了团队的部分工作，后续将在此持续介绍大模型 + 知识产权的团队与领域工作。欢迎您的持续关注。</p>
+
+<p><strong>Taibao-IP 团队简介</strong>：SIAT-NLP 博士生王琪尧与 DUT-IR 合作的 LLM + 知识产权方向研究小组。</p>
+
+            </div>
+
             <h2 id="contact">Contact</h2>
             <div class="contact-section">
               <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
