@@ -33,7 +33,7 @@ layout: compress
         <nav id="toc" aria-label="Blog archive"></nav>
         <nav id="topics" class="blog-topics-section" aria-label="Filter by topic">
           <strong>Topics</strong>
-        </div>
+        </nav>
       </div>
       
       <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
@@ -434,6 +434,7 @@ layout: compress
     {% include scripts.html %}
     <script>
       document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('base')?.setAttribute('target', '_self');
         const root = document.documentElement;
         const themeToggle = document.querySelector('.blog-theme-toggle');
         const savedTheme = localStorage.getItem('blog-theme');

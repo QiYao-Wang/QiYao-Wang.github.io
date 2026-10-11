@@ -2,6 +2,7 @@
   const init = () => {
     if (document.documentElement.dataset.blogEnhanced === 'true') return;
     document.documentElement.dataset.blogEnhanced = 'true';
+    document.querySelector('base')?.setAttribute('target', '_self');
 
     if (window.hljs) window.hljs.highlightAll();
 
@@ -36,6 +37,7 @@
         item.style.paddingLeft = `${(Number(heading.tagName[1]) - 2) * 12}px`;
         const link = document.createElement('a');
         link.href = `#${heading.id}`;
+        link.target = '_self';
         link.textContent = heading.innerText;
         item.appendChild(link);
         list.appendChild(item);

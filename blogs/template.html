@@ -85,6 +85,7 @@ layout: compress
     {% include scripts.html %}
     <script>
       document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('base')?.setAttribute('target', '_self');
         if (window.hljs) window.hljs.highlightAll();
 
         const root = document.documentElement;

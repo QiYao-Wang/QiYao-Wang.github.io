@@ -586,6 +586,7 @@ html[data-blog-theme="dark"] .greedy-nav {
 
 .blog-search-input:focus { border-color: var(--blog-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--blog-accent) 18%, transparent); }
 .blog-search-input::placeholder { color: var(--blog-muted); }
+.blog-search-container input.blog-search-input { box-sizing: border-box; margin: 0; }
 .blog-search-clear { border: 0; background: transparent; color: var(--blog-muted); }
 .blog-search-clear:hover, .blog-search-clear:focus-visible { color: var(--blog-accent); background: var(--blog-accent-soft); }
 .blog-search-hint { margin: -1rem 0 1.5rem; color: var(--blog-muted); font-size: 0.78rem; }
