@@ -4,6 +4,18 @@
     document.documentElement.dataset.blogEnhanced = 'true';
     document.querySelector('base')?.setAttribute('target', '_self');
 
+    document.querySelectorAll('.blog-content figure img').forEach((img) => {
+      if (img.closest('a')) return;
+      const link = document.createElement('a');
+      link.href = img.getAttribute('src');
+      link.target = '_self';
+      link.className = 'blog-image-link';
+      link.title = '点击查看原图';
+      link.setAttribute('aria-label', `查看原图：${img.alt || '正文插图'}`);
+      img.replaceWith(link);
+      link.appendChild(img);
+    });
+
     if (window.hljs) window.hljs.highlightAll();
 
     const root = document.documentElement;

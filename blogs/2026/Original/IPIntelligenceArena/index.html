@@ -1,0 +1,212 @@
+---
+layout: compress
+title: "IPIntelligenceArena：面向知识产权智能的可信开放评测平台"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="大模型会不会做知识产权工作，不能只看它能不能回答几道题。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-5">
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">跳至正文</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+      <div class="masthead__inner-wrap">
+        <div class="masthead__menu">
+          <nav id="site-nav" class="greedy-nav">
+            <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div id="main" role="main">
+      <div class="sidebar sticky"><nav id="toc" aria-label="文章目录"></nav></div>
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content blog-content" itemprop="text" tabindex="-1">
+            <div class="blog-post-header">
+              <h1>IPIntelligenceArena：面向知识产权智能的可信开放评测平台</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">2026年8月18日 17:35 · Taibao-IP</span>
+                <span class="meta-topic">#IPIntelligence</span>
+              </div>
+              <div class="blog-entry-editions"><a href="https://iparena.wangqiyao.me/">平台主页 ↗</a><a href="https://mp.weixin.qq.com/s?__biz=MzkwNTI1OTUwNQ==&amp;mid=2247485249&amp;idx=1&amp;sn=fb9ca33bb8c629a9a52e732dc86b74dc&amp;chksm=c1a7ddace40048d02dc4ff3eb55b93858adce57e5681d19b75e649292817045c5effa457f97d#rd">微信原文 ↗</a></div>
+            </div>
+
+            <div id="wechat-original-content">
+
+<p>大模型会不会做知识产权工作，不能只看它能不能回答几道题。</p>
+
+<p>知识产权任务既涉及法律规则，也涉及技术事实、证据组织和程序推进。从知识咨询到综合实践，再到专利审查意见与答复，任务形态在变化，对模型的要求也在变化。一个更基础的问题是：<strong>我们应当如何准确、可复现地评价大模型在知识产权领域的能力？</strong></p>
+
+<p>今天，Taibao IP Intelligence 研究团队主页正式上线。作为网站 Resources &amp; Tools 板块的精选资源，<strong>IPIntelligenceArena </strong>汇集团队已公开的知识产权大模型评测研究，为相关论文、代码、数据和项目页面提供统一入口。后续将持续更新团队在知识产权智能的可信评测的相关工作。</p>
+
+<figure><img src="/blogs/2026/Original/IPIntelligenceArena/wechat-overview.png" width="1080" height="603" alt="IPIntelligenceArena 研究与评测入口" loading="lazy"></figure>
+
+<p>当前平台收录 <strong>IPEval</strong>、<strong>IPBench</strong> 与 <strong>PatRe</strong> 三项 benchmark，覆盖中英文两种语言，并从知识与咨询、综合知识产权实践和专利审查过程三个层面呈现大模型能力。</p>
+
+<p>平台主页：<a href="https://iparena.wangqiyao.me/">https://iparena.wangqiyao.me/</a></p>
+
+<p class="blog-section-kicker">01  ｜RESEARCH PATH</p>
+
+<h2 id="research-path"><strong>一个入口，看见三项研究的能力递进</strong></h2>
+
+<p><strong>IPIntelligenceArena</strong> 不是将三项工作简单放在一起。按发布时间回看，它们形成了一条清晰的研究路径：</p>
+
+<p>「<strong>IPEval</strong>」从中英双语知识产权知识与代理咨询出发，回答模型“是否理解并能够应用基本规则”；</p>
+
+<p>「<strong>IPBench</strong>」将评价扩展到更广泛的法律技术任务考察信息处理、逻辑推理、判别评价和创造生成；</p>
+
+<p>「<strong>PatRe</strong>」进一步进入多轮专利审查过程，要求模型在具体申请文件、审查意见和对比文献构成的上下文中，分别完成审查意见与申请人答复生成。</p>
+
+<p>三项 benchmark 的评价对象并不相同，也不适合被简化为一张总分榜。它们更像三个相互衔接的观察窗口：<strong>从知识，到任务，再到程序，逐步呈现知识产权智能的不同层次。</strong></p>
+
+<figure><img src="/blogs/2026/Original/IPIntelligenceArena/wechat-research-path.png" width="717" height="404" alt="知识产权智能的三个评测窗口" loading="lazy"><figcaption>▲从知识与咨询、综合实践到专利审查流程：知识产权智能的三个窗口</figcaption></figure>
+
+
+
+<p class="blog-section-kicker">02  ｜PATENT EXAMINATION</p>
+
+<h2 id="patent-examination"><strong>PatRe：把专利审查还原为持续的意见与答复</strong></h2>
+
+<p>专利审查不是一次性的文本判断。审查员需要结合权利要求和对比文件提出审查意见，申请人则需要理解驳回理由并作出回应；随着程序推进，双方意见还会继续影响后续轮次。</p>
+
+<p><strong>PatRe</strong>将这一过程建模为 Office Action 生成与 Rebuttal 生成两类任务，基于 480 个真实案例和 1,075 份 Office Action，设置直接生成、给定审查员参考文献和模拟检索等不同实验条件。</p>
+
+<p>与只判断“是否新颖”或抽取某个字段的静态任务相比，PatRe 关注的是模型能否在明确角色、具体材料和多轮历史中形成完整、可回应的专业文本。它把评价从单点答案推进到更接近真实审查程序的文档生成过程。</p>
+
+<p><strong>相关资源</strong></p>
+
+<p>项目主页：<a href="https://patre.wangqiyao.me/">https://patre.wangqiyao.me/</a></p>
+
+<p>论文：<a href="https://arxiv.org/abs/2605.03571">https://arxiv.org/abs/2605.03571</a></p>
+
+<p>代码与数据：<a href="https://github.com/AIforIP/PatRe">https://github.com/AIforIP/PatRe</a></p>
+
+<figure><img src="/blogs/2026/Original/IPIntelligenceArena/wechat-patre.jpg" width="864" height="434" alt="PatRe 的 Office Action—Rebuttal 多轮任务框架" loading="lazy"><figcaption>▲  PatRe 的 Office Action—Rebuttal 多轮任务框架。</figcaption></figure>
+
+
+
+<p class="blog-section-kicker">03  ｜KNOWLEDGE &amp; PRACTICE</p>
+
+<h2 id="knowledge-practice"><strong>IPBench：从知识记忆走向综合知识产权实践</strong></h2>
+
+<p>真实的知识产权任务很少只依赖一种能力。模型既要读懂技术文本和法律规则，也要进行比较、判断、推理与生成。</p>
+
+<p><strong>IPBench</strong> 基于认知深度理论构建四层任务体系，包含 10,374 条数据、20 项任务，覆盖 8 类知识产权机制。任务横跨技术与法律内容，从信息处理、逻辑推理、判别评价和创造生成四个层次考察模型。</p>
+
+<p>这一设计使评价不再停留于“记住了多少知识”，而是进一步观察模型能否在不同任务形式下理解、分析和处理知识产权信息。IPBench 已被 ACL 2026 Findings 接收。</p>
+
+<p><strong>相关资源</strong></p>
+
+<p>项目主页：<a href="https://ipbench.wangqiyao.me/">https://ipbench.wangqiyao.me/</a></p>
+
+<p>论文：<a href="https://arxiv.org/abs/2504.15524">https://arxiv.org/abs/2504.15524</a></p>
+
+<p>代码：<a href="https://github.com/IPBench/IPBench">https://github.com/IPBench/IPBench</a></p>
+
+<p>数据：</p>
+
+<p><a href="https://huggingface.co/datasets/IPBench/IPBench">https://huggingface.co/datasets/IPBench/IPBench</a></p>
+
+<figure><img src="/blogs/2026/Original/IPIntelligenceArena/wechat-ipbench.png" width="766" height="430" alt="IPBench 四层任务体系" loading="lazy"><figcaption>▲  IPBench 四层任务体系及其覆盖的知识产权实践任务。</figcaption></figure>
+
+
+
+<p class="blog-section-kicker">04  ｜BILINGUAL FOUNDATION</p>
+
+<h2 id="bilingual-foundation"><strong>IPEval：从中英双语知识与咨询建立评价起点</strong></h2>
+
+<p>在进入复杂任务以前，模型首先需要理解知识产权制度，并能够在咨询语境中正确应用相关知识。</p>
+
+<p><strong>IPEval</strong> 收录 2,657 道中英文选择题，覆盖知识产权创造、运用、保护和管理四个能力维度，用于评价大模型在知识产权代理与咨询场景中的知识理解和应用能力。</p>
+
+<p>作为三项工作中最早发布的 benchmark，IPEval 提供了一个清晰、可重复的基础评价起点，也为后续从知识考察走向综合任务与程序任务奠定了基础。</p>
+
+<p><strong>相关资源</strong></p>
+
+<p>项目主页：<a href="https://ipeval.wangqiyao.me/">https://ipeval.wangqiyao.me/</a></p>
+
+<p>论文：<a href="https://arxiv.org/abs/2406.12386">https://arxiv.org/abs/2406.12386</a></p>
+
+<p>代码：<a href="https://github.com/QiYao-Wang/IPEval">https://github.com/QiYao-Wang/IPEval</a></p>
+
+<p>数据：</p>
+
+<p><a href="https://huggingface.co/datasets/Mathsion/IPEval">https://huggingface.co/datasets/Mathsion/IPEval</a></p>
+
+<figure><img src="/blogs/2026/Original/IPIntelligenceArena/wechat-ipeval.png" width="774" height="402" alt="IPEval 中英双语知识产权代理咨询评价框架" loading="lazy"><figcaption>▲  IPEval 中英双语知识产权代理咨询评价框架。</figcaption></figure>
+
+
+
+<p class="blog-section-kicker">05  ｜WHY A COLLECTION</p>
+
+<h2 id="why-a-collection">
+<strong>为什么要把这些 benchmark 放在一起</strong>？</h2>
+
+<p>当研究分散在不同论文、项目页面和代码库中，我们容易只看到单项结果，却不容易看清整个领域正在评价什么。</p>
+
+
+
+<p><strong>IPIntelligenceArena </strong>提供的第一个价值，是让不同层次的任务进入同一视野：</p>
+
+<p>—  评价单元 从单道问题，扩展到多类型实践任务，再进入多轮审查文档；</p>
+
+<p>—  能力要求 从知识记忆与规则应用，扩展到理解、推理、判别和生成；</p>
+
+<p>—  任务语境 从相对独立的问答，逐步进入带有角色、材料和程序历史的专业过程。</p>
+
+<p>这条路径也提示我们：衡量“IP Intelligence”，不能只问模型答对了多少题，还要继续追问它依据什么作出判断、能否处理具体材料、能否在程序约束下完成可核验的专业任务。</p>
+
+<p><strong>IPIntelligenceArena</strong> 当前聚焦于已经公开的研究成果。平台中的每项 benchmark 均链接至相应论文与公开资源，便于研究者了解任务设计、复现实验并进一步讨论模型能力边界。</p>
+
+<p class="blog-section-kicker">06  ｜VISIT</p>
+
+<h2 id="visit"><strong>访问 IPIntelligenceArena</strong></h2>
+
+<p>欢迎访问 <strong>IPIntelligenceArena</strong>，以及 <strong>IPEval</strong>、<strong>IPBench</strong> 与 <strong>PatRe</strong> 项目页面、论文、代码和已公开数据资源。</p>
+
+<p>平台主页：<a href="https://iparena.wangqiyao.me/">https://iparena.wangqiyao.me/</a></p>
+
+<p>研究主页：<a href="https://lab.wangqiyao.me/">https://lab.wangqiyao.me/</a></p>
+
+<p>GitHub：<a href="https://github.com/AIforIP">https://github.com/AIforIP</a></p>
+
+<p>资源入口：</p>
+
+<p><a href="https://lab.wangqiyao.me/resources.html">https://lab.wangqiyao.me/resources.html</a></p>
+
+<p>Taibao-IP 团队简介：SIAT-NLP 博士生王琪尧与 DUT-IR 合作的 LLM + 知识产权方向研究小组。</p>
+
+<p>来源：李鉴航</p>
+
+<p>审核：王琪尧</p>
+
+            </div>
+
+            <h2 id="contact">Contact</h2>
+            <div class="contact-section">
+              <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+            </div>
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=original" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-3" defer></script>
+  </body>
+</html>
