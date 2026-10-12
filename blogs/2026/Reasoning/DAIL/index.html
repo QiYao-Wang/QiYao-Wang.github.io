@@ -1,0 +1,252 @@
+---
+layout: compress
+title: "DAIL：让专家解法可学，而不是让学生背下推理捷径"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+  {% include head.html %}
+  {% include head/custom.html %}
+  <base target="_self">
+  <meta name="description" content="从稀疏奖励和专家解法的省略，到混合采样、对比自蒸馏与 pass@k：推导 DAIL 的目标分布，核对实验和公开实现的边界。">
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>html { scroll-behavior: smooth; }</style>
+</head>
+<body>
+  {% include browser-upgrade.html %}
+  <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+  <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+  <div class="masthead container"><div class="masthead__inner-wrap"><div class="masthead__menu">
+    <nav id="site-nav" class="greedy-nav"><ul class="visible-links">
+      <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+      <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+      <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+    </ul></nav>
+  </div></div></div>
+  <div id="main" role="main">
+    <div class="sidebar sticky"><nav id="toc" aria-label="Table of contents"></nav></div>
+    <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+      {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+      <div class="page__inner-wrap"><section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+        <div class="blog-post-header">
+          <h1>DAIL：让专家解法可学，而不是让学生背下推理捷径</h1>
+          <div class="blog-post-meta"><span class="meta-date">📅 2026年10月12日 · Qiyao Wang · AI 辅助阅读</span><span class="meta-topic">#Paper · #Reasoning</span></div>
+        </div>
+        <div class="blog-content">
+<p>一份正确的竞赛数学解答，未必是一份学生能学会的解题示范：专家省略了关键桥梁，模型又可能照着已知结论补出貌似合理的过程。DAIL 用同一个模型构造“完整解法教师”和“捷径参照”，再把两者的分布差异蒸馏给只看问题的学生；在 Qwen2.5-7B 的 AIME 2024/2025 上，pass@128 从 51.7 提升至 63.3，但 pass@1 从 9.8 降至 8.8。因此，它首先展示的是多次采样的解题覆盖改善，而不是单次回答全面变强。</p>
+<p>本文依据 Ethan Mendes、Jungsoo Park、Alan Ritter 的 <a href="https://arxiv.org/abs/2602.02405v2">Making Expert Reasoning Learnable with Self-Distillation，arXiv:2602.02405v2</a>（2026 年 6 月 3 日修订，ICML 2026）。下文把论文定义、公开代码以及本文的独立推导分开，尤其不将“专家知道答案”误写成“学生推理时也能看到答案”。</p>
+
+<h2 id="key-takeaways">先记住六件事</h2>
+<ul>
+  <li><strong>问题：</strong>结果奖励在难题上可能太稀疏；直接模仿专家解答又可能学到省略步骤和已知答案后的合理化。</li>
+  <li><strong>机制：</strong>先把专家解法展开到模型可读的轨迹，再用完整解法教师与捷径参照的对比信号训练问题条件化学生。</li>
+  <li><strong>证据：</strong>主表三个数学任务的 pass@128 均高于同表基线，但单次采样、弱模型与跨领域指标并不一致提高。</li>
+  <li><strong>实践：</strong>检查教师究竟知道什么、学生前缀来自哪里，以及目标是反向 KL 还是交叉熵；这些区别决定算法含义。</li>
+  <li><strong>代价：</strong>少量专家题不等于少量生成轨迹，冻结教师也不等于没有额外前向计算；负参照质量是新的依赖。</li>
+  <li><strong>开放问题：</strong>收益有多少来自专家知识，有多少来自更细的展开与分布匹配？预算匹配的提示干预最能区分这些解释。</li>
+</ul>
+
+<h2 id="from-sparse-reward-to-expert-data">一、为什么有了正确解答，还需要另一种学习信号？</h2>
+<p>可验证奖励强化学习（RLVR）把“答案是否正确”转成训练信号。它的优势是无需给每一步贴标签，也不必要求模型模仿某一种固定措辞。然而，若模型在困难问题上反复失败，奖励就很难告诉它应该在哪一步改变做法。以组内相对奖励的 GRPO 为例，一组答案全部得到相同的零奖励时，该组的结果奖励优势为零；这不意味着 KL 正则等其他项也没有梯度，但真正指向正确解法的信号确实缺失。</p>
+<p>这与“题目绝对不在模型能力范围内”不是同一判断。假设每次独立采样的成功率为 \(p=0.01\)，连续 32 次失败的概率仍有 \((1-p)^{32}\approx0.725\)。所以论文以“32 次未解出”筛选困难题，是有限预算下的操作性定义，不能据此证明真实成功概率为零。</p>
+<p>既然人工解法已经存在，最直接的补救是监督微调（SFT）。可竞赛解答通常面向已经掌握相关工具的人：一句“应用某不等式”可能代替了识别适用条件、选择变量代换和检验等号情形的整个过程。专家写得短，不表示专家只做了那些计算；学生拟合短解，却可能只学会在某种语境下宣布那个结论。</p>
+<p>这里要区分两种捷径。<strong>教学省略</strong>可以在数学上完全正确，只是预设读者已经知道中间桥梁；<strong>事后合理化</strong>则是看到终点以后，编出不足以支持终点的推导。前者需要补全，后者需要抑制。单纯延长输出只能解决长度问题，不保证增加的是有效推理。</p>
+<p>DAIL 的切入点因此不是“把更强模型的所有长答案拿来训练”，而是利用现有专家信息，让同一个基础模型先产生更可学的展开，再区分展开中的有效引导和答案驱动的捷径。它也把不易用最终数值验证的证明题纳入训练：这里的“不可验证”是缺少便宜、直接的最终答案检查器，不是数学证明永远无法评价。</p>
+
+<h2 id="three-contexts-one-model">二、教师更强，靠的不是参数更多，而是上下文更多</h2>
+<p>记问题为 \(x\)，专家解法为 \(s\)，冻结的初始模型为 \(M_{\mathrm{ref}}\)，训练中的学生为 \(M_\theta\)。在同一个推理前缀 \(r_{&lt;t}\) 上，三个下一 token 分布为：</p>
+\[
+\begin{aligned}
+T_t(v)&=M_{\mathrm{ref}}(v\mid x,s,r_{&lt;t}),\\
+N_t(v)&=M_{\mathrm{ref}}(v\mid x,\widetilde s,r_{&lt;t}),\\
+p_{\theta,t}(v)&=M_\theta(v\mid x,r_{&lt;t}).
+\end{aligned}
+\]
+<p>\(T_t\) 读取完整解法，是提供展开方向的教师；\(N_t\) 读取从解法提取的捷径提示 \(\widetilde s\)，是 negative reference；学生只读取问题。三者共享前缀，但用户提示的知识条件不同。学生最终独立作答时不会获得完整解法，也不会获得那个捷径提示。</p>
+<p>这是一种<strong>特权信息的自蒸馏</strong>：相同参数在获得额外上下文后可能提供更好的局部分布，不必额外存储一个更大教师。但若基础模型根本不能理解专家证明，更长的上下文不一定转成有效指导；“同模型教师”不能凭定义克服能力上限。</p>
+<p>论文分两阶段。首先，使用冻结模型和专家解法离线生成展开轨迹；然后，在这些固定轨迹的前缀上做对比蒸馏。训练期间学生会变化，已生成的轨迹却不会自动变成当前学生的新采样。因此，这不是每轮都在最新学生 rollout 上更新的在线 on-policy distillation，也不能把采样分布对参数的导数擅自加进固定数据训练的梯度。</p>
+
+<h2 id="mixed-rollouts">三、混合采样：让学生先走，但教师可以接管</h2>
+<p>直接从 \(T_t\) 采样，可能依然保持过于专家化的表达。论文因此尝试 mixed rollout：在每个前缀上，由没有专家解法的模型分布 \(S_t\) 提议 token \(v\)；若完整解法教师认为 \(T_t(v)\ge\tau\)，就保留它，否则改从 \(T_t\) 采样。论文使用阈值 \(\tau=0.8\)，意图保留教师高度认可的学生续写，同时在不合适的位置提供帮助。</p>
+<p>重要的是，“教师认为概率高”不是“这个 token 被数学证明正确”。教师可能偏好自己的措辞，拒绝另一条合法路径；一个高概率衔接词也不能为整段推导背书。这是局部分布门控，而不是定理验证器。</p>
+
+<h3 id="actual-mixture-distribution">它到底生成了哪个分布？</h3>
+<p>以下是本文对<strong>论文单次提议规则</strong>的独立推导。固定前缀，省略下标，定义接受集合及其学生概率质量：</p>
+\[
+E_\tau=\{v:T(v)\ge\tau\},\qquad a=\sum_{v\in E_\tau}S(v).
+\]
+<p>一个 token 可以通过“学生提议且被接受”，或“提议被拒后教师重新采样”两条路径出现，故实际边缘分布为：</p>
+\[
+q_{\mathrm{mix}}(v)=S(v)\mathbf1_{E_\tau}(v)+(1-a)T(v).
+\]
+<p>两项概率质量分别为 \(a\) 和 \(1-a\)，因此归一化。若 \(\tau=0\)，所有提议被接受，得到 \(S\)；若阈值高于所有教师 token 概率，则得到 \(T\)。通常它既不是纯学生分布，也不是纯教师分布。教师兜底还能产生接受集合外的 token，所以不能把输出集合理解成“只含过门控的 token”。</p>
+<p>这也解释了为何不能把它说成精确 speculative decoding：保持目标分布的接受校正需要不同的规则；这里只按教师绝对概率筛选，目标本来就是改变轨迹，使专家信息与学生风格交汇。相似的“提议—验证”外观，不等于相同的概率语义。</p>
+<p>公开代码还允许最多五次重新提议。若只考虑理想化的独立重试、且 \(a&gt;0\)，重试 \(m\) 次后的分布可推得：</p>
+\[
+q_m(v)=\bigl[1-(1-a)^m\bigr]\frac{S(v)\mathbf1_{E_\tau}(v)}a+(1-a)^mT(v).
+\]
+<p>重试越多，就越倾向学生在接受集合内的条件分布。实际代码还做 top-20 概率截断与重归一化，并处理思考终止 token，所以上式仅解释重试本身，不能冒充完整实现的精确分布。论文规则与工程实现应分别记录。</p>
+
+<h2 id="shortcut-reference">四、为什么还需要一个“捷径参照”？</h2>
+<p>即使生成轨迹时有完整解法，模型仍可能跳到专家已给的数值，再补一段看起来通顺的解释。DAIL 从专家文本中抽取数值、表达式等路标，构造只知道这些捷径信息的参照。数值题的参照还单独包含最终答案；证明题没有对应的数值终点。作者希望把“受到完整证明支持的下一步”与“仅凭路标也容易写出的下一步”分开。</p>
+<p>但 \(N_t\) 不是由人工逐 token 标注的错误策略。代码通过正则表达式提取并去重，可能包含合法的系数、幂和关键中间量；这些信息本来也是正确解法的一部分。它之所以被称为负参照，是因为<strong>信息不足却容易诱发跳跃</strong>，不是其每一个高概率 token 都应被禁止。</p>
+<p>这使得目标设计至关重要。如果只远离负参照，学生可能连共同的正确语言也一并压低；如果只接近完整教师，学生又可能照单全收教师的合理化。DAIL 用两个相反方向的项，让“接近有依据的教师”成为主约束，把负参照用作较弱的对比修正。</p>
+
+<h2 id="contrastive-objective">五、双 KL 并不是两份答案的胜负排序</h2>
+<p>在离线轨迹前缀上，论文的 token 级目标为：</p>
+\[
+\mathcal L(\theta)=\mathbb E_{(x,s,r)\sim\mathcal D_{\mathrm{syn}}}
+\sum_t\left[D_{\mathrm{KL}}(p_{\theta,t}\|T_t)-\gamma D_{\mathrm{KL}}(p_{\theta,t}\|N_t)\right].
+\]
+<p>主实验使用 \(\gamma=0.1\)。这里两个 KL 都把<strong>学生分布放在左边</strong>，是 reverse KL 的蒸馏方向；它不是只让学生提高已采到 token 的似然，也不是拿一对完整好／坏答案做 DPO 排序。教师与负参照冻结且停止梯度，学生获得的是完整词表上的局部分布信号。</p>
+
+<h3 id="reweighted-teacher">把目标展开，才能看清它教了什么</h3>
+<p>以下为本文独立推导。固定前缀，假设有限词表，\(T(v),N(v)&gt;0\)，且 \(0\le\gamma&lt;1\)。把学生分布简称为 \(p\)，有：</p>
+\[
+\mathcal L_t=(1-\gamma)\sum_vp(v)\log p(v)-\sum_vp(v)\log T(v)+\gamma\sum_vp(v)\log N(v).
+\]
+<p>令归一化常数为 \(Z\)，定义一个重加权教师：</p>
+\[
+q^*(v)=\frac1Z T(v)^{1/(1-\gamma)}N(v)^{-\gamma/(1-\gamma)}.
+\]
+<p>代回可得一个精确恒等式：</p>
+\[
+\mathcal L_t=(1-\gamma)D_{\mathrm{KL}}(p\|q^*)-(1-\gamma)\log Z.
+\]
+<p>这意味着，在上述固定前缀和支持条件下，自由选择概率分布时最优解是 \(p=q^*\)。它不是毫无约束地把负 KL 越推越大，而是在拟合一个<strong>更偏好完整教师、同时惩罚捷径参照高概率项</strong>的目标。这个单状态最优解不是神经网络训练收敛证明：同一组参数需要同时拟合大量状态，且训练状态与部署状态也可能不同。</p>
+<p>比较两个候选 token 更直观：</p>
+\[
+\frac{q^*(v)}{q^*(w)}=
+\left(\frac{T(v)}{T(w)}\right)^{1/(1-\gamma)}
+\left(\frac{N(w)}{N(v)}\right)^{\gamma/(1-\gamma)}.
+\]
+<p>教师越偏好 \(v\)，目标越偏好它；在教师相近时，负参照较少支持的 token 会得到相对提升。一个<strong>人为二元例子</strong>：\(T=(0.6,0.4)\)、\(N=(0.2,0.8)\)、\(\gamma=0.1\)，可算出 \(q^*\approx(0.6467,0.3533)\)。这不是作者实验，而是说明对比项如何加强“完整信息支持、捷径信息不支持”的候选。</p>
+<p>支持条件不能省掉。单独的负 KL 项确实可能无界，但在有限词表、参照严格为正、\(\gamma&lt;1\) 的条件下，整个组合有上述下界。若概率出现零支持或数值下溢，不能直接沿用这个论证。\(\gamma=1\) 时熵项消失，目标变成 \(\mathbb E_p\log(N/T)\)，倾向选择对比最强的候选，不再有同样的熵约束；这也是不要把系数随意放大的理由。</p>
+
+<h3 id="fixed-prefix-gradient">固定前缀的梯度，与在线策略梯度不同</h3>
+<p>设学生 logits 为 \(z_v\)，\(p=\operatorname{softmax}(z)\)，并定义 \(b_v=(1-\gamma)\log p_v-\log T_v+\gamma\log N_v\)。固定参照与前缀时：</p>
+\[
+\frac{\partial\mathcal L_t}{\partial z_v}=p_v\left(b_v-\sum_wp_wb_w\right).
+\]
+<p>它不是前向 KL／软标签交叉熵常见的 \(p_v-T_v\)。学生自己分配了多少概率，会影响各候选的梯度权重；反向 KL 也不要求均匀覆盖教师所有模式。若改为从当前策略持续采样前缀，期望分布也依赖参数，分析就需要额外说明是否对 rollout 停止梯度。DAIL 的离线数据设置不包含那个额外导数。</p>
+
+<h2 id="data-and-evaluation">六、先理解数据与指标，再看谁赢了</h2>
+<p>论文的 e1-verifiable 包含 417 道从历史 AIME 1985–2023 筛出的困难题，专家解来自 AoPS 社区；e1-proof 报告 669 道证明题，使用获许可的 Evan Chen 资料。Qwen2.5-7B 主要在数值题上训练，Qwen3-8B 与 14B 的思考模型主要在证明题上训练。两组数据和模型条件不同，不能只因都叫 DAIL 就视为同一个训练实验。</p>
+<p>非思考模型的专家展开平均约为原解的四倍长度；思考模型的生成则截取 256 个推理 token，着重学习推进解法而不是完整输出。公开提取脚本对数值题筛选正确展开，对思考轨迹可保留多个变体。因此，“不到一千道专家题”不等于“总共不到一千条完整、已验证的证明轨迹”。截断前缀尤其不能当作完整证明。</p>
+<p>主要测试集是 AIME 2024/2025（60 题）、BeyondAIME（100 题）与 IMO-AnswerBench（400 题）。每题生成 \(n=128\) 个样本，并报告不同 \(k\) 的 pass@k。若其中 \(c\) 个正确，有限样本估计为：</p>
+\[
+\widehat{\mathrm{pass@}k}=1-\frac{\binom{n-c}{k}}{\binom nk},\qquad 1\le k\le n.
+\]
+<p>当 \(n-c&lt;k\) 时分子取零。\(k=1\) 给出采样正确比例 \(c/n\)，<strong>不是贪心解码准确率</strong>；\(k=128\) 则只检查该题这批样本是否至少成功一次。只有在独立同分布等条件下，才可把成功覆盖写成 \(1-(1-p)^k\)。实际温度、截断和采样协议都应一并报告。</p>
+<p>pass@128 衡量“至少有一个正确答案”的覆盖，隐含能识别正确候选的理想选择器。它并不保证真实产品知道该返回哪一个，也不验证每条思维链逐步正确。大量采样提高覆盖与单次可靠性，是相关但不同的目标。</p>
+
+<h2 id="main-results">七、主表的故事：高预算覆盖提高，低预算未必</h2>
+<p>下列三张表完整保留 v2 主表的五种方法和八个采样预算，单位均为百分比，模型为 Qwen2.5-7B。GRPO、NuRL+GRPO 与 DeepScaleR 数据上的 GRPO 是论文中的对照；训练数据和优化流程并不全部相同，所以它们支持报告条件下的效果比较，不是自动完成了等计算因果比较。</p>
+<table id="imo-results"><caption>IMO-AnswerBench：DAIL 在 pass@1 较低，但高 k 的覆盖更高。</caption><thead><tr><th>方法 / k</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>32</th><th>64</th><th>128</th></tr></thead><tbody>
+<tr><td>Base</td><td>6.8</td><td>10.3</td><td>14.3</td><td>18.3</td><td>22.2</td><td>26.0</td><td>29.7</td><td>33.5</td></tr>
+<tr><td>GRPO</td><td>7.7</td><td>11.2</td><td>15.0</td><td>18.6</td><td>22.3</td><td>25.9</td><td>29.6</td><td>32.8</td></tr>
+<tr><td>NuRL+GRPO</td><td>8.0</td><td>11.4</td><td>14.8</td><td>18.2</td><td>21.3</td><td>24.4</td><td>27.6</td><td>30.8</td></tr>
+<tr><td>GRPO (DeepScaleR)</td><td>7.7</td><td>10.3</td><td>13.2</td><td>16.3</td><td>19.3</td><td>21.9</td><td>24.6</td><td>27.8</td></tr>
+<tr><td>DAIL</td><td>6.4</td><td>10.3</td><td>15.1</td><td>20.3</td><td>25.3</td><td>29.9</td><td>34.1</td><td>37.8</td></tr>
+</tbody></table>
+<table id="beyond-results"><caption>BeyondAIME：主要差距在较大的采样预算下展开。</caption><thead><tr><th>方法 / k</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>32</th><th>64</th><th>128</th></tr></thead><tbody>
+<tr><td>Base</td><td>4.1</td><td>6.0</td><td>8.7</td><td>12.1</td><td>16.6</td><td>22.4</td><td>30.1</td><td>41.0</td></tr>
+<tr><td>GRPO</td><td>4.2</td><td>6.4</td><td>9.4</td><td>13.2</td><td>18.0</td><td>23.9</td><td>31.0</td><td>40.0</td></tr>
+<tr><td>NuRL+GRPO</td><td>3.3</td><td>5.4</td><td>8.0</td><td>11.1</td><td>15.1</td><td>20.2</td><td>27.0</td><td>36.0</td></tr>
+<tr><td>GRPO (DeepScaleR)</td><td>4.9</td><td>7.1</td><td>9.6</td><td>12.4</td><td>15.5</td><td>19.0</td><td>22.9</td><td>27.0</td></tr>
+<tr><td>DAIL</td><td>4.3</td><td>6.8</td><td>10.4</td><td>15.5</td><td>21.9</td><td>29.6</td><td>38.0</td><td>46.0</td></tr>
+</tbody></table>
+<table id="aime-results"><caption>AIME 2024/2025：pass@128 增加 11.6 个百分点，相对 Base 约提高 22.4%，但 pass@1 降低。</caption><thead><tr><th>方法 / k</th><th>1</th><th>2</th><th>4</th><th>8</th><th>16</th><th>32</th><th>64</th><th>128</th></tr></thead><tbody>
+<tr><td>Base</td><td>9.8</td><td>14.3</td><td>19.2</td><td>24.4</td><td>29.8</td><td>36.1</td><td>43.7</td><td>51.7</td></tr>
+<tr><td>GRPO</td><td>9.0</td><td>13.2</td><td>17.6</td><td>22.6</td><td>29.1</td><td>37.1</td><td>45.4</td><td>53.3</td></tr>
+<tr><td>NuRL+GRPO</td><td>11.0</td><td>16.3</td><td>21.5</td><td>26.4</td><td>31.5</td><td>36.8</td><td>42.0</td><td>46.7</td></tr>
+<tr><td>GRPO (DeepScaleR)</td><td>12.0</td><td>15.8</td><td>19.3</td><td>23.4</td><td>28.7</td><td>34.5</td><td>39.0</td><td>41.7</td></tr>
+<tr><td>DAIL</td><td>8.8</td><td>13.4</td><td>18.8</td><td>25.2</td><td>33.4</td><td>43.5</td><td>54.1</td><td>63.3</td></tr>
+</tbody></table>
+<p>一种合理解读是，DAIL 扩展了可采到正确解的题目覆盖，而某些 RL 对照更偏向提高少数模式的单次概率。但表格本身不足以证明内部“探索能力”或数学知识种类增加；温度校准、概率重新分配也可能贡献这种曲线形状。判断部署价值时，需要匹配实际允许的采样次数与候选选择成本。</p>
+<figure style="--blog-figure-width: 720px;"><img src="/blogs/2026/Reasoning/DAIL/baselines.svg" alt="原论文中基础模型不同温度、直接 SFT、STaR 与 DAIL 的 pass@k 曲线，DAIL 的优势主要在高采样预算"><figcaption>v2 附录原图：保留四种基础采样温度、Direct SFT 和 STaR，而不只画最弱对照。图支持高 k 优势，不能由此推出所有采样设置上的单次最优。</figcaption></figure>
+
+<h3 id="reasoning-budget">推理更省，究竟省的是什么？</h3>
+<figure style="--blog-figure-width: 760px;"><img src="/blogs/2026/Reasoning/DAIL/qwen3-budget.svg" alt="Qwen3-8B 在三个数学任务上随推理 token 预算变化的原始点和趋势，AIME 最低预算处 DAIL 不优于基础模型"><figcaption>v2 原图，Qwen3-8B 的 pass@128 与推理预算。保留散点与趋势；最低 AIME 预算处并非 DAIL 胜出，不能写成每个预算都改善。</figcaption></figure>
+<p>v2 在 512、1024、2048、4096 个思考 token 预算处强制结束思考，并给出要求最终 boxed answer 的提示，随后还允许最多 2048 个答案输出 token。作者以此减少预算截断后不作答的问题：旧协议超过 10% 的不响应在新协议下降至不超过 0.2%。因此，不应把旧协议的曲线直接混进新表。</p>
+<p>论文所说约两倍推理效率，应理解为在某些相近表现点使用较少的思考 tokens，<strong>不是 GPU 吞吐率翻倍</strong>，也不是所有预算都节省一半端到端延迟。答案生成、长上下文预填充、候选采样和验证仍有成本；图中的交叉也提醒我们，预算很小时省略与正确性可能发生新的权衡。</p>
+
+<h3 id="out-of-domain-evidence">没有全面遗忘，也没有全面保留的证据</h3>
+<table id="gpqa-results"><caption>GPQA Diamond（198 题），原表完整数值，单位 %。原表的 Qwen3 栏未标模型规模，本文不自行补成 8B。</caption><thead><tr><th>指标 / 模型</th><th>Qwen2.5</th><th>Qwen3 · 512</th><th>Qwen3 · 1024</th><th>Qwen3 · 2048</th><th>Qwen3 · 4096</th></tr></thead><tbody>
+<tr><td>Base pass@1</td><td>34.1</td><td>46.2</td><td>48.9</td><td>51.4</td><td>55.1</td></tr>
+<tr><td>DAIL pass@1</td><td>35.1</td><td>46.9</td><td>49.8</td><td>52.1</td><td>54.7</td></tr>
+<tr><td>Base pass@128</td><td>85.9</td><td>93.9</td><td>95.5</td><td>93.4</td><td>93.4</td></tr>
+<tr><td>DAIL pass@128</td><td>84.3</td><td>96.5</td><td>96.9</td><td>96.5</td><td>96.0</td></tr>
+</tbody></table>
+<p>Qwen2.5 的 pass@128 反而降低 1.6 个百分点；Qwen3 在最大预算的 pass@1 也略降。这是有限跨任务结果，不支持“数学训练完全不损失其他能力”。主表又没有为每个差值提供足够的重复训练和置信区间，小差异不应被写成稳定的机制事实。</p>
+
+<h2 id="ablations-and-capacity">八、消融支持什么，又没有支持什么？</h2>
+<table id="loss-ablation"><caption>BeyondAIME、mixed rollout、pass@128（%），完整保留该损失消融的四个比较项。</caption><thead><tr><th>训练目标</th><th>pass@128</th></tr></thead><tbody>
+<tr><td>对比双 KL</td><td>46.0</td></tr><tr><td>仅教师 KL</td><td>44.0</td></tr><tr><td>Base</td><td>41.0</td></tr><tr><td>最小化负参照 KL</td><td>38.1</td></tr>
+</tbody></table>
+<p>仅教师 KL 已有收益，加入负参照再提高；直接拟合捷径参照则更差。这支持“负参照并非良好教师”和“对比修正有增量价值”，但还没有逐条证明负参照定位了哪种逻辑错误。特别是表达风格、文本长度和额外知识同时变化时，损失消融不能替代逐步证明核验。</p>
+<p>mixed rollout 也不是必需的万能部件。论文中它对 Qwen3 的思考模型更有帮助，对 Qwen2.5-7B 的某些设置却不如直接教师采样。一种可能解释是：弱学生的提议不足以贡献有效路径，强制保留学生风格反而限制教师；这是解释，不是已由单变量实验确证的结论。</p>
+<table id="weak-model"><caption>BeyondAIME，Llama-3.1-8B-Instruct：DAIL 没有改善 pass@128，pass@1 还降低。单位 %。</caption><thead><tr><th>方法</th><th>pass@1</th><th>pass@128</th></tr></thead><tbody><tr><td>Base</td><td>0.64</td><td>24.0</td></tr><tr><td>DAIL</td><td>0.47</td><td>24.0</td></tr></tbody></table>
+<table id="distilled-llama"><caption>BeyondAIME，DeepSeek-R1-Distill-Llama-8B，pass@128（%）：同为 Llama 系列，已有推理能力的模型能够受益。</caption><thead><tr><th>方法 / 思考预算</th><th>512</th><th>1024</th><th>2048</th><th>4096</th></tr></thead><tbody><tr><td>Base</td><td>9</td><td>15</td><td>31</td><td>45</td></tr><tr><td>DAIL</td><td>13</td><td>29</td><td>39</td><td>57</td></tr></tbody></table>
+<p>这一对结果将问题从“某架构是否适用”推进到“当前能力是否足以理解教师信息”。更强外部教师也可能更有效，论文另有 235B 教师蒸馏的比较；但其表注未完整指定 Qwen 规模与任务条件，本文不据此给出精确的跨设置排名。自蒸馏的卖点是可用性，不是已经证明等质量胜过所有强教师。</p>
+
+<h3 id="non-math-boundary">扩展到非数学任务，不等于通用安全性</h3>
+<table id="non-math-results"><caption>非数学实验仅摘取原表 k=1 和 k=128 两端，单位 %，不是完整 pass@k 曲线；Tool Use 使用 Qwen3-8B。</caption><thead><tr><th>任务</th><th>方法</th><th>pass@1</th><th>pass@128</th></tr></thead><tbody>
+<tr><td>Maze</td><td>Base</td><td>13.5</td><td>96.0</td></tr><tr><td>Maze</td><td>DAIL</td><td>20.6</td><td>100.0</td></tr><tr><td>Maze</td><td>GRPO</td><td>43.5</td><td>48.0</td></tr>
+<tr><td>Rotten Oranges</td><td>Base</td><td>5.0</td><td>74.0</td></tr><tr><td>Rotten Oranges</td><td>DAIL</td><td>10.5</td><td>92.0</td></tr><tr><td>Rotten Oranges</td><td>GRPO</td><td>14.1</td><td>64.0</td></tr>
+<tr><td>Tool Use</td><td>Base</td><td>57.7</td><td>75.0</td></tr><tr><td>Tool Use</td><td>DAIL</td><td>58.6</td><td>76.5</td></tr><tr><td>Tool Use</td><td>GRPO</td><td>64.5</td><td>67.6</td></tr>
+</tbody></table>
+<p>这些结果延续了单次成功与多次覆盖的分离。HealthBench 扩展则使用 1529 个训练例子，已不是“少于一千”的数学数据条件，而且用 GPT-4o-mini 评判，不应与标准 GPT-4o 评判的数字无条件横比。其总分为 0.16→0.16，指令遵循为 0.63→0.57；论文未证明医疗场景的临床可靠性或安全性。跨领域结果应作为研究边界，而非部署背书。</p>
+
+<h2 id="reproduction-and-cost">九、复现时最容易错的，不是模型名字</h2>
+<p>本文核对的公开代码固定在 <a href="https://github.com/ethanm88/DAIL/tree/af48eb43ea8464ad575087f1a5acafedb6f3776c">提交 af48eb43</a>。以下是读源码发现的复现事项，不代表本文运行过训练：</p>
+<ul>
+  <li><strong>方向：</strong>实际训练配置选择 reverse KL。PyTorch 的 <code>F.kl_div(expert_logp, student_logp, log_target=True)</code> 对应学生到教师的 KL，不能因参数顺序把它读反；辅助函数的默认方向也不等于实际配置。</li>
+  <li><strong>归一化：</strong>代码在选中的 token 上使用 <code>batchmean</code>，是所选 token 的平均，不是原样照搬论文的每序列求和。需核对 padding、上下文边界与 logits 移位后的 mask 对齐。</li>
+  <li><strong>冻结：</strong>通过开启／关闭学生 adapter 获得学生和冻结参照，教师无梯度；这减少参数副本需求，却仍需三个不同条件的前向计算。生成代码还有两个 vLLM engine，不能由训练结构推断整个流水线只占一份模型显存。</li>
+  <li><strong>门控：</strong>公开生成配置的非思考阈值为 0.8，思考阈值默认 1.0；在相应 student-propose 分支中，1.0 被用于直接教师兜底。因此不能不记运行时覆盖参数，就声称默认命令复现了论文的 0.8 混合采样。</li>
+  <li><strong>角色：</strong><code>student_propose</code> 会交换两个 engine 的提示条件，变量名不可靠；谁只看题、谁看完整解法，应沿数据流判断。重试次数和 top-20 截断也应记录。</li>
+</ul>
+<p>训练使用 LoRA rank 32、alpha 32，学习率 \(2\times10^{-4}\)、有效 batch 4；非思考模型训练 5 个 epoch，思考模型 3 个。负参照系数在验证集上选择为 0.1。这些设置既关系到效果，也关系到小数据上的过拟合，不能只写“几百道题就够了”。</p>
+<p>作者报告 DAIL 训练使用 4 张 A40，RL 对照使用 8 张 A40 或 4 张 H100；蒸馏每 epoch 约 0.1 H100 等效小时的数值，是排除生成阶段后的换算，而不是完整端到端实测。更诚实的账本是本文的分析式 \(C_{\mathrm{total}}=C_{\mathrm{generation}}+E\,C_{\mathrm{epoch}}\)，再列出验证、预填充和存储。离线轨迹可以复用，在线 RL 需要不断采样，但未补齐这些项之前，不应宣布总成本普遍降低几个数量级。</p>
+<p>数据审计也不能忽略。作者发现 e1-verifiable 与 IMO-AnswerBench 有 15 个重叠，移除后补做实验，定性趋势保留；证明集用 SentenceBERT 相似度过滤。过滤是有用检查，却不是不存在语义泄漏的证明。附录还写了收集 683 条、删除 15 条，却报告最终 669 条，计数有一条差异；本文沿用公布的 669，不自行改写成另一个未经核验的数据版本。</p>
+
+<h2 id="extensions">十、把这篇论文延伸成可以验证的研究问题</h2>
+<h3 id="separating-information-and-style">先区分“多知道了什么”与“只是换了表达方式”</h3>
+<p>双 KL 的推导提示一个关键混杂：\(q^*\) 奖励教师与负参照的差异，但差异既可能来自有效知识，也可能来自文体、长度和模板。下面是本文建议的实验，不是作者已经得到的结果：固定模型、问题、轨迹前缀和提示长度，比较完整正确解法、只有结果路标、同文体但无关的解法，以及含可定位错误的解法。让格式差异尽可能小，再分别测学生独立解题、逐步正确性和对错误专家的响应。</p>
+<p>如果无关但文体相近的提示也能带来同样收益，那么“抑制数学捷径”的解释就不足；如果错误专家会诱导学生稳定复制错误，方法的知识转移虽有效，可靠性却需要额外验证器。更理想的行为是：正确信息提高可执行性，可识别错误信息触发核验，而不是一律追随高置信教师。</p>
+<p>还能逐 token 记录 \(\log T(v)-\log N(v)\)，把最大对比位置交给数学核验。若高对比集中在真正的推导桥梁，机制解释更可信；若主要集中在“仔细考虑”“因此显然”等风格词，训练也许学到的是表述修饰。仅看到最终分数提高，不能决定这两种解释谁成立。</p>
+
+<h3 id="student-capacity-frontier">专家信息应该放在学生能力的哪个边界？</h3>
+<p>弱 Llama 与蒸馏 Llama 的对照说明，专家信息的价值可能不是单调随题目难度增长。题目过易，学生已经会，新增示范收益有限；题目适度困难，专家能填上关键桥梁；题目远超学生能力，模型可能连教师的局部展开都读不懂。这是本文提出的能力边界视角，而不是论文已经拟合出的曲线。</p>
+<p>可以用题目前测成功率、教师展开的局部可预测性与错误专家敏感性共同分层，再在每层匹配生成预算。对照应包括直接教师采样、混合采样、只做教师 KL 和双 KL。这样才能判断哪类学生确实需要更贴近自身分布的展开，哪类学生更需要直接的知识注入，而不是一概调高学生采样比例。</p>
+
+<h3 id="connection-to-e2s-and-ssr">与 E2S、SSR、OPD：三个坐标，不能互相替代</h3>
+<table><caption>本文的统一分析视角；不是几种方法已完成的组合实验。</caption><thead><tr><th>路线</th><th>主要改变什么</th><th>仍未自动解决什么</th></tr></thead><tbody>
+<tr><td><a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a></td><td>把有效专家信息转成学生更可学的轨迹分布</td><td>分布更接近，不保证每一步逻辑正确</td></tr>
+<tr><td><a href="/blogs/2026/Reasoning/SSR/">SSR</a></td><td>用结构骨架组织答案可见的生成过程</td><td>骨架与展开仍可能携带结果信息捷径</td></tr>
+<tr><td><a href="/blogs/2026/RL/Self-Distilled-Reasoner/">OPSD / OPD</a></td><td>在学生实际访问的状态上给出教师分布</td><td>学生状态上的教师也可能因参考答案而合理化</td></tr>
+<tr><td>DAIL</td><td>离线展开专家信息，再以完整／捷径参照作对比</td><td>负参照可能混合知识与风格，离线状态也可能偏离部署</td></tr>
+</tbody></table>
+<p>这里有三个独立坐标：<strong>状态是否贴近学生、轨迹是否可学、信息是否有依据</strong>。一个数据集可以语言很亲切却缺少正确桥梁，也可以每步正确却跳过学生需要的选择依据。组合方法时，应逐项测试这三个坐标，不能把“on-policy”“长推理”“结构化”当成正确性的互换标签。</p>
+
+<h2 id="conclusion">结语：专家解法不是训练信号的终点</h2>
+<p>DAIL 最值得学习的地方，是把“有正确答案就有好数据”的直觉拆开：专家解法需要展开，展开需要与捷径区分，蒸馏目标又需要与学生推理时的条件一致。它用一个可推导的对比目标和少量专家题，展示了高采样预算下的覆盖收益；但负参照质量、能力门槛和端到端预算，仍决定这种收益能否变成真正可部署的学习。</p>
+<h2 id="references">参考与核对位置</h2>
+<p>[1] Mendes、Park、Ritter，<a href="https://arxiv.org/abs/2602.02405v2">Making Expert Reasoning Learnable with Self-Distillation，v2</a>。方法见主文的专家展开与对比自蒸馏；完整比较、预算评测、数据去重与跨领域结果见主文及附录。本文图片来自该版论文，转换为 SVG 以保留文字清晰度。</p>
+<p>[2] <a href="https://github.com/ethanm88/DAIL/tree/af48eb43ea8464ad575087f1a5acafedb6f3776c">官方实现，固定提交 af48eb43</a>：生成配置、混合提议、数据提取和 KL 训练分支。本文完成源码与公式核对，没有复跑训练或声称复现实验性能。</p>
+<h2 id="contact">Contact</h2>
+<div class="contact-section"><p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p></div>
+        </div>
+        <nav class="blog-post-navigation" aria-label="文章导航"><a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a></nav>
+      </section></div>
+    </article>
+  </div>
+  <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+  {% include analytics.html %}
+  <script src="/assets/js/blog-enhancements.js?v=20261011-5" defer></script>
+</body>
+</html>
