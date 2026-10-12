@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" role="img" aria-labelledby="title desc">
+  <title id="title">SSR 的骨架通道与残余答案通道</title>
+  <desc id="desc">给定同一问题，参考答案既用于生成结构骨架，也仍然直接提供给推理生成阶段。理论约束骨架通道，不自动约束第二条通道。</desc>
+  <rect width="640" height="380" rx="16" fill="#f6f8fc"/>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#365fc8"/></marker><marker id="residual" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#b0602a"/></marker></defs>
+  <g font-family="system-ui, sans-serif" fill="#172033" text-anchor="middle">
+    <text x="320" y="36" font-size="17" font-weight="600">固定问题 Q：答案信息仍有两条入口</text>
+    <rect x="30" y="86" width="156" height="68" rx="10" fill="#fff" stroke="#cbd5e1"/>
+    <text x="108" y="116" font-size="17">参考答案 A</text><text x="108" y="138" font-size="12" fill="#637083">数据生成时可见</text>
+    <rect x="252" y="86" width="156" height="68" rx="10" fill="#e9eeff" stroke="#a5b9ee"/>
+    <text x="330" y="116" font-size="17">结构骨架 S</text><text x="330" y="138" font-size="12" fill="#637083">标签 + 操作级摘要</text>
+    <rect x="472" y="86" width="138" height="68" rx="10" fill="#fff" stroke="#cbd5e1"/>
+    <text x="541" y="116" font-size="17">完整推理 R</text><text x="541" y="138" font-size="12" fill="#637083">骨架引导生成</text>
+    <path d="M190 120H247" fill="none" stroke="#365fc8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path d="M412 120H467" fill="none" stroke="#365fc8" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <path d="M108 159V229H541V159" fill="none" stroke="#b0602a" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#residual)"/>
+    <text x="330" y="198" font-size="14" fill="#b0602a">A 在第二阶段仍然可见</text>
+    <text x="330" y="253" font-size="13" fill="#b0602a">残余通道不能仅靠骨架容量上界排除</text>
+    <rect x="30" y="282" width="580" height="72" rx="9" fill="#fff" stroke="#e4e8f0"/>
+    <text x="320" y="309" font-size="14">理论：约束通过 S 传递的答案信息</text>
+    <text x="320" y="335" font-size="14">实验：检查最终 R 的依赖是否真的减少</text>
+  </g>
+</svg>

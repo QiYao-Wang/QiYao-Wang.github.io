@@ -1,0 +1,351 @@
+---
+layout: compress
+title: "SSR：答案可见时，怎样避免把推理写成事后合理化"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+  <head>
+    {% include head.html %}
+    {% include head/custom.html %}
+    <base target="_self">
+    <meta name="description" content="从反向思维链的数据困境，到三层答案锚定指标、骨架信息通道、SSR-D 蒸馏与 OOD 保留：区分可教的推导和事后合理化。">
+    <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>html { scroll-behavior: smooth; }</style>
+  </head>
+  <body>
+    {% include browser-upgrade.html %}
+    <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+    <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+    <div class="masthead container">
+      <div class="masthead__inner-wrap">
+        <div class="masthead__menu">
+          <nav id="site-nav" class="greedy-nav">
+            <ul class="visible-links">
+              <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+              <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+              <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <div id="main" role="main">
+      <div class="sidebar sticky"><nav id="toc" aria-label="Table of contents"></nav></div>
+      <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+        {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+        <div class="page__inner-wrap">
+          <section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+            <div class="blog-post-header">
+              <h1>SSR：答案可见时，怎样避免把推理写成事后合理化</h1>
+              <div class="blog-post-meta">
+                <span class="meta-date">📅 2026年10月12日 · Qiyao Wang · AI 辅助阅读</span>
+                <span class="meta-topic">#Paper · #Reasoning</span>
+              </div>
+            </div>
+            <div class="blog-content">
+<p>有了一个好答案，再请模型补出推理，得到的究竟是学生能够学会的解题过程，还是只有看过答案才能写出的解释？SSR 用结构骨架缓解这类“事后合理化”：在论文的 100k 数据微调设置下，Qwen3-8B 的 ArenaHard 得分从普通反向生成基线的 50.8 提升到 SSR-D 的 59.5，但 AIME 2025 仍低于未微调模型，因此改善数据生成不等于已经解决推理忠实性或遗忘。</p>
+<p>本文依据 <a href="https://arxiv.org/abs/2602.14469v4">arXiv:2602.14469v4</a>，即 2026 年 7 月 20 日修订的 ICML 2026 版本。它将旧版的熵曲线指标改为答案可见／不可见的轨迹锚定；下文不混用不同版本的指标。公式推演、教学例子和后续实验建议会与作者报告的结果分开。</p>
+
+<h2 id="key-takeaways">先记住六件事</h2>
+<ul>
+  <li><strong>问题：</strong>反向生成能把问答对变成推理示范，却可能把“已知终点后怎样解释”教给需要“未知终点时怎样求解”的学生。</li>
+  <li><strong>机制：</strong>SSR 先生成操作级骨架，再展开推理；它改变答案信息进入轨迹的方式，而不是在生成时彻底移除答案。</li>
+  <li><strong>证据：</strong>SSR-D 在主表的四种模型、四个任务上均优于同表基线；8B 的 AIME 从 NEU 的 33.3 恢复到 44.2，却仍低于未训练的 70.0。</li>
+  <li><strong>实践：</strong>不要只检查答案词是否出现，还要检查答案可见性对下一 token 分布的影响，并同时保留任务质量评价。</li>
+  <li><strong>代价：</strong>骨架不是零带宽通道，第二阶段仍有直接答案入口；SSR-D 还需要教师微调、额外数据生成与学生训练。</li>
+  <li><strong>开放问题：</strong>收益究竟来自更少的信息捷径、更好的规划、更强教师还是额外计算？固定骨架后移除答案的预算匹配对照最值得补。</li>
+</ul>
+
+<h2 id="why-reverse-generation">一、为什么会先有答案，后有推理？</h2>
+<p>推理蒸馏面临的现实问题不是所有题都没有答案，而是<strong>问答对容易取得，值得模仿的中间过程更难取得</strong>。一个系统可能经过多次尝试才获得高质量回答，却没有保留全过程；人工标注也往往只给结果。直接让学生拟合答案，不能保证它学会通往答案的操作。用强模型从问题独立生成轨迹、再筛掉差解，是另一条路线，但可能需要多次采样和可靠验证。</p>
+<p>Reverse Chain-of-Thought Generation（RCG，反向思维链生成）把最终答案当成额外信息，要求模型补出连接问题和答案的轨迹。它并非把真实思考录像倒放，也不能恢复原回答生成时的内部计算；更准确地说，它是在<strong>构造一份与给定结论相容的解释</strong>。解释是否足以成为可执行的教学示范，需要另行验证。</p>
+<p>设问题为 \(Q\)，参考答案为 \(A\)，轨迹为 \(R\)。数据生成端使用 \(p_T(R\mid Q,A)\)，学生独立作答时却不能先得到 \(A\)，需要从 \(p_\theta(R\mid Q)\) 出发。这与一般的教师—学生能力差异不同：即使两者同样强，生成示范的那一方仍可能占有推理时不可用的信息。</p>
+<p>以一道方程题为例，已经知道解的人可以专挑通向那个解的变换，跳过选择方法和排除错误分支的依据。每一步甚至可以形式上正确，但学生换一道题就不知道该选哪条路。由此产生的事后合理化（post-hoc rationalization）不一定是明显的假话，也不一定降低最终答案质量；危险在于它<strong>省略了未知答案时必须完成的决策</strong>。</p>
+<p>因此，这篇论文值得接在 <a href="/blogs/2026/RL/Self-Distilled-Reasoner/">Self-Distilled Reasoner / OPSD</a> 后面读。已知答案可以成为有用的教师信息，但教师知道得更多，并不自动意味着它提供的每一段轨迹都适合学生独立执行。本文讨论的是这份特权信息怎样进入示范，而不是简单主张“答案条件化都不应使用”。</p>
+
+<h2 id="measurement-before-mitigation">二、先定义失败，而不是先设计一句提示词</h2>
+<p>最直觉的补救是告诉模型：推理时不要泄露已给出的答案。论文把普通答案可见生成记为 NEU，把语义抑制记为 SUP，并加入措辞更强的 AUG-SUP。问题是，少写几个答案词，可能只是让依赖变得更隐蔽。为了把“表面隐藏”和“生成过程不再靠答案”分开，作者设计了三个指标。</p>
+
+<h3 id="lexical-anchoring">词汇锚定：看有没有复用答案特有内容</h3>
+<p>v4 不再只看任意 token 重叠。它先过滤问题本来就包含的答案内容词，再按 IDF 加权计算召回。把过滤后剩余的词项记为 \(\mathcal W_Q(A)\)，词频记为 \(\mathrm{tf}_X(w)\)，可以写成：</p>
+\[
+\mathcal A_{\mathrm{lex}}=
+\frac{\sum_{w\in\mathcal W_Q(A)}\mathrm{idf}(w)\min\{\mathrm{tf}_R(w),\mathrm{tf}_A(w)\}}
+{\sum_{w\in\mathcal W_Q(A)}\mathrm{idf}(w)\mathrm{tf}_A(w)}.
+\]
+<p>IDF 让少见、较有答案辨识力的词占更大权重；\(\min\) 防止在轨迹中反复写同一个词无限抬高分数。分母为零时，论文定义该分数为零。问句过滤很重要：题目已经写出的实体或数值，本来就可以被正常推理使用，不应仅因再次出现就判成答案泄漏。</p>
+<p>但它仍然是表面指标。用代词、同义改写或暗示保留同一结论，可以使词汇重叠很低；反过来，合法推导也可以产生与答案相同的词。<strong>它测的是某种复用行为，不是错误推理的比例。</strong></p>
+
+<h3 id="trajectory-anchoring">轨迹锚定：同一个前缀，看到答案会怎样？</h3>
+<p>把已生成的前缀固定为 \(R_{&lt;t}\)，分别让同一个评分模型读取 \((Q,R_{&lt;t})\) 和 \((Q,A,R_{&lt;t})\)。令 \(H(p)=-\sum_vp(v)\log p(v)\) 为下一 token 分布的熵，并在两种条件下使用一致的对数底，论文定义：</p>
+\[
+\mathcal A_{\mathrm{traj}}=
+\frac1{|R|}\sum_{t=1}^{|R|}
+\left[H\bigl(p(\cdot\mid Q,R_{&lt;t})\bigr)
+-H\bigl(p(\cdot\mid Q,A,R_{&lt;t})\bigr)\right].
+\]
+<p>这里问的不是轨迹有没有写出答案，而是<strong>给出答案以后，同一段轨迹接下来要写什么，是否更容易确定</strong>。因此，一个句句避开答案词的解释，也可能高度依赖答案。实际主实验为节省评分成本，在轨迹约 10%、25%、50%、75%、90% 的五个前缀位置计算熵差，再等权平均；这是有限检查点近似，不是逐 token 穷举，也不能未经假设就称为全轨迹平均的无偏估计。</p>
+<p>要特别注意“条件化降低熵”的适用条件：对于同一联合分布，平均条件熵有相应的信息论关系；它不保证任意一个问题、答案和前缀上的熵差都非负，更不保证把同一个语言模型放进两个不同提示后，得到的条件分布完全符合那个理想联合模型。这里更稳妥的理解是<strong>评分模型上的答案可见性诊断</strong>。</p>
+<p>还可以做一个独立的数学检查：若不见答案时下一 token 分布是 \((0.9,0.1)\)，见到答案后变成 \((0.1,0.9)\)，两者熵完全相同，但偏好的 token 已经颠倒，\(D_{\mathrm{KL}}(p\|q)=0.8\log 9&gt;0\)。所以零熵差不等于零分布变化。论文附录也报告 KL / JSD 作为补充；复现时不应只保留一个熵标量。</p>
+
+<h3 id="probabilistic-anchoring">概率锚定：读完轨迹后，答案更容易被预测了吗？</h3>
+<p>前一个指标关注 \(A\rightarrow R\) 的生成条件差异；这个指标反过来检查 \(R\rightarrow A\) 的可预测性。先定义答案的平均 token 对数概率，再计算轨迹消除了多少基线 surprisal：</p>
+\[
+\begin{aligned}
+\ell_\theta(A\mid C)&=\frac1{|A|}\log_2P_\theta(A\mid C),\\
+\mathcal A_{\mathrm{prob}}&=
+\operatorname{clip}_{[0,1]}
+\left(\frac{\ell_\theta(A\mid Q,R)-\ell_\theta(A\mid Q)}{-\ell_\theta(A\mid Q)}\right).
+\end{aligned}
+\]
+<p>这个式子要求基线答案概率非零且基线 surprisal 为正。举一个<strong>纯教学例子</strong>：原来答案平均每 token 是 −4 bits，读完轨迹后为 −3 bits，分数就是 \(({-3}-({-4}))/4=0.25\)。它表示该评分模型对答案的平均惊讶程度减少了四分之一，不是“四分之一的推理不忠实”。若轨迹反而使答案更难预测，原始增益为负，clipping 会把它与零增益都显示为零；因此应保留未经截断的增益作为诊断。</p>
+<p>真正有用的推理当然也应该让正确答案更可预测。这个指标的风险正在这里：它不能单独区分“从问题合法推得答案”和“把答案换一种说法藏进轨迹”。论文将其视为答案可恢复性的代理量，而不是严格的条件互信息估计；必须和生成过程、任务正确性与推导质量共同解释。</p>
+
+<h2 id="diagnostic-evidence">三、抑制为什么可能只改变表面？</h2>
+<p>主诊断使用 LMArena 抽取的 10,000 个问题，参考回答由 Qwen3-Max 的生成、评价和聚合迭代构造；这些不是全部经过人工验证的金标准。目标模型为 Qwen3-4B-Thinking-2507，除特殊说明外，每个方法评价 5,000 个例子。作者另在 Qwen3-8B 上做了跨模型诊断。</p>
+<table id="anchoring-results">
+  <caption>v4 主文的参考归一化展示分数：三列均越低越好，但不是原生熵、词汇召回率或泄漏概率。</caption>
+  <thead><tr><th>方法</th><th>词汇锚定</th><th>轨迹锚定</th><th>概率锚定</th></tr></thead>
+  <tbody>
+    <tr><td>NEU</td><td>41.9</td><td>47.5</td><td>52.3</td></tr>
+    <tr><td>SUP</td><td>40.2</td><td>52.5</td><td>50.6</td></tr>
+    <tr><td>AUG-SUP</td><td>40.5</td><td>52.7</td><td>49.4</td></tr>
+    <tr><td>SSR</td><td>30.3</td><td>33.3</td><td>40.8</td></tr>
+  </tbody>
+</table>
+<p>SUP 的词汇分数从 41.9 降至 40.2，轨迹分数却从 47.5 升至 52.5。它支持的结论是：在当前评分与提示条件下，隐藏表面内容没有同时消除生成过程中的答案依赖。它还不能单独证明模型内部发生了哪一种具体计算。</p>
+<p>作者用认知心理学中的“反讽过程”解释这种分离：为了检查自己是否提到禁用答案，生成器可能需要持续保持答案的表征。这个解释有吸引力，但附录明确把它作为<strong>待验证的机制假设</strong>。对答案位置的注意力、隐状态探针和激活干预，还需要额外实验；不能把心理学类比写成已经在 Transformer 内部定位到的机制。</p>
+
+<h3 id="display-scale">这张表的分数究竟是什么单位？</h3>
+<p>为了把三种不同尺度画进同一张图，作者以 Blind CoT 的均值为 \(L_m\)，四个主方法均值的中位数为 \(M_m\)，令 \(U_m=L_m+2(M_m-L_m)\)，再做：</p>
+\[
+D_m(x)=100\,\operatorname{clip}_{[0,1]}
+\left(\frac{x-L_m}{U_m-L_m}\right).
+\]
+<p>因此，50 是相对于这次校准的中间位置，不是“50% 的推理被答案支配”。轨迹与概率两列报告方法均值经过 \(D_m\) 的结果；词汇列报告逐例展示分数的均值，两者因截断而不一定可交换。跨研究、跨版本直接比较这种分数，必须先确认校准是否相同。</p>
+<p>行为图进一步把轨迹和概率展示坐标按 0.5 阈值分为 Reason、Encode、Monitor、Copy 四区。它们有盲生成、直接把答案当轨迹和人为构造的控制文本作参照，但<strong>区名不是逐条人工认证的真值</strong>。SSR 的 Reason 区占比由 NEU 的 38.0% 增至 54.8%，不能改写成“54.8% 的样本已被证明具有真实内部推理”。</p>
+
+<h2 id="structural-skeleton">四、SSR 改的是信息组织，不是答案的可见性</h2>
+<p>SSR 不再只要求“别写什么”，而是先给生成过程一个正向目标：描述要做哪些操作，再执行这些操作。骨架写为 \(S=\langle(F_i,C_i)\rangle_{i=1}^N\)，其中 \(F_i\) 来自八个功能标签，\(C_i\) 是不预先写出具体结果的操作摘要。</p>
+<table>
+  <caption>功能标签是推理操作，不是完成正确推理的证明。</caption>
+  <thead><tr><th>标签</th><th>作用</th><th>要避免的空壳写法</th></tr></thead>
+  <tbody>
+    <tr><td>PLAN</td><td>识别问题、目标与约束</td><td>只有“认真分析”，没有具体约束</td></tr>
+    <tr><td>RETR</td><td>引入所需事实或知识</td><td>未经验证就宣布已取得可靠证据</td></tr>
+    <tr><td>INFR</td><td>推导、计算、变换</td><td>把参考结论包装成推导前提</td></tr>
+    <tr><td>EVAL</td><td>核验计算与一致性</td><td>只写“结果正确”，不指定检验对象</td></tr>
+    <tr><td>SUMM</td><td>整合结论并组织输出</td><td>在前面没有依据时提前锁定结论</td></tr>
+    <tr><td>BRCH</td><td>比较可能路径</td><td>装饰性列出没有实际比较的分支</td></tr>
+    <tr><td>RFLX</td><td>检查关键判断与边界</td><td>没有具体风险的泛泛“反思”</td></tr>
+    <tr><td>BTRK</td><td>检验失败后修正先前路径</td><td>没有失败依据的表演式回溯</td></tr>
+  </tbody>
+</table>
+<p>最后一列是本文的教学分析，不是论文额外实验。v4 的最终提示通常要求 6–12 步，按任务复杂度调整，并以 HIGH / LOW 标记需要更多细节的步骤。HIGH 是生成指令，不是经计算得到的置信度或数值熵；把这个标记当成模型已知的“难度标签”，会误解实现。</p>
+<p>论文的两阶段生成条件是：</p>
+\[
+S\sim p_T(S\mid Q,A),\qquad
+R\sim p_T(R\mid Q,A,S).
+\]
+<p><strong>答案在两个阶段都可见。</strong>骨架希望把目标从“怎样解释这个答案”引向“怎样组织求解”，但这是一种软干预，不是通过上下文隔离实现的答案禁用。省掉第二个条件里的 \(A\)，会把本文的方法误写成另一项更强的干预。</p>
+<figure style="--blog-figure-width: 640px;">
+  <img src="/blogs/2026/Reasoning/SSR/answer-channels.svg" alt="SSR 中答案经骨架和第二阶段直接输入两条路径影响推理，骨架容量约束不排除残余通道">
+  <figcaption>依据 v4 第 3 节与附录 B 自绘。实线是骨架介导路径，虚线是仍然存在的直接答案入口；这不是作者实验曲线。</figcaption>
+</figure>
+
+<h3 id="worked-example">一个小例子：把操作留下，把终点拿掉</h3>
+<p>以下是人为构造的教学例子，不是模型实测输出。问题为 \(2x+3=11\)，给定参考解 \(x=4\)。一个有用的骨架应保留“为什么选择某种变换、怎样检验”的任务结构，而不是把“得到 4”换成委婉说法：</p>
+<pre><code class="language-plaintext">1. [PLAN][LOW] 确认未知量与方程约束。
+2. [BRCH][HIGH] 比较直接移项与候选值检验的求解路径。
+3. [INFR][LOW] 对等式两边消去相同的常数项。
+4. [INFR][LOW] 用非零系数隔离未知量。
+5. [EVAL][HIGH] 将所得候选代回原方程检查一致性。
+6. [SUMM][HIGH] 依据核验结果组织最终解的表述。</code></pre>
+<p>展开时可以公开写出 \(2x=8\)、\(x=4\)，并检查 \(2\cdot4+3=11\)。骨架不写最终数值，不代表完整推导永远不能出现结果；它是在规划阶段避免让结果替代操作依据。更重要的是，若故意把参考解换成 \(x=5\)，检验应发现 \(2\cdot5+3=13\ne11\)，而不是为参考答案修改运算。这个反事实检查比“有没有 EVAL 标签”更能判别验证是否起了实际作用。</p>
+
+<h2 id="skeleton-channel-bound">五、骨架容量的上界，为什么不是忠实性的保证？</h2>
+<p>论文附录 B 给出一个有限、但有解释力的理论结果。固定骨架长度 \(N=n\)，假设每个摘要对答案的额外依赖满足：</p>
+\[
+I(A;C_i\mid Q,N=n,S_{&lt;i},F_i)\le\epsilon_i^{(n)}.
+\]
+<p>这里的 \(I\) 是在指定联合分布上的条件互信息，单位为 bits。假设不是“词汇重叠低”，而是摘要在已知问题、先前骨架和当前标签后，还能额外传递多少答案信息。对骨架顺序用链式法则：</p>
+\[
+\begin{aligned}
+I(A;S\mid Q,N=n)
+&=\sum_i I(A;F_i\mid Q,N=n,S_{&lt;i})\\
+&\quad+\sum_i I(A;C_i\mid Q,N=n,S_{&lt;i},F_i)\\
+&\le n\log_2|\mathcal F|+\sum_i\epsilon_i^{(n)}.
+\end{aligned}
+\]
+<p>第一项由离散标签的条件熵上界控制，第二项依赖上面的不变性假设。八种标签意味着每步标签的最大容量是 \(\log_2 8=3\) bits。作为容量量级的假想说明，六步标签最多有 \(8^6\) 种序列，即 18 bits；这个数字是上界，不是实测泄漏量，也绝不等于零。标签顺序、是否回溯、长度本身都可以携带答案信息。</p>
+<p>如果长度随机，还必须加上长度通道：</p>
+\[
+I(A;S\mid Q)
+\le I(A;N\mid Q)+\mathbb E_n\!\left[n\log_2|\mathcal F|+\sum_i\epsilon_i^{(n)}\right].
+\]
+<p>真正关键的边界在完整轨迹：</p>
+\[
+I(A;R\mid Q)
+\le I(A;S\mid Q)+I(A;R\mid Q,S).
+\]
+<p>右边的第二项是<strong>给定骨架以后，答案仍能对推理传递的残余信息</strong>。由于第二阶段仍读取 \(A\)，骨架容量上界不能消掉它。若骨架过于泛化，生成器甚至可能更依赖答案来补全内容。论文也明确承认：理论约束的是骨架通道，完整概率锚定的降低是实验发现，不是已证明的总信息上界。</p>
+<p>还有一个容易忽略的统计边界：在理想的唯一答案任务里，如果 \(A\) 已经是 \(Q\) 的确定函数，真实联合分布可能满足 \(H(A\mid Q)=0\)，但一个有限计算能力的模型仍会因得到答案而明显改变行为。<strong>本文的延伸解读是</strong>，统计上的条件信息与模型完成计算的难度不是同一个量；对开放式随机参考回答，信息通道分析有其意义，但不应将它直接当成所有数学题上“答案捷径”的完整形式化。这也是评分模型诊断需要独立实验校验的原因。</p>
+
+<h2 id="distilled-ssr">六、SSR-D：从提示格式到教师—学生流水线</h2>
+<p>只写 SSR 提示，模型仍可能漏标签、把具体结论写进摘要，或在展开阶段忽略骨架。SSR-D 因而先训练一个能稳定生成 SSR 形式的教师，再用该教师产生最终示范给目标学生。附录 D 的流程可分为三步：Qwen3-Max 生成临时参考轨迹；Qwen3-235B-Instruct-2507 将其分段、标注功能并改写成骨架，得到种子元组；随后用这些元组微调 235B 模型，获得 SSR 教师。</p>
+<p>这个教师在另外 100k 问答对上生成学生使用的最终 SSR-D 轨迹。临时轨迹、教师训练用的骨架标注，以及最后给学生的示范，不应被当成同一批产物。SSR-D 的收益因此也不能只归功于“在原提示里加几行标签”。</p>
+<p>原文给出的两个监督目标是：</p>
+\[
+\begin{aligned}
+\mathcal L_S&=-\log p_\theta(S^*\mid Q,A),\\
+\mathcal L_R&=-\log p_\theta(R^*\mid Q,A,S^*),\\
+\mathcal L&=\mathcal L_S+\mathcal L_R.
+\end{aligned}
+\]
+<p>这些是序列负对数似然目标，不是奖励最大化，也不是学生 on-policy rollout 上的全词表 KL。骨架和展开分开监督，旨在让模型学习“先组织操作，再实现操作”的顺序。但最终推理时如何把这份技能用于答案不可见输入，还涉及实际的对话序列排列、输入内容与 loss mask。论文上述式子明确保留 \(A\)，因此<strong>这里不擅自把学生目标改写成只条件于 \(Q\)</strong>；复现时必须核对训练数据和推理入口，而不能仅由目标名称推断答案只在教师侧出现。</p>
+
+<h2 id="experimental-setup">七、实验究竟比较了哪些东西？</h2>
+<p>下游主实验使用 LMArena 的 100k 问题，Qwen3-Max 构造参考回答，普通方法由 Qwen3-235B-Instruct-2507 生成反向轨迹，SSR-D 则使用经过微调的 SSR 教师。学生包括 Qwen3-8B、Qwen3-32B、Qwen3-4B-Thinking-2507 和跨家族的 NBG4-3B-Base。诊断实验的 4B 生成器、下游主实验的 235B 数据教师，以及评价学生，不能混成一个角色。</p>
+<p>附录给出的 8B 微调配置为最大长度 32,768、有效 batch 256、学习率 \(4\times10^{-5}\)、最多 4 epochs、BF16、ZeRO-3 和 sample packing；其他规模原则上保持有效 batch 与优化设置，调整并行配置。相同训练配方不代表相同的数据生成或端到端计算：SSR-D 额外训练过教师，轨迹长度也可能不同。</p>
+<p>ArenaHard-v2.0 衡量开放式回答的评审表现，EQ-Bench 3 评价情境中的情绪理解与响应，IFEval 检查可程序验证的指令约束，MultiChallenge 检查多轮约束保持、记忆与一致性。它们不是四个可以随意平均的同质“准确率”。GPQA-Diamond 和 AIME 2025 则用于训练数据之外的科学与数学测试，后者尤其能检验开放式问答微调是否损伤原有解题能力。</p>
+
+<h2 id="main-results">八、主结果：完整对照，而不是只看最高一行</h2>
+<table id="main-results-table">
+  <caption>v4 主表全部模型与方法。Arena / EQ / IF / MC 分别对应 ArenaHard、EQ-Bench 3、IFEval、MultiChallenge，均越高越好；数字为原文各基准得分。</caption>
+  <thead><tr><th>学生</th><th>方法</th><th>Arena</th><th>EQ</th><th>IF</th><th>MC</th></tr></thead>
+  <tbody>
+    <tr><td>Qwen3-8B-Think</td><td>NEU</td><td>50.8</td><td>76.4</td><td>80.0</td><td>38.2</td></tr>
+    <tr><td>Qwen3-8B-Think</td><td>SUP</td><td>51.5</td><td>77.5</td><td>81.2</td><td>35.5</td></tr>
+    <tr><td>Qwen3-8B-Think</td><td>AUG-SUP</td><td>52.8</td><td>78.3</td><td>81.5</td><td>33.0</td></tr>
+    <tr><td>Qwen3-8B-Think</td><td>SSR</td><td>56.3</td><td>82.6</td><td>82.9</td><td>39.4</td></tr>
+    <tr><td>Qwen3-8B-Think</td><td>SSR-D</td><td>59.5</td><td>86.1</td><td>83.7</td><td>41.2</td></tr>
+    <tr><td>Qwen3-32B-Think</td><td>NEU</td><td>68.2</td><td>85.5</td><td>83.4</td><td>43.8</td></tr>
+    <tr><td>Qwen3-32B-Think</td><td>SUP</td><td>68.8</td><td>85.6</td><td>84.5</td><td>41.5</td></tr>
+    <tr><td>Qwen3-32B-Think</td><td>AUG-SUP</td><td>69.1</td><td>86.4</td><td>83.2</td><td>41.3</td></tr>
+    <tr><td>Qwen3-32B-Think</td><td>SSR</td><td>70.1</td><td>87.7</td><td>84.8</td><td>44.6</td></tr>
+    <tr><td>Qwen3-32B-Think</td><td>SSR-D</td><td>72.0</td><td>89.6</td><td>85.1</td><td>45.0</td></tr>
+    <tr><td>Qwen3-4B-Think-2507</td><td>NEU</td><td>41.7</td><td>79.3</td><td>76.7</td><td>38.9</td></tr>
+    <tr><td>Qwen3-4B-Think-2507</td><td>SUP</td><td>42.3</td><td>79.2</td><td>78.5</td><td>36.6</td></tr>
+    <tr><td>Qwen3-4B-Think-2507</td><td>AUG-SUP</td><td>43.5</td><td>79.0</td><td>80.1</td><td>34.5</td></tr>
+    <tr><td>Qwen3-4B-Think-2507</td><td>SSR</td><td>46.1</td><td>81.9</td><td>81.6</td><td>40.2</td></tr>
+    <tr><td>Qwen3-4B-Think-2507</td><td>SSR-D</td><td>50.8</td><td>83.1</td><td>83.8</td><td>42.0</td></tr>
+    <tr><td>NBG4-3B-Base</td><td>NEU</td><td>32.4</td><td>79.6</td><td>74.3</td><td>34.5</td></tr>
+    <tr><td>NBG4-3B-Base</td><td>SUP</td><td>32.9</td><td>81.5</td><td>76.5</td><td>33.4</td></tr>
+    <tr><td>NBG4-3B-Base</td><td>AUG-SUP</td><td>33.2</td><td>82.8</td><td>77.2</td><td>33.0</td></tr>
+    <tr><td>NBG4-3B-Base</td><td>SSR</td><td>34.6</td><td>84.4</td><td>77.6</td><td>35.8</td></tr>
+    <tr><td>NBG4-3B-Base</td><td>SSR-D</td><td>37.2</td><td>86.5</td><td>78.2</td><td>37.1</td></tr>
+  </tbody>
+</table>
+<p>8B 的 SSR-D 相对 NEU 在 ArenaHard 上提高 8.7 分，在 MultiChallenge 上提高 3.0 分；4B 的 ArenaHard 提高 9.1 分。与此同时，8B 的 AUG-SUP 把 ArenaHard 从 50.8 提到 52.8，却把 MultiChallenge 从 38.2 降到 33.0，减少了 5.2 分。这说明一个单轮评审收益不能代表多轮能力同步改善。</p>
+<p>一种合理的解读是：操作规划及核验结构可能比隐藏答案措辞更容易迁移到持续交互。但主表比较的是完整训练流程，不能把所有差异归为唯一的“锚定减少”机制。SSR-D 与 SSR 还同时改变了教师训练和格式可靠性；没有充分的预算与组成控制，就不能证明特定内部机制是全部收益的原因。</p>
+
+<h3 id="ood-retention">保留多少旧能力，比“比基线强”更重要</h3>
+<table id="ood-results-table">
+  <caption>OOD 原表完整对照，包含未微调模型。GPQA-D 与 AIME 为原文报告的得分，越高越好。</caption>
+  <thead><tr><th>方法</th><th>8B GPQA-D</th><th>8B AIME</th><th>32B GPQA-D</th><th>32B AIME</th></tr></thead>
+  <tbody>
+    <tr><td>w/o Train</td><td>58.1</td><td>70.0</td><td>64.1</td><td>73.3</td></tr>
+    <tr><td>NEU</td><td>49.5</td><td>33.3</td><td>60.6</td><td>56.7</td></tr>
+    <tr><td>SUP</td><td>51.0</td><td>35.0</td><td>60.1</td><td>52.5</td></tr>
+    <tr><td>AUG-SUP</td><td>51.2</td><td>33.3</td><td>61.1</td><td>49.2</td></tr>
+    <tr><td>SSR</td><td>53.2</td><td>40.0</td><td>62.7</td><td>56.7</td></tr>
+    <tr><td>SSR-D</td><td>56.6</td><td>44.2</td><td>65.2</td><td>59.2</td></tr>
+  </tbody>
+</table>
+<p>8B 的 AIME，NEU 相对未训练丢掉 36.7 分，SSR-D 恢复其中 10.9 分：\((44.2-33.3)/(70.0-33.3)\approx29.7\%\)。这是“恢复了约三成损失”，不是“只剩三成损失”，更不是“已经恢复原有数学能力”。32B 的 SSR-D 在 GPQA-D 上比未训练高 1.1 分，AIME 却仍低 14.1 分；能力保留是任务依赖的。</p>
+<p>这把 SSR 与 <a href="/blogs/2026/RL/E2S-Finetuning/">E2S</a> 的问题接了起来：改进训练数据时，不只要看新任务学到了多少，也要看哪些已有能力受到影响。开放式数据不覆盖竞赛数学，本身就能解释部分领域偏移；当前结果不能把所有损伤都因果归于事后合理化，也不能认为消除合理化就能补足缺失知识。</p>
+
+<h2 id="ablations-and-controls">九、哪些对照支持方法，哪些仍不够？</h2>
+<h3 id="forward-reasoning-control">好答案不保证反向生成优于正常解题</h3>
+<table id="filtering-results-table">
+  <caption>独立 16k 子集的 ArenaHard 实验，不是上面的 100k 主表。包含正常生成和 Best-of-3 筛选，全部行保留。</caption>
+  <thead><tr><th>方法</th><th>Qwen3-Max-Preview 设置</th><th>Kimi2.5 设置</th></tr></thead>
+  <tbody>
+    <tr><td>Native rollout</td><td>45.2</td><td>37.8</td></tr>
+    <tr><td>Best-of-3 rollout</td><td>46.7</td><td>39.2</td></tr>
+    <tr><td>NEU</td><td>44.0</td><td>35.4</td></tr>
+    <tr><td>SUP</td><td>45.5</td><td>36.9</td></tr>
+    <tr><td>AUG-SUP</td><td>45.8</td><td>37.5</td></tr>
+    <tr><td>SSR</td><td>48.2</td><td>39.6</td></tr>
+    <tr><td>SSR-D</td><td>55.1</td><td>44.0</td></tr>
+  </tbody>
+</table>
+<p>NEU 的 44.0 低于正常 rollout 的 45.2，也低于 Best-of-3 的 46.7。这是一个重要的反例：<strong>拥有参考答案，并不自动产生更好的教学轨迹</strong>。SSR / SSR-D 能超过这些对照，说明结构化反向生成有进一步利用问答对的空间。换成 Kimi2.5 后仍看到相同排序，缓解了单一教师家族的偏置担忧，但不构成跨所有教师的保证，也没有建立端到端等计算量优势。</p>
+
+<h3 id="component-ablation">骨架是否只是一层装饰？</h3>
+<table id="component-results-table">
+  <caption>Qwen3-8B 组件消融，全部配置保留。下文差值按表格计算，避免沿用正文中的近似差值。</caption>
+  <thead><tr><th>配置</th><th>ArenaHard</th><th>GPQA-D</th></tr></thead>
+  <tbody>
+    <tr><td>SSR-D</td><td>59.5</td><td>56.6</td></tr>
+    <tr><td>去掉两阶段生成</td><td>52.2</td><td>51.6</td></tr>
+    <tr><td>去掉功能标签</td><td>55.8</td><td>54.2</td></tr>
+    <tr><td>去掉内容骨架</td><td>53.4</td><td>52.8</td></tr>
+    <tr><td>NEU</td><td>50.8</td><td>49.5</td></tr>
+  </tbody>
+</table>
+<p>在这张表里，两阶段移除造成 ArenaHard 下降 7.3 分，移除内容骨架下降 6.1 分，移除标签下降 3.7 分。它支持“操作级指导和先规划后展开均有贡献”，不支持“任何标注 PLAN / EVAL 的文本都会有效”。消融改变了完整的生成约束和轨迹分布，依然需要检查长度、质量与监督预算是否同时变化。</p>
+<p>更强约束也不是单调更好。附录比较核心 SSR 与逐段紧密落实骨架的 Dense 版本：词汇展示分数 30.3→28.9，轨迹 33.3→27.8，但概率锚定 40.8→44.1；抽象终点对齐率 0.989→0.998，同时简单任务中超过 300 tokens 的比例 45.3%→67.2%。多写核验、把终点接得更牢，可能同时让答案更容易被恢复，也可能制造无必要的长轨迹。</p>
+<p>这组结果提醒我们：三个指标不是一个可以随便取均值的统一损失。更低的答案可恢复性、更完整的任务指导和更少的冗长之间，存在真实取舍；“全部指标都越低越好”只是在特定对照下的诊断方向，不是脱离任务质量的优化原则。</p>
+
+<h3 id="quality-guardrails">没有跑题，不等于每一步都正确</h3>
+<p>作者用抽象终点对齐检查轨迹是否仍服务于同一请求、立场和输出类型。主方法的对齐率接近饱和，SSR 为 0.989，NEU / SUP 为 0.996，AUG-SUP 为 0.994；这降低了“SSR 只是写得空泛或跑题”的担忧，但该检验刻意不要求复现具体事实、数值或代码，不能替代逐步正确性验证。</p>
+<p>另有 500 个样本的外部 LLM 评审，用只见 \((Q,R)\) 的自包含推导评价，与另见 \(A\) 的事后依赖评价交叉检查，两种评审器均给出 SSR-D 更优的排序。这是收敛的外部证据，不是直接观测内部计算。表中的样本方差也不能当作多次训练的种子方差；主成绩缺少充分的重复训练与不确定性信息时，小差值仍应谨慎解读。</p>
+
+<h2 id="reproduction-boundaries">十、复现前先确认版本与输入条件</h2>
+<p>截至本文检查，作者仓库 <a href="https://github.com/viniferagy/SSR/tree/7527bd6049782568d051dccd912d94f23135bdff">commit 7527bd6</a> 的指标代码仍计算基于 token LCS 的词汇召回，以及单条轨迹熵曲线形状的旧指标；没有把 v4 中答案可见／不可见的五前缀熵差直接实现为当前主指标。公开提示也与 v4 的 HIGH / LOW 骨架规则不同。因此，运行仓库得到的 Alex / Aent / Aprob，不应未经核对就当成这里主表的三个 v4 分数。</p>
+<p>旧版熵曲线指标为什么被淘汰，本身是一课。它会受轨迹长度、分段和模板平滑程度影响；看起来“更像思考”的熵形状，不一定意味着更少依赖答案。作者在附录保留了这段修订经过，而不是把新旧结果拼成一条更强的故事。复现也应固定论文版本、指标定义、评分模型、提示、校准和截断方式。</p>
+<p>另一个缺口是学生训练入口：目前检查到的公开目录主要是生成、指标与报告脚本，没有完整的学生 SFT 数据序列与 loss-mask 配方来消解前述 \(Q,A\) 条件式的实现细节。这不等于已经证明实验错误，而是<strong>仍需补充的信息</strong>。本文按论文报告解释方法和成绩，不宣称已复现这些模型训练结果。</p>
+
+<h2 id="beyond-the-paper">十一、延伸：该控制的是不当捷径，而非所有答案信息</h2>
+<p>以下是本文的分析与实验提案，不是作者已经验证的结论。SSR 最有价值的提醒，是把“示范有没有正确答案”升级为“示范所依赖的信息，学生独立运行时能不能获得”。但把锚定压到零也不是终点：一个完全空泛的骨架可以很少泄漏，却教不了任何任务；一个正确而完整的推导则理应帮助读者预测答案。</p>
+
+<h3 id="fixed-skeleton-intervention">最关键的实验：固定骨架，再遮掉答案</h3>
+<p>当前最难排除的是图中的残余通道。可以先生成并保存同一个 \(S\)，再用同一教师、同一评分模型比较 \(p_T(R\mid Q,S)\) 与 \(p_T(R\mid Q,A,S)\)，匹配生成 token 预算与验证标准。由于骨架固定，这更接近隔离第二阶段直接读取答案的效应；不过 \(S\) 自身可能已含答案信息，因此它也不是完整答案盲实验。</p>
+<p>下一步可以把“骨架由 \(Q\) 还是 \((Q,A)\) 生成”与“展开是否看到 \(A\)”交叉成四组。若答案盲展开保持质量并减少 OOD 损失，说明骨架能传递足够的求解结构；若质量坍塌，则所谓结构还不足以替代答案支持。若只有答案可见骨架有效，还要检查它是否已经编码了决定性结果。</p>
+<p>再加入正确答案、可识别错误答案、语义相同但措辞不同的答案三种干预。一个健壮的验证过程，应对措辞变化相对稳定，对错误结果能够明确发现矛盾。只测换答案后文本“变了多少”，容易把适当响应和盲目合理化混为一谈；应把变化是否有证据依据也纳入评价。</p>
+
+<h3 id="quality-dependence-frontier">把数据质量画成一条前沿，而不是单一排名</h3>
+<p>更实用的目标，是在相同预算下比较“任务正确性／可执行性”与“不当答案依赖”的前沿。先规定学生独立作答不能获得哪些信息，再检查示范是否把这些信息作为无依据前提；同时测量新任务收益和逐项旧能力保留。低锚定但低质量的数据，与高质量但强答案依赖的数据，分别暴露不同失败模式，不能只凭一个最小分数选出赢家。</p>
+<p>预算也必须包含 SSR 教师的训练与骨架生成，而不只是学生的更新步数。Best-of-3 的重复生成、SSR 的结构化生成，以及 SSR-D 的额外教师训练，在总生成 tokens、验证器调用和 GPU 时间上各有账单。现有论文支持效果提升，却没有给出足以宣布哪条路线端到端最省的完整账目。</p>
+
+<h3 id="connection-to-opd-and-e2s">与 OPD、E2S 的关系：三个不同的兼容性问题</h3>
+<table>
+  <caption>这是本文的统一视角，不是三种方法已经完成的联合实验。</caption>
+  <thead><tr><th>方法</th><th>主要干预对象</th><th>仍需要检查什么</th></tr></thead>
+  <tbody>
+    <tr><td>OPSD / OPD</td><td>在学生实际前缀上提供教师 token 分布</td><td>有参考解的教师是否能正确纠错，而非继续合理化</td></tr>
+    <tr><td>E2S</td><td>把有效专家信息转成更接近学生分布的示范</td><td>学生友好是否同时保留逐步正确性与解法覆盖</td></tr>
+    <tr><td>SSR</td><td>把答案可见示范组织成操作骨架与展开</td><td>结构降低了捷径，还是换了一种答案编码方式</td></tr>
+  </tbody>
+</table>
+<p>第一类关注<strong>状态兼容性</strong>，第二类关注<strong>轨迹分布兼容性</strong>，第三类关注<strong>信息条件兼容性</strong>。它们不是同一个问题的三个名称。可以设想用 SSR 构造较少合理化的教师轨迹，再由学生友好采样器改写，或者在学生状态上引入操作级核验；但每次组合都要重新检查答案泄漏、验证质量和额外计算，不能把各自提升简单相加。</p>
+
+<h2 id="conclusion">结语：可解释的文本，仍需证明它可用于学习</h2>
+<p>这篇论文的核心贡献不是证明结构标签天然可信，而是给反向数据生成提出了更严肃的检查标准：<strong>答案词少了，不代表推理更独立；有骨架，不代表残余答案通道消失；新任务提高了，也不代表旧能力保住了。</strong>SSR / SSR-D 提供了一个有实验支持的缓解方案，而它的理论边界、指标修订和未补齐的复现细节，也同样值得学习。</p>
+
+<h2 id="reference">参考与核对位置</h2>
+<p>[1] Guangyue Peng 等，<a href="https://arxiv.org/abs/2602.14469v4">Measuring and Mitigating Post-hoc Rationalization in Reverse Chain-of-Thought Generation</a>，ICML 2026，arXiv v4。定义与主表见第 2–5 节；指标估计与展示尺度见附录 A；信息通道边界见附录 B；训练与 SSR-D 流程见附录 D；组件与 Dense 消融见附录 E。本文数字来自论文，不是独立复现。</p>
+<p>[2] 作者<a href="https://github.com/viniferagy/SSR/tree/7527bd6049782568d051dccd912d94f23135bdff">公开代码快照</a>，检查日期 2026 年 10 月 12 日。版本差异核对位置：<code>scripts/anchoring_measure/metrics.py</code>、<code>scripts/rcot_generation/rcot_prompt.py</code>。</p>
+<p>[3] 相关站内阅读：<a href="/blogs/2026/RL/Self-Distilled-Reasoner/">Self-Distilled Reasoner</a>、<a href="/blogs/2026/RL/E2S-Finetuning/">E2S Finetuning</a>、<a href="/blogs/2026/RL/Retaining-by-Doing/">Retaining by Doing</a>。这些联系是本文的研究线索整理，不是原论文已经验证的组合方法。</p>
+
+              <h2 id="contact">Contact</h2>
+              <div class="contact-section">
+                <p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p>
+              </div>
+            </div>
+            <nav class="blog-post-navigation" aria-label="文章导航">
+              <a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a>
+            </nav>
+          </section>
+        </div>
+      </article>
+    </div>
+    <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+    {% include analytics.html %}
+    <script src="/assets/js/blog-enhancements.js?v=20261011-5" defer></script>
+  </body>
+</html>
