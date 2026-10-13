@@ -3,7 +3,6 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 import os
 from pathlib import Path
-import re
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
 
@@ -84,38 +83,8 @@ def fetch_google_profile(scholar_id):
             'publication_scope': 'First profile page, up to 100 papers'}
 
 
-def fetch_mirror_total(scholar_id):
-    page = read_url('https://www.newx.sg/scholar/' + scholar_id)
-    if f'Google Scholar ID: <!-- -->{scholar_id}' not in page:
-        raise RuntimeError('Scholar mirror returned a different profile.')
-    match = re.search(r'\\"citations_all\\":(\d+)', page)
-    if not match:
-        raise RuntimeError('Scholar mirror returned no citation total.')
-    return int(match.group(1))
-
-
-def fetch_profile(scholar_id, previous=None):
-    try:
-        return fetch_google_profile(scholar_id)
-    except Exception as google_error:
-        total = fetch_mirror_total(scholar_id)
-        author = dict(previous or {})
-        author.update({
-            'scholar_id': scholar_id,
-            'citedby': total,
-            'updated': datetime.now(timezone.utc).isoformat(),
-            'source': 'Agora mirror of Google Scholar profile',
-            'source_url': 'https://www.newx.sg/scholar/' + scholar_id,
-            'direct_google_error': type(google_error).__name__,
-        })
-        author.setdefault('publications', {})
-        return author
-
-
 if __name__ == '__main__':
-    previous_path = Path('../_data/google_scholar.json')
-    previous = json.loads(previous_path.read_text(encoding='utf-8')) if previous_path.exists() else None
-    author = fetch_profile(os.environ['GOOGLE_SCHOLAR_ID'], previous)
+    author = fetch_google_profile(os.environ['GOOGLE_SCHOLAR_ID'])
     results = Path('results')
     results.mkdir(exist_ok=True)
     (results / 'gs_data.json').write_text(json.dumps(author, ensure_ascii=False, indent=2), encoding='utf-8')
