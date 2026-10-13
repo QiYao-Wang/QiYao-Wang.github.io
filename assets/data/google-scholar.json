@@ -7,7 +7,8 @@
     "counts"
   ],
   "scholar_id": "STze0QgAAAAJ",
-  "source": "AUTHOR_PROFILE_PAGE",
+  "source": "Agora mirror of Google Scholar profile",
+  "source_url": "https://www.newx.sg/scholar/STze0QgAAAAJ",
   "name": "Qiyao Wang",
   "url_picture": "https://scholar.googleusercontent.com/citations?view_op=view_photo&user=STze0QgAAAAJ&citpid=2",
   "affiliation": "Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences",
@@ -17,7 +18,7 @@
     "Patent Processing"
   ],
   "email_domain": "@mail.dlut.edu.cn",
-  "citedby": 42,
+  "citedby": 77,
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "container_type": "Publication",
@@ -87,5 +88,5 @@
     "2024": 4,
     "2025": 38
   },
-  "updated": "2025-07-22 08:15:16.119202"
+  "updated": "2026-10-13T00:00:00+00:00"
 }

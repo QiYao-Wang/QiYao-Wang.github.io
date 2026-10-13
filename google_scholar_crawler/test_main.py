@@ -1,5 +1,6 @@
 import unittest
-from main import ProfileParser
+from unittest.mock import patch
+from main import ProfileParser, fetch_mirror_total, fetch_profile
 
 
 class ProfileParserTests(unittest.TestCase):
@@ -17,6 +18,21 @@ class ProfileParserTests(unittest.TestCase):
         parser = ProfileParser()
         parser.feed('<html><p>Our systems detected unusual traffic.</p></html>')
         self.assertEqual(parser.counts, [])
+
+    @patch('main.read_url')
+    def test_mirror_total_is_bound_to_scholar_id(self, read_url):
+        read_url.return_value = r'Google Scholar ID: <!-- -->abc {\"citations_all\":77}'
+        self.assertEqual(fetch_mirror_total('abc'), 77)
+        with self.assertRaises(RuntimeError):
+            fetch_mirror_total('different')
+
+    @patch('main.fetch_google_profile', side_effect=TimeoutError)
+    @patch('main.fetch_mirror_total', return_value=77)
+    def test_mirror_fallback_preserves_papers(self, mirror, google):
+        result = fetch_profile('abc', {'publications': {'paper': {'num_citations': 3}}})
+        self.assertEqual(result['citedby'], 77)
+        self.assertEqual(result['publications']['paper']['num_citations'], 3)
+        self.assertIn('mirror', result['source'])
 
 
 if __name__ == '__main__':

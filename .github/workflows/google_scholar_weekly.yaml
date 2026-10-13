@@ -4,7 +4,9 @@ on:
   # One-time bootstrap for the user-requested refresh; removed after this run starts.
   push:
     branches: [main]
-    paths: ['.github/workflows/google_scholar_weekly.yaml']
+    paths:
+      - '.github/workflows/google_scholar_weekly.yaml'
+      - 'google_scholar_crawler/main.py'
   schedule:
     # GitHub cron is UTC: Monday 00:00 UTC = Monday 08:00 Asia/Shanghai.
     - cron: '0 0 * * 1'
