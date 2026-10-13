@@ -1,18 +1,26 @@
-name: Get Citation Data
+name: Weekly Google Scholar Citations
 
-on: 
- page_build: 
- schedule:
-  - cron:  '0 8 * * *'
+on:
+  schedule:
+    # GitHub cron is UTC: Monday 00:00 UTC = Monday 08:00 Asia/Shanghai.
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
     - name: Install Reqs
       run: |
-        sudo apt-get install python3-setuptools
+        python3 -m pip install setuptools
     - name: Run
       run: |
         cd ./google_scholar_crawler
@@ -26,4 +34,4 @@ jobs:
         git commit -m "Updated Citation Data"
         git push "${remote_repo}" HEAD:google-scholar-stats --force
       env: 
-        GOOGLE_SCHOLAR_ID: ${{ secrets.GOOGLE_SCHOLAR_ID }}
+        GOOGLE_SCHOLAR_ID: ${{ secrets.GOOGLE_SCHOLAR_ID || 'STze0QgAAAAJ' }}

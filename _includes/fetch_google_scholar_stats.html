@@ -1,19 +1,65 @@
 <script>
-    $(document).ready(function () {
-        {% if site.google_scholar_stats_use_cdn %}
-        var gsDataBaseUrl = 'https://cdn.jsdelivr.net/gh/{{ site.repository }}@'
-        {% else %}
-        var gsDataBaseUrl = 'https://raw.githubusercontent.com/{{ site.repository }}/'
-        {% endif %}
-        $.getJSON(gsDataBaseUrl + "google-scholar-stats/gs_data.json", function (data) {
-            var totalCitation = data['citedby']
-            document.getElementById('total_cit').innerHTML = totalCitation;
-            var citationEles = document.getElementsByClassName('show_paper_citations')
-            Array.prototype.forEach.call(citationEles, element => {
-                var paperId = element.getAttribute('data')
-                var numCitations = data['publications'][paperId]['num_citations']
-                element.innerHTML = '| Citations: ' + numCitations;
-            });
+(function () {
+  'use strict';
+  async function loadScholarStats() {
+    const total = document.getElementById('total_cit');
+    const paperSpans = document.querySelectorAll('.show_paper_citations');
+    const titledSpans = document.querySelectorAll('.page__content span[id]');
+    if (!total && !paperSpans.length && !titledSpans.length) return;
+    // Read the saved weekly snapshot; visitors never scrape Google Scholar.
+    const sources = [
+      'https://raw.githubusercontent.com/{{ site.repository }}/google-scholar-stats/gs_data.json',
+      'https://cdn.jsdelivr.net/gh/{{ site.repository }}@google-scholar-stats/gs_data.json'
+    ];
+    for (const url of sources) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      try {
+        const response = await fetch(url, {cache: 'no-store', signal: controller.signal});
+        if (!response.ok) throw new Error('Scholar statistics unavailable');
+        const data = await response.json();
+        if (!Number.isInteger(data.citedby) || data.citedby < 0) throw new Error('Invalid citation count');
+        if (total) {
+          total.textContent = data.citedby.toLocaleString('en-US');
+          const badge = total.closest('.scholar-citation-badge');
+          const date = typeof data.updated === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data.updated)
+            ? data.updated.slice(0, 10) : '';
+          if (badge) badge.title = 'Google Scholar citations' + (date ? ' · data updated ' + date : '') + ' · updated weekly on Monday at 08:00 China Standard Time';
+          const dateLabel = document.getElementById('scholar-citation-date');
+          if (dateLabel) {
+            dateLabel.hidden = true;
+            dateLabel.textContent = '';
+          }
+          // Do not present an old snapshot as a current, live citation count.
+          if (dateLabel && date && Date.now() - Date.parse(date + 'T00:00:00Z') > 10 * 86400000) {
+            dateLabel.textContent = '· as of ' + date;
+            dateLabel.hidden = false;
+          }
+        }
+        const publications = data.publications || {};
+        paperSpans.forEach(element => {
+          const publication = publications[element.getAttribute('data')];
+          if (publication && Number.isInteger(publication.num_citations)) {
+            element.textContent = '| Citations: ' + publication.num_citations;
+          }
         });
-    })
+        const byTitle = new Map(Object.values(publications).filter(p => p && p.bib && Number.isInteger(p.num_citations)).map(p => [p.bib.title, p.num_citations]));
+        titledSpans.forEach(element => {
+          if (element !== total && byTitle.has(element.id)) element.textContent = 'Citation: ' + byTitle.get(element.id);
+        });
+        return;
+      } catch (error) {
+        // Try the alternate host; leave a truthful placeholder if both fail.
+      } finally {
+        clearTimeout(timeout);
+      }
+    }
+    if (total) {
+      const badge = total.closest('.scholar-citation-badge');
+      if (badge) badge.title = 'Citation count unavailable · click to view Google Scholar';
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadScholarStats, {once: true});
+  else loadScholarStats();
+})();
 </script>

@@ -261,6 +261,31 @@ redirect_from:
   .service-list li a:hover {
     color: #2980b9;
   }
+  .scholar-citation-badge {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    max-width: 100%;
+    margin: 0.2em 0 0.2em 0.3em;
+    padding: 0.1em 0.55em;
+    border: 1px solid #dbe5f1;
+    border-radius: 0.5em;
+    background: #f5f8fc;
+    color: #35628f;
+    font-size: 0.82em;
+    line-height: 1.65;
+    text-decoration: none;
+    vertical-align: baseline;
+  }
+  .scholar-citation-badge:hover,
+  .scholar-citation-badge:focus-visible {
+    border-color: #8aaacf;
+    background: #edf3fb;
+    color: #214e80;
+  }
+  .scholar-citation-badge strong { color: inherit; }
+  .scholar-citation-date { color: #66758a; font-size: 0.88em; }
 </style>
 
 {% if site.google_scholar_stats_use_cdn %}
@@ -272,7 +297,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Hello, my name is Qiyao Wang (王琪尧). I am a second year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), supervised by Prof. <a href="https://minyang.me/">Min Yang</a>.<br>
+Hello, my name is Qiyao Wang (王琪尧). I am a second year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), supervised by Prof. <a href="https://minyang.me/">Min Yang</a>. <a class="scholar-citation-badge" href="{{ site.author.googlescholar }}" target="_self" title="Google Scholar citations · updated weekly on Monday at 08:00 China Standard Time"><span>Google Scholar ·</span> <span><strong id="total_cit" aria-live="polite">—</strong> citations</span><span id="scholar-citation-date" class="scholar-citation-date" hidden></span></a><br>
 I obtained my Bachelor's degree in Artificial Intelligence from Dalian University of Technology (2021-2025).
 During my undergraduate studies, I worked in the Dalian University of Technology <em>Information Retrieval Laboratory (DUT-IR)</em>
 and <em>Public Service Science and Engineering Laboratory</em>, supervised by Prof. <a href="http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm">Yuan Lin</a>,
@@ -653,39 +678,6 @@ Journal Reviewer of Expert Systems.
 
 Updated at October, 2026. ![](https://komarev.com/ghpvc/?username=QiYao-Wang&color=brightgreen)
 
-
-<script>
-        // URL of the JSON file in the 'google-scholar-stats' branch
-        const jsonUrl = "https://raw.githubusercontent.com/QiYao-Wang/QiYao-Wang.github.io/refs/heads/google-scholar-stats/gs_data.json";
-
-        // Fetch JSON data and dynamically update the citation count
-        fetch(jsonUrl)
-            .then(response => response.json())
-            .then(data => {
-                // Locate the publication data from JSON
-                const publications = data.publications;
-
-                // Find all span elements with dynamic ids and update their content
-                const spans = document.querySelectorAll("span[id]"); // Select all span elements with an id attribute
-
-                spans.forEach(span => {
-                    const spanId = span.id; // Get the id of the span element
-
-                    // Iterate over publications to find a match with the id
-                    for (const key in publications) {
-                        const publication = publications[key];
-                        if (publication.bib.title === spanId) { // Match title with the span id
-                            const citationCount = publication.num_citations || 0;
-                            span.textContent = `Citation: ${citationCount}`;
-                            break;
-                        }
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("Error loading JSON:", error);
-            });
-    </script>
 
 <script>
     // Dynamically count competition awards by keywords
