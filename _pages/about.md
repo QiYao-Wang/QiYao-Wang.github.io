@@ -284,7 +284,7 @@ redirect_from:
     background: #edf3fb;
     color: #214e80;
   }
-  .scholar-citation-badge strong { color: inherit; }
+  .scholar-citation-badge strong { color: #8b1e2d; font-weight: 800; font-size: 1.15em; }
   .scholar-citation-date { color: #66758a; font-size: 0.88em; }
 </style>
 
@@ -297,7 +297,7 @@ redirect_from:
 
 <span class='anchor' id='about-me'></span>
 
-Hello, my name is Qiyao Wang (王琪尧). I am a second year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), supervised by Prof. <a href="https://minyang.me/">Min Yang</a>. <a class="scholar-citation-badge" href="{{ site.author.googlescholar }}" target="_self" title="Google Scholar citations · updated weekly on Monday at 08:00 China Standard Time"><span>Google Scholar ·</span> <span><strong id="total_cit" aria-live="polite">—</strong> citations</span><span id="scholar-citation-date" class="scholar-citation-date" hidden></span></a><br>
+Hello, my name is Qiyao Wang (王琪尧). I am a second year Ph.D. student at the University of Chinese Academy of Sciences (UCAS), supervised by Prof. <a href="https://minyang.me/">Min Yang</a>. <a class="scholar-citation-badge" href="{{ site.author.googlescholar }}" target="_self" title="Google Scholar citations · data updated {{ site.data.google_scholar.updated }} · updated weekly on Monday at 08:00 China Standard Time"><span>Google Scholar ·</span> <span><strong id="total_cit" aria-live="polite">{{ site.data.google_scholar.citedby | default: '—' }}</strong> citations</span><span id="scholar-citation-date" class="scholar-citation-date">· as of {{ site.data.google_scholar.updated | slice: 0, 10 }}</span></a><br>
 I obtained my Bachelor's degree in Artificial Intelligence from Dalian University of Technology (2021-2025).
 During my undergraduate studies, I worked in the Dalian University of Technology <em>Information Retrieval Laboratory (DUT-IR)</em>
 and <em>Public Service Science and Engineering Laboratory</em>, supervised by Prof. <a href="http://faculty.dlut.edu.cn/linyuan/zh_CN/index.htm">Yuan Lin</a>,

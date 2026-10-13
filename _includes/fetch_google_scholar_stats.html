@@ -8,6 +8,7 @@
     if (!total && !paperSpans.length && !titledSpans.length) return;
     // Read the saved weekly snapshot; visitors never scrape Google Scholar.
     const sources = [
+      '/assets/data/google-scholar.json',
       'https://raw.githubusercontent.com/{{ site.repository }}/google-scholar-stats/gs_data.json',
       'https://cdn.jsdelivr.net/gh/{{ site.repository }}@google-scholar-stats/gs_data.json'
     ];
@@ -56,7 +57,7 @@
     }
     if (total) {
       const badge = total.closest('.scholar-citation-badge');
-      if (badge) badge.title = 'Citation count unavailable · click to view Google Scholar';
+      if (badge && total.textContent.trim() === '—') badge.title = 'Citation count unavailable · click to view Google Scholar';
     }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadScholarStats, {once: true});
