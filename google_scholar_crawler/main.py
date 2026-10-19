@@ -3,8 +3,15 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 import os
 from pathlib import Path
+import time
+from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
+
+
+RETRY_ATTEMPTS = 3
+RETRY_DELAYS_SECONDS = (20, 60)
+CHALLENGE_MARKERS = ('unusual traffic', 'not a robot', 'recaptcha', 'sorry')
 
 class ProfileParser(HTMLParser):
     """Read the total and visible papers from a single public profile request."""
@@ -63,24 +70,56 @@ class ProfileParser(HTMLParser):
 
 def read_url(url):
     request = Request(url, headers={
-        'User-Agent': 'Mozilla/5.0 (compatible; QiyaoHomepage/1.0; +https://wangqiyao.me/)'
+        'User-Agent': ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+                       '(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
     })
     with urlopen(request, timeout=30) as response:
         return response.read().decode('utf-8')
 
 
-def fetch_google_profile(scholar_id):
+def invalid_response_summary(page):
+    normalized_page = ' '.join(page.split())
+    lower_page = normalized_page.lower()
+    markers = [marker for marker in CHALLENGE_MARKERS if marker in lower_page]
+    marker_summary = ', '.join(markers) if markers else 'none'
+    return (f'Google Scholar returned no citation statistics '
+            f'(response length: {len(page)}; challenge markers: {marker_summary}; '
+            f'preview: {normalized_page[:160]!r}).')
+
+
+def fetch_google_profile(scholar_id, attempts=RETRY_ATTEMPTS,
+                         fetcher=read_url, sleep=time.sleep):
+    if attempts < 1:
+        raise ValueError('attempts must be at least one.')
+
     query = urlencode({'user': scholar_id, 'hl': 'en', 'pagesize': 100})
-    page = read_url('https://scholar.google.com/citations?' + query)
-    parser = ProfileParser()
-    parser.feed(page)
-    if len(parser.counts) < 2:
-        raise RuntimeError('Google Scholar returned no citation statistics.')
-    return {'scholar_id': scholar_id, 'citedby': parser.counts[0],
-            'updated': datetime.now(timezone.utc).isoformat(),
-            'publications': parser.publications,
-            'source': 'Google Scholar public profile',
-            'publication_scope': 'First profile page, up to 100 papers'}
+    profile_url = 'https://scholar.google.com/citations?' + query
+    last_error = None
+
+    for attempt in range(attempts):
+        try:
+            page = fetcher(profile_url)
+            parser = ProfileParser()
+            parser.feed(page)
+            if len(parser.counts) >= 2:
+                return {'scholar_id': scholar_id, 'citedby': parser.counts[0],
+                        'updated': datetime.now(timezone.utc).isoformat(),
+                        'publications': parser.publications,
+                        'source': 'Google Scholar public profile',
+                        'publication_scope': 'First profile page, up to 100 papers'}
+            last_error = RuntimeError(invalid_response_summary(page))
+        except (HTTPError, URLError, TimeoutError) as error:
+            last_error = error
+
+        if attempt < attempts - 1:
+            delay_seconds = RETRY_DELAYS_SECONDS[min(attempt, len(RETRY_DELAYS_SECONDS) - 1)]
+            print(f'Google Scholar fetch attempt {attempt + 1} failed: {last_error}. '
+                  f'Retrying in {delay_seconds} seconds.')
+            sleep(delay_seconds)
+
+    raise RuntimeError(f'Google Scholar fetch failed after {attempts} attempts: {last_error}') from last_error
 
 
 if __name__ == '__main__':
