@@ -1,27 +1,27 @@
 {
   "scholar_id": "STze0QgAAAAJ",
-  "citedby": 412,
-  "updated": "2026-10-13T07:03:30.075872+00:00",
+  "citedby": 424,
+  "updated": "2026-10-19T05:38:52.599449+00:00",
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "bib": {
         "title": "Supergpqa: Scaling llm evaluation across 285 graduate disciplines"
       },
-      "num_citations": 282,
+      "num_citations": 289,
       "author_pub_id": "STze0QgAAAAJ:9yKSN-GCB0IC"
     },
     "STze0QgAAAAJ:zYLM7Y9cAGgC": {
       "bib": {
         "title": "A survey on large language model benchmarks"
       },
-      "num_citations": 75,
+      "num_citations": 78,
       "author_pub_id": "STze0QgAAAAJ:zYLM7Y9cAGgC"
     },
     "STze0QgAAAAJ:u-x6o8ySG0sC": {
       "bib": {
         "title": "AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"
       },
-      "num_citations": 33,
+      "num_citations": 34,
       "author_pub_id": "STze0QgAAAAJ:u-x6o8ySG0sC"
     },
     "STze0QgAAAAJ:u5HHmVD_uO8C": {
@@ -45,19 +45,19 @@
       "num_citations": 4,
       "author_pub_id": "STze0QgAAAAJ:hqOjcs7Dif8C"
     },
+    "STze0QgAAAAJ:UebtZRa9Y70C": {
+      "bib": {
+        "title": "Beyond Quantity: Trajectory Diversity Scaling for Code Agents"
+      },
+      "num_citations": 3,
+      "author_pub_id": "STze0QgAAAAJ:UebtZRa9Y70C"
+    },
     "STze0QgAAAAJ:5nxA0vEk-isC": {
       "bib": {
         "title": "FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration"
       },
       "num_citations": 2,
       "author_pub_id": "STze0QgAAAAJ:5nxA0vEk-isC"
-    },
-    "STze0QgAAAAJ:UebtZRa9Y70C": {
-      "bib": {
-        "title": "Beyond Quantity: Trajectory Diversity Scaling for Code Agents"
-      },
-      "num_citations": 2,
-      "author_pub_id": "STze0QgAAAAJ:UebtZRa9Y70C"
     },
     "STze0QgAAAAJ:qxL8FJ1GzNcC": {
       "bib": {
