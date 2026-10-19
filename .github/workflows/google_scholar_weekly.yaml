@@ -1,6 +1,12 @@
 name: Weekly Google Scholar Citations
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/google_scholar_weekly.yaml'
+      - 'google_scholar_crawler/**'
   schedule:
     # GitHub cron is UTC: Monday 00:00 UTC = Monday 08:00 Asia/Shanghai.
     - cron: '0 0 * * 1'
@@ -27,8 +33,9 @@ jobs:
       run: |
         cd ./google_scholar_crawler
         python3 main.py
-      env: 
+      env:
         GOOGLE_SCHOLAR_ID: ${{ secrets.GOOGLE_SCHOLAR_ID || 'STze0QgAAAAJ' }}
+        PYTHONUNBUFFERED: '1'
     - name: Publish same-origin statistics
       run: |
         mkdir -p _data assets/data
