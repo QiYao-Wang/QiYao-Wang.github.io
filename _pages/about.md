@@ -646,14 +646,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div>
 
 # 📖 Educations
-- ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Science, China.
+- ***2025.09 - (5 years)***, pursuing a Ph.D. degree in Computer Technology, ShenZhen Institute of Advanced Technology, Chinese Academy of Sciences, China.
 - ***2021.09 - 2025.06***, Bachelor degree in AI, School of Future Technology, Dalian University of Technology, China.
   
 # 💬 Academic Services
 <p><strong>Reviewer</strong></p>
 <ul>
 <li>
-Conference Reviewer: NeurIPS 2026, ICLR 2026, ARR Oct 2026, COLING 2027, NAACL 2027.
+Conference Reviewer: NeurIPS 2026, ARR Oct 2026, ICLR 2027, COLING 2027, NAACL 2027.
 </li>
 <li>
 Journal Reviewer of Expert Systems. 
