@@ -344,6 +344,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
+  <li><em><strong>2026.10.22:</strong></em> &nbsp;🧠 The <a href="https://arxiv.org/abs/2610.30949">IQuest-Q1 technical report</a> is now available on arXiv.</li>
   <li><em><strong>2026.10.10:</strong></em> &nbsp;🧠 <a href="https://iquestlab.github.io/">IQuest-Q1</a>, an open-source agentic foundation model for CLI systems, is now available.</li>
   <li><em><strong>2026.09.29:</strong></em> &nbsp;🧠 Our <a href="https://arxiv.org/abs/2609.37559">APM-Bench</a>, a benchmark for cross-session persistent memory in egocentric streaming video assistants, is now available. [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]</li>
   <li><em><strong>2026.05.05:</strong></em> &nbsp;🧠 Our <a href="https://arxiv.org/abs/2605.03571">PatRe</a> benchmark for full-stage patent examination and rebuttal generation is now available. [<a href="https://patre.wangqiyao.me/">Website</a>] [<a href="https://github.com/AIforIP/PatRe">Github</a>]</li>
@@ -563,13 +564,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 # 🪡 Intellectual Property
 <p><strong>Patents</strong></p>
 
+- Method and System for Patent Retrieval Agent Evaluation and Trajectory Selection Training. ***Qiyao Wang**, Jianhang Li, Hongbo Wang, Yuan Lin, Wenfei Liu, Kan Xu*. 202611650304.1. 2026.10.23. DUT. Pending.
 - Method and System for Generating Patent Dependent Claims Based on Reasoning-Aware Evaluation and Iterative Feedback. ***Qiyao Wang**, Hongbo Wang, Yuan Lin, Hanyu Kang, Xinhao Gao, Kan Xu, Wenfei Liu, Yilin Yue, Zhifei Qin, Yihang Wu*. CN122491216A. 2026.7.31. DUT. Pending.
 - Flow-Guided Scientific Idea Evolution Generation Method, Electronic Device, and Computer-Readable Storage Medium. *Hongbo Wang, **Qiyao Wang**, Yuan Lin, Xinhao Gao, Kan Xu, Wenfei Liu, Yihang Wu*. CN122332541A. 2026.07.03. DUT. Pending. (Supervisor)
-- Method, Apparatus, Computer Device, and Storage Medium for Recommending Procurement Evaluation Experts in Universities. *Rong Cao, Xinzhuo Wu, Yuan Lin, **Qiyao Wang**, Kan Xu, Wenfei Liu, Hongbo Wang*. 202511277799.3. 2025.09.29. DUT. Pending. (Main Member)
 
 <details>
 <summary style="color:gray; cursor:pointer;">Show more</summary>
 <ul>
+  <li>Method, Apparatus, Computer Device, and Storage Medium for Recommending Procurement Evaluation Experts in Universities. Rong Cao, Xinzhuo Wu, Yuan Lin, <strong><em>Qiyao Wang</em></strong>, Kan Xu, Wenfei Liu, Hongbo Wang. 202511277799.3. 2025.09.29. DUT. Pending. (Main Member)</li>
   <li>Method for Audio Transcription Annotation and Analysis Based on Multi-Agent Collaboration Mechanism. Hongbo Wang, Yuan Lin, <strong><em>Qiyao Wang</em></strong>, Huanming Wang. CN120492633A. 2025.05.30. DUT. Pending. (Main Member)</li>
   <li>Method, Apparatus, Electronic Device, and Storage Medium for Generating a Patent Application Document. Shiwen Ni, Min Yang, <strong><em>Qiyao Wang</em></strong>. CN202411824533.1. 2024.12.12 CAS-SIAT. Pending. (Sole Student Member)</li>
   <li>A query expansion method based on collaborative enhancement at the term level. <strong><em>Qiyao Wang</em></strong>, Shule Lu, Yang Yang, Yuan Lin et.al. CN118467708A. 2024.08.09. DUT. Licensed.</li>
