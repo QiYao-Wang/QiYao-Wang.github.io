@@ -430,6 +430,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems. (Contributor)
      [<a href="https://iquestlab.github.io/">Website</a>]
      [<a href="https://arxiv.org/abs/2610.30949">Arxiv</a>]
+     [<a href="https://huggingface.co/papers/2610.30949">HuggingFace Paper</a>]
      [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
      [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
      <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
