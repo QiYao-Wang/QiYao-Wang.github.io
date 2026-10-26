@@ -1,20 +1,20 @@
 {
   "scholar_id": "STze0QgAAAAJ",
-  "citedby": 424,
-  "updated": "2026-10-19T05:38:52.599449+00:00",
+  "citedby": 432,
+  "updated": "2026-10-26T03:17:43.486334+00:00",
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "bib": {
         "title": "Supergpqa: Scaling llm evaluation across 285 graduate disciplines"
       },
-      "num_citations": 289,
+      "num_citations": 293,
       "author_pub_id": "STze0QgAAAAJ:9yKSN-GCB0IC"
     },
     "STze0QgAAAAJ:zYLM7Y9cAGgC": {
       "bib": {
         "title": "A survey on large language model benchmarks"
       },
-      "num_citations": 78,
+      "num_citations": 80,
       "author_pub_id": "STze0QgAAAAJ:zYLM7Y9cAGgC"
     },
     "STze0QgAAAAJ:u-x6o8ySG0sC": {
@@ -49,7 +49,7 @@
       "bib": {
         "title": "Beyond Quantity: Trajectory Diversity Scaling for Code Agents"
       },
-      "num_citations": 3,
+      "num_citations": 4,
       "author_pub_id": "STze0QgAAAAJ:UebtZRa9Y70C"
     },
     "STze0QgAAAAJ:5nxA0vEk-isC": {
@@ -66,6 +66,13 @@
       "num_citations": 2,
       "author_pub_id": "STze0QgAAAAJ:qxL8FJ1GzNcC"
     },
+    "STze0QgAAAAJ:_kc_bZDykSQC": {
+      "bib": {
+        "title": "APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants"
+      },
+      "num_citations": 1,
+      "author_pub_id": "STze0QgAAAAJ:_kc_bZDykSQC"
+    },
     "STze0QgAAAAJ:8k81kl-MbHgC": {
       "bib": {
         "title": "InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?"
@@ -73,19 +80,12 @@
       "num_citations": 1,
       "author_pub_id": "STze0QgAAAAJ:8k81kl-MbHgC"
     },
-    "STze0QgAAAAJ:aqlVkmm33-oC": {
+    "STze0QgAAAAJ:mVmsd5A6BfQC": {
       "bib": {
         "title": "IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems"
       },
       "num_citations": 0,
-      "author_pub_id": "STze0QgAAAAJ:aqlVkmm33-oC"
-    },
-    "STze0QgAAAAJ:_kc_bZDykSQC": {
-      "bib": {
-        "title": "APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants"
-      },
-      "num_citations": 0,
-      "author_pub_id": "STze0QgAAAAJ:_kc_bZDykSQC"
+      "author_pub_id": "STze0QgAAAAJ:mVmsd5A6BfQC"
     },
     "STze0QgAAAAJ:MXK_kJrjxJIC": {
       "bib": {
