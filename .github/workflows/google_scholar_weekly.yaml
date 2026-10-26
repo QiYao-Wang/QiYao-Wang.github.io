@@ -8,8 +8,9 @@ on:
       - '.github/workflows/google_scholar_weekly.yaml'
       - 'google_scholar_crawler/**'
   schedule:
-    # GitHub cron is UTC: Monday 00:00 UTC = Monday 08:00 Asia/Shanghai.
-    - cron: '0 0 * * 1'
+    # GitHub cron is UTC. Retry on separate runners at 08:00, 12:00, and
+    # 16:00 Asia/Shanghai because Google Scholar can reject individual IPs.
+    - cron: '0 0,4,8 * * 1'
   workflow_dispatch:
 
 permissions:
@@ -29,7 +30,32 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.10'
+    - name: Check whether scheduled data is fresh
+      id: freshness
+      run: |
+        python3 - <<'PY'
+        import json
+        import os
+        from datetime import datetime, timedelta, timezone
+        from pathlib import Path
+
+        data_path = Path('assets/data/google-scholar.json')
+        should_skip = False
+        if os.environ['GITHUB_EVENT_NAME'] == 'schedule' and data_path.exists():
+            try:
+                updated = datetime.fromisoformat(json.loads(data_path.read_text())['updated'])
+                should_skip = datetime.now(timezone.utc) - updated < timedelta(days=6)
+            except (KeyError, ValueError, json.JSONDecodeError):
+                pass
+
+        with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+            output.write(f'skip={str(should_skip).lower()}\n')
+        print(f'Scheduled data refresh skip: {should_skip}')
+        PY
+      env:
+        GITHUB_EVENT_NAME: ${{ github.event_name }}
     - name: Fetch profile once
+      if: steps.freshness.outputs.skip != 'true'
       run: |
         cd ./google_scholar_crawler
         python3 main.py
@@ -37,6 +63,7 @@ jobs:
         GOOGLE_SCHOLAR_ID: ${{ secrets.GOOGLE_SCHOLAR_ID || 'STze0QgAAAAJ' }}
         PYTHONUNBUFFERED: '1'
     - name: Publish same-origin statistics
+      if: steps.freshness.outputs.skip != 'true'
       run: |
         mkdir -p _data assets/data
         cp google_scholar_crawler/results/gs_data.json _data/google_scholar.json
@@ -49,6 +76,7 @@ jobs:
         git pull --rebase origin main
         git push origin HEAD:main
     - name: Request website rebuild
+      if: steps.freshness.outputs.skip != 'true'
       run: gh api --method POST "repos/${GITHUB_REPOSITORY}/pages/builds"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
