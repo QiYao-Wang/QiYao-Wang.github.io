@@ -375,6 +375,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://huggingface.co/papers/2609.37559">HuggingFace Paper</a>]
      [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]
      <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
+     <a href="https://huggingface.co/papers/2609.37559"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2609.37559%3F&amp;query=%24.upvotes&amp;label=Hugging%20Face%20Upvotes&amp;color=ffd21e" alt="APM-Bench Hugging Face upvotes"></a>
 </li>
 <li>
      PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
@@ -383,6 +384,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://huggingface.co/papers/2605.03571">HuggingFace Paper</a>]
      [<a href="https://github.com/AIforIP/PatRe">Github</a>]
      <a href="https://github.com/AIforIP/PatRe"><img src="https://img.shields.io/github/stars/AIforIP/PatRe" alt="PatRe"></a>
+     <a href="https://huggingface.co/papers/2605.03571"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2605.03571%3F&amp;query=%24.upvotes&amp;label=Hugging%20Face%20Upvotes&amp;color=ffd21e" alt="PatRe Hugging Face upvotes"></a>
 </li>
 <li>
      InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang</strong>, Haoran Hu, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
@@ -391,6 +393,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://huggingface.co/papers/2604.27419">HuggingFace Paper</a>]
      [<a href="https://github.com/AIforIP/InteractWeb-Bench">Github</a>]
      <a href="https://github.com/AIforIP/InteractWeb-Bench"><img src="https://img.shields.io/github/stars/AIforIP/InteractWeb-Bench" alt="InteractWeb-Bench"></a>
+     <a href="https://huggingface.co/papers/2604.27419"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2604.27419%3F&amp;query=%24.upvotes&amp;label=Hugging%20Face%20Upvotes&amp;color=ffd21e" alt="InteractWeb-Bench Hugging Face upvotes"></a>
 </li>
 <li>
      FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
@@ -399,6 +402,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://huggingface.co/papers/2603.29557">HuggingFace Paper</a>]
      [<a href="https://github.com/AIforIP/FlowPIE">Github</a>]
      <a href="https://github.com/AIforIP/FlowPIE"><img src="https://img.shields.io/github/stars/AIforIP/FlowPIE" alt="FlowPIE"></a>
+     <a href="https://huggingface.co/papers/2603.29557"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2603.29557%3F&amp;query=%24.upvotes&amp;label=Hugging%20Face%20Upvotes&amp;color=ffd21e" alt="FlowPIE Hugging Face upvotes"></a>
 </li>
 </ul>
 </div>
@@ -434,6 +438,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
      [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
      <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
+     <a href="https://huggingface.co/papers/2610.30949"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.30949%3F&amp;query=%24.upvotes&amp;label=Hugging%20Face%20Upvotes&amp;color=ffd21e" alt="IQuest-Q1 Hugging Face upvotes"></a>
 </li>
 </ul>
 </div>
@@ -496,6 +501,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      A Survey on Large Language Model Benchmarks. <em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong>Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em>.
      [<a href="https://arxiv.org/abs/2508.15361">Paper</a>]
      [<a href="https://huggingface.co/papers/2508.15361">HuggingFace Paper</a>]
+     <a href="https://huggingface.co/papers/2508.15361"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2508.15361%3F&amp;query=%24.upvotes&amp;label=Hugging%20Face%20Upvotes&amp;color=ffd21e" alt="LLM Benchmarks Survey Hugging Face upvotes"></a>
     </li>
   </ul>
 </div>
