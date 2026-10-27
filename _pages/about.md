@@ -584,7 +584,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
   <li>Method for Audio Transcription Annotation and Analysis Based on Multi-Agent Collaboration Mechanism. Hongbo Wang, Yuan Lin, <strong><em>Qiyao Wang</em></strong>, Huanming Wang. CN120492633A. 2025.05.30. DUT. Pending. (Main Member)</li>
   <li>Method, Apparatus, Electronic Device, and Storage Medium for Generating a Patent Application Document. Shiwen Ni, Min Yang, <strong><em>Qiyao Wang</em></strong>. CN202411824533.1. 2024.12.12 CAS-SIAT. Pending. (Sole Student Member)</li>
   <li>A query expansion method based on collaborative enhancement at the term level. <strong><em>Qiyao Wang</em></strong>, Shule Lu, Yang Yang, Yuan Lin et.al. CN118467708A. 2024.08.09. DUT. Licensed.</li>
-  <li>A Technology Integration Opportunity Prediction Method Based on Large Language Models. <strong><em>Qiyao Wang</em></strong>, Kan Xu, Shule Lu et.al. CN118246534A. 2024.06.25. DUT. Pending.
+  <li>A Technology Integration Opportunity Prediction Method Based on Large Language Models. <strong><em>Qiyao Wang</em></strong>, Kan Xu, Shule Lu et.al. CN118246534A. 2024.06.25. DUT. Licensed.
   </li>
 </ul>
 </details>
