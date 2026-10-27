@@ -371,6 +371,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <ul>
 <li>
      Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em>.
+     [<a href="https://patex-gym.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/abs/2610.33503">Arxiv</a>]
 </li>
 <li>
