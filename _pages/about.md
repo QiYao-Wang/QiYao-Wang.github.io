@@ -375,6 +375,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://arxiv.org/abs/2610.33503">Arxiv</a>]
      [<a href="https://github.com/AIforIP/PatEx-Gym">Github</a>]
      <a href="https://github.com/AIforIP/PatEx-Gym"><img src="https://img.shields.io/github/stars/AIforIP/PatEx-Gym" alt="PatEx-Gym"></a>
+     <a href="https://huggingface.co/papers/2610.33503"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.33503%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatEx-Gym Hugging Face upvotes"></a>
 </li>
 <li>
      APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang, Jinming Liu, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
