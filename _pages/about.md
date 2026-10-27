@@ -373,6 +373,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em>.
      [<a href="https://patex-gym.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/abs/2610.33503">Arxiv</a>]
+     [<a href="https://github.com/AIforIP/PatEx-Gym">Github</a>]
+     <a href="https://github.com/AIforIP/PatEx-Gym"><img src="https://img.shields.io/github/stars/AIforIP/PatEx-Gym" alt="PatEx-Gym"></a>
 </li>
 <li>
      APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang, Jinming Liu, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
