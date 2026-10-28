@@ -370,6 +370,12 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
+     WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training. <em>Ziyang Zeng*, Tingyang Chen*, Jia Deng*, <strong>Qiyao Wang*</strong>, Shuo Tang*, Yike Yang*, Tao Ren*, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em>. <em>* Equal contribution.</em>
+     [<a href="https://arxiv.org/abs/2610.37161">Arxiv</a>]
+     [<a href="https://github.com/IQuestLab/WorkFactory">Github</a>]
+     <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
+</li>
+<li>
      Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em>.
      [<a href="https://patex-gym.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/abs/2610.33503">Arxiv</a>]
