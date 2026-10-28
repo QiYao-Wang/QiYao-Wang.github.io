@@ -370,7 +370,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
-     WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training. <em>Ziyang Zeng*, Tingyang Chen*, Jia Deng*, <strong>Qiyao Wang*</strong>, Shuo Tang*, Yike Yang*, Tao Ren*, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em>. <em>* Equal contribution.</em>
+     WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training. <em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em>. <em><sup>*</sup> Equal contribution.</em>
      [<a href="https://arxiv.org/abs/2610.37161">Arxiv</a>]
      [<a href="https://github.com/IQuestLab/WorkFactory">Github</a>]
      <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
