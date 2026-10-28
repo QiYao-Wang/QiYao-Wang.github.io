@@ -370,13 +370,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div>
 <ul>
 <li>
-     WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training. <em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em>. <em><sup>*</sup> Equal contribution.</em>
+     WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training. <em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em>. IQuest Research.
      [<a href="https://arxiv.org/abs/2610.37161">Arxiv</a>]
      [<a href="https://github.com/IQuestLab/WorkFactory">Github</a>]
      <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
 </li>
 <li>
      Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em>.
+     CAS-SIAT and DUT.
      [<a href="https://patex-gym.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/abs/2610.33503">Arxiv</a>]
      [<a href="https://github.com/AIforIP/PatEx-Gym">Github</a>]
@@ -385,6 +386,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </li>
 <li>
      APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang<sup>*</sup>, Jinming Liu<sup>*</sup>, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
+     SJTU.
      [<a href="https://arxiv.org/abs/2609.37559">Arxiv</a>]
      [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]
      <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
