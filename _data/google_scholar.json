@@ -1,27 +1,27 @@
 {
   "scholar_id": "STze0QgAAAAJ",
-  "citedby": 432,
-  "updated": "2026-10-26T03:17:43.486334+00:00",
+  "citedby": 441,
+  "updated": "2026-10-28T10:07:33.736818+00:00",
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "bib": {
-        "title": "Supergpqa: Scaling llm evaluation across 285 graduate disciplines"
+        "title": "SuperGPQA: Scaling LLM Evaluation Across 285 Graduate Disciplines"
       },
-      "num_citations": 293,
+      "num_citations": 298,
       "author_pub_id": "STze0QgAAAAJ:9yKSN-GCB0IC"
     },
     "STze0QgAAAAJ:zYLM7Y9cAGgC": {
       "bib": {
-        "title": "A survey on large language model benchmarks"
+        "title": "A Survey on Large Language Model Benchmarks"
       },
-      "num_citations": 80,
+      "num_citations": 83,
       "author_pub_id": "STze0QgAAAAJ:zYLM7Y9cAGgC"
     },
     "STze0QgAAAAJ:u-x6o8ySG0sC": {
       "bib": {
         "title": "AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"
       },
-      "num_citations": 34,
+      "num_citations": 35,
       "author_pub_id": "STze0QgAAAAJ:u-x6o8ySG0sC"
     },
     "STze0QgAAAAJ:u5HHmVD_uO8C": {
