@@ -384,14 +384,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://huggingface.co/papers/2610.33503"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.33503%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatEx-Gym Hugging Face upvotes"></a>
 </li>
 <li>
-     APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang, Jinming Liu, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
+     APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang<sup>*</sup>, Jinming Liu<sup>*</sup>, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
      [<a href="https://arxiv.org/abs/2609.37559">Arxiv</a>]
      [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]
      <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
      <a href="https://huggingface.co/papers/2609.37559"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2609.37559%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="APM-Bench Hugging Face upvotes"></a>
 </li>
 <li>
-     PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang<sup>*</sup></strong>, Xinyi Chen<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="https://patre.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2605.03571">Arxiv</a>]
      [<a href="https://github.com/AIforIP/PatRe">Github</a>]
@@ -399,7 +399,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://huggingface.co/papers/2605.03571"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2605.03571%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatRe Hugging Face upvotes"></a>
 </li>
 <li>
-     InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang</strong>, Haoran Hu, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang<sup>*</sup></strong>, Haoran Hu<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="https://interactweb-bench.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2604.27419">Arxiv</a>]
      [<a href="https://github.com/AIforIP/InteractWeb-Bench">Github</a>]
@@ -407,7 +407,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://huggingface.co/papers/2604.27419"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2604.27419%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="InteractWeb-Bench Hugging Face upvotes"></a>
 </li>
 <li>
-     FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
+     FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang<sup>*</sup></strong>, Hongbo Wang<sup>*</sup>, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
      [<a href="flowpie.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/pdf/2603.29557">Arxiv</a>]
      [<a href="https://github.com/AIforIP/FlowPIE">Github</a>]
