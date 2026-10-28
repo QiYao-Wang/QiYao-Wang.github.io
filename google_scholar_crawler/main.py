@@ -9,8 +9,8 @@ from urllib.parse import parse_qs, urlencode, urlparse
 from urllib.request import Request, urlopen
 
 
-RETRY_ATTEMPTS = 3
-RETRY_DELAYS_SECONDS = (20, 60)
+RETRY_ATTEMPTS = 4
+RETRY_DELAYS_SECONDS = (20, 60, 120)
 CHALLENGE_MARKERS = ('unusual traffic', 'not a robot', 'recaptcha', 'sorry')
 
 class ProfileParser(HTMLParser):
