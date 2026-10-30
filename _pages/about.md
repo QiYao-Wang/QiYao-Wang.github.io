@@ -374,6 +374,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      [<a href="https://arxiv.org/abs/2610.37161">Arxiv</a>]
      [<a href="https://github.com/IQuestLab/WorkFactory">Github</a>]
      <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
+     <a href="https://huggingface.co/papers/2610.37161"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.37161%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="WorkFactory Hugging Face upvotes"></a>
 </li>
 <li>
      Multiscale Policy Optimization for Long-Horizon LLM Agents. <em>Tao Ren<sup>*</sup>, Hui Yang<sup>*</sup>, Jia Deng<sup>*</sup>, Tingyang Chen<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Ziyang Zeng<sup>*</sup>, Yuhua Jiang, Guanghao Li, Huatong Song, Yining Li, Yifan Luo, Kunbao Ding, Feng Chang, Chuan Hao, Ran Tao, Bryan Dai, Jiafeng Liang, Jinyang Jiang</em>. IQuest-Research.
