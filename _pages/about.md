@@ -696,6 +696,10 @@ Journal Reviewer: Expert Systems.
 - ***2024.12.09***: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a>
 - ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 
+<p><strong>Mentees</strong></p>
+
+- ***2026:*** Hongbo Wang (王宏波), 攻读硕士研究生, 中国科学院深圳先进技术研究院 SIAT-NLP; Xinyi Chen (陈欣宜), 攻读硕士研究生, 中国科学院软件研究所 中文信息处理实验室; Haoran Hu (胡浩然), 攻读硕士研究生, 中国科学技术大学。
+
 # 💻 Internships
 - ***2026.06 - now***: Ubiquant, iQuest, Beijing
 - ***2025.10 - 2026.03***: Tongyi Lab, Alibaba, Beijing
