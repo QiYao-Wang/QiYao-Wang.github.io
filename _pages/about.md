@@ -309,7 +309,7 @@ I warmly welcome undergraduates (any major) from DUT to join our research group 
 And if you are interested in my research, <strong style="color: darkred">feel free to collaborate with me</strong>!
 </p>
 <p>
-作为项目负责人和指导者，带领团队获得 10 项国家级奖项（包括 2024 年挑战杯国家银奖和 2025 年挑战杯国家级一等奖）和 13 项省级奖项。指导多名大连理工大学计算机、人工智能、公共管理、知识产权等专业本科生前往中国科学院大学、中国科学技术大学、复旦大学及大连理工大学等国内名校深造。
+作为项目负责人和指导者，带领团队获得 11 项国家级奖项（包括 2024 年挑战杯国家银奖, 2025 年挑战杯国家级一等奖, 2026 年挑战杯国家级一等奖）和 13 项省级奖项。指导多名大连理工大学计算机、人工智能、公共管理、知识产权等专业本科生前往中国科学院大学、中国科学技术大学、复旦大学及大连理工大学等国内名校深造。
 </p>
 
 <p>本科期间，发表《中文信息学报》(CCF-T1) 一作两篇。主导研发的知识产权服务大模型“太保”于第十四届中国国际专利技术与产品交易会发布。学术服务与研究成果受"光明日报"等主流媒体及"新智元"等媒体报道。</p>
@@ -344,6 +344,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
+  <li><em><strong>2026.11:</strong></em> &nbsp;🎉 As the Team Supervisor, I successfully guided my team to win the First Prize at the national level in the 15th “Challenge Cup” China College Students’ Entrepreneurship Plan Competition!</li>
   <li><em><strong>2026.10.22:</strong></em> &nbsp;🧠 The <a href="https://arxiv.org/abs/2610.30949">IQuest-Q1 technical report</a> is now available on arXiv.</li>
   <li><em><strong>2026.10.10:</strong></em> &nbsp;🧠 <a href="https://iquestlab.github.io/">IQuest-Q1</a>, an open-source agentic foundation model for CLI systems, is now available.</li>
   <li><em><strong>2026.09.29:</strong></em> &nbsp;🧠 Our <a href="https://arxiv.org/abs/2609.37559">APM-Bench</a>, a benchmark for cross-session persistent memory in egocentric streaming video assistants, is now available. [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]</li>
@@ -379,6 +380,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <li>
      Multiscale Policy Optimization for Long-Horizon LLM Agents. <em>Tao Ren<sup>*</sup>, Hui Yang<sup>*</sup>, Jia Deng<sup>*</sup>, Tingyang Chen<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Ziyang Zeng<sup>*</sup>, Yuhua Jiang, Guanghao Li, Huatong Song, Yining Li, Yifan Luo, Kunbao Ding, Feng Chang, Chuan Hao, Ran Tao, Bryan Dai, Jiafeng Liang, Jinyang Jiang</em>. IQuest-Research.
      [<a href="https://arxiv.org/abs/2610.35013">Arxiv</a>]
+     [<a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization">Github</a>]
+     <a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization"><img src="https://img.shields.io/github/stars/IQuestLab/Multiscale-Policy-Optimization" alt="Multiscale Policy Optimization"></a>
      <a href="https://huggingface.co/papers/2610.35013"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.35013%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="Multiscale Policy Optimization Hugging Face upvotes"></a>
 </li>
 <li>
@@ -641,6 +644,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <div id="competition-awards-list">
 <ul>
+  <li><strong><em>2026.11</em></strong>: The 15th "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <span style="color:darkred"><strong><em>First Prize</em></strong></span> at the National level. (Supervisor)</li>
   <li><strong><em>2026.06</em></strong>: 2026 "Challenge Cup" College Students' Entrepreneurship Plan Competition —— <em>Grand Prize</em> in Liaoning Province. (Supervisor)</li>
   <li><strong><em>2025.11</em></strong>: The 19th "Challenge Cup" National College Students' Extracurricular Academic Science and Technology Competition —— <span style="color:darkred"><strong><em>First Prize</em></strong></span> at the National level. (Supervisor)</li>
   <li><strong><em>2025.10</em></strong>: The 11th Liaoning Province TRIZ Cup College Student Innovation Method Competition —— <em>First Prize</em> in Liaoning Province. (Supervisor)</li>
