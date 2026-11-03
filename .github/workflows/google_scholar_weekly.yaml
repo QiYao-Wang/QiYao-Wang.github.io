@@ -54,7 +54,7 @@ jobs:
         PY
       env:
         GITHUB_EVENT_NAME: ${{ github.event_name }}
-    - name: Fetch profile once
+    - name: Fetch Google Scholar profile with retries
       if: steps.freshness.outputs.skip != 'true'
       run: |
         cd ./google_scholar_crawler
