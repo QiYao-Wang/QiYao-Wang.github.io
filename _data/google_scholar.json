@@ -1,42 +1,49 @@
 {
   "scholar_id": "STze0QgAAAAJ",
-  "citedby": 441,
-  "updated": "2026-10-28T10:07:33.736818+00:00",
+  "citedby": 452,
+  "updated": "2026-11-03T06:20:09.319129+00:00",
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "bib": {
         "title": "SuperGPQA: Scaling LLM Evaluation Across 285 Graduate Disciplines"
       },
-      "num_citations": 298,
+      "num_citations": 302,
       "author_pub_id": "STze0QgAAAAJ:9yKSN-GCB0IC"
     },
     "STze0QgAAAAJ:zYLM7Y9cAGgC": {
       "bib": {
         "title": "A Survey on Large Language Model Benchmarks"
       },
-      "num_citations": 83,
+      "num_citations": 84,
       "author_pub_id": "STze0QgAAAAJ:zYLM7Y9cAGgC"
     },
     "STze0QgAAAAJ:u-x6o8ySG0sC": {
       "bib": {
         "title": "AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"
       },
-      "num_citations": 35,
+      "num_citations": 34,
       "author_pub_id": "STze0QgAAAAJ:u-x6o8ySG0sC"
     },
     "STze0QgAAAAJ:u5HHmVD_uO8C": {
       "bib": {
         "title": "IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models"
       },
-      "num_citations": 7,
+      "num_citations": 8,
       "author_pub_id": "STze0QgAAAAJ:u5HHmVD_uO8C"
     },
     "STze0QgAAAAJ:3fE2CSJIrl8C": {
       "bib": {
         "title": "Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice"
       },
-      "num_citations": 4,
+      "num_citations": 7,
       "author_pub_id": "STze0QgAAAAJ:3fE2CSJIrl8C"
+    },
+    "STze0QgAAAAJ:UebtZRa9Y70C": {
+      "bib": {
+        "title": "Beyond Quantity: Trajectory Diversity Scaling for Code Agents"
+      },
+      "num_citations": 5,
+      "author_pub_id": "STze0QgAAAAJ:UebtZRa9Y70C"
     },
     "STze0QgAAAAJ:hqOjcs7Dif8C": {
       "bib": {
@@ -45,12 +52,12 @@
       "num_citations": 4,
       "author_pub_id": "STze0QgAAAAJ:hqOjcs7Dif8C"
     },
-    "STze0QgAAAAJ:UebtZRa9Y70C": {
+    "STze0QgAAAAJ:MXK_kJrjxJIC": {
       "bib": {
-        "title": "Beyond Quantity: Trajectory Diversity Scaling for Code Agents"
+        "title": "PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination"
       },
-      "num_citations": 4,
-      "author_pub_id": "STze0QgAAAAJ:UebtZRa9Y70C"
+      "num_citations": 2,
+      "author_pub_id": "STze0QgAAAAJ:MXK_kJrjxJIC"
     },
     "STze0QgAAAAJ:5nxA0vEk-isC": {
       "bib": {
@@ -80,19 +87,33 @@
       "num_citations": 1,
       "author_pub_id": "STze0QgAAAAJ:8k81kl-MbHgC"
     },
+    "STze0QgAAAAJ:QIV2ME_5wuYC": {
+      "bib": {
+        "title": "WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training"
+      },
+      "num_citations": 0,
+      "author_pub_id": "STze0QgAAAAJ:QIV2ME_5wuYC"
+    },
+    "STze0QgAAAAJ:7PzlFSSx8tAC": {
+      "bib": {
+        "title": "Multiscale Policy Optimization for Long-Horizon LLM Agents"
+      },
+      "num_citations": 0,
+      "author_pub_id": "STze0QgAAAAJ:7PzlFSSx8tAC"
+    },
+    "STze0QgAAAAJ:dhFuZR0502QC": {
+      "bib": {
+        "title": "Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination"
+      },
+      "num_citations": 0,
+      "author_pub_id": "STze0QgAAAAJ:dhFuZR0502QC"
+    },
     "STze0QgAAAAJ:mVmsd5A6BfQC": {
       "bib": {
         "title": "IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems"
       },
       "num_citations": 0,
       "author_pub_id": "STze0QgAAAAJ:mVmsd5A6BfQC"
-    },
-    "STze0QgAAAAJ:MXK_kJrjxJIC": {
-      "bib": {
-        "title": "PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination"
-      },
-      "num_citations": 0,
-      "author_pub_id": "STze0QgAAAAJ:MXK_kJrjxJIC"
     },
     "STze0QgAAAAJ:W7OEmFMy1HYC": {
       "bib": {
