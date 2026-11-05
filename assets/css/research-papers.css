@@ -7,15 +7,11 @@
 #research-papers .paper-section h2 { margin-top: 1.4rem; font-size: 1.2em; }
 #research-papers .paper-group h3 { font-size: .9em; color: #526578; margin: 1rem 0 .5rem; }
 #research-papers .paper-list { list-style: none; padding: 0; margin: 0; }
-#research-papers .paper-card { display: flex; align-items: center; gap: 1.3rem; padding: 1.2rem; margin: 0 0 1.2rem; border: 0; border-radius: 14px; background: linear-gradient(135deg, #f0f8ff, #eaf4ff); box-shadow: 0 2px 6px rgba(89, 160, 225, .09); transition: box-shadow .2s ease; }
-#research-papers .paper-card:hover { box-shadow: 0 3px 9px rgba(89, 160, 225, .13); }
+#research-papers .paper-card { display: flex; align-items: center; gap: 1.3rem; padding: 1.2rem; margin: 0 0 1.2rem; border: 0; border-radius: 14px; background: #eaf3fc; box-shadow: none; }
 #research-papers .paper-filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem 0 1rem; }
 #research-papers .paper-filters button { border: 0; border-radius: 20px; padding: .4rem .8rem; background: #eef4fa; color: #35516b; font: inherit; font-size: .8em; cursor: pointer; }
 #research-papers .paper-filters button[aria-pressed="true"] { background: #d5e8fa; color: #173f65; font-weight: 700; }
 #research-papers .paper-filters button:disabled { opacity: .4; cursor: not-allowed; }
-@media (prefers-reduced-motion: reduce) {
-  #research-papers .paper-card { transition: none; }
-}
 #research-papers .paper-figure { flex: 0 0 28%; display: block; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 6px #0000000a; }
 #research-papers .paper-figure img { display: block; width: 100%; height: auto; max-height: 250px; object-fit: contain; margin: 0; }
 #research-papers .paper-content { flex: 1; min-width: 0; overflow-wrap: anywhere; }
