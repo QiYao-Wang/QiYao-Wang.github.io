@@ -1,0 +1,26 @@
+#research-papers [hidden] { display: none !important; }
+#research-papers .paper-tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+#research-papers .paper-tabs button { border: 1px solid #ccd5de; border-radius: 8px; padding: .55rem .8rem; background: #fff; color: #334155; font: inherit; font-size: .85em; cursor: pointer; }
+#research-papers .paper-tabs button[aria-selected="true"] { background: #234e70; border-color: #234e70; color: #fff; }
+#research-papers :focus-visible { outline: 3px solid #59a6d9; outline-offset: 3px; }
+#research-papers .paper-legend { color: #666; font-size: .8em; }
+#research-papers .paper-section h2 { margin-top: 1.4rem; font-size: 1.2em; }
+#research-papers .paper-group h3 { font-size: .9em; color: #526578; margin: 1rem 0 .5rem; }
+#research-papers .paper-list { list-style: none; padding: 0; margin: 0; }
+#research-papers .paper-card { display: flex; align-items: center; gap: 1.3rem; padding: 1.2rem; margin: 0 0 1rem; border: 1px solid #eeeae3; border-radius: 14px; background: #f7f5f0; }
+#research-papers .paper-figure { flex: 0 0 28%; display: block; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 6px #0000000a; }
+#research-papers .paper-figure img { display: block; width: 100%; height: auto; max-height: 250px; object-fit: contain; margin: 0; }
+#research-papers .paper-content { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+#research-papers .paper-title { font-weight: 700; font-size: 1.05em; line-height: 1.45; margin-bottom: .55rem; color: #20252b; }
+#research-papers .paper-authors { color: #666970; font-size: .9em; line-height: 1.65; margin-bottom: .5rem; }
+#research-papers .paper-authors em { font-style: normal; }
+#research-papers .paper-authors strong { color: #aa3d2e; }
+#research-papers .paper-venue { font-size: .85em; color: #59616c; margin-bottom: .55rem; }
+#research-papers .paper-links { font-size: .88em; line-height: 1.9; }
+#research-papers .paper-links a { color: #28619b; }
+#research-papers .paper-content img { display: inline-block; vertical-align: middle; }
+@media (max-width: 640px) {
+  #research-papers .paper-card { flex-direction: column; align-items: stretch; padding: 1rem; }
+  #research-papers .paper-figure { flex: auto; width: 100%; max-width: 320px; }
+  #research-papers .paper-figure img { height: 180px; }
+}

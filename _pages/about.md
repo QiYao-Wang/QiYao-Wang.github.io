@@ -367,66 +367,207 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </ul>
 </div>
 
-# 📄 Manuscripts
-<div>
-<ul>
-<li>
-     WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training. <em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em>. IQuest Research.
-     [<a href="https://arxiv.org/abs/2610.37161">Arxiv</a>]
+# 📚 Research Papers
+
+<link rel="stylesheet" href="{{ '/assets/css/research-papers.css' | relative_url }}">
+<div id="research-papers">
+<div class="paper-tabs" role="tablist" aria-label="Research topics" hidden>
+<button type="button" role="tab" id="topic-all" data-topic="all" aria-controls="paper-panel" aria-selected="true" tabindex="0">All</button>
+<button type="button" role="tab" id="topic-agents" data-topic="agents" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Agents & Agent Training</button>
+<button type="button" role="tab" id="topic-ip" data-topic="ip" aria-controls="paper-panel" aria-selected="false" tabindex="-1">IP Intelligence</button>
+<button type="button" role="tab" id="topic-evaluation" data-topic="evaluation" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Evaluation & Benchmarks</button>
+<button type="button" role="tab" id="topic-nlp" data-topic="nlp" aria-controls="paper-panel" aria-selected="false" tabindex="-1">NLP & Retrieval</button>
+</div>
+<p class="paper-legend"><sup>*</sup> Equal contribution · <sup>†</sup> Corresponding author</p>
+<div id="paper-panel" role="tabpanel" aria-labelledby="topic-all" tabindex="0">
+<section class="paper-section"><h2>Publications</h2>
+<div class="paper-group"><h3>First / Co-first Author</h3><ul class="paper-list">
+<li class="paper-card" id="paper-ipbench" data-topics="ip evaluation"><a class="paper-figure" href="{{ "/images/publications/ipbench.png" | relative_url }}"><img src="{{ "/images/publications/ipbench.png" | relative_url }}" alt="ipbench overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice.</div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em></div>
+<div class="paper-venue">CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.</div>
+<div class="paper-links">[<a href="https://ipbench.wangqiyao.me">Website</a>]
+    [<a href="https://arxiv.org/abs/2504.15524">Paper</a>]
+    [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
+    [<a href="https://github.com/IPBench/IPBench">Github</a>] |
+    News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a>
+    <a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a></div>
+</div></li>
+<li class="paper-card" id="paper-ipeval" data-topics="ip evaluation"><a class="paper-figure" href="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" aria-label="View ipeval framework or task overview"><img src="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" alt="ipeval framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models.</div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Hongbo Wang, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em></div>
+<div class="paper-venue">DUT. 2024.</div>
+<div class="paper-links">[<a href="https://ipeval.wangqiyao.me/">Website</a>]
+     [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
+     [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
+     [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>]
+     <a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></div>
+</div></li>
+<li class="paper-card" id="paper-autopatent" data-topics="ip agents"><a class="paper-figure" href="{{ "/images/publications/autopatent.png" | relative_url }}"><img src="{{ "/images/publications/autopatent.png" | relative_url }}" alt="autopatent overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title"><span>AutoPatent: 基于多智能体的自动专利生成框架.</span></div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Shiwen Ni, Guhong Chen, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em></div>
+<div class="paper-venue"><strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>.
+      CAS-SIAT and DUT.</div>
+<div class="paper-links">[<a href="https://autopatent.wangqiyao.me/">Website</a>]
+      [<a href="https://arxiv.org/pdf/2412.09796">Arxiv</a>]
+      [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>]
+      | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
+      <a href="https://github.com/QiYao-Wang/AutoPatent">
+      <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></div>
+</div></li>
+<li class="paper-card" id="paper-cage" data-topics="nlp"><div class="paper-content">
+<div class="paper-title"><span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span></div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em></div>
+<div class="paper-venue">2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.</div>
+</div></li>
+<li class="paper-card" id="paper-ecpe" data-topics="nlp"><div class="paper-content">
+<div class="paper-title"><span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span></div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em></div>
+<div class="paper-venue">2024. CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.</div>
+<div class="paper-links">[<a href="http://jcip.cipsc.org.cn/article/doi/10.3969/j.issn.1003-0077.2026.05.010">Paper</a>] |
+      [<a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a>]</div>
+</div></li>
+</ul></div>
+<div class="paper-group"><h3>Co-author</h3><ul class="paper-list">
+<li class="paper-card" id="paper-tdscaling" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" aria-label="View tdscaling framework or task overview"><img src="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" alt="tdscaling framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">Beyond Quantity: Trajectory Diversity Scaling for Code Agents.</div>
+<div class="paper-authors"><em>Guhong Chen, Chenghao Sun, Cheng Fu, <strong>Qiyao Wang</strong>, Zhihong Huang, ChaoPeng Wei, Guangxu Chen, Feiteng Fang, Ahmadreza Argha, Bing Zhao, Xander Xu, Qi Han, Hamid Alinejad-Rokny, Qiang Qu, Binhua Li, Shiwen Ni, Min Yang, HU WEI, Yongbin Li </em></div>
+<div class="paper-venue">CAS-SIAT and Qoder. <strong>ACL 2026 (CCF-A) Findings</strong>.</div>
+<div class="paper-links">[<a href="https://arxiv.org/abs/2602.03219">Arxiv</a>]
+     [<a href="https://github.com/Eileen19200930/TDScaling">Github</a>] |
+     News: <a href="https://mp.weixin.qq.com/s/YGig9EA4HXdxskq3vk7M9w">深度学习与自然语言处理</a>
+     <a href="https://github.com/Eileen19200930/TDScaling"><img src="https://img.shields.io/github/stars/Eileen19200930/TDScaling" alt="TDScaling"></a></div>
+</div></li>
+<li class="paper-card" id="paper-oprm" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/oprm-overview.webp" | relative_url }}" aria-label="View oprm framework or task overview"><img src="{{ "/images/publications/oprm-overview.webp" | relative_url }}" alt="oprm framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">Learning Ordinal Probabilistic Reward from Preferences.</div>
+<div class="paper-authors"><em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em></div>
+<div class="paper-venue">CAS-SIAT. <strong>ICLR 2026 (CCF-A)</strong>.</div>
+<div class="paper-links">[<a href="https://openreview.net/forum?id=0Vf5trUAVF">Paper</a>]
+     [<a href="https://arxiv.org/abs/2602.12660">Arxiv</a>]
+     [<a href="https://github.com/ritzz-ai/OPRM">Github</a>]
+     [<a href="https://huggingface.co/collections/ritzzai/oprm">HuggingFace</a>]
+     <a href="https://github.com/ritzz-ai/OPRM"><img src="https://img.shields.io/github/stars/ritzz-ai/OPRM" alt="OPRM"></a></div>
+</div></li>
+<li class="paper-card" id="paper-supergpqa" data-topics="evaluation"><a class="paper-figure" href="{{ "/images/publications/supergpqa.png" | relative_url }}"><img src="{{ "/images/publications/supergpqa.png" | relative_url }}" alt="supergpqa overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.</div>
+<div class="paper-authors"><em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em></div>
+<div class="paper-venue">M-A-P. <strong>NeurIPS 2025 (CCF-A)</strong>.</div>
+<div class="paper-links">[<a href="https://supergpqa.github.io">Website</a>]
+     [<a href="https://arxiv.org/abs/2502.14739">Paper</a>]
+     [<a href="https://huggingface.co/datasets/m-a-p/SuperGPQA">HuggingFace</a>]
+     [<a href="https://github.com/SuperGPQA/SuperGPQA">Github</a>]
+     <a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></div>
+</div></li>
+<li class="paper-card" id="paper-survey" data-topics="evaluation"><a class="paper-figure" href="{{ "/images/publications/survey-overview.webp" | relative_url }}" aria-label="View survey framework or task overview"><img src="{{ "/images/publications/survey-overview.webp" | relative_url }}" alt="survey framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">A Survey on Large Language Model Benchmarks.</div>
+<div class="paper-authors"><em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong>Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em></div>
+<div class="paper-links">[<a href="https://arxiv.org/abs/2508.15361">Paper</a>]
+     <a href="https://huggingface.co/papers/2508.15361"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2508.15361%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="LLM Benchmarks Survey Hugging Face upvotes"></a></div>
+</div></li>
+<li class="paper-card" id="paper-ipagents" data-topics="ip agents"><div class="paper-content">
+<div class="paper-title"><span>大语言模型驱动知识产权服务智能体研究.</span></div>
+<div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em></div>
+<div class="paper-venue">2025. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT.</div>
+<div class="paper-links">[<a href="https://kns.cnki.net/kcms2/article/abstract?v=lj-1FT9NYjAosSU0rkR3eAemiyJJV0UT9espBjfpbnQLhymtG7Sl0mkeef-85SJKmmq_DJ9cyAzKtMh_7RFvFt2wintqOS6GXLM5uR9cCp-riN0KG-UfNHLX3XuCClO4zO7cF6G7vgGLVAtZ1vKHegVR-d65xlS1d4ckvaRFH8NzunTn5ppPRw==&uniplatform=NZKPT&language=CHS">Paper</a>]</div>
+</div></li>
+<li class="paper-card" id="paper-ipservice" data-topics="ip"><div class="paper-content">
+<div class="paper-title"><span>大语言模型赋能知识产权信息服务模型构建及应用.</span></div>
+<div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em></div>
+<div class="paper-venue">2025. <strong>图书馆理论与实践 (CSSCI扩展版, 北大核心)</strong>. DUT.</div>
+<div class="paper-links">[<a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">Paper</a>]</div>
+</div></li>
+</ul></div>
+</section>
+<section class="paper-section"><h2>Manuscripts</h2>
+<div class="paper-group"><h3>First / Co-first Author</h3><ul class="paper-list">
+<li class="paper-card" id="paper-workfactory" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/workfactory-overview.webp" | relative_url }}" aria-label="View workfactory framework or task overview"><img src="{{ "/images/publications/workfactory-overview.webp" | relative_url }}" alt="workfactory framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training.</div>
+<div class="paper-authors"><em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em></div>
+<div class="paper-venue">IQuest Research.</div>
+<div class="paper-links">[<a href="https://arxiv.org/abs/2610.37161">Arxiv</a>]
      [<a href="https://github.com/IQuestLab/WorkFactory">Github</a>]
      <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
-     <a href="https://huggingface.co/papers/2610.37161"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.37161%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="WorkFactory Hugging Face upvotes"></a>
-</li>
-<li>
-     Multiscale Policy Optimization for Long-Horizon LLM Agents. <em>Tao Ren<sup>*</sup>, Hui Yang<sup>*</sup>, Jia Deng<sup>*</sup>, Tingyang Chen<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Ziyang Zeng<sup>*</sup>, Yuhua Jiang, Guanghao Li, Huatong Song, Yining Li, Yifan Luo, Kunbao Ding, Feng Chang, Chuan Hao, Ran Tao, Bryan Dai, Jiafeng Liang, Jinyang Jiang</em>. IQuest-Research.
-     [<a href="https://arxiv.org/abs/2610.35013">Arxiv</a>]
+     <a href="https://huggingface.co/papers/2610.37161"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.37161%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="WorkFactory Hugging Face upvotes"></a></div>
+</div></li>
+<li class="paper-card" id="paper-mpo" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/mpo-overview.webp" | relative_url }}" aria-label="View mpo framework or task overview"><img src="{{ "/images/publications/mpo-overview.webp" | relative_url }}" alt="mpo framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">Multiscale Policy Optimization for Long-Horizon LLM Agents.</div>
+<div class="paper-authors"><em>Tao Ren<sup>*</sup>, Hui Yang<sup>*</sup>, Jia Deng<sup>*</sup>, Tingyang Chen<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Ziyang Zeng<sup>*</sup>, Yuhua Jiang, Guanghao Li, Huatong Song, Yining Li, Yifan Luo, Kunbao Ding, Feng Chang, Chuan Hao, Ran Tao, Bryan Dai, Jiafeng Liang, Jinyang Jiang</em></div>
+<div class="paper-venue">IQuest-Research.</div>
+<div class="paper-links">[<a href="https://arxiv.org/abs/2610.35013">Arxiv</a>]
      [<a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization">Github</a>]
      <a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization"><img src="https://img.shields.io/github/stars/IQuestLab/Multiscale-Policy-Optimization" alt="Multiscale Policy Optimization"></a>
-     <a href="https://huggingface.co/papers/2610.35013"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.35013%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="Multiscale Policy Optimization Hugging Face upvotes"></a>
-</li>
-<li>
-     Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination. <em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em>.
-     CAS-SIAT and DUT.
-     [<a href="https://patex-gym.wangqiyao.me">Website</a>]
+     <a href="https://huggingface.co/papers/2610.35013"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.35013%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="Multiscale Policy Optimization Hugging Face upvotes"></a></div>
+</div></li>
+<li class="paper-card" id="paper-patex" data-topics="ip agents evaluation"><a class="paper-figure" href="{{ "/images/publications/patex-overview.webp" | relative_url }}" aria-label="View patex framework or task overview"><img src="{{ "/images/publications/patex-overview.webp" | relative_url }}" alt="patex framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination.</div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em></div>
+<div class="paper-venue">CAS-SIAT and DUT.</div>
+<div class="paper-links">[<a href="https://patex-gym.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/abs/2610.33503">Arxiv</a>]
      [<a href="https://github.com/AIforIP/PatEx-Gym">Github</a>]
      <a href="https://github.com/AIforIP/PatEx-Gym"><img src="https://img.shields.io/github/stars/AIforIP/PatEx-Gym" alt="PatEx-Gym"></a>
-     <a href="https://huggingface.co/papers/2610.33503"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.33503%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatEx-Gym Hugging Face upvotes"></a>
-</li>
-<li>
-     APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants. <em>Jianguo Huang<sup>*</sup>, Jinming Liu<sup>*</sup>, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em>.
-     SJTU.
-     [<a href="https://arxiv.org/abs/2609.37559">Arxiv</a>]
-     [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]
-     <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
-     <a href="https://huggingface.co/papers/2609.37559"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2609.37559%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="APM-Bench Hugging Face upvotes"></a>
-</li>
-<li>
-     PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination. <em><strong>Qiyao Wang<sup>*</sup></strong>, Xinyi Chen<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
-     [<a href="https://patre.wangqiyao.me/">Website</a>]
+     <a href="https://huggingface.co/papers/2610.33503"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.33503%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatEx-Gym Hugging Face upvotes"></a></div>
+</div></li>
+<li class="paper-card" id="paper-patre" data-topics="ip evaluation"><a class="paper-figure" href="{{ "/images/publications/patre-overview.webp" | relative_url }}" aria-label="View patre framework or task overview"><img src="{{ "/images/publications/patre-overview.webp" | relative_url }}" alt="patre framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination.</div>
+<div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Xinyi Chen<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em></div>
+<div class="paper-venue">CAS-SIAT and DUT.</div>
+<div class="paper-links">[<a href="https://patre.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2605.03571">Arxiv</a>]
      [<a href="https://github.com/AIforIP/PatRe">Github</a>]
      <a href="https://github.com/AIforIP/PatRe"><img src="https://img.shields.io/github/stars/AIforIP/PatRe" alt="PatRe"></a>
-     <a href="https://huggingface.co/papers/2605.03571"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2605.03571%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatRe Hugging Face upvotes"></a>
-</li>
-<li>
-     InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation? <em><strong>Qiyao Wang<sup>*</sup></strong>, Haoran Hu<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
-     [<a href="https://interactweb-bench.wangqiyao.me/">Website</a>]
+     <a href="https://huggingface.co/papers/2605.03571"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2605.03571%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatRe Hugging Face upvotes"></a></div>
+</div></li>
+<li class="paper-card" id="paper-interactweb" data-topics="agents evaluation"><a class="paper-figure" href="{{ "/images/publications/interactweb-overview.webp" | relative_url }}" aria-label="View interactweb framework or task overview"><img src="{{ "/images/publications/interactweb-overview.webp" | relative_url }}" alt="interactweb framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?</div>
+<div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Haoran Hu<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em></div>
+<div class="paper-venue">CAS-SIAT and DUT.</div>
+<div class="paper-links">[<a href="https://interactweb-bench.wangqiyao.me/">Website</a>]
      [<a href="https://arxiv.org/pdf/2604.27419">Arxiv</a>]
      [<a href="https://github.com/AIforIP/InteractWeb-Bench">Github</a>]
      <a href="https://github.com/AIforIP/InteractWeb-Bench"><img src="https://img.shields.io/github/stars/AIforIP/InteractWeb-Bench" alt="InteractWeb-Bench"></a>
-     <a href="https://huggingface.co/papers/2604.27419"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2604.27419%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="InteractWeb-Bench Hugging Face upvotes"></a>
-</li>
-<li>
-     FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration. <em><strong>Qiyao Wang<sup>*</sup></strong>, Hongbo Wang<sup>*</sup>, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em>. CAS-SIAT and DUT.
-     [<a href="flowpie.wangqiyao.me">Website</a>]
+     <a href="https://huggingface.co/papers/2604.27419"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2604.27419%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="InteractWeb-Bench Hugging Face upvotes"></a></div>
+</div></li>
+<li class="paper-card" id="paper-flowpie" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/flowpie-overview.webp" | relative_url }}" aria-label="View flowpie framework or task overview"><img src="{{ "/images/publications/flowpie-overview.webp" | relative_url }}" alt="flowpie framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration.</div>
+<div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Hongbo Wang<sup>*</sup>, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em></div>
+<div class="paper-venue">CAS-SIAT and DUT.</div>
+<div class="paper-links">[<a href="flowpie.wangqiyao.me">Website</a>]
      [<a href="https://arxiv.org/pdf/2603.29557">Arxiv</a>]
      [<a href="https://github.com/AIforIP/FlowPIE">Github</a>]
      <a href="https://github.com/AIforIP/FlowPIE"><img src="https://img.shields.io/github/stars/AIforIP/FlowPIE" alt="FlowPIE"></a>
-     <a href="https://huggingface.co/papers/2603.29557"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2603.29557%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="FlowPIE Hugging Face upvotes"></a>
-</li>
-</ul>
+     <a href="https://huggingface.co/papers/2603.29557"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2603.29557%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="FlowPIE Hugging Face upvotes"></a></div>
+</div></li>
+</ul></div>
+<div class="paper-group"><h3>Co-author</h3><ul class="paper-list">
+<li class="paper-card" id="paper-apm" data-topics="agents evaluation"><a class="paper-figure" href="{{ "/images/publications/apm-overview.webp" | relative_url }}" aria-label="View apm framework or task overview"><img src="{{ "/images/publications/apm-overview.webp" | relative_url }}" alt="apm framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants.</div>
+<div class="paper-authors"><em>Jianguo Huang<sup>*</sup>, Jinming Liu<sup>*</sup>, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em></div>
+<div class="paper-venue">SJTU.</div>
+<div class="paper-links">[<a href="https://arxiv.org/abs/2609.37559">Arxiv</a>]
+     [<a href="https://github.com/Jianguo-Huang11/APM-Bench">Github</a>]
+     <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
+     <a href="https://huggingface.co/papers/2609.37559"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2609.37559%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="APM-Bench Hugging Face upvotes"></a></div>
+</div></li>
+</ul></div>
+</section>
+<section class="paper-section"><h2>Technical Reports</h2>
+<div class="paper-group"><ul class="paper-list">
+<li class="paper-card" id="paper-iquest" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/iquest-overview.webp" | relative_url }}" aria-label="View IQuest-Q1 benchmark performance comparison"><img src="{{ "/images/publications/iquest-overview.webp" | relative_url }}" alt="IQuest-Q1 benchmark performance comparison" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems.</div>
+<div class="paper-authors">Contributor</div>
+<div class="paper-links">[<a href="https://iquestlab.github.io/">Website</a>]
+     [<a href="https://arxiv.org/abs/2610.30949">Arxiv</a>]
+     [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
+     [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
+     <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
+     <a href="https://huggingface.co/papers/2610.30949"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.30949%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="IQuest-Q1 Hugging Face upvotes"></a></div>
+</div></li>
+</ul></div>
+</section>
 </div>
+</div>
+<script src="{{ "/assets/js/research-papers.js" | relative_url }}" defer></script>
 
 # 🤖 Spotlight Models
 
@@ -443,124 +584,6 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <hr>
 
-
-# 📚 Publications
-<sup>*</sup>Equal Contribution and <sup>†</sup> Corresponding Author
-
-<p><strong>Technical Report</strong></p>
-
-<div>
-<ul>
-<li>
-     IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems. (Contributor)
-     [<a href="https://iquestlab.github.io/">Website</a>]
-     [<a href="https://arxiv.org/abs/2610.30949">Arxiv</a>]
-     [<a href="https://huggingface.co/IQuestLab/IQuest-Q1">Hugging Face</a>]
-     [<a href="https://github.com/IQuestLab/IQuest-Q1">Github</a>]
-     <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
-     <a href="https://huggingface.co/papers/2610.30949"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.30949%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="IQuest-Q1 Hugging Face upvotes"></a>
-</li>
-</ul>
-</div>
-
-<hr>
-
-<p><strong>2026 and Earlier</strong></p>
-
-<div>
-  <ul>
-    <li>
-    Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice. <em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>. CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.
-    [<a href="https://ipbench.wangqiyao.me">Website</a>]
-    [<a href="https://arxiv.org/abs/2504.15524">Paper</a>]
-    [<a href="https://huggingface.co/datasets/IPBench/IPBench">HuggingFace</a>]
-    [<a href="https://github.com/IPBench/IPBench">Github</a>] |
-    News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a>
-    <a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a>
-    </li>
-    <li>
-     Beyond Quantity: Trajectory Diversity Scaling for Code Agents. <em>Guhong Chen, Chenghao Sun, Cheng Fu, <strong>Qiyao Wang</strong>, Zhihong Huang, ChaoPeng Wei, Guangxu Chen, Feiteng Fang, Ahmadreza Argha, Bing Zhao, Xander Xu, Qi Han, Hamid Alinejad-Rokny, Qiang Qu, Binhua Li, Shiwen Ni, Min Yang, HU WEI, Yongbin Li </em>. CAS-SIAT and Qoder. <strong>ACL 2026 (CCF-A) Findings</strong>.
-     [<a href="https://arxiv.org/abs/2602.03219">Arxiv</a>]
-     [<a href="https://github.com/Eileen19200930/TDScaling">Github</a>] | 
-     News: <a href="https://mp.weixin.qq.com/s/YGig9EA4HXdxskq3vk7M9w">深度学习与自然语言处理</a> 
-     <a href="https://github.com/Eileen19200930/TDScaling"><img src="https://img.shields.io/github/stars/Eileen19200930/TDScaling" alt="TDScaling"></a>
-    </li>
-    <li>
-     Learning Ordinal Probabilistic Reward from Preferences. <em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em>. CAS-SIAT. <strong>ICLR 2026 (CCF-A)</strong>.
-     [<a href="https://openreview.net/forum?id=0Vf5trUAVF">Paper</a>]
-     [<a href="https://arxiv.org/abs/2602.12660">Arxiv</a>]
-     [<a href="https://github.com/ritzz-ai/OPRM">Github</a>]
-     [<a href="https://huggingface.co/collections/ritzzai/oprm">HuggingFace</a>]
-     <a href="https://github.com/ritzz-ai/OPRM"><img src="https://img.shields.io/github/stars/ritzz-ai/OPRM" alt="OPRM"></a>
-    </li>
-    <li>
-     SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines. <em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em>. M-A-P. <strong>NeurIPS 2025 (CCF-A)</strong>.
-     [<a href="https://supergpqa.github.io">Website</a>]
-     [<a href="https://arxiv.org/abs/2502.14739">Paper</a>]
-     [<a href="https://huggingface.co/datasets/m-a-p/SuperGPQA">HuggingFace</a>]
-     [<a href="https://github.com/SuperGPQA/SuperGPQA">Github</a>]
-     <a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a>
-    </li>
-    <li>
-     IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models. <em><strong>Qiyao Wang</strong>, Hongbo Wang, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em> DUT. 2024.
-     [<a href="https://ipeval.wangqiyao.me/">Website</a>]
-     [<a href="https://arxiv.org/pdf/2406.12386">Paper</a>]
-     [<a href="https://huggingface.co/datasets/Mathsion/IPEval">HuggingFace</a>]
-     [<a href="https://github.com/QiYao-Wang/IPEval">Github</a>]
-     <a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a>
-    </li>
-  </ul>
-</div>
-
-<hr>
-
-<p><strong>Survey</strong></p>
-<div>
-  <ul>
-    <li>
-     A Survey on Large Language Model Benchmarks. <em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong>Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em>.
-     [<a href="https://arxiv.org/abs/2508.15361">Paper</a>]
-     <a href="https://huggingface.co/papers/2508.15361"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2508.15361%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="LLM Benchmarks Survey Hugging Face upvotes"></a>
-    </li>
-  </ul>
-</div>
-
-<hr>
-
-<p><strong>Chinese Papers</strong></p>
-
-<div>
-  <ul>
-    <li>
-      <span>AutoPatent: 基于多智能体的自动专利生成框架.</span>
-      <em><strong>Qiyao Wang</strong>, Shiwen Ni, Guhong Chen, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em>.  <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>.
-      CAS-SIAT and DUT. 
-      [<a href="https://autopatent.wangqiyao.me/">Website</a>] 
-      [<a href="https://arxiv.org/pdf/2412.09796">Arxiv</a>]
-      [<a href="https://github.com/QiYao-Wang/AutoPatent">Github</a>]
-      | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
-      <a href="https://github.com/QiYao-Wang/AutoPatent">
-      <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a>
-    </li>
-    <li>
-      <span>大语言模型驱动知识产权服务智能体研究.</span>
-      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em> 2025. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT. [<a href="https://kns.cnki.net/kcms2/article/abstract?v=lj-1FT9NYjAosSU0rkR3eAemiyJJV0UT9espBjfpbnQLhymtG7Sl0mkeef-85SJKmmq_DJ9cyAzKtMh_7RFvFt2wintqOS6GXLM5uR9cCp-riN0KG-UfNHLX3XuCClO4zO7cF6G7vgGLVAtZ1vKHegVR-d65xlS1d4ckvaRFH8NzunTn5ppPRw==&uniplatform=NZKPT&language=CHS">Paper</a>]
-    </li>
-    <li>
-      <span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span>
-      <em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em> 2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.
-    </li>
-    <li>
-      <span>大语言模型赋能知识产权信息服务模型构建及应用.</span>
-      <em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em> 2025. <strong>图书馆理论与实践 (CSSCI扩展版, 北大核心)</strong>. DUT. [<a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">Paper</a>]
-    </li>
-    <li>
-      <span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span>
-      <em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em> 2024. CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT. [<a href="http://jcip.cipsc.org.cn/article/doi/10.3969/j.issn.1003-0077.2026.05.010">Paper</a>] |
-      [<a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a>]
-    </li>
-  </ul>
-  </div>
 
 # 🔧 Projects
 
