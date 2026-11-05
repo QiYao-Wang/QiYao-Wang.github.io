@@ -34,13 +34,14 @@
     link.addEventListener('click', function (event) {
       if (typeof viewer.showModal !== 'function') return;
       event.preventDefault();
+      event.stopImmediatePropagation();
       opener = link;
       scrollPosition = { left: window.scrollX, top: window.scrollY };
       fullImage.src = link.href;
       fullImage.alt = link.querySelector('img').alt;
       viewer.showModal();
       window.scrollTo({ left: scrollPosition.left, top: scrollPosition.top, behavior: 'instant' });
-    });
+    }, true);
   });
   const filters = Array.from(root.querySelectorAll('.paper-filters button'));
   let selectedKind = 'all';

@@ -20,11 +20,12 @@
 #research-papers .paper-authors em { font-style: normal; }
 #research-papers .paper-authors strong { color: #aa3d2e; }
 #research-papers .paper-venue { font-size: .85em; color: #59616c; margin-bottom: .55rem; }
-#research-papers .paper-links { font-size: .88em; line-height: 1.9; }
-#research-papers .paper-links a { color: #28619b; display: inline-block; margin-right: .55rem; text-decoration: none; }
+#research-papers .paper-links { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .65rem; font-size: .88em; line-height: 1.5; }
+#research-papers .paper-links a { color: #28619b; display: inline-flex; align-items: center; gap: 4px; min-height: 24px; margin: 0; text-decoration: none; }
 #research-papers .paper-links a:hover { color: #164675; text-decoration: underline; }
 #research-papers .paper-content img { display: inline-block; vertical-align: middle; }
-#research-papers .paper-links .paper-brand-link { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; vertical-align: baseline; }
+#research-papers .paper-links .paper-brand-link { white-space: nowrap; }
+#research-papers .paper-links a > img { display: block; margin: 0; }
 #research-papers .paper-links .paper-brand-icon { flex: 0 0 13px; width: 13px; height: 13px; max-width: 13px; max-height: 13px; object-fit: contain; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
 #research-papers .paper-figure { cursor: zoom-in; }
 #research-papers .paper-image-viewer { border: 0; border-radius: 16px; padding: 48px 20px 20px; max-width: 94vw; max-height: 94vh; background: #f7fbff; box-shadow: 0 16px 80px #102b4d55; }
