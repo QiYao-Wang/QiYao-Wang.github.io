@@ -1,6 +1,11 @@
 (function () {
   const root = document.getElementById('research-papers');
   if (!root) return;
+  root.querySelectorAll('.paper-list').forEach(function (list) {
+    Array.from(list.children).sort(function (first, second) {
+      return (second.dataset.date || '').localeCompare(first.dataset.date || '');
+    }).forEach(function (card) { list.append(card); });
+  });
   const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
   const panel = root.querySelector('[role="tabpanel"]');
   const reports = root.querySelector('#technical-reports');

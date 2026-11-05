@@ -373,10 +373,12 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div id="research-papers">
 <div class="paper-tabs" role="tablist" aria-label="Research topics" hidden>
 <button type="button" role="tab" id="topic-all" data-topic="all" aria-controls="paper-panel" aria-selected="true" tabindex="0">All</button>
-<button type="button" role="tab" id="topic-agents" data-topic="agents" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Agents & Agent Training</button>
+<button type="button" role="tab" id="topic-agents" data-topic="agents" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Agent</button>
+<button type="button" role="tab" id="topic-post-training" data-topic="post-training" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Post-Training</button>
+<button type="button" role="tab" id="topic-working-agent" data-topic="working-agent" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Working Agent</button>
 <button type="button" role="tab" id="topic-ip" data-topic="ip" aria-controls="paper-panel" aria-selected="false" tabindex="-1">IP Intelligence</button>
-<button type="button" role="tab" id="topic-evaluation" data-topic="evaluation" aria-controls="paper-panel" aria-selected="false" tabindex="-1">Evaluation & Benchmarks</button>
-<button type="button" role="tab" id="topic-nlp" data-topic="nlp" aria-controls="paper-panel" aria-selected="false" tabindex="-1">NLP & Retrieval</button>
+<button type="button" role="tab" id="topic-science" data-topic="science" aria-controls="paper-panel" aria-selected="false" tabindex="-1">AI for Science</button>
+<button type="button" role="tab" id="topic-social-science" data-topic="social-science" aria-controls="paper-panel" aria-selected="false" tabindex="-1">AI for Social Science</button>
 </div>
 <div class="paper-filters" role="group" aria-label="Publication status" hidden>
 <button type="button" data-kind="all" aria-pressed="true">All</button>
@@ -388,14 +390,14 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div id="paper-panel" role="tabpanel" aria-labelledby="topic-all" tabindex="0">
 <section class="paper-section" data-kind="publications"><h2>Publications</h2>
 <div class="paper-group"><h3>First / Co-first Author</h3><ul class="paper-list">
-<li class="paper-card" data-date="2026-05" id="paper-ecpe" data-topics="nlp"><a class="paper-figure" href="{{ "/images/publications/ecpe-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ecpe-overview.webp" | relative_url }}" alt="ECPE-Qwen task execution workflow" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-05" id="paper-ecpe" data-topics="post-training"><a class="paper-figure" href="{{ "/images/publications/ecpe-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ecpe-overview.webp" | relative_url }}" alt="ECPE-Qwen task execution workflow" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title"><span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span></div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em></div>
 <div class="paper-venue">CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心), 2026.05</strong>. DUT.</div>
 <div class="paper-links"><a href="http://jcip.cipsc.org.cn/article/doi/10.3969/j.issn.1003-0077.2026.05.010">📄 Paper</a> |
       <a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a></div>
 </div></li>
-<li class="paper-card" data-date="2026" id="paper-ipbench" data-topics="ip evaluation"><a class="paper-figure" href="{{ "/images/publications/ipbench.png" | relative_url }}"><img src="{{ "/images/publications/ipbench.png" | relative_url }}" alt="ipbench overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026" id="paper-ipbench" data-topics="ip"><a class="paper-figure" href="{{ "/images/publications/ipbench.png" | relative_url }}"><img src="{{ "/images/publications/ipbench.png" | relative_url }}" alt="ipbench overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice.</div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em></div>
 <div class="paper-venue">CAS-SIAT and DUT. <strong>ACL 2026 (CCF-A) Findings</strong>.</div>
@@ -406,22 +408,12 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
     News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a>
     <a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-cage" data-topics="nlp"><div class="paper-content">
+<li class="paper-card" data-date="2025" id="paper-cage" data-topics=""><div class="paper-content">
 <div class="paper-title"><span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span></div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em></div>
 <div class="paper-venue">2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT.</div>
 </div></li>
-<li class="paper-card" data-date="2024" id="paper-ipeval" data-topics="ip evaluation"><a class="paper-figure" href="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" aria-label="View ipeval framework or task overview"><img src="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" alt="ipeval framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
-<div class="paper-title">IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models.</div>
-<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Hongbo Wang, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em></div>
-<div class="paper-venue">DUT. 2024.</div>
-<div class="paper-links"><a href="https://ipeval.wangqiyao.me/">🌐 Project Page</a>
-     <a href="https://arxiv.org/pdf/2406.12386">📄 Paper</a>
-     <a href="https://huggingface.co/datasets/Mathsion/IPEval">🤗 Hugging Face</a>
-     <a href="https://github.com/QiYao-Wang/IPEval"><i class="fa fa-github" aria-hidden="true"></i> GitHub</a>
-     <a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></div>
-</div></li>
-<li class="paper-card" data-date="2024" id="paper-autopatent" data-topics="ip agents"><a class="paper-figure" href="{{ "/images/publications/autopatent.png" | relative_url }}"><img src="{{ "/images/publications/autopatent.png" | relative_url }}" alt="autopatent overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2024-12" id="paper-autopatent" data-topics="agents working-agent ip"><a class="paper-figure" href="{{ "/images/publications/autopatent.png" | relative_url }}"><img src="{{ "/images/publications/autopatent.png" | relative_url }}" alt="autopatent overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title"><span>AutoPatent: 基于多智能体的自动专利生成框架.</span></div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Shiwen Ni, Guhong Chen, Hamid Alinejad-Rokny, and Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em></div>
 <div class="paper-venue"><strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>.
@@ -433,9 +425,19 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
       <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></div>
 </div></li>
+<li class="paper-card" data-date="2024" id="paper-ipeval" data-topics="ip"><a class="paper-figure" href="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" aria-label="View ipeval framework or task overview"><img src="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" alt="ipeval framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models.</div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Hongbo Wang, Jianguo Huang, Shule Lu, Yuan Lin<sup>†</sup>, Kan Xu, Liang Yang, Hongfei Lin.</em></div>
+<div class="paper-venue">DUT. 2024.</div>
+<div class="paper-links"><a href="https://ipeval.wangqiyao.me/">🌐 Project Page</a>
+     <a href="https://arxiv.org/pdf/2406.12386">📄 Paper</a>
+     <a href="https://huggingface.co/datasets/Mathsion/IPEval">🤗 Hugging Face</a>
+     <a href="https://github.com/QiYao-Wang/IPEval"><i class="fa fa-github" aria-hidden="true"></i> GitHub</a>
+     <a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></div>
+</div></li>
 </ul></div>
 <div class="paper-group"><h3>Co-author</h3><ul class="paper-list">
-<li class="paper-card" data-date="2026" id="paper-tdscaling" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" aria-label="View tdscaling framework or task overview"><img src="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" alt="tdscaling framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026" id="paper-tdscaling" data-topics="agents post-training working-agent"><a class="paper-figure" href="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" aria-label="View tdscaling framework or task overview"><img src="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" alt="tdscaling framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Beyond Quantity: Trajectory Diversity Scaling for Code Agents.</div>
 <div class="paper-authors"><em>Guhong Chen, Chenghao Sun, Cheng Fu, <strong>Qiyao Wang</strong>, Zhihong Huang, ChaoPeng Wei, Guangxu Chen, Feiteng Fang, Ahmadreza Argha, Bing Zhao, Xander Xu, Qi Han, Hamid Alinejad-Rokny, Qiang Qu, Binhua Li, Shiwen Ni, Min Yang, HU WEI, Yongbin Li </em></div>
 <div class="paper-venue">CAS-SIAT and Qoder. <strong>ACL 2026 (CCF-A) Findings</strong>.</div>
@@ -444,7 +446,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      News: <a href="https://mp.weixin.qq.com/s/YGig9EA4HXdxskq3vk7M9w">深度学习与自然语言处理</a>
      <a href="https://github.com/Eileen19200930/TDScaling"><img src="https://img.shields.io/github/stars/Eileen19200930/TDScaling" alt="TDScaling"></a></div>
 </div></li>
-<li class="paper-card" data-date="2026" id="paper-oprm" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/oprm-overview.webp" | relative_url }}" aria-label="View oprm framework or task overview"><img src="{{ "/images/publications/oprm-overview.webp" | relative_url }}" alt="oprm framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026" id="paper-oprm" data-topics="post-training"><a class="paper-figure" href="{{ "/images/publications/oprm-overview.webp" | relative_url }}" aria-label="View oprm framework or task overview"><img src="{{ "/images/publications/oprm-overview.webp" | relative_url }}" alt="oprm framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Learning Ordinal Probabilistic Reward from Preferences.</div>
 <div class="paper-authors"><em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em></div>
 <div class="paper-venue">CAS-SIAT. <strong>ICLR 2026 (CCF-A)</strong>.</div>
@@ -454,7 +456,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://huggingface.co/collections/ritzzai/oprm">🤗 Hugging Face</a>
      <a href="https://github.com/ritzz-ai/OPRM"><img src="https://img.shields.io/github/stars/ritzz-ai/OPRM" alt="OPRM"></a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-supergpqa" data-topics="evaluation"><a class="paper-figure" href="{{ "/images/publications/supergpqa.png" | relative_url }}"><img src="{{ "/images/publications/supergpqa.png" | relative_url }}" alt="supergpqa overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2025" id="paper-supergpqa" data-topics=""><a class="paper-figure" href="{{ "/images/publications/supergpqa.png" | relative_url }}"><img src="{{ "/images/publications/supergpqa.png" | relative_url }}" alt="supergpqa overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">SuperGPQA: Scaling LLM Evaluation across 285 Graduate Disciplines.</div>
 <div class="paper-authors"><em>M-A-P Team, Xinrun Du, et al., <strong>Qiyao Wang</strong> (Core Contributor listed in Alphabetical Order), et al., Ge Zhang</em></div>
 <div class="paper-venue">M-A-P. <strong>NeurIPS 2025 (CCF-A)</strong>.</div>
@@ -464,19 +466,19 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://github.com/SuperGPQA/SuperGPQA"><i class="fa fa-github" aria-hidden="true"></i> GitHub</a>
      <a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-survey" data-topics="evaluation"><a class="paper-figure" href="{{ "/images/publications/survey-overview.webp" | relative_url }}" aria-label="View survey framework or task overview"><img src="{{ "/images/publications/survey-overview.webp" | relative_url }}" alt="survey framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2025" id="paper-survey" data-topics=""><a class="paper-figure" href="{{ "/images/publications/survey-overview.webp" | relative_url }}" aria-label="View survey framework or task overview"><img src="{{ "/images/publications/survey-overview.webp" | relative_url }}" alt="survey framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">A Survey on Large Language Model Benchmarks.</div>
 <div class="paper-authors"><em>Shiwen Ni, Guhong Chen, Shuaimin Li, Xuanang Chen, Siyi Li, Bingli Wang, <strong>Qiyao Wang</strong>, Xingjian Wang, Yifan Zhang, Liyang Fan, Chengming Li, Ruifeng Xu, Sun Le, Min Yang<sup>†</sup></em></div>
 <div class="paper-links"><a href="https://arxiv.org/abs/2508.15361">📄 Paper</a>
      <a href="https://huggingface.co/papers/2508.15361"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2508.15361%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="LLM Benchmarks Survey Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-ipagents" data-topics="ip agents"><div class="paper-content">
+<li class="paper-card" data-date="2025" id="paper-ipagents" data-topics="agents working-agent ip social-science"><div class="paper-content">
 <div class="paper-title"><span>大语言模型驱动知识产权服务智能体研究.</span></div>
 <div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em></div>
 <div class="paper-venue">2025. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT.</div>
 <div class="paper-links"><a href="https://kns.cnki.net/kcms2/article/abstract?v=lj-1FT9NYjAosSU0rkR3eAemiyJJV0UT9espBjfpbnQLhymtG7Sl0mkeef-85SJKmmq_DJ9cyAzKtMh_7RFvFt2wintqOS6GXLM5uR9cCp-riN0KG-UfNHLX3XuCClO4zO7cF6G7vgGLVAtZ1vKHegVR-d65xlS1d4ckvaRFH8NzunTn5ppPRw==&uniplatform=NZKPT&language=CHS">📄 Paper</a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-ipservice" data-topics="ip"><div class="paper-content">
+<li class="paper-card" data-date="2025" id="paper-ipservice" data-topics="ip social-science"><div class="paper-content">
 <div class="paper-title"><span>大语言模型赋能知识产权信息服务模型构建及应用.</span></div>
 <div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em></div>
 <div class="paper-venue">2025. <strong>图书馆理论与实践 (CSSCI扩展版, 北大核心)</strong>. DUT.</div>
@@ -486,7 +488,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </section>
 <section class="paper-section" data-kind="manuscripts"><h2>Manuscripts</h2>
 <div class="paper-group"><h3>First / Co-first Author</h3><ul class="paper-list">
-<li class="paper-card" data-date="2026-10-27" id="paper-workfactory" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/workfactory-overview.webp" | relative_url }}" aria-label="View workfactory framework or task overview"><img src="{{ "/images/publications/workfactory-overview.webp" | relative_url }}" alt="workfactory framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-10-27" id="paper-workfactory" data-topics="agents post-training working-agent"><a class="paper-figure" href="{{ "/images/publications/workfactory-overview.webp" | relative_url }}" aria-label="View workfactory framework or task overview"><img src="{{ "/images/publications/workfactory-overview.webp" | relative_url }}" alt="workfactory framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training.</div>
 <div class="paper-authors"><em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em></div>
 <div class="paper-venue">IQuest Research.</div>
@@ -495,7 +497,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
      <a href="https://huggingface.co/papers/2610.37161"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.37161%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="WorkFactory Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2026-10-26" id="paper-mpo" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/mpo-overview.webp" | relative_url }}" aria-label="View mpo framework or task overview"><img src="{{ "/images/publications/mpo-overview.webp" | relative_url }}" alt="mpo framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-10-26" id="paper-mpo" data-topics="agents post-training"><a class="paper-figure" href="{{ "/images/publications/mpo-overview.webp" | relative_url }}" aria-label="View mpo framework or task overview"><img src="{{ "/images/publications/mpo-overview.webp" | relative_url }}" alt="mpo framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Multiscale Policy Optimization for Long-Horizon LLM Agents.</div>
 <div class="paper-authors"><em>Tao Ren<sup>*</sup>, Hui Yang<sup>*</sup>, Jia Deng<sup>*</sup>, Tingyang Chen<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Ziyang Zeng<sup>*</sup>, Yuhua Jiang, Guanghao Li, Huatong Song, Yining Li, Yifan Luo, Kunbao Ding, Feng Chang, Chuan Hao, Ran Tao, Bryan Dai, Jiafeng Liang, Jinyang Jiang</em></div>
 <div class="paper-venue">IQuest-Research.</div>
@@ -504,7 +506,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization"><img src="https://img.shields.io/github/stars/IQuestLab/Multiscale-Policy-Optimization" alt="Multiscale Policy Optimization"></a>
      <a href="https://huggingface.co/papers/2610.35013"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.35013%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="Multiscale Policy Optimization Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2026-10-24" id="paper-patex" data-topics="ip agents evaluation"><a class="paper-figure" href="{{ "/images/publications/patex-overview.webp" | relative_url }}" aria-label="View patex framework or task overview"><img src="{{ "/images/publications/patex-overview.webp" | relative_url }}" alt="patex framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-10-24" id="paper-patex" data-topics="agents post-training working-agent ip"><a class="paper-figure" href="{{ "/images/publications/patex-overview.webp" | relative_url }}" aria-label="View patex framework or task overview"><img src="{{ "/images/publications/patex-overview.webp" | relative_url }}" alt="patex framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Novel or Not? PatEx-Gym: Agentic Prior-Art Search for Novelty Assessment in Patent Examination.</div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">CAS-SIAT and DUT.</div>
@@ -514,7 +516,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://github.com/AIforIP/PatEx-Gym"><img src="https://img.shields.io/github/stars/AIforIP/PatEx-Gym" alt="PatEx-Gym"></a>
      <a href="https://huggingface.co/papers/2610.33503"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.33503%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatEx-Gym Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2026-05" id="paper-patre" data-topics="ip evaluation"><a class="paper-figure" href="{{ "/images/publications/patre-overview.webp" | relative_url }}" aria-label="View patre framework or task overview"><img src="{{ "/images/publications/patre-overview.webp" | relative_url }}" alt="patre framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-05" id="paper-patre" data-topics="working-agent ip"><a class="paper-figure" href="{{ "/images/publications/patre-overview.webp" | relative_url }}" aria-label="View patre framework or task overview"><img src="{{ "/images/publications/patre-overview.webp" | relative_url }}" alt="patre framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">PatRe: A Full-Stage Office Action and Rebuttal Generation Benchmark for Patent Examination.</div>
 <div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Xinyi Chen<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">CAS-SIAT and DUT.</div>
@@ -524,7 +526,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://github.com/AIforIP/PatRe"><img src="https://img.shields.io/github/stars/AIforIP/PatRe" alt="PatRe"></a>
      <a href="https://huggingface.co/papers/2605.03571"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2605.03571%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatRe Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2026-04" id="paper-interactweb" data-topics="agents evaluation"><a class="paper-figure" href="{{ "/images/publications/interactweb-overview.webp" | relative_url }}" aria-label="View interactweb framework or task overview"><img src="{{ "/images/publications/interactweb-overview.webp" | relative_url }}" alt="interactweb framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-04" id="paper-interactweb" data-topics="agents working-agent"><a class="paper-figure" href="{{ "/images/publications/interactweb-overview.webp" | relative_url }}" aria-label="View interactweb framework or task overview"><img src="{{ "/images/publications/interactweb-overview.webp" | relative_url }}" alt="interactweb framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?</div>
 <div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Haoran Hu<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">CAS-SIAT and DUT.</div>
@@ -534,7 +536,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
      <a href="https://github.com/AIforIP/InteractWeb-Bench"><img src="https://img.shields.io/github/stars/AIforIP/InteractWeb-Bench" alt="InteractWeb-Bench"></a>
      <a href="https://huggingface.co/papers/2604.27419"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2604.27419%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="InteractWeb-Bench Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2026-03" id="paper-flowpie" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/flowpie-overview.webp" | relative_url }}" aria-label="View flowpie framework or task overview"><img src="{{ "/images/publications/flowpie-overview.webp" | relative_url }}" alt="flowpie framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-03" id="paper-flowpie" data-topics="agents science"><a class="paper-figure" href="{{ "/images/publications/flowpie-overview.webp" | relative_url }}" aria-label="View flowpie framework or task overview"><img src="{{ "/images/publications/flowpie-overview.webp" | relative_url }}" alt="flowpie framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration.</div>
 <div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Hongbo Wang<sup>*</sup>, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">CAS-SIAT and DUT.</div>
@@ -546,7 +548,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div></li>
 </ul></div>
 <div class="paper-group"><h3>Co-author</h3><ul class="paper-list">
-<li class="paper-card" data-date="2026-09" id="paper-apm" data-topics="agents evaluation"><a class="paper-figure" href="{{ "/images/publications/apm-overview.webp" | relative_url }}" aria-label="View apm framework or task overview"><img src="{{ "/images/publications/apm-overview.webp" | relative_url }}" alt="apm framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-09" id="paper-apm" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/apm-overview.webp" | relative_url }}" aria-label="View apm framework or task overview"><img src="{{ "/images/publications/apm-overview.webp" | relative_url }}" alt="apm framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants.</div>
 <div class="paper-authors"><em>Jianguo Huang<sup>*</sup>, Jinming Liu<sup>*</sup>, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em></div>
 <div class="paper-venue">SJTU.</div>
@@ -559,7 +561,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </section>
 <section class="paper-section" id="technical-reports" data-kind="reports"><h2>Technical Reports</h2>
 <div class="paper-group"><ul class="paper-list">
-<li class="paper-card" data-date="2026-10" id="paper-iquest" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/iquest-overview.webp" | relative_url }}" aria-label="View IQuest-Q1 benchmark performance comparison"><img src="{{ "/images/publications/iquest-overview.webp" | relative_url }}" alt="IQuest-Q1 benchmark performance comparison" loading="lazy" decoding="async"></a><div class="paper-content">
+<li class="paper-card" data-date="2026-10" id="paper-iquest" data-topics="agents post-training working-agent"><a class="paper-figure" href="{{ "/images/publications/iquest-overview.webp" | relative_url }}" aria-label="View IQuest-Q1 benchmark performance comparison"><img src="{{ "/images/publications/iquest-overview.webp" | relative_url }}" alt="IQuest-Q1 benchmark performance comparison" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems.</div>
 <div class="paper-authors">Contributor</div>
 <div class="paper-links"><a href="https://iquestlab.github.io/">🌐 Project Page</a>
