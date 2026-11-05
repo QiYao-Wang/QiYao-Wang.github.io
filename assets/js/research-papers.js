@@ -18,21 +18,28 @@
   closeButton.textContent = '×';
   closeButton.setAttribute('aria-label', 'Close figure preview');
   const fullImage = document.createElement('img');
+  let opener;
+  let scrollPosition;
   viewer.append(closeButton, fullImage);
   root.append(viewer);
   closeButton.addEventListener('click', function () { viewer.close(); });
   viewer.addEventListener('click', function (event) {
-    if (event.target !== viewer) return;
-    const bounds = viewer.getBoundingClientRect();
-    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) viewer.close();
+    if (event.target === viewer) viewer.close();
+  });
+  viewer.addEventListener('close', function () {
+    if (opener) opener.focus({ preventScroll: true });
+    if (scrollPosition) window.scrollTo({ left: scrollPosition.left, top: scrollPosition.top, behavior: 'instant' });
   });
   root.querySelectorAll('.paper-figure').forEach(function (link) {
     link.addEventListener('click', function (event) {
       if (typeof viewer.showModal !== 'function') return;
       event.preventDefault();
+      opener = link;
+      scrollPosition = { left: window.scrollX, top: window.scrollY };
       fullImage.src = link.href;
       fullImage.alt = link.querySelector('img').alt;
       viewer.showModal();
+      window.scrollTo({ left: scrollPosition.left, top: scrollPosition.top, behavior: 'instant' });
     });
   });
   const filters = Array.from(root.querySelectorAll('.paper-filters button'));
