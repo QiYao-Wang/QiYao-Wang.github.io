@@ -26,6 +26,8 @@
 #research-papers .paper-content img { display: inline-block; vertical-align: middle; }
 #research-papers .paper-links .paper-brand-link { white-space: nowrap; }
 #research-papers .paper-links a > img { display: block; margin: 0; }
+#research-papers .paper-link-label { display: block; font: inherit; line-height: 20px; }
+#research-papers .paper-link-symbol { display: flex; align-items: center; justify-content: center; flex: 0 0 13px; width: 13px; height: 13px; font-size: 13px; line-height: 1; }
 #research-papers .paper-links .paper-brand-icon { flex: 0 0 13px; width: 13px; height: 13px; max-width: 13px; max-height: 13px; object-fit: contain; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
 #research-papers .paper-figure { cursor: zoom-in; }
 #research-papers .paper-image-viewer { border: 0; border-radius: 16px; padding: 48px 20px 20px; max-width: 94vw; max-height: 94vh; background: #f7fbff; box-shadow: 0 16px 80px #102b4d55; }
