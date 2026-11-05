@@ -401,7 +401,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
     News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a>
     <a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-cage" data-topics=""><div class="paper-content">
+<li class="paper-card" data-date="2025" id="paper-cage" data-topics=""><a class="paper-figure" href="{{ "/images/publications/cage-overview.png" | relative_url }}"><img src="{{ "/images/publications/cage-overview.png" | relative_url }}" alt="CAGE: 协同增强扩展词获取流程" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title"><span>CAGE: 基于协同增强相关反馈的查询扩展方法.</span></div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Hongbo Wang, Peiyu He, Yuan Lin<sup>†</sup>, Kan Xu and Hongfei Lin.</em></div>
 <div class="paper-venue">2025. CCIR 2025. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT-IR.</div>

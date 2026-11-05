@@ -30,6 +30,10 @@ Additional author-supplied PDFs:
 - `ipservice-overview.webp`: 基于大语言模型的知识产权信息服务模型构建及应用_林原.pdf, page 4, Figure 1 (operating mechanism).
 - `ipagents-overview.webp`: 大语言模型驱动知识产权服务智能体研究_林原.pdf, page 4, Figure 1 (overall service architecture). Journal issue: July 2026, 70(14).
 
+Author-supplied Word document: `cage-overview.png` is the original embedded
+`word/media/image2.png` from CAGE最终版(3).docx, Figure 2, 协同增强扩展词(CAT)获取流程.
+The original resolution is preserved without upscaling.
+
 Edit the single paper card in `_pages/about.md`; do not duplicate cards across topics.
 Use space-separated `data-topics` values: `agents`, `post-training`,
 `working-agent`, `ip`, `science`, `social-science`, `reports`.
