@@ -28,7 +28,8 @@
 #research-papers .paper-links a { color: #28619b; display: inline-block; margin-right: .55rem; text-decoration: none; }
 #research-papers .paper-links a:hover { color: #164675; text-decoration: underline; }
 #research-papers .paper-content img { display: inline-block; vertical-align: middle; }
-#research-papers .paper-links .paper-brand-icon { width: 1em; height: 1em; margin: 0 .15em 0 0; vertical-align: -.12em; }
+#research-papers .paper-links .paper-brand-link { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; vertical-align: baseline; }
+#research-papers .paper-links .paper-brand-icon { flex: 0 0 13px; width: 13px; height: 13px; max-width: 13px; max-height: 13px; object-fit: contain; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
 #research-papers .paper-figure { cursor: zoom-in; }
 #research-papers .paper-image-viewer { border: 0; border-radius: 16px; padding: 48px 20px 20px; max-width: 94vw; max-height: 94vh; background: #f7fbff; box-shadow: 0 16px 80px #102b4d55; }
 #research-papers .paper-image-viewer::backdrop { background: rgba(15, 30, 50, .5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }

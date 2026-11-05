@@ -404,7 +404,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-links"><a href="https://ipbench.wangqiyao.me">🌐 Project Page</a>
     <a href="https://arxiv.org/abs/2504.15524">📄 Paper</a>
     <a href="https://huggingface.co/datasets/IPBench/IPBench">🤗 Hugging Face</a>
-    <a href="https://github.com/IPBench/IPBench"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a> |
+    <a class="paper-brand-link" href="https://github.com/IPBench/IPBench"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a> |
     News: <a href="https://mp.weixin.qq.com/s/YBuvuJctiAtpuW0XYXl38w">深度学习与自然语言处理</a>
     <a href="https://github.com/IPBench/IPBench"><img src="https://img.shields.io/github/stars/IPBench/IPBench" alt="IPBench"></a></div>
 </div></li>
@@ -419,8 +419,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-venue"><strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>.
       SIAT-NLP and DUT-IR.</div>
 <div class="paper-links"><a href="https://autopatent.wangqiyao.me/">🌐 Project Page</a>
-      <a href="https://arxiv.org/pdf/2412.09796"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-      <a href="https://github.com/QiYao-Wang/AutoPatent"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+      <a class="paper-brand-link" href="https://arxiv.org/pdf/2412.09796"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+      <a class="paper-brand-link" href="https://github.com/QiYao-Wang/AutoPatent"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
       | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
       <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></div>
@@ -432,17 +432,23 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-links"><a href="https://ipeval.wangqiyao.me/">🌐 Project Page</a>
      <a href="https://arxiv.org/pdf/2406.12386">📄 Paper</a>
      <a href="https://huggingface.co/datasets/Mathsion/IPEval">🤗 Hugging Face</a>
-     <a href="https://github.com/QiYao-Wang/IPEval"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://github.com/QiYao-Wang/IPEval"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/QiYao-Wang/ipeval"><img src="https://img.shields.io/github/stars/QiYao-Wang/ipeval" alt="IPEval"></a></div>
 </div></li>
 </ul></div>
 <div class="paper-group"><h3>Co-author</h3><ul class="paper-list">
+<li class="paper-card" data-date="2026-07" id="paper-ipagents" data-topics="agents working-agent ip social-science"><a class="paper-figure" href="{{ "/images/publications/ipagents-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ipagents-overview.webp" | relative_url }}" alt="知识产权智能体服务体系整体架构" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title"><span>大语言模型驱动知识产权服务智能体研究.</span></div>
+<div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em></div>
+<div class="paper-venue">2026.07. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT-IR.</div>
+<div class="paper-links"><a href="https://kns.cnki.net/kcms2/article/abstract?v=lj-1FT9NYjAosSU0rkR3eAemiyJJV0UT9espBjfpbnQLhymtG7Sl0mkeef-85SJKmmq_DJ9cyAzKtMh_7RFvFt2wintqOS6GXLM5uR9cCp-riN0KG-UfNHLX3XuCClO4zO7cF6G7vgGLVAtZ1vKHegVR-d65xlS1d4ckvaRFH8NzunTn5ppPRw==&uniplatform=NZKPT&language=CHS">📄 Paper</a></div>
+</div></li>
 <li class="paper-card" data-date="2026" id="paper-tdscaling" data-topics="agents post-training working-agent"><a class="paper-figure" href="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" aria-label="View tdscaling framework or task overview"><img src="{{ "/images/publications/tdscaling-overview.webp" | relative_url }}" alt="tdscaling framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Beyond Quantity: Trajectory Diversity Scaling for Code Agents.</div>
 <div class="paper-authors"><em>Guhong Chen, Chenghao Sun, Cheng Fu, <strong>Qiyao Wang</strong>, Zhihong Huang, ChaoPeng Wei, Guangxu Chen, Feiteng Fang, Ahmadreza Argha, Bing Zhao, Xander Xu, Qi Han, Hamid Alinejad-Rokny, Qiang Qu, Binhua Li, Shiwen Ni, Min Yang, HU WEI, Yongbin Li </em></div>
 <div class="paper-venue">SIAT-NLP and Qoder. <strong>ACL 2026 (CCF-A) Findings</strong>.</div>
-<div class="paper-links"><a href="https://arxiv.org/abs/2602.03219"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/Eileen19200930/TDScaling"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a> |
+<div class="paper-links"><a class="paper-brand-link" href="https://arxiv.org/abs/2602.03219"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/Eileen19200930/TDScaling"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a> |
      News: <a href="https://mp.weixin.qq.com/s/YGig9EA4HXdxskq3vk7M9w">深度学习与自然语言处理</a>
      <a href="https://github.com/Eileen19200930/TDScaling"><img src="https://img.shields.io/github/stars/Eileen19200930/TDScaling" alt="TDScaling"></a></div>
 </div></li>
@@ -451,8 +457,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-authors"><em>Longze Chen, Lu Wang, Renke Shan, Ze Gong, Run Luo, Jiaming Li, Jing Luo, <strong>Qiyao Wang</strong>, Min Yang</em></div>
 <div class="paper-venue">SIAT-NLP. <strong>ICLR 2026 (CCF-A)</strong>.</div>
 <div class="paper-links"><a href="https://openreview.net/forum?id=0Vf5trUAVF">📄 Paper</a>
-     <a href="https://arxiv.org/abs/2602.12660"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/ritzz-ai/OPRM"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://arxiv.org/abs/2602.12660"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/ritzz-ai/OPRM"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://huggingface.co/collections/ritzzai/oprm">🤗 Hugging Face</a>
      <a href="https://github.com/ritzz-ai/OPRM"><img src="https://img.shields.io/github/stars/ritzz-ai/OPRM" alt="OPRM"></a></div>
 </div></li>
@@ -463,7 +469,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-links"><a href="https://supergpqa.github.io">🌐 Project Page</a>
      <a href="https://arxiv.org/abs/2502.14739">📄 Paper</a>
      <a href="https://huggingface.co/datasets/m-a-p/SuperGPQA">🤗 Hugging Face</a>
-     <a href="https://github.com/SuperGPQA/SuperGPQA"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://github.com/SuperGPQA/SuperGPQA"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/SuperGPQA/SuperGPQA"><img src="https://img.shields.io/github/stars/SuperGPQA/SuperGPQA" alt="SuperGPQA"></a></div>
 </div></li>
 <li class="paper-card" data-date="2025" id="paper-survey" data-topics=""><a class="paper-figure" href="{{ "/images/publications/survey-overview.webp" | relative_url }}" aria-label="View survey framework or task overview"><img src="{{ "/images/publications/survey-overview.webp" | relative_url }}" alt="survey framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
@@ -472,14 +478,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-links"><a href="https://arxiv.org/abs/2508.15361">📄 Paper</a>
      <a href="https://huggingface.co/papers/2508.15361"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2508.15361%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="LLM Benchmarks Survey Hugging Face upvotes"></a></div>
 </div></li>
-<li class="paper-card" data-date="2025" id="paper-ipagents" data-topics="agents working-agent ip social-science"><div class="paper-content">
-<div class="paper-title"><span>大语言模型驱动知识产权服务智能体研究.</span></div>
-<div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em></div>
-<div class="paper-venue">2025. <strong>图书情报工作 (CSSCI, 北大核心, 南大核心)</strong>. DUT-IR.</div>
-<div class="paper-links"><a href="https://kns.cnki.net/kcms2/article/abstract?v=lj-1FT9NYjAosSU0rkR3eAemiyJJV0UT9espBjfpbnQLhymtG7Sl0mkeef-85SJKmmq_DJ9cyAzKtMh_7RFvFt2wintqOS6GXLM5uR9cCp-riN0KG-UfNHLX3XuCClO4zO7cF6G7vgGLVAtZ1vKHegVR-d65xlS1d4ckvaRFH8NzunTn5ppPRw==&uniplatform=NZKPT&language=CHS">📄 Paper</a></div>
-</div></li>
-<li class="paper-card" data-date="2025" id="paper-ipservice" data-topics="ip social-science"><div class="paper-content">
-<div class="paper-title"><span>大语言模型赋能知识产权信息服务模型构建及应用.</span></div>
+<li class="paper-card" data-date="2025" id="paper-ipservice" data-topics="ip social-science"><a class="paper-figure" href="{{ "/images/publications/ipservice-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ipservice-overview.webp" | relative_url }}" alt="基于大语言模型的知识产权运行机制" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title"><span>基于大语言模型的知识产权信息服务模型构建及应用.</span></div>
 <div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong>, and Kun Ding.</em></div>
 <div class="paper-venue">2025. <strong>图书馆理论与实践 (CSSCI扩展版, 北大核心)</strong>. DUT-IR.</div>
 <div class="paper-links"><a href="https://kns.cnki.net/kcms2/article/abstract?v=dSUnQCB_TmPD5Vo4M5Z7pve-TNwni0aOM8xTQxBn92ZW4SwcjVu0H-I4LcD0yvSdizMLRdGYj4WBuKMRxhrErrC57hdXpKpawq-ZtygDhHQ4Mb5vl48xRfcsRpRtYNrhKRixZSuUptVPYGDluXKqtzZ2pRzYI5TVWcxA9ZNqOofYBsuwqyHduQ==&uniplatform=NZKPT&language=CHS">📄 Paper</a></div>
@@ -492,8 +492,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-title">WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training.</div>
 <div class="paper-authors"><em>Ziyang Zeng<sup>*</sup>, Tingyang Chen<sup>*</sup>, Jia Deng<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Yike Yang<sup>*</sup>, Tao Ren<sup>*</sup>, Wayne Xin Zhao, Feng Chang, Jujie He, Chuan Hao, Ran Tao, Bryan Dai</em></div>
 <div class="paper-venue">IQuest Research.</div>
-<div class="paper-links"><a href="https://arxiv.org/abs/2610.37161"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/IQuestLab/WorkFactory"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+<div class="paper-links"><a class="paper-brand-link" href="https://arxiv.org/abs/2610.37161"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/IQuestLab/WorkFactory"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/IQuestLab/WorkFactory"><img src="https://img.shields.io/github/stars/IQuestLab/WorkFactory" alt="WorkFactory"></a>
      <a href="https://huggingface.co/papers/2610.37161"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.37161%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="WorkFactory Hugging Face upvotes"></a></div>
 </div></li>
@@ -501,8 +501,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-title">Multiscale Policy Optimization for Long-Horizon LLM Agents.</div>
 <div class="paper-authors"><em>Tao Ren<sup>*</sup>, Hui Yang<sup>*</sup>, Jia Deng<sup>*</sup>, Tingyang Chen<sup>*</sup>, <strong>Qiyao Wang<sup>*</sup></strong>, Shuo Tang<sup>*</sup>, Ziyang Zeng<sup>*</sup>, Yuhua Jiang, Guanghao Li, Huatong Song, Yining Li, Yifan Luo, Kunbao Ding, Feng Chang, Chuan Hao, Ran Tao, Bryan Dai, Jiafeng Liang, Jinyang Jiang</em></div>
 <div class="paper-venue">IQuest Research.</div>
-<div class="paper-links"><a href="https://arxiv.org/abs/2610.35013"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+<div class="paper-links"><a class="paper-brand-link" href="https://arxiv.org/abs/2610.35013"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/IQuestLab/Multiscale-Policy-Optimization"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/IQuestLab/Multiscale-Policy-Optimization"><img src="https://img.shields.io/github/stars/IQuestLab/Multiscale-Policy-Optimization" alt="Multiscale Policy Optimization"></a>
      <a href="https://huggingface.co/papers/2610.35013"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.35013%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="Multiscale Policy Optimization Hugging Face upvotes"></a></div>
 </div></li>
@@ -511,8 +511,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Xinyi Chen, Hongbo Wang, Jiayuan Lu, Jianhang Li, Minghuan Tan, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">SIAT-NLP and DUT-IR.</div>
 <div class="paper-links"><a href="https://patex-gym.wangqiyao.me">🌐 Project Page</a>
-     <a href="https://arxiv.org/abs/2610.33503"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/AIforIP/PatEx-Gym"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://arxiv.org/abs/2610.33503"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/AIforIP/PatEx-Gym"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/AIforIP/PatEx-Gym"><img src="https://img.shields.io/github/stars/AIforIP/PatEx-Gym" alt="PatEx-Gym"></a>
      <a href="https://huggingface.co/papers/2610.33503"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.33503%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatEx-Gym Hugging Face upvotes"></a></div>
 </div></li>
@@ -521,8 +521,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Xinyi Chen<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">SIAT-NLP and DUT-IR.</div>
 <div class="paper-links"><a href="https://patre.wangqiyao.me/">🌐 Project Page</a>
-     <a href="https://arxiv.org/pdf/2605.03571"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/AIforIP/PatRe"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://arxiv.org/pdf/2605.03571"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/AIforIP/PatRe"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/AIforIP/PatRe"><img src="https://img.shields.io/github/stars/AIforIP/PatRe" alt="PatRe"></a>
      <a href="https://huggingface.co/papers/2605.03571"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2605.03571%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="PatRe Hugging Face upvotes"></a></div>
 </div></li>
@@ -531,8 +531,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Haoran Hu<sup>*</sup>, Longze Chen, Hongbo Wang, Hamid Alinejad-Rokny, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">SIAT-NLP and DUT-IR.</div>
 <div class="paper-links"><a href="https://interactweb-bench.wangqiyao.me/">🌐 Project Page</a>
-     <a href="https://arxiv.org/pdf/2604.27419"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/AIforIP/InteractWeb-Bench"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://arxiv.org/pdf/2604.27419"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/AIforIP/InteractWeb-Bench"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/AIforIP/InteractWeb-Bench"><img src="https://img.shields.io/github/stars/AIforIP/InteractWeb-Bench" alt="InteractWeb-Bench"></a>
      <a href="https://huggingface.co/papers/2604.27419"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2604.27419%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="InteractWeb-Bench Hugging Face upvotes"></a></div>
 </div></li>
@@ -541,8 +541,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-authors"><em><strong>Qiyao Wang<sup>*</sup></strong>, Hongbo Wang<sup>*</sup>, Longze Chen, Zhihao Yang, Guhong Chen, Hamid Alinejad-Rokny, Hui Li, Yuan Lin, Min Yang</em></div>
 <div class="paper-venue">SIAT-NLP and DUT-IR.</div>
 <div class="paper-links"><a href="flowpie.wangqiyao.me">🌐 Project Page</a>
-     <a href="https://arxiv.org/pdf/2603.29557"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/AIforIP/FlowPIE"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://arxiv.org/pdf/2603.29557"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/AIforIP/FlowPIE"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/AIforIP/FlowPIE"><img src="https://img.shields.io/github/stars/AIforIP/FlowPIE" alt="FlowPIE"></a>
      <a href="https://huggingface.co/papers/2603.29557"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2603.29557%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="FlowPIE Hugging Face upvotes"></a></div>
 </div></li>
@@ -552,8 +552,8 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-title">APM-Bench: Benchmarking Cross-session Persistent Memory for Egocentric Streaming Video Assistants.</div>
 <div class="paper-authors"><em>Jianguo Huang<sup>*</sup>, Jinming Liu<sup>*</sup>, <strong>Qiyao Wang</strong>, Liang Xu, Jianhang Li, Zhimian Wen, Mingda Li, Shule Lu, Zhicheng Wang, Yuhan Guo, Xin Jin, Wenjun Zeng</em></div>
 <div class="paper-venue">SJTU.</div>
-<div class="paper-links"><a href="https://arxiv.org/abs/2609.37559"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
-     <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+<div class="paper-links"><a class="paper-brand-link" href="https://arxiv.org/abs/2609.37559"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://github.com/Jianguo-Huang11/APM-Bench"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/Jianguo-Huang11/APM-Bench"><img src="https://img.shields.io/github/stars/Jianguo-Huang11/APM-Bench" alt="APM-Bench"></a>
      <a href="https://huggingface.co/papers/2609.37559"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2609.37559%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="APM-Bench Hugging Face upvotes"></a></div>
 </div></li>
@@ -565,9 +565,9 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div class="paper-title">IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems.</div>
 <div class="paper-authors">Contributor</div>
 <div class="paper-links"><a href="https://iquestlab.github.io/">🌐 Project Page</a>
-     <a href="https://arxiv.org/abs/2610.30949"><img class="paper-brand-icon" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
+     <a class="paper-brand-link" href="https://arxiv.org/abs/2610.30949"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/arxiv.svg" | relative_url }}" alt="" aria-hidden="true"> arXiv</a>
      <a href="https://huggingface.co/IQuestLab/IQuest-Q1">🤗 Hugging Face</a>
-     <a href="https://github.com/IQuestLab/IQuest-Q1"><img class="paper-brand-icon" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
+     <a class="paper-brand-link" href="https://github.com/IQuestLab/IQuest-Q1"><img class="paper-brand-icon" width="13" height="13" src="{{ "/assets/icons/github.svg" | relative_url }}" alt="" aria-hidden="true"> GitHub</a>
      <a href="https://github.com/IQuestLab/IQuest-Q1"><img src="https://img.shields.io/github/stars/IQuestLab/IQuest-Q1" alt="IQuest-Q1"></a>
      <a href="https://huggingface.co/papers/2610.30949"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fhuggingface.co%2Fapi%2Fpapers%2F2610.30949%3F&amp;query=%24.upvotes&amp;label=HF%20Upvotes&amp;color=ffd21e" alt="IQuest-Q1 Hugging Face upvotes"></a></div>
 </div></li>
