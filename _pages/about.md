@@ -390,13 +390,6 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <div id="paper-panel" role="tabpanel" aria-labelledby="topic-all" tabindex="0">
 <section class="paper-section" data-kind="publications"><h2>Publications</h2>
 <div class="paper-group"><h3>First / Co-first Author</h3><ul class="paper-list">
-<li class="paper-card" data-date="2026-05" id="paper-ecpe" data-topics="post-training"><a class="paper-figure" href="{{ "/images/publications/ecpe-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ecpe-overview.webp" | relative_url }}" alt="ECPE-Qwen task execution workflow" loading="lazy" decoding="async"></a><div class="paper-content">
-<div class="paper-title"><span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span></div>
-<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em></div>
-<div class="paper-venue">CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心), 2026.05</strong>. DUT-IR.</div>
-<div class="paper-links"><a href="http://jcip.cipsc.org.cn/article/doi/10.3969/j.issn.1003-0077.2026.05.010">📄 Paper</a> |
-      <a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a></div>
-</div></li>
 <li class="paper-card" data-date="2026" id="paper-ipbench" data-topics="ip"><a class="paper-figure" href="{{ "/images/publications/ipbench.png" | relative_url }}"><img src="{{ "/images/publications/ipbench.png" | relative_url }}" alt="ipbench overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice.</div>
 <div class="paper-authors"><em><strong>Qiyao Wang</strong>, Guhong Chen, Hongbo Wang, Huaren Liu, Minghui Zhu, Zhifei Qin, Linwei Li, Yilin Yue, Shiqiang Wang, Jiayan Li, Yihang Wu, Ziqiang Liu, Longze Chen, Run Luo, Liyang Fan, Jiaming Li, Lei Zhang, Kan Xu, Chengming Li, Hamid Alinejad-Rokny, Shiwen Ni<sup>†</sup>, Yuan Lin<sup>†</sup>, Min Yang<sup>†</sup></em></div>
@@ -424,6 +417,13 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
       | News: <a href="https://mp.weixin.qq.com/s/H6zsbruPl4wtYOFCOIphBA">新智元</a>
       <a href="https://github.com/QiYao-Wang/AutoPatent">
       <img src="https://img.shields.io/github/stars/QiYao-Wang/AutoPatent" alt="AutoPatent"></a></div>
+</div></li>
+<li class="paper-card" data-date="2024" id="paper-ecpe" data-topics="post-training"><a class="paper-figure" href="{{ "/images/publications/ecpe-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ecpe-overview.webp" | relative_url }}" alt="ECPE-Qwen task execution workflow" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title"><span>ECPE-Qwen</span><span>: 微调大语言模型进行零样本情绪原因对抽取.</span></div>
+<div class="paper-authors"><em><strong>Qiyao Wang</strong>, Liang Yang, Kan Xu, Yuan Lin<sup>†</sup> and Hongfei Lin.</em></div>
+<div class="paper-venue">CCIR 2024. <strong>中文信息学报 (CCF-T1, CCF-B, 北大核心)</strong>. DUT-IR.</div>
+<div class="paper-links"><a href="http://jcip.cipsc.org.cn/article/doi/10.3969/j.issn.1003-0077.2026.05.010">📄 Paper</a> |
+      <a href="https://mp.weixin.qq.com/s/mkd7lqDpFGa0eLHYURoXGA">News</a></div>
 </div></li>
 <li class="paper-card" data-date="2024" id="paper-ipeval" data-topics="ip"><a class="paper-figure" href="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" aria-label="View ipeval framework or task overview"><img src="{{ "/images/publications/ipeval-overview.webp" | relative_url }}" alt="ipeval framework or task overview" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">IPEval: A Bilingual Intellectual Property Agency Consultation Evaluation Benchmark for Large Language Models.</div>

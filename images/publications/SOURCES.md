@@ -39,6 +39,7 @@ evaluation, survey and retrieval papers without a clear match to the six topics.
 Place each card under the appropriate publication status and author-role group.
 Keep technical reports separate, and preserve author order and contribution marks.
 Sort each role group by `data-date` descending, using the published date when known
-and the existing year or arXiv date otherwise; keep ties stable. ECPE-Qwen's journal
-publication is May 2026, distinct from its CCIR 2024 acceptance.
+and the existing year or arXiv date otherwise; keep ties stable. At the author's
+request, ECPE-Qwen is displayed and sorted under CCIR 2024; its figure source URL
+is retained unchanged.
 If a verified figure is unavailable, omit `.paper-figure` entirely.
