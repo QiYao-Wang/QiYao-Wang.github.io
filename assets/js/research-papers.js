@@ -3,7 +3,12 @@
   if (!root) return;
   const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
   const panel = root.querySelector('[role="tabpanel"]');
+  const reports = root.querySelector('#technical-reports');
   function selectTopic(tab) {
+    if (reports) {
+      if (tab.dataset.topic === 'all') panel.prepend(reports);
+      else panel.append(reports);
+    }
     tabs.forEach(function (candidate) {
       const selected = candidate === tab;
       candidate.setAttribute('aria-selected', String(selected));

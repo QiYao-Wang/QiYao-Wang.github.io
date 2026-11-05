@@ -551,7 +551,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div></li>
 </ul></div>
 </section>
-<section class="paper-section"><h2>Technical Reports</h2>
+<section class="paper-section" id="technical-reports"><h2>Technical Reports</h2>
 <div class="paper-group"><ul class="paper-list">
 <li class="paper-card" id="paper-iquest" data-topics="agents"><a class="paper-figure" href="{{ "/images/publications/iquest-overview.webp" | relative_url }}" aria-label="View IQuest-Q1 benchmark performance comparison"><img src="{{ "/images/publications/iquest-overview.webp" | relative_url }}" alt="IQuest-Q1 benchmark performance comparison" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title">IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems.</div>
