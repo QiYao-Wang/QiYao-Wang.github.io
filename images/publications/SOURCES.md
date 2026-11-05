@@ -28,7 +28,8 @@ PNG is a title-page crop and is intentionally not used.
 
 Edit the single paper card in `_pages/about.md`; do not duplicate cards across topics.
 Use space-separated `data-topics` values: `agents`, `post-training`,
-`working-agent`, `ip`, `science`, `social-science`.
+`working-agent`, `ip`, `science`, `social-science`, `reports`.
+Technical Reports has its own top-level topic; its secondary status filters are hidden.
 An empty topic list keeps a paper visible in All only; this is used for general
 evaluation, survey and retrieval papers without a clear match to the six topics.
 Place each card under the appropriate publication status and author-role group.

@@ -50,6 +50,7 @@
   }
   function selectTopic(tab) {
     selectedKind = 'all';
+    root.querySelector('.paper-filters').hidden = tab.dataset.topic === 'reports';
     if (reports) {
       if (tab.dataset.topic === 'all') panel.prepend(reports);
       else panel.append(reports);
