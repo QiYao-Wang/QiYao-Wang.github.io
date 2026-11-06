@@ -332,6 +332,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 - ***General Agents***: Building general-purpose agents through large-scale agentic data synthesis, agentic post-training, and reinforcement learning. [[Topic Homepage](https://wangqiyao.me/General-Agentic-AI/)]
 - ***Working Agents***: Developing reliable agents that can plan, use tools, maintain memory, and complete long-horizon tasks in real-world work environments.
 - ***AI for Science and Social Science***: Developing domain-specific LLM and MLLM applications to accelerate research and discovery across the natural and social sciences.
+  - ***Social Computing and Simulation***: Using LLMs and multi-agent systems to model human behavior, simulate social interactions, and study collective dynamics.
   - ***IP Intelligence***: Advancing AI for intellectual property services and studying intellectual property issues surrounding AI. [[Topic Homepage](https://wangqiyao.me/IPIntelligence/)] [![Awesome-LLM4Patents](https://img.shields.io/github/stars/QiYao-Wang/Awesome-LLM4Patents)](https://github.com/QiYao-Wang/Awesome-LLM4Patents)
   - ***Legal Intelligence***: Developing LLMs for legal reasoning and applications.
   - ***Biomedical Intelligence***: Applying AI to biomedical research and healthcare applications.
