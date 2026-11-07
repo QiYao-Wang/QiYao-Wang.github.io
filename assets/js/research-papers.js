@@ -44,16 +44,26 @@
     }, true);
   });
   const filters = Array.from(root.querySelectorAll('.paper-filters button'));
+  filters.forEach(function (button) { button.dataset.label = button.textContent.trim(); });
+  root.querySelectorAll('.paper-section > h2').forEach(function (heading) {
+    heading.dataset.label = heading.textContent.trim();
+  });
   let selectedKind = 'all';
   function filterStatus() {
+    const counts = { all: 0 };
     root.querySelectorAll('.paper-section').forEach(function (section) {
-      const hasPapers = Array.from(section.querySelectorAll('.paper-card')).some(function (card) { return !card.hidden; });
-      section.hidden = !hasPapers || (selectedKind !== 'all' && section.dataset.kind !== selectedKind);
+      const count = Array.from(section.querySelectorAll('.paper-card')).filter(function (card) { return !card.hidden; }).length;
+      counts[section.dataset.kind] = count;
+      counts.all += count;
+      const heading = section.querySelector('h2');
+      heading.textContent = heading.dataset.label + ' (' + count + ')';
+      section.hidden = count === 0 || (selectedKind !== 'all' && section.dataset.kind !== selectedKind);
     });
     filters.forEach(function (button) {
       button.setAttribute('aria-pressed', String(button.dataset.kind === selectedKind));
-      const section = root.querySelector('.paper-section[data-kind="' + button.dataset.kind + '"]');
-      button.disabled = !!section && !Array.from(section.querySelectorAll('.paper-card')).some(function (card) { return !card.hidden; });
+      const count = counts[button.dataset.kind] || 0;
+      button.textContent = button.dataset.label + ' (' + count + ')';
+      button.disabled = count === 0;
     });
   }
   function selectTopic(tab) {
