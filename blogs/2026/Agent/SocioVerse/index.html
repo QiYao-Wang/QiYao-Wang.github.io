@@ -1,0 +1,1141 @@
+---
+layout: compress
+title: "SocioVerse → SocioVerse2：从千万用户画像到可检验的动态社会模拟"
+---
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+  {% include head.html %}
+  {% include head/custom.html %}
+  <base target="_self">
+  <meta name="description" content="合读 SocioVerse 与 SocioVerse2：人口校准、动态反馈、实验分支、七类案例、完整对照，以及从历史拟合到现实因果预测的边界。">
+  <link rel="stylesheet" href="/assets/css/blog.css?v=20261011-6">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>html { scroll-behavior: smooth; }</style>
+</head>
+<body>
+  {% include browser-upgrade.html %}
+  <a class="blog-skip-link" href="#blog-content">Skip to article</a>
+  <div class="blog-reading-progress" aria-hidden="true"><span></span></div>
+  <div class="masthead container"><div class="masthead__inner-wrap"><div class="masthead__menu">
+    <nav id="site-nav" class="greedy-nav"><ul class="visible-links">
+      <li class="masthead__menu-item masthead__menu-item--lg masthead__menu-home-item"><a href="https://wangqiyao.me/">Homepage</a></li>
+      <li class="masthead__menu-item"><a href="https://wangqiyao.me/blogs/">Blogs</a></li>
+      <li class="masthead__menu-item"><button class="blog-theme-toggle" type="button" aria-label="Toggle colour theme" aria-pressed="false"><span aria-hidden="true">◐</span><span class="blog-theme-label">Theme</span></button></li>
+    </ul></nav>
+  </div></div></div>
+  <div id="main" role="main">
+    <div class="sidebar sticky"><nav id="toc" aria-label="Table of contents"></nav></div>
+    <article class="page" itemscope itemtype="http://schema.org/CreativeWork">
+      {% if page.title %}<meta itemprop="headline" content="{{ page.title | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
+      <div class="page__inner-wrap"><section id="blog-content" class="page__content" itemprop="text" tabindex="-1">
+        <div class="blog-post-header">
+          <h1>SocioVerse → SocioVerse2：从千万用户画像到可检验的动态社会模拟</h1>
+          <div class="blog-post-meta"><span class="meta-date">📅 2026年11月9日 · Qiyao Wang · AI 辅助阅读</span><span class="meta-topic">#Paper · #Agent</span></div>
+        </div>
+        <div class="blog-content">
+<p>让一万个大模型角色同时回答问题，并不自动得到一个可信的社会：人群可能选错，角色可能只是在复述模型的平均偏好，时间与制度也可能没有真正进入决策。SocioVerse 尝试用真实用户痕迹和人口分布校准回答“该让谁来模拟”；SocioVerse2 则把问题推进到“这些人怎样在环境中持续行动，以及研究者怎样修改、回放和检验这个过程”。两篇合起来最值得学习的，是从生成像人的回答，走向构造可检查的社会实验；但不同案例的证据强度差别很大，不能把历史拟合、规则复现和现实因果预测混为一谈。</p>
+<p>本文合读 <a href="https://arxiv.org/abs/2504.10157v3">SocioVerse，arXiv:2504.10157v3</a>（2025 年 7 月修订）与 <a href="https://arxiv.org/abs/2609.24911v1">SocioVerse2，arXiv:2609.24911v1</a>（2026 年 9 月技术报告）。依据两版正文、附录和 TeX 源码整理；数值是作者报告的结果，本文没有复跑实验。下文的推导与后续实验建议会单独说明。</p>
+
+<h2 id="key-takeaways">先记住六件事</h2>
+<ul>
+<li><strong>问题：</strong>LLM 有知识，不等于其默认回答代表目标人群；模拟社会需要同时对齐人群、信息、行为和测量方式。</li>
+<li><strong>机制：</strong>一代以用户池和分布采样组织横截面调查；二代把人群、环境和决策函数拆成可替换对象，加入持续状态、环境反馈与实验分支。</li>
+<li><strong>证据：</strong>一代覆盖选举、新闻反馈和消费调查；二代覆盖七类动态案例，但新闻参照、校准重建、留出预测各自回答不同的问题。</li>
+<li><strong>实践：</strong>先确定要模拟谁、能看见什么、如何汇总为真实指标，再选择规则、LLM、RL 或混合决策；不是每个代理都必须调用大模型。</li>
+<li><strong>代价：</strong>大用户池不等于大规模独立证据。属性推断误差、共同模型偏差、长程调用成本与研究者反复调参都会限制结果。</li>
+<li><strong>开放问题：</strong>最关键的检验，是在冻结设计后，对真正未见的群体、时间和干预保持预测能力；模拟器内部的反事实分支本身不能识别现实因果效应。</li>
+</ul>
+
+<h2 id="why-social-simulation">一、为什么社会模拟需要比“给模型一个角色”更多的东西？</h2>
+<p>假设我们想知道，一项住房政策会怎样改变居民搬迁。直接问模型“这项政策有什么影响”，得到的是语言模型对常见论述的综合；让它扮演一位租房家庭，得到的是某个条件下的角色回答。要进一步推断全市的变化，还缺至少三步：这些家庭在真实城市中占多少，他们面对的房租、工作和交通是否不同，以及一个家庭的搬迁如何改变其他家庭下一步看到的环境。</p>
+<p>传统 agent-based model（ABM，基于主体的模型）正是处理最后一个问题的工具。研究者规定个体状态、邻接关系和更新规则，让宏观图景从局部互动中产生。Schelling 居住隔离模型的启发在于：不需要每个人都追求高度隔离，局部的邻居偏好也可能形成显著的整体分化。因此，宏观结果不能简单由个体回答的平均值推断，互动与反馈本身就是机制。</p>
+<p>规则模型的优点是明确：你知道谁依据什么规则移动，能修改一个参数，观察后果。但规则通常需要研究者提前决定“人如何权衡”，很难覆盖语言表达的政策、复杂生活处境和未预先枚举的反应。LLM 提供了一种更灵活的行为函数：它能同时读取家庭背景、新闻和候选行动，再输出一个决定。代价是函数更难解释，也可能把刻板印象当成个体偏好，把语气流畅当成行为真实性。</p>
+<p>这形成两条不能互相替代的研究线。一条追求<strong>生成能力</strong>：代理能记忆、计划、交谈并产生丰富行为。另一条追求<strong>经验对齐</strong>：这些行为在什么目标人群、什么测量方式下，与真实观察相符？一段热闹的虚拟社区对话证明系统能运行，却不证明它能预测城市政策。SocioVerse 的主要切入点是第二条；SocioVerse2 再把对齐后的组件接入可持续运行的实验系统。</p>
+<p>两篇标题中的 world model 也应按这个语境理解。它们提出的是社会模拟框架及其数据、决策和研究流程，不是训练出一个统一神经网络，已能对所有社会状态进行可靠的下一步预测。二代允许行为函数来自规则、语言模型或强化学习，这恰恰说明贡献重点在组件组织和实验基础设施。</p>
+
+<h2 id="first-generation-alignment">二、SocioVerse：先把“由谁回答”变成一个可操作的问题</h2>
+<h3 id="four-engines">四个模块分别约束什么？</h3>
+<p>一代将模拟拆成社会环境、用户引擎、场景引擎和行为引擎。环境提供社会结构、事件和个体能看到的背景；用户引擎从用户池构造目标人群；场景引擎决定问卷、访谈或互动怎样开展；行为引擎决定代理如何作答或行动。这种拆分的价值是把错误定位：答案不对，可能是行为模型不好，也可能是根本问错了人、给错了信息，或用错了问法。</p>
+<table><caption>一代框架的四种对齐。能力设计与论文实际验证要分开。</caption><thead><tr><th>组件</th><th>输入与输出</th><th>主要针对的错误</th><th>仍依赖的假设</th></tr></thead><tbody>
+<tr><td>社会环境</td><td>结构背景、新闻、个体历史 → 决策上下文</td><td>代理脱离具体时间和情境</td><td>被纳入的信息确实是目标人群当时可见、会注意的信息</td></tr>
+<tr><td>用户引擎</td><td>用户痕迹、属性、目标分布 → 采样人群</td><td>默认角色分布不代表目标总体</td><td>属性推断足够可靠，池内覆盖目标群体</td></tr>
+<tr><td>场景引擎</td><td>调查目标 → 问卷、访谈、行为实验或社交交互</td><td>抽象提问不对应实际测量过程</td><td>提问和行动接口没有引入新的系统偏差</td></tr>
+<tr><td>行为引擎</td><td>角色与上下文 → 回答或行动</td><td>规则过于僵硬、无法处理开放文本</td><td>模型条件回答近似目标人的反应</td></tr>
+</tbody></table>
+<p>框架讨论了单轮问卷、多轮访谈和多人交互，也容纳规则与领域模型，但一代主要实验实际采用问卷式场景。不能因为架构图画出了多人社会互动，就把这三个实验说成完整验证了长程社会涌现。这也是二代为何要专门强调 longitudinal dynamics：一代有社会背景和个性化输入，尚不等于已经系统检验了反馈中的持续行为。</p>
+
+<h3 id="user-pool-and-inferred-attributes">千万用户池：真实的是痕迹，不是每个属性标签</h3>
+<table><caption>SocioVerse 表 1 的用户池。池的容量不是一次实验的代理数。</caption><thead><tr><th>来源</th><th>用户数</th><th>帖子数</th></tr></thead><tbody><tr><td>X</td><td>1,006,517</td><td>30,195,510</td></tr><tr><td>小红书</td><td>9,158,404</td><td>40,963,735</td></tr><tr><td>合计</td><td>10,164,921</td><td>71,159,245</td></tr></tbody></table>
+<p>作者希望避免凭空生成一组千篇一律的角色，因此用历史帖子提供个性化线索，并推断年龄、性别、职业、教育、收入、地区、政治倾向、人格和兴趣等属性。这里的“真实用户”指用户记录来自现实平台，并不意味着年龄、收入或政治属性都经过本人核验。研究对象从“任意编写的角色”改善为“有行为痕迹约束的角色”，但仍经过模型推断这一层。</p>
+<p>附录给出的标注流程是：多种 LLM 标注部分用户，人工独立复核，再以多数票标签训练分类器扩大覆盖。7 位标注人员参与复核，每份数据至少由 2 人检查。多数票与人工标注的一致率为 X 上 0.956、小红书上 0.849；这是对文本推断的一致性，不是与实名人口档案的核验准确率。</p>
+<p>X 使用 LongFormer，小红书使用 BERT-base-chinese；各用 10,000 条训练数据，分别训练 5 个和 4 个分类器，而非所有 15 类属性都拥有同样的全量分类器验证。其余特定实验所需属性，对采样后的用户再做模型标注。下表也显示，种族、消费水平等属性比部分基本人口属性更难推断。</p>
+<table><caption>一代表 9：人口属性分类器测试集结果。Acc 与 F1 越高越好；空项表示该平台未报告该分类器。</caption>
+<tr>
+<th rowspan="2" scope="col"><span>Demos</span></th>
+<th colspan="2" scope="col">LongFormer</th>
+<th colspan="2" scope="col">Bert-base-chinese</th></tr>
+<tr>
+<td>Acc</td>
+<td>F1</td>
+<td>Acc</td>
+<td>F1</td></tr>
+<tr>
+<td>Gender</td>
+<td>0.875</td>
+<td>0.904</td>
+<td>0.926</td>
+<td>0.958</td></tr>
+<tr>
+<td>Age</td>
+<td>0.902</td>
+<td>0.873</td>
+<td>0.925</td>
+<td>0.920</td></tr>
+<tr>
+<td>Party</td>
+<td>0.849</td>
+<td>0.846</td>
+<td>\</td>
+<td>\</td></tr>
+<tr>
+<td>Ideology</td>
+<td>0.810</td>
+<td>0.807</td>
+<td>\</td>
+<td>\</td></tr>
+<tr>
+<td>Race</td>
+<td>0.779</td>
+<td>0.768</td>
+<td>\</td>
+<td>\</td></tr>
+<tr>
+<td>Consumption</td>
+<td>\</td>
+<td>\</td>
+<td>0.749</td>
+<td>0.748</td></tr>
+<tr>
+<td>Education</td>
+<td>\</td>
+<td>\</td>
+<td>0.954</td>
+<td>0.975</td></tr>
+</table>
+<p>这个区别会传递到后续采样。如果按推断收入重加权，校准的是“模型识别出的收入分布”；若分类错误与群体、语言风格或活动频率有关，重加权后的真实收入分布仍可能偏离目标。再多用户也不能自动纠正同一种标注偏差。平台用户本身又经过“谁会上网、谁会发帖、谁会谈这个话题”的选择，不能把平台规模直接换算成全国代表性。</p>
+
+<h3 id="ipf-demographic-calibration">IPF 为什么有用，又为什么不能恢复未知的真实社会？</h3>
+<p>选举实验拥有年龄、性别等维度的目标比例，却未必拥有这些属性的完整联合分布。Iterative Proportional Fitting（IPF，迭代比例拟合）从池内的联合频数出发，轮流调整各个维度，使边际分布接近目标。以二维表为例，令 \(x_{ij}\) 表示年龄组 \(i\) 与收入组 \(j\) 的人数，目标行和、列和分别为 \(r_i,c_j\)。标准更新为：</p>
+\[
+x_{ij}^{(2k+1)}=x_{ij}^{(2k)}\frac{r_i}{\sum_{j'}x_{ij'}^{(2k)}},\qquad
+x_{ij}^{(2k+2)}=x_{ij}^{(2k+1)}\frac{c_j}{\sum_{i'}x_{i'j}^{(2k+1)}}.
+\]
+<p>第一次把一整行乘以同一个比例，使该年龄组总人数正确；第二次对一整列做同样操作，使收入组总人数正确。列调整可能破坏刚调好的行和，因此需要迭代。这里修正了一代附录 C.1 印刷公式中求和下标没有进入被求和项的问题：行归一化必须遍历列，列归一化必须遍历行。总量需要兼容，分母必须非零；缺失的支持集不能靠除法凭空补出。</p>
+<p>下面是本文的假设例子，用于解释限制，并非论文实验。两张表</p>
+\[
+A=\begin{pmatrix}40&amp;10\\10&amp;40\end{pmatrix},\qquad
+B=\begin{pmatrix}25&amp;25\\25&amp;25\end{pmatrix}
+\]
+<p>都有相同的行和、列和 50，但一张存在明显相关性，另一张独立。只知道边际，不能判断哪个才是真实联合分布。在所有格子为正的二维情形，IPF 的行列缩放还保持交叉比 \(x_{11}x_{22}/(x_{12}x_{21})\) 不变，因为乘到分子和分母上的行列因子相互抵消。上述两张表的交叉比分别是 16 和 1；目标边际相同，不会让它们自动收敛成同一张表。</p>
+<p>因此，IPF 的含义是“在种子分布和支持集约束下对齐已知边际”，不是“从几个比例恢复真实人群”。若某类低收入高学历用户在池中完全缺席，原有零格子经乘法仍是零。补造合成人物可以增加支持，但这引入新的条件分布假设，必须标记来源，不能伪装成观测。</p>
+<p>一代附录还坦率报告：选举中对每州使用性别、种族、年龄、意识形态和党派五个维度做 IPF，多数情形没有达到收敛；918 个边际中 888 个误差低于 5%。这比笼统说“已经严格匹配人口分布”更准确。读结果时，应把剩余校准误差纳入解释，而不能把算法名称当作代表性证明。</p>
+
+<h2 id="first-generation-evidence">三、一代的三个实验，实际在检验三种不同的对齐</h2>
+<h3 id="three-observation-models">先确定参照数据是谁产生的</h3>
+<table><caption>一代实验规模与测量目标，依据表 2 和各实验段落。</caption><thead><tr><th>任务</th><th>代理 / 问题</th><th>主要参照</th><th>最需要注意的区别</th></tr></thead><tbody>
+<tr><td>美国总统选举</td><td>331,836 / 49</td><td>州级选举结果；Census 与 ANES 提供人口先验</td><td>选对胜者与预测准票份额是两种指标</td></tr>
+<tr><td>ChatGPT 发布后的新闻反馈</td><td>20,000 / 18</td><td>真实讨论用户的背景，经 LLM 问卷产生参照回答</td><td>不是直接获得 20,000 人的真实态度调查</td></tr>
+<tr><td>中国居民消费支出</td><td>16,000 / 17</td><td>31 个地区官方调查汇总</td><td>收入分布部分由假设构造，不能视作完整实测微观数据</td></tr>
+</tbody></table>
+<p>选举实验的胜者准确率是“多少州判断正确”，RMSE 衡量票份额数值偏差。一个模型可以在优势明显的州取得高胜者准确率，却系统高估某党的支持；也可能在竞争极接近的州只差一点点，但胜者判错。因此要同时看全体州和摇摆州，不能只挑最漂亮的一列。</p>
+<p>新闻实验更微妙。作者先找到可能关心科技的用户集合，再以实际讨论 ChatGPT 的用户构造参照集合，限制历史内容的时间，以避免直接把事后帖子放入角色背景。问卷依据态度模型覆盖认知、情感与行为相关维度。但模拟集合与参照集合都由 LLM 代理回答问卷。比较所检验的是：<strong>按目标人口特征采样的代理，是否接近由真实讨论者背景构造的代理</strong>。它仍有价值，却不能被表述为“预测了真人问卷答案”；两个分布可能共享同一模型的测量偏差。</p>
+<p>消费实验对齐官方家庭调查汇总，模拟 16,000 个角色，并比较消费类别结构。附录不是只用一个简单正态收入假设：主体收入使用对数正态，高收入尾部使用 Pareto，经验比例通常为 90% 与 10%。区域平均收入本身不能确定方差、尾部厚度和高收入占比；这些额外选择会影响消费结构。模型答得好坏，混合了收入先验和消费行为函数两层误差。</p>
+
+<h3 id="all-backbone-results">完整主表：不同模型擅长不同统计目标</h3>
+<p>一代使用温度 0.7、最大输出 2,048 tokens，比较六种模型。开源 70B / 72B 模型通过 vLLM 部署；部分商业模型的完整选举实验因成本未运行。下表保留缺失项，不把未报告写成零，也不跨任务比较数值大小。</p>
+<table><caption>一代表 3：全部行为模型比较。Acc 越高越好，KL / RMSE 越低越好；Battleground 为摇摆州，Developed 为 GDP 前十地区。</caption>
+<tr>
+<th rowspan="3" scope="col"><span>Model</span></th>
+<th colspan="4" scope="col"><span>PresElectPredict</span></th>
+<th colspan="2" scope="col"><span>BreakNewsFeed</span></th>
+<th colspan="4" scope="col"><span>NatEconSurvey</span></th></tr>
+<tr>
+<td colspan="2"><span>Overall</span></td>
+<td colspan="2"><span>Battleground</span></td>
+<td></td>
+<td></td>
+<td colspan="2"><span>Overall</span></td>
+<td colspan="2"><span>Developed-region</span></td></tr>
+<tr>
+<td>Acc\(\uparrow\)</td>
+<td>RMSE\(\downarrow\)</td>
+<td>Acc\(\uparrow\)</td>
+<td>RMSE\(\downarrow\)</td>
+<td>KL-Div\(\downarrow\)</td>
+<td>RMSE\(\downarrow\)</td>
+<td>KL-Div\(\downarrow\)</td>
+<td>RMSE\(\downarrow\)</td>
+<td>KL-Div\(\downarrow\)</td>
+<td>RMSE\(\downarrow\)</td></tr>
+<tr>
+<td>Llama3-70b</td>
+<td>0.843</td>
+<td>0.064</td>
+<td>0.733</td>
+<td>0.045</td>
+<td>0.668</td>
+<td>0.199</td>
+<td><span>0.016</span></td>
+<td><span>0.026</span></td>
+<td><span>0.013</span></td>
+<td><span>0.025</span></td></tr>
+<tr>
+<td>Qwen2.5-72b</td>
+<td><span>0.922</span></td>
+<td><span>0.037</span></td>
+<td>0.800</td>
+<td><span>0.031</span></td>
+<td><span>0.113</span></td>
+<td>0.059</td>
+<td>0.066</td>
+<td>0.048</td>
+<td>0.043</td>
+<td>0.039</td></tr>
+<tr>
+<td>DeepSeek-R1-671b</td>
+<td>\</td>
+<td>\</td>
+<td>0.670</td>
+<td>0.065</td>
+<td>0.383</td>
+<td>0.082</td>
+<td>0.059</td>
+<td>0.045</td>
+<td>0.045</td>
+<td>0.036</td></tr>
+<tr>
+<td>DeepSeek-V3</td>
+<td><span>0.922</span></td>
+<td>0.046</td>
+<td><span>0.867</span></td>
+<td>0.041</td>
+<td>0.263</td>
+<td>0.072</td>
+<td>0.035</td>
+<td>0.036</td>
+<td>0.023</td>
+<td>0.030</td></tr>
+<tr>
+<td>GPT-4o-mini</td>
+<td>\</td>
+<td>\</td>
+<td>0.800</td>
+<td>0.039</td>
+<td>0.195</td>
+<td>0.114</td>
+<td>0.046</td>
+<td>0.045</td>
+<td>0.030</td>
+<td>0.036</td></tr>
+<tr>
+<td>GPT-4o</td>
+<td>\</td>
+<td>\</td>
+<td>\</td>
+<td>\</td>
+<td>0.196</td>
+<td><span>0.055</span></td>
+<td>0.062</td>
+<td>0.051</td>
+<td>0.036</td>
+<td>0.038</td></tr>
+</table>
+<p>读这张表有三个重点。第一，Qwen2.5-72B 的整体选举 RMSE 为 0.037，DeepSeek-V3 的摇摆州准确率为 0.867；“整体最好”取决于你优先关心哪个目标。第二，消费调查中 Llama3-70B 的整体 KL / RMSE 为 0.016 / 0.026，比表中其他模型低；一般能力排行榜不能替代领域校准。第三，新闻反馈的最低 KL 是 Qwen 的 0.113，最低 RMSE 是 GPT-4o 的 0.055。一代正文对这两个最优指标的归属有颠倒，本文以表 3 数值为准。</p>
+<p>KL 衡量分布差别，RMSE 衡量对应数值的平方误差；它们不会保证产生相同排序。消费细项表使用 NRMSE，而主表列标题写 RMSE；因此下面沿用各原表标记，不擅自将它们当成同一个分母、同一个尺度的结果。主表主要是在同一框架内更换行为模型，并没有单凭这张表排除传统加权统计模型能够达到类似效果的解释。</p>
+
+<h3 id="first-generation-ablations">消融支持“人群先验重要”，但没有完成所有因素分解</h3>
+<table><caption>一代表 4：摇摆州消融。Knowledge 指用户历史知识，Prior 指人口先验；最后一行同时移除两者。</caption>
+<tr>
+<th scope="col"><span>Model</span></th>
+<th scope="col"><span>Acc\(\uparrow\)</span></th>
+<th scope="col"><span>RMSE\(\downarrow\)</span></th></tr>
+<tr>
+<td>Llama3-70b</td>
+<td><span>0.733</span></td>
+<td><span>0.045</span></td></tr>
+<tr>
+<td>- w/o Knowledge</td>
+<td>0.533</td>
+<td>0.051</td></tr>
+<tr>
+<td>- w/o Knowledge &amp; Piror Distribution</td>
+<td>0.600</td>
+<td>0.386</td></tr>
+<tr>
+<td>Qwen2.5-72b</td>
+<td><span>0.800</span></td>
+<td><span>0.031</span></td></tr>
+<tr>
+<td>- w/o Knowledge</td>
+<td><span>0.800</span></td>
+<td>0.033</td></tr>
+<tr>
+<td>- w/o Knowledge &amp; Piror Distribution</td>
+<td>0.600</td>
+<td>0.370</td></tr>
+<tr>
+<td>GPT-4o-mini</td>
+<td><span>0.800</span></td>
+<td><span>0.039</span></td></tr>
+<tr>
+<td>- w/o Knowledge</td>
+<td><span>0.800</span></td>
+<td>0.052</td></tr>
+<tr>
+<td>- w/o Knowledge &amp; Piror Distribution</td>
+<td>0.667</td>
+<td>0.323</td></tr>
+</table>
+<p>以 Qwen 为例，移除用户历史知识，摇摆州准确率仍是 0.800，RMSE 从 0.031 变为 0.033；进一步移除先验分布，RMSE 增至 0.370。这表明在该配置下，人口先验对票份额校准非常重要，历史文本对所选汇总指标的增益较小。但实验是依次移除，缺少“保留知识、仅移除先验”这一完整交叉条件，所以不能独立估计两个因素及其交互的所有效应。</p>
+<p>Llama 的胜者准确率还从仅移除知识时的 0.533，变成两个都移除时的 0.600，而 RMSE 却从 0.051 恶化到 0.386。这不是矛盾：离散胜负可能偶然变对，预测份额却更失真。也正因此，不能用单一准确率来认定某种设置更接近真实社会。</p>
+<table><caption>一代表 5：31 个地区各类支出的平均 NRMSE，越低越好。Household 对应文中重点讨论的住房支出项。</caption>
+<tr>
+<th scope="col"><span>Item</span></th>
+<th scope="col"><span>Llama3-70b</span></th>
+<th scope="col"><span>Qwen2.5-72b</span></th>
+<th scope="col"><span>GPT-4o-mini</span></th>
+<th scope="col"><span>GPT-4o</span></th>
+<th scope="col"><span>DeepSeek-R1</span></th></tr>
+<tr>
+<td>Daily</td>
+<td><span>0.007</span></td>
+<td><span>0</span>.009</td>
+<td><span>0.006</span></td>
+<td><span>0</span>.010</td>
+<td><span>0.009</span></td></tr>
+<tr>
+<td>Clothing</td>
+<td>0.012</td>
+<td>0.015</td>
+<td>0.019</td>
+<td>0.015</td>
+<td>0.015</td></tr>
+<tr>
+<td>Transportation_Communication</td>
+<td>0.016</td>
+<td>0.020</td>
+<td>0.027</td>
+<td>0.023</td>
+<td>0.017</td></tr>
+<tr>
+<td>Education_Entertainment</td>
+<td>0.018</td>
+<td>0.022</td>
+<td>0.024</td>
+<td>0.017</td>
+<td>0.022</td></tr>
+<tr>
+<td>Medical</td>
+<td>0.023</td>
+<td>0.062</td>
+<td>0.041</td>
+<td>0.057</td>
+<td>0.060</td></tr>
+<tr>
+<td>Food</td>
+<td>0.037</td>
+<td>0.031</td>
+<td>0.031</td>
+<td>0.040</td>
+<td>0.032</td></tr>
+<tr>
+<td>Household</td>
+<td>0.052</td>
+<td>0.110</td>
+<td>0.107</td>
+<td>0.120</td>
+<td>0.102</td></tr>
+<tr>
+<td>Others</td>
+<td><span>0</span>.008</td>
+<td><span>0.008</span></td>
+<td><span>0</span>.010</td>
+<td><span>0.005</span></td>
+<td><span>0.009</span></td></tr>
+</table>
+<p>消费细项进一步指出误差落在哪里。住房相关支出对多种模型更难：Llama 的 0.052 已是该行最低，其他模型可超过 0.10；日用品、衣着等类别则小得多。消费不是对“平均收入”作语言联想就能解决的任务，住房制度、资产状态和地区成本都可能决定行为。一个整体分布看似接近的模型，未必足以支持涉及特定支出类别的政策分析。</p>
+
+<h2 id="second-generation-loops">四、SocioVerse2：从一次调查变成会演化、可修改的实验</h2>
+<h3 id="state-action-feedback">第一个循环：行为改变下一步环境</h3>
+<p>若每个月都重新生成一批角色，再让它们回答当前新闻，那只是很多次独立横截面调查。纵向模拟需要“还是这个人”：他上个月的行动影响本月的状态，其他人的行动也会改变他所处的环境。二代用固定人群 \(P\)、环境 \(E_t\) 和行为函数 \(f\) 表达这个过程：</p>
+\[
+e_{i,t}=\omega(E_t,p_i),\qquad b_{i,t}=f(p_i,e_{i,t},m_{i,t}),\qquad
+E_{t+1}=g(E_t,B_t),\quad B_t=\{b_{i,t}\}_{i=1}^{N}.
+\]
+<p>\(p_i\) 是身份及属性，\(\omega\) 决定这个人实际能看到什么，\(m_{i,t}\) 是记忆，\(b_{i,t}\) 是行动，\(g\) 是环境更新。观察函数很重要：城市平均失业率、自己所在工厂的裁员通知、邻居的搬迁和社交平台推送，不能无区别地广播给所有人。二代将物理 / 信息、宏观 / 微观拆成四种观察字段，让暴露差异成为可检查的对象。</p>
+<p>执行上，step 0 物化初始状态而不行动；后续每步先注入外生变化，再观察、决策、统一应用行动，最后记录。同步应用使同一步的代理基于同一个时间切片作答，避免仅因遍历顺序不同，让后面的代理提前看见前面代理的结果。这个选择也限制了模型：如果现实中有明确的先后交易、抢占或即时反馈，就要在环境机制或更细时间步中表达，而不是假设同步更新适合一切。</p>
+<p>默认记忆保留最近 8 步自身行动，身份 ID 稳定且不复用。稳定 ID 允许比较同一人的变化；有限记忆控制上下文成本，却不意味着它能捕获长期创伤、职业积累或复杂的跨年财务约束。真正需要长期状态的任务，应显式储存资产、债务、健康等变量，不能只期待短文本记忆自动承担全部状态。</p>
+<p>行动接口区分类型、负载、理由和来源。例如“打算搬家”不等于“成功搬进一个社区”：环境还要检查预算、空房和容量。二代示例中也区分搬迁意愿与实际执行数量。将意图、执行和后果分层记录，才能知道一项政策是在改变偏好，还是在改变约束。自然语言理由便于审阅，但它是模型生成的说明，不能直接当成忠实的内部决策因果链。</p>
+
+<h3 id="counterfactual-branches">分支必须共享已经发生的历史</h3>
+<p>设我们在第 \(t^*\) 步改变住房补贴。为了比较同一历史下的两条路径，不能从头重新抽样人群，也不能重新调用模型生成前几步，然后宣称“其他条件不变”。二代保存并回放父运行已经实现的行动，在分叉点重建环境与记忆，随后才调用行为函数生成新行动。这里统一令 \(t^*\) 表示<strong>第一个受到干预的步骤</strong>：</p>
+\[
+E'_t=E_t\quad(t&lt;t^*),\qquad E'_{t^*}=\operatorname{op}(E_{t^*}),\qquad
+\Delta_t=Y(E'_t)-Y(E_t).
+\]
+<p>\(\operatorname{op}\) 是声明的环境操作，\(Y\) 是关心的指标，例如迁居率或价格；之后两条路径各自继续演化。论文有的示例以“最后一个继承步骤”命名 fork，因此写成继承 0–4、从 5 开始干预。实现和阅读时应明确边界，避免把干预前后错开一步。</p>
+<figure style="display:block"><img src="/blogs/2026/Agent/SocioVerse/fork.png" width="1800" height="1231" style="width:100%;aspect-ratio:1800/1231" alt="SocioVerse2 反事实分支示意：保存的历史被回放，干预之后才产生新轨迹" loading="lazy"><figcaption>图 1 · 来自 SocioVerse2 的分支示意。关键是继承实际历史，而不是重新采样出一段看似相同的过去；图中的步号约定应与实现一起检查。</figcaption></figure>
+<p>这个 \(\Delta_t\) 是<strong>模型内部的条件对照</strong>。它保证“在这套行为与环境机制中，改变该操作后发生什么”，没有保证现实的人也遵循这些机制。即使观察路径拟合得很好，多套不同的机制仍可能在干预后给出相反预测；观测拟合并不能唯一确定反事实。共同 seed 有助于控制随机差异，也不能保证远程 LLM 服务逐位可复现，保存实际输出和运行清单仍然必要。</p>
+
+<h3 id="research-loop-and-versions">第二个循环：把研究者的修改也变成实验对象</h3>
+<p>二代把一个研究定义写作 \(\sigma=(P,E_{0:T},f,\Theta)\)，其中 \(\Theta\) 包含指标、种子和资源配置。研究者提出修改 \(a_k\)，产生新版本 \(\sigma_{k+1}=h(a_k,\sigma_k)\)。这不是训练 LLM 参数的梯度更新，而是人和助手共同迭代研究方案：更换人口校准、修正环境、替换决策器或追加分析。</p>
+<p>环境中的未来政策变动可以形成共享历史的分支；改变人群、行为规则或实验定义，通常应成为新版本重新运行。两者的差别直接影响可比性：换掉整个决策模型后跑出的结果，不是对同一个世界施加一次政策干预。版本树保存修改来源，分支树保存共享前史的对照，不能只靠一堆文件名来混用。</p>
+<table><caption>研究流水线的七个阶段，依据二代表 2 概括。</caption><thead><tr><th>阶段</th><th>产物</th><th>它使什么可以被审查？</th></tr></thead><tbody>
+<tr><td>初始化研究</td><td>问题、目标、数据来源和研究定义</td><td>研究意图是否明确，数据是否支持该问题</td></tr>
+<tr><td>构建模型</td><td>可组合的模块与接口检查</td><td>观察、决策、执行与指标是否连通</td></tr>
+<tr><td>构建环境</td><td>固定的环境与事件包</td><td>时间、可见信息和更新机制</td></tr>
+<tr><td>构建人群</td><td>人群清单、权重、属性来源</td><td>代表谁，哪些属性是补全的</td></tr>
+<tr><td>运行</td><td>运行配置与逐步轨迹</td><td>成本、行动来源、失败或回退</td></tr>
+<tr><td>报告</td><td>图表、证据与研究文本</td><td>结论是否超过结果支持的范围</td></tr>
+<tr><td>迭代</td><td>新版本、重入阶段与修改记录</td><td>到底改变了什么，哪些比较仍然有效</td></tr>
+</tbody></table>
+<p>作者在意图确认、版本 / 分支选择、调用成本与数据使用条件等位置设置人工检查。这里的 Human–AI Co-evolution 更接近“人可介入且过程可追踪的研究协作”，不能读成已经用实验定量证明人机共同学习带来某个提升。论文讨论明确承认：案例主要展示最终接受的版本，没有完整比较有人编辑与完全自动运行，因此人工研究循环的增益尚未被隔离测量。</p>
+
+<h2 id="population-and-event-infrastructure">五、基础设施解决的不是“多接几个 API”，而是研究口径</h2>
+<h3 id="population-mcp">多来源人口池：更多字段，也有更多拼接假设</h3>
+<table><caption>二代表 3：五个人口子池。本地 Indexed 与上游可寻址总量不同，合成 persona 与真实用户记录也不同。</caption>
+<tr>
+<th scope="col">Category</th>
+<th scope="col">Source</th>
+<th scope="col">Indexed</th>
+<th scope="col">Fields</th>
+<th scope="col">
+<span>
+<span>Role</span>
+</span></th></tr>
+<tr>
+<td rowspan="2"><span>Internal real users</span></td>
+<td><span>SocioVerse</span> 1.0 X/Twitter</td>
+<td>973,928</td>
+<td>10</td>
+<td>
+<span>
+<span>anchor, real behavioral text</span>
+</span></td></tr>
+<tr>
+<td><span>SocioVerse</span> 1.0 RedNote</td>
+<td>9,158,404</td>
+<td>8</td>
+<td>
+<span>
+<span>anchor, Chinese-language context</span>
+</span></td></tr>
+<tr>
+<td rowspan="3"><span>Open persona pools</span></td>
+<td>Nemotron-Personas USA</td>
+<td>59,994</td>
+<td>7</td>
+<td>
+<span>
+<span>anchor / complement, census-aligned</span>
+</span></td></tr>
+<tr>
+<td>MatrAIx Persona 1M</td>
+<td>56,583</td>
+<td>20</td>
+<td>
+<span>
+<span>complement, high-dimensional</span>
+</span></td></tr>
+<tr>
+<td>PersonaHub</td>
+<td>199,466</td>
+<td>—</td>
+<td>
+<span>
+<span>retrieval and text material</span>
+</span></td></tr>
+</table>
+<p>二代本地索引共 10,448,375 条 persona 记录。X 为 973,928，小红书为 9,158,404；新增 Nemotron-USA 59,994、MatrAIx 56,583、PersonaHub 199,466。注意一代 X 数量是 1,006,517，不应将不同版本池的计数静默合并。论文谈到的约十亿规模是上游可寻址记录，不是本地已经索引十亿真实人，更不是一次模拟运行十亿代理。</p>
+<p>不同来源的证据性质也不同。真实平台痕迹提供行为背景，但受平台选择偏差影响；按人口统计构造的合成人物可补覆盖，却不等于真实个人；PersonaHub 主要是文本 persona，因此不用于同样的分布式属性采样。MatrAIx 的一维边际校准也不能保证联合分布真实。把所有来源汇总成一个大数字，恰恰会丢掉最该知道的信息。</p>
+<p>标准流程先选字段覆盖更合适的主池，再用共享属性做统计匹配、补充其他字段，最后对目标边际做 IPF；缺失属性可以条件生成，并记录来源。这里有一个很容易忽略的识别问题：若池 A 有收入与教育，池 B 有教育与政策偏好，只按教育拼接，并不能识别“在相同教育下，收入和政策偏好怎样相关”。条件补全可以让表格完整，但完整性不是正确性。若这个未知关系正决定政策响应，拼接假设就会成为结果的主要驱动。</p>
+
+<h3 id="event-vintages">时间安全：数据发生在什么时候，不等于当时已经知道</h3>
+<p>Event MCP 将宏观、劳动力、金融、住房、新闻及人口调查等来源组织成环境信号。关键不是数据源列表有多长，而是 as-of 查询：在模拟某月某日时，系统只能读取当时已发布的版本。三种时间必须分开：数据描述的参考期、首次发布日期、后来修订日期。一份 1 月经济统计可能 2 月才发布，3 月又修订；让 1 月代理读取最终修订值就是前视泄漏。</p>
+<p>二代的做法是在构建阶段抓取和物化时间线，运行阶段从冻结环境包读取，以便重放。这样同一实验不会因为新闻接口第二天改了内容而悄悄换数据。可复现所需的也不只是 seed，而是人口快照、源数据版本、提示、LLM 版本、温度、调用输出、环境机制及指标代码。</p>
+<p>不过，输入时间安全只解决显式上下文泄漏。基础模型可能在训练中见过历史选举或经济结果，研究者也可能在多次试验时根据测试期表现改过设计。“提示没有给答案”与“系统从未利用答案”不是同一条件。论文使用知识截止后的窗口是有用补充，但截止日期应落实到准确模型快照和服务配置；不能仅凭一个笼统模型名，宣布完全排除了记忆。</p>
+
+<h2 id="seven-cases-map">六、先给二代的七个案例分清证据等级</h2>
+<table><caption>实验规模、重复方式与可支持的主要结论。详情见二代表 5、11 和各案例。</caption><thead><tr><th>案例</th><th>规模与时间</th><th>重复 / 参照</th><th>主要检验</th></tr></thead><tbody>
+<tr><td>经典 ABM</td><td>10 个任务，40–810 个代理，30–200 步</td><td>规则每任务 10 次，各 LLM 3 次</td><td>是否复现已知规则的汇总动力学</td></tr>
+<tr><td>混合舆论</td><td>300 个 LLM 核心 + 700 个规则用户，14 个半日步</td><td>3 个运动，各 3 次；观察到的轨迹</td><td>真实舆论轨迹对齐与混合架构</td></tr>
+<tr><td>芝加哥居住隔离</td><td>19,235 个加权代理，781 个街区，15 步</td><td>LLM 5 个种子，规则 10 个；2010 Census</td><td>扰动后能否恢复既有格局</td></tr>
+<tr><td>药品集采</td><td>325 个药品市场任务，50 步 / episode</td><td>每任务一个训练 seed；历史中选企业集合</td><td>多角色策略优化与历史中选集合的一致性</td></tr>
+<tr><td>CCI</td><td>5,000 核心 → 250,000 家庭，75 个月</td><td>每地区单次校准运行；官方指数</td><td>信息驱动的指数重建 / 即时预测</td></tr>
+<tr><td>PMI</td><td>300 企业，22 月与 32 月留出窗口</td><td>单个冻结配置；首次发布 PMI</td><td>留出期增量预测信号</td></tr>
+<tr><td>德国汽车</td><td>600 消费者，41 个重叠月，533 品牌月单元</td><td>单次校准回测；KBA 注册份额进入校准</td><td>校准重建，未验证样本外预测</td></tr>
+</tbody></table>
+<p>这些案例既包括框架中原生构建的研究，也包括对既有模型的适配，或引用底层研究已有的评价。七种任务展示了接口覆盖面，却不是七次同一条件下的“新框架对旧框架”胜出实验。以下按每个案例自身的研究问题来读，避免将平台集成能力误写成统一算法的效果提升。</p>
+
+<h2 id="abm-and-opinion">七、规则能被语言模型替代吗？从经典 ABM 到混合舆论</h2>
+<h3 id="abm-suite">经典 ABM：先测替换行为函数会不会破坏动力学</h3>
+<p>这一组覆盖交通、行人、群集、资源分配、重复博弈、居住隔离、群体冲突和扩散。实验保持环境与行动接口，把规则决策替换为 LLM，再比较速度、财富、聚类数、传播覆盖等任务级指标。参照是规则模型 10 次运行的均值，一致性分数由相对偏差汇总，越接近 1 越一致。</p>
+<table><caption>二代表 12：十个经典 ABM 的完整任务配置。N 是代理数，Steps 是步数。</caption>
+<tr>
+<th scope="col">Family</th>
+<th scope="col">Task</th>
+<th scope="col">Source ABM</th>
+<th scope="col">\(N\)</th>
+<th scope="col">Steps</th>
+<th scope="col">Key parameter</th></tr>
+<tr>
+<td rowspan="3"><span>Flow</span></td>
+<td>NaSch</td>
+<td><cite>Nagel and Schreckenberg [47]</cite></td>
+<td>200</td>
+<td>50</td>
+<td>\(v_{\max}=5\), \(p_{\text{brake}}=0.3\)</td></tr>
+<tr>
+<td>Boids</td>
+<td><cite>Reynolds [48]</cite></td>
+<td>40</td>
+<td>100</td>
+<td>radius=5, heading tol. \(30^{\circ}\)</td></tr>
+<tr>
+<td>Social Force</td>
+<td><cite>Helbing et al. [49]</cite></td>
+<td>80</td>
+<td>200</td>
+<td>desired speed 1.2 m/s</td></tr>
+<tr>
+<td rowspan="3"><span>Market</span></td>
+<td>Sugarscape</td>
+<td><cite>Epstein and Axtell [2]</cite></td>
+<td>200</td>
+<td>100</td>
+<td>metabolism \(\in[1,4]\), vision \(\in[1,6]\)</td></tr>
+<tr>
+<td>Minority Game</td>
+<td><cite>Challet and Zhang [50]</cite></td>
+<td>301</td>
+<td>100</td>
+<td>memory \(m=3\), strategies \(s=2\)</td></tr>
+<tr>
+<td>Axelrod IPD</td>
+<td><cite>Axelrod [51]</cite></td>
+<td>64</td>
+<td>200</td>
+<td>5 strategies, round-robin</td></tr>
+<tr>
+<td rowspan="2"><span>Organization</span></td>
+<td>Schelling</td>
+<td><cite>Schelling [1]</cite></td>
+<td>810</td>
+<td>30</td>
+<td>threshold 0.3, grid \(30\times 30\)</td></tr>
+<tr>
+<td>Civil Violence</td>
+<td><cite>Epstein [52]</cite></td>
+<td>230</td>
+<td>50</td>
+<td>legitimacy 0.82, vision 7</td></tr>
+<tr>
+<td rowspan="2"><span>Diffusion</span></td>
+<td>SIR rumor</td>
+<td><cite>Kermack and McKendrick [53]</cite></td>
+<td>500</td>
+<td>30</td>
+<td>\(\beta=0.3\), \(\gamma=0.1\)</td></tr>
+<tr>
+<td>Hegselmann–Krause</td>
+<td><cite>Hegselmann and Krause [54]</cite></td>
+<td>100</td>
+<td>50</td>
+<td>confidence bound 0.2</td></tr>
+</table>
+<p>平均分为规则对照 0.911、GPT-4o 0.898、DeepSeek-V3 0.900、Qwen3-235B 0.885。这说明这些语言模型在所选任务上能保持不少宏观规律，但有两点不能省略。其一，参照本身是规则模型，不是真实交通或真实群体；复现规则有助于验证接口与能力，不能直接验证社会真实性。其二，0.911 是规则运行相对均值的经验一致程度，并非其他模型数学上不可超过的上界。</p>
+<p>误差也有结构：确定性策略、精确间距运算、连续方向控制会暴露 LLM 的不足。若任务只是精确执行一个便宜规则，用昂贵的语言模型近似它未必有实际价值。更有意义的对照是：添加规则难以表达的情境后，模型能否产生可验证的行为变化。</p>
+<p>论文专门做了一个 Schelling 情境探针：在 20×20 网格、400 个主体和相同阈值条件下，标量背景约在第 12 步达到全体满意，加入搬迁成本和耐心等上下文后约在第 18 步达到相同终点。这个探针与上表 30×30 的标准任务是不同配置。它提示<strong>终点一致不代表路径一致</strong>：若政策关心过渡期成本，仅比较最终满意率会忽略关键差异。</p>
+
+<h3 id="hybrid-opinion">混合舆论：让语言模型负责信息源，让规则负责传播</h3>
+<p>第二个案例不再坚持人人都用 LLM。300 个核心用户由语言模型驱动，700 个普通用户按意见动力学规则更新；核心用户的帖子通过 mirror coupling 注入普通用户模型。这样复杂语义集中在少量信息源，数量庞大的传播和态度更新由便宜规则完成。该实现没有反向建模普通用户对核心用户的反馈，因此它是有方向性的耦合，不是完整双向社交生态。</p>
+<p>MeToo、Roe v. Wade 和 BLM 三个场景以观察数据校准与验证，14 个步长各对应半天。普通用户规则比较 bounded confidence、Hegselmann–Krause、Lorenz、relative agreement 和 social judgement；先在规则阶段校准，再固定参数进入混合验证。对于核心用户，不能只看看起来很高的 stance accuracy：</p>
+<table><caption>二代表 6：核心用户的微观对齐。立场准确率很高，但 F1 明显低，不能只保留准确率。</caption>
+<tr>
+<th scope="col">Scenario</th>
+<th scope="col"><span></span> <span>
+<span>
+<span>
+<span>Stance</span></span>
+<span>
+<span>Acc</span></span>
+</span></span><span></span></th>
+<th scope="col"><span></span> <span>
+<span>
+<span>
+<span>Stance</span></span>
+<span>
+<span>F1</span></span>
+</span></span><span></span></th>
+<th scope="col"><span></span> <span>
+<span>
+<span>
+<span>Content</span></span>
+<span>
+<span>Acc</span></span>
+</span></span><span></span></th>
+<th scope="col"><span></span> <span>
+<span>
+<span>
+<span>Content</span></span>
+<span>
+<span>Sim</span></span>
+</span></span><span></span></th>
+<th scope="col"><span></span> <span>
+<span>
+<span>
+<span>Behavior</span></span>
+<span>
+<span>Acc</span></span>
+</span></span><span></span></th>
+<th scope="col"><span></span> <span>
+<span>
+<span>
+<span>Behavior</span></span>
+<span>
+<span>F1</span></span>
+</span></span><span></span></th></tr>
+<tr>
+<td>MeToo</td>
+<td>0.968</td>
+<td>0.340</td>
+<td>0.701</td>
+<td>0.806</td>
+<td>0.731</td>
+<td>0.521</td></tr>
+<tr>
+<td>Roe v. Wade</td>
+<td>0.943</td>
+<td>0.336</td>
+<td>0.642</td>
+<td>0.809</td>
+<td>0.667</td>
+<td>0.469</td></tr>
+<tr>
+<td>BLM</td>
+<td>0.899</td>
+<td>0.374</td>
+<td>0.735</td>
+<td>0.841</td>
+<td>0.780</td>
+<td>0.576</td></tr>
+</table>
+<p>立场准确率在 0.899–0.968，F1 却仅 0.336–0.374。这至少说明单一准确率不能完整代表不同立场的识别质量；要判断少数立场是否被忽略，还需混淆矩阵、类别分布和具体 F1 平均口径。内容相似度大于 0.8 也不等于真实用户的下一条内容被精确预测，行为类别准确率仅在 0.667–0.780。</p>
+<table><caption>二代表 7：三次运行平均的舆论轨迹比较。Corr 越高越好，ΔBias 越低越好；这是论文列出的摘要组合。</caption>
+<tr>
+<th scope="col"></th>
+<th colspan="2" scope="col">MeToo</th>
+<th colspan="2" scope="col">Roe v. Wade</th>
+<th colspan="2" scope="col">BLM</th></tr>
+<tr>
+<td>Method</td>
+<td>Corr</td>
+<td>\(\Delta\)Bias</td>
+<td>Corr</td>
+<td>\(\Delta\)Bias</td>
+<td>Corr</td>
+<td>\(\Delta\)Bias</td></tr>
+<tr>
+<td>Best pure-ABM</td>
+<td>0.483</td>
+<td>0.0124</td>
+<td>0.733</td>
+<td>0.0352</td>
+<td>0.448</td>
+<td>0.0411</td></tr>
+<tr>
+<td>Hybrid w/ RA</td>
+<td><span>0.724</span></td>
+<td>0.0117</td>
+<td>0.427</td>
+<td>0.0221</td>
+<td><span>0.605</span></td>
+<td>0.0376</td></tr>
+<tr>
+<td>Hybrid w/ Lorenz</td>
+<td>0.610</td>
+<td><span>0.0035</span></td>
+<td><span>0.758</span></td>
+<td><span>0.0093</span></td>
+<td>0.506</td>
+<td><span>0.0023</span></td></tr>
+</table>
+<p>报告称 15 个“场景 × 规则”配对的混合相关性都高于各自纯规则对应项；上表是论文披露的摘要，不能从中还原未列出的每个配对数值。Relative agreement 混合在 MeToo、BLM 的相关性更高，Lorenz 在三个场景的绝对偏差更低。相关性描述起伏同步，偏差描述水平偏离；一条整体抬高的曲线可以相关性很好，因此两个指标都要保留。</p>
+<p>平台干预探针比较反向观点、中立观点与公共话题空间等策略，报告公共讨论空间在降低同质性的同时有较低毒性。这是该模型中的平台设计比较；其可信度仍受单向耦合和行为校准影响。成本优势也有清楚来源：固定核心人数后，LLM 调用主要随核心人数增长，普通用户增多主要增加规则计算。不是系统总成本永远与人口无关，而是昂贵部分被限制在核心层。</p>
+
+<h2 id="chicago-and-procurement">八、政策模拟：恢复历史格局与优化制度目标，是不同任务</h2>
+<h3 id="chicago-segregation">芝加哥：被扰动的城市，会回到原来的隔离状态吗？</h3>
+<p>这一实验将 Schelling 从网格搬到 781 个真实街区构成的邻接图。241 类家庭原型由种族、收入、家庭类型和社区类型构成，19,235 个加权代理代表人口；流动率、理想邻里比例与满意度权重参考既有社会学研究。代理先评估满意度，再评估搬迁候选，环境限制迁入容量、各群体搬迁预算与过度聚集。</p>
+<p>初始状态不是未来城市，而是 2010 Census 格局中随机挪动 15% 家庭后的扰动状态。研究问题是能否在 15 个抽象步骤内回到既有格局，不能将其写成从未知起点预测多年后的城市。一个常用指标是两群体的不相似指数：</p>
+\[
+D_{AB}=\frac12\sum_j\left|\frac{A_j}{A}-\frac{B_j}{B}\right|.
+\]
+<p>\(A_j,B_j\) 是街区 \(j\) 中两群体的人数，\(A,B\) 是各群体全市总人数。若每个街区的两群体空间份额一致，指数为 0；完全分离时趋于 1。它衡量空间分布差异，并不直接衡量每个家庭的主观满意度。</p>
+<table><caption>二代表 8：五个种子的均值 ± 95% 置信区间。D 为不相似指数，P* 为隔离 / 暴露指标；目标是 2010 Census。</caption>
+<tr>
+<th scope="col">Index</th>
+<th scope="col">Perturbed (\(t{=}0\))</th>
+<th scope="col">LLM-ABM (\(t{=}15\))</th>
+<th scope="col">2010 Census</th></tr>
+<tr>
+<td>\(D_{BW}\)</td>
+<td>\(0.716\pm 0.007\)</td>
+<td>\(0.782\pm 0.005\)</td>
+<td>0.835</td></tr>
+<tr>
+<td>\(D_{HW}\)</td>
+<td>\(0.500\pm 0.005\)</td>
+<td>\(0.577\pm 0.004\)</td>
+<td>0.608</td></tr>
+<tr>
+<td>\(D_{AW}\)</td>
+<td>\(0.423\pm 0.006\)</td>
+<td>\(0.435\pm 0.006\)</td>
+<td>0.434</td></tr>
+<tr>
+<td>\(P^{*}_{B}\)</td>
+<td>\(0.658\pm 0.004\)</td>
+<td>\(0.700\pm 0.003\)</td>
+<td>0.797</td></tr>
+<tr>
+<td>\(P^{*}_{BW}\)</td>
+<td>\(0.135\pm 0.004\)</td>
+<td>\(0.104\pm 0.002\)</td>
+<td>0.081</td></tr>
+</table>
+<p>Black–White 指数从 0.716 回到 0.782，目标为 0.835；恢复约一半的扰动差距，不是已经精确恢复。Hispanic–White 从 0.500 到 0.577，目标 0.608；Asian–White 从 0.423 到 0.435，接近 0.434。街区种族份额的 \(R^2\) 为 0.79，同时每步搬迁人数从约 1,050 降至约 250，显示路径逐渐趋稳。</p>
+<p>对照不是只有随机搬迁。相同地理图、预算和容量下，经典统一阈值规则的随机目的地版本得到 Black–White 指数 0.743，最佳改善目的地为 0.788；分群体阈值为 0.875；logit 效用规则为 0.839；随机重分配约为 0.05。后两种虽更接近或超过 Black–White 目标，却过度推高 Asian–White 隔离。LLM 的优势主要在多轴结果与停止行为的组合，而不是在每一个单指标上都最好。</p>
+<figure style="display:block"><img src="/blogs/2026/Agent/SocioVerse/chicago.png" width="1800" height="521" style="width:100%;aspect-ratio:1800/521" alt="芝加哥隔离模拟的多种子时间轨迹，比较不同群体隔离指标及其变化" loading="lazy"><figcaption>图 2 · SocioVerse2 的芝加哥多种子轨迹。与只看终点相比，时间路径显示哪些差距持续缩小、哪些维度趋于稳定；这是扰动恢复实验。</figcaption></figure>
+<p>消融在 218 个街区的子集上，与同子集匹配对照比较。去掉种族上下文，Black–White 指数变化为 −0.033，对照为 +0.110；去掉流动约束会过冲；打乱非种族街区属性仍保留约 60% 恢复。这支持“种族上下文影响方向、流动约束限制终点、其他属性调节过程”的模型内解释。</p>
+<p>但原型已带有文献校准的群体偏好与权重，执行器又有防过冲控制，因此不能说模型从零发现了这些偏好。生成理由提到安全、学校与熟悉感，也不证明每个因素的真实因果贡献；提示移除和约束消融，比一段听起来合理的自述更有说服力。成本同样具体：一次完整运行约 275,000 次调用，约 3.5 亿输入 tokens、2,000 万输出 tokens，即使已按原型和街区批处理，长程模拟仍很昂贵。</p>
+
+<h3 id="procurement-game">药品集采：为什么这个案例的行为函数主要是 RL？</h3>
+<p>采购市场有清楚的行动、清算规则和数值目标，不一定需要语言模型作每一步决定。这里一个政府角色制定政策参数，企业出价，医疗机构报告需求并执行采购；环境清算数量与价格，计算各方收益，再进入下一轮。政府与医疗机构用 PPO，企业用集中训练、分散执行的 MAPPO，各企业策略不共享参数。</p>
+<p>任务来自第 2–5、7–9 轮历史集采，覆盖 325 个药品任务、2,267 家企业。每任务训练 10,000 个 episode，每个 50 步，训练 seed 为 42；最终策略用 1,000 个 episode 评价。对照有仅企业作为战略主体的 ProcureGym RL、LLM、规则控制器，以及随机策略。下表是报告提供的完整收益中位数表；LLM 与规则控制器虽参与其他比较，本文不补造它们未在该表列出的收益数值。</p>
+<table><caption>二代表 9：325 个任务的收益中位数。福利与利润单位为百万元人民币，医疗机构效用为单独尺度。</caption>
+<tr>
+<th scope="col"></th>
+<th scope="col">Government</th>
+<th scope="col">Enterprise</th>
+<th scope="col">Medical institution</th></tr>
+<tr>
+<td>Method</td>
+<td>Social welfare</td>
+<td>Profit</td>
+<td>Utility</td></tr>
+<tr>
+<td>Random</td>
+<td>117.96</td>
+<td>79.48</td>
+<td>0.629</td></tr>
+<tr>
+<td>ProcureGym RL</td>
+<td>228.82</td>
+<td>188.99</td>
+<td>0.382</td></tr>
+<tr>
+<td><span>Ours</span></td>
+<td><span>291.02</span></td>
+<td><span>252.97</span></td>
+<td><span>0.859</span></td></tr>
+<tr>
+<td>Ours vs. ProcureGym RL</td>
+<td>\(+27.2\%\)</td>
+<td>\(+33.9\%\)</td>
+<td>\(+0.477\)</td></tr>
+</table>
+<p>政府福利与企业利润单位为百万元人民币，医疗机构效用是另一种尺度。相对企业单方学习的 RL 基线，前两者中位数分别提高 27.2% 和 33.9%，医疗机构效用从 0.382 到 0.859。历史中选企业集合的 F1 为 0.790，比 ProcureGym RL 高 0.006；说明大收益变化未必需要大幅改变赢家集合，价格和数量就可能承担主要变化。</p>
+<p>这里必须把“优化目标变好”和“历史行为更真实”分开。医疗机构以前不决策，现在直接优化其效用，提高并不意外；现实机构未必严格按该效用最优行动。最终检查点还先筛 Pareto 非支配集合，再优先照顾最弱的标准化目标，因此结果包含明确的多目标选择设计。1000 次固定策略评估能减少评估噪声，却不能替代多个独立训练种子对训练稳定性的检验。</p>
+
+<h2 id="consumer-confidence">九、CCI：从家庭回答拼出宏观信心，增益来自哪里？</h2>
+<p>消费者信心指数本来就是调查回答的汇总，因此比“直接猜一个宏观数字”更适合自下而上重建。该案例从 SIPP 抽取 5,000 个带权核心家庭，用 GSS 条件分布补充财务满意度、乐观程度与信任等属性，再按人口单元扩展到 250,000 家庭。它不是对 250,000 个独立真实家庭逐一调查，也不等于每个月让 250,000 个 LLM 独立作答。</p>
+<p>环境把宏观、市场、劳动力、住房、政策和新闻转成情境信号场，并考虑谁暴露于什么信号以及时间衰减。房贷利率对业主和租客不同，股价对资产持有者与没有股票的人不同。GPT-4o 回答各地区官方问卷的类别分布，再经后分层的贝叶斯扩展和 Behavioral Inertia Alignment 汇总。最后一步混合行为预测与上月官方值，意味着系统也利用指数本身的持续性。</p>
+<p>美国、EU27、日本的混合权重通过 2024 年 1–6 月验证误差选择后冻结，分别为 0.4、0.6、0.7。欧洲与日本适配调查题目、量表和环境，并未完整重建各自本地微观人口底座。不同指数尺度不同，只能在各地区内部比较误差，不能因为日本 MAE 更小就说它比美国更容易。</p>
+<table><caption>SocioVerse2 §5.4.1：2020 年 1 月至 2026 年 3 月，75 个月主回测。每地区单次校准运行。</caption><thead><tr><th>地区</th><th>MAE ↓</th><th>RMSE ↓</th><th>Pearson r ↑</th><th>Spearman ↑</th></tr></thead><tbody><tr><td>美国</td><td>3.45</td><td>4.56</td><td>0.9590</td><td>0.9519</td></tr><tr><td>EU27</td><td>1.607</td><td>2.737</td><td>0.882</td><td>0.849</td></tr><tr><td>日本</td><td>1.363</td><td>2.040</td><td>0.824</td><td>0.840</td></tr></tbody></table>
+<p>报告称其在四项指标上优于 12 个汇总基线，覆盖自回归 ridge、预期回归、新闻语义因子、滚动均值、SARIMAX、指数平滑、Theta、Auto ARIMA、Prophet 变体及宏观 / 市场 / 新闻 ridge。但该技术报告没有逐一给出全部基线的数值表，故这里将它保留为作者报告的排序，不制造完整基线成绩，也不凭三个主结果声称已独立核验全部胜幅。</p>
+<p>消融与规模实验另用评价窗口，不能把下面 1.36 的 MAE 与上面 3.45 直接相减。完整模型 MAE 为 1.36；去掉后分层扩展为 2.03，去掉惯性对齐为 2.53，去掉信号场为 3.35，去掉 persona 为 3.48。在该窗口，人群和信息环境的作用最大。固定核心群体，扩展从 5 倍到 50 倍，MAE 从 6.10 到 1.72；100 倍仅进一步到 1.70。扩展覆盖带来平台期，并非无限复制代理就无限接近真值。</p>
+<p>论文还讨论冲击月份和下游住房预测，但这些有各自窗口：冲击比较跨 2014–2025 年的 19 个标注窗口，并非同一 75 月回测的简单切片。另有 2026 年 4–6 月、位于作者所称模型知识截止之后的美国诊断：MAE / RMSE 为 2.74 / 3.10，最强基线为 3.53 / 3.98。三个月只有三个观测，相关性 0.971 不宜当成强稳健性证据；而按事件标注曲线也不能证明该事件引起了预测变化。</p>
+<p>这一案例真正有吸引力的输出是群体分解：相同宏观指数变化，可能来自低收入家庭对价格压力的反应，也可能来自业主对住房信号的反应。但这种微观解释仍是模型生成的诊断，需要另用分组真实调查验证；仅匹配总指数，无法保证内部每个群体都反应正确。</p>
+
+<h2 id="pmi-nowcasting">十、PMI：完整附录比主文的漂亮一句话更有信息</h2>
+<p>PMI 是采购经理问卷的扩散指数。对某一分项，若加权回答中“改善”占 \(p_+\)、“不变”占 \(p_0\)，扩散指数为 \(100(p_++\tfrac12p_0)\)；五个分项按相应问卷编码后等权汇总。50 是常用的扩张 / 收缩分界，但增长方向正确、指数误差小、是否跨过 50，是三个不同的评价目标。</p>
+<p>二代用 300 家持续存在的合成制造企业，保留行业、规模、地区及不同风险暴露。结构模块先更新订单、生产、就业、供应商交付和库存等潜在经营状态，再让 LLM 经理回答问卷。信息截断在每月 21 日，目标是首次发布的 PMI，而非最终修订值。参数在 2015–2018 年拟合，2019–2021 年开发；2022 年 1 月至 2023 年 10 月为第一留出窗口，2023 年 11 月至 2026 年 6 月为模型声明知识截止后的第二窗口。</p>
+<table><caption>二代表 16：两个留出窗口的完整 PMI 对照。MAE / RMSE 越低越好；Direction 与 Side of 50 越高越好。</caption>
+<tr>
+<th scope="col">Window</th>
+<th scope="col">Method</th>
+<th scope="col">MAE</th>
+<th scope="col">RMSE</th>
+<th scope="col">Direction</th>
+<th scope="col">Side of 50</th></tr>
+<tr>
+<td rowspan="7"><span><span></span><span>
+<span>
+<span>
+<span>Clean test</span></span>
+<span>
+<span>2022-01–2023-10</span></span>
+</span></span><span></span></span></td>
+<td>Agent-based change nowcast</td>
+<td>1.025</td>
+<td>1.228</td>
+<td>65.0%</td>
+<td>95.5%</td></tr>
+<tr>
+<td>Bates–Granger ensemble</td>
+<td><span>0.928</span></td>
+<td><span>1.151</span></td>
+<td><span>80.0%</span></td>
+<td><span>100.0%</span></td></tr>
+<tr>
+<td>Earlier-kernel change nowcast</td>
+<td>1.044</td>
+<td>1.246</td>
+<td>70.0%</td>
+<td>95.5%</td></tr>
+<tr>
+<td>Earlier-kernel ensemble</td>
+<td>0.933</td>
+<td>1.157</td>
+<td><span>80.0%</span></td>
+<td><span>100.0%</span></td></tr>
+<tr>
+<td>Mechanical-threshold twin</td>
+<td>1.041</td>
+<td>1.243</td>
+<td>70.0%</td>
+<td>95.5%</td></tr>
+<tr>
+<td>Market consensus</td>
+<td>0.936</td>
+<td>1.160</td>
+<td>75.0%</td>
+<td>95.5%</td></tr>
+<tr>
+<td>Persistence</td>
+<td>1.073</td>
+<td>1.293</td>
+<td>—</td>
+<td>95.5%</td></tr>
+<tr>
+<td rowspan="7"><span><span></span><span>
+<span>
+<span>
+<span>Post-cutoff</span></span>
+<span>
+<span>2023-11–2026-06</span></span>
+</span></span><span></span></span></td>
+<td>Agent-based change nowcast</td>
+<td><span>0.892</span></td>
+<td>1.256</td>
+<td>58.6%</td>
+<td>87.5%</td></tr>
+<tr>
+<td>Bates–Granger ensemble</td>
+<td>0.898</td>
+<td>1.188</td>
+<td>51.7%</td>
+<td><span>90.6%</span></td></tr>
+<tr>
+<td>Earlier-kernel change nowcast</td>
+<td>0.942</td>
+<td>1.258</td>
+<td><span>65.5%</span></td>
+<td>87.5%</td></tr>
+<tr>
+<td>Earlier-kernel ensemble</td>
+<td>0.900</td>
+<td><span>1.184</span></td>
+<td>55.2%</td>
+<td>87.5%</td></tr>
+<tr>
+<td>Mechanical-threshold twin</td>
+<td>0.940</td>
+<td>1.257</td>
+<td><span>65.5%</span></td>
+<td>87.5%</td></tr>
+<tr>
+<td>Market consensus</td>
+<td>0.922</td>
+<td>1.202</td>
+<td>51.7%</td>
+<td><span>90.6%</span></td></tr>
+<tr>
+<td>Persistence</td>
+<td>0.894</td>
+<td>1.279</td>
+<td>—</td>
+<td>84.4%</td></tr>
+</table>
+<p>最重要的数字不是“第一名”，而是第一名领先多少。后截止窗口主模型 MAE 为 0.892，沿用上月值为 0.894，差距只有 <strong>0.002 个 PMI 点</strong>。主模型相对市场共识 0.922 有一些改善，但 RMSE 1.256 高于共识的 1.202。集成模型 RMSE 为 1.188，较好地控制大误差；不同目标没有一个统一赢家。</p>
+<p>主文表 10 中，主模型方向准确率 58.6% 高于共识与主集成的 51.7%。然而完整附录表 16 显示，旧版 kernel 和机械阈值 twin 的方向准确率均为 65.5%，旧版集成的 RMSE 还达到 1.184。因此“主模型做出了最好的方向判断”只适用于主文选列的比较，不适用于完整基线集合。若研究目的是验证 LLM 经理相对简单规则的必要性，这两行尤其不能删。</p>
+<p>第一留出窗口里，主集成 MAE 为 0.928、方向准确率 80%，优于主模型单独的 1.025 / 65%。但共识本身已有 0.936 / 75%，提升应放在这个强基线上判断。方向指标还涉及零变化和可评价转移的口径，不能直接把百分数乘以窗口总月数还原成功次数；原表定义应与评价代码共同检查。</p>
+<table><caption>二代表 17：2019–2021 年、165 企业开发面板的完整消融。ΔMAE 为相对同输出路径完整模型的差，负值表示改善。</caption>
+<tr>
+<th scope="col">Variant</th>
+<th scope="col">Output path</th>
+<th scope="col">MAE</th>
+<th scope="col">Direction</th>
+<th scope="col">\(\Delta\)MAE</th></tr>
+<tr>
+<td>Full model</td>
+<td>Level</td>
+<td>4.868</td>
+<td>0.400</td>
+<td>0.000</td></tr>
+<tr>
+<td>Full model</td>
+<td>Change</td>
+<td>1.948</td>
+<td>0.441</td>
+<td>0.000</td></tr>
+<tr>
+<td>Without post-stratification</td>
+<td>Level</td>
+<td>4.817</td>
+<td>0.400</td>
+<td>\(-0.051\)</td></tr>
+<tr>
+<td>Without post-stratification</td>
+<td>Change</td>
+<td>1.917</td>
+<td>0.471</td>
+<td>\(-0.031\)</td></tr>
+<tr>
+<td>Without inertia alignment</td>
+<td>Level</td>
+<td>5.905</td>
+<td>0.429</td>
+<td>1.037</td></tr>
+<tr>
+<td>Deterministic response kernel</td>
+<td>Level</td>
+<td>5.044</td>
+<td>0.600</td>
+<td>0.176</td></tr>
+<tr>
+<td>Deterministic response kernel</td>
+<td>Change</td>
+<td>1.900</td>
+<td>0.514</td>
+<td>\(-0.048\)</td></tr>
+<tr>
+<td>Without news field</td>
+<td>Level</td>
+<td>4.877</td>
+<td>0.400</td>
+<td>0.009</td></tr>
+<tr>
+<td>Without news field</td>
+<td>Change</td>
+<td>1.953</td>
+<td>0.441</td>
+<td>0.005</td></tr>
+<tr>
+<td>Without manager memorandum</td>
+<td>Level</td>
+<td>4.904</td>
+<td>0.400</td>
+<td>0.036</td></tr>
+<tr>
+<td>Without manager memorandum</td>
+<td>Change</td>
+<td>1.932</td>
+<td>0.471</td>
+<td>\(-0.016\)</td></tr>
+<tr>
+<td>Homogeneous firm persona</td>
+<td>Level</td>
+<td>4.697</td>
+<td>0.429</td>
+<td>\(-0.171\)</td></tr>
+<tr>
+<td>Homogeneous firm persona</td>
+<td>Change</td>
+<td>1.957</td>
+<td>0.441</td>
+<td>0.009</td></tr>
+<tr>
+<td>Without longitudinal memory</td>
+<td>Level</td>
+<td>5.121</td>
+<td>0.400</td>
+<td>0.253</td></tr>
+<tr>
+<td>Without longitudinal memory</td>
+<td>Change</td>
+<td>1.942</td>
+<td>0.471</td>
+<td>\(-0.006\)</td></tr>
+</table>
+<p>消融是在开发期 165 家企业的缩小面板上做的，且区分 level 与 change 两条输出路径。去掉惯性对齐，level MAE 恶化 1.037；去掉纵向记忆，恶化 0.253。但去掉后分层，level MAE 反而改善 0.051；统一企业 persona 改善 0.171；确定性响应 kernel 的 change MAE 也比完整模型低 0.048。它们不是证明这些组件永远无用，而是明确反对“每个复杂组件都被消融证明必要”这种读法。</p>
+<p>一种更稳妥的解读是：保持跨月状态和惯性有助于维持水平路径，而当前实验尚未展示所有 persona 与语言决策细节都能稳定改善短期变化预测。该系统可以作为与市场共识互补的即时预测组件；要进一步证明统计显著的、可部署的增益，需要更长的盲测期、多次运行，以及对时序相关误差的恰当不确定性分析。</p>
+
+<h2 id="car-market-reconstruction">十一、德国汽车市场：重建得像，为什么仍不是预测成功？</h2>
+<p>最后一个案例模拟 600 个消费者在预算、购车周期、产品特征、事件和同伴影响下选择品牌与动力类型。市场分成 13 个互斥品牌组和 4 类动力系统；模拟覆盖 2023 年 1 月至 2026 年 7 月，KBA 参照止于 2026 年 5 月，因此评分只使用 41 个重叠月、533 个品牌—月份单元。</p>
+<table><caption>二代表 19：41 个月的品牌份额校准重建。MAE 单位 pp 为百分点；这些不是留出预测成绩。</caption>
+<tr>
+<th scope="col">Brand group</th>
+<th scope="col">Mean KBA share</th>
+<th scope="col">Mean simulated share</th>
+<th scope="col">MAE (pp)</th>
+<th scope="col">Pearson \(r\)</th></tr>
+<tr>
+<td>VW</td>
+<td>18.970%</td>
+<td>19.174%</td>
+<td>0.801</td>
+<td>0.558</td></tr>
+<tr>
+<td>BMW</td>
+<td>8.442%</td>
+<td>8.623%</td>
+<td>0.539</td>
+<td>0.633</td></tr>
+<tr>
+<td>Mercedes</td>
+<td>9.299%</td>
+<td>9.162%</td>
+<td>0.554</td>
+<td>0.709</td></tr>
+<tr>
+<td>Audi</td>
+<td>7.646%</td>
+<td>7.687%</td>
+<td>0.414</td>
+<td>0.796</td></tr>
+<tr>
+<td>Skoda</td>
+<td>7.274%</td>
+<td>7.020%</td>
+<td>0.484</td>
+<td>0.859</td></tr>
+<tr>
+<td>Seat/Cupra</td>
+<td>5.232%</td>
+<td>5.125%</td>
+<td>0.309</td>
+<td>0.799</td></tr>
+<tr>
+<td>Opel</td>
+<td>5.003%</td>
+<td>4.940%</td>
+<td>0.391</td>
+<td>0.686</td></tr>
+<tr>
+<td>Toyota</td>
+<td>2.935%</td>
+<td>2.942%</td>
+<td>0.266</td>
+<td>0.770</td></tr>
+<tr>
+<td>Hyundai</td>
+<td>3.460%</td>
+<td>3.319%</td>
+<td>0.239</td>
+<td>0.666</td></tr>
+<tr>
+<td>Renault</td>
+<td>2.118%</td>
+<td>2.189%</td>
+<td>0.253</td>
+<td>0.546</td></tr>
+<tr>
+<td>Tesla</td>
+<td>1.444%</td>
+<td>1.736%</td>
+<td>0.508</td>
+<td>0.761</td></tr>
+<tr>
+<td>BYD</td>
+<td>0.508%</td>
+<td>0.549%</td>
+<td><span>0.157</span></td>
+<td><span>0.951</span></td></tr>
+<tr>
+<td>Other</td>
+<td>27.400%</td>
+<td>27.535%</td>
+<td>0.834</td>
+<td>0.704</td></tr>
+<tr>
+<td>All 533 cells</td>
+<td>—</td>
+<td>—</td>
+<td>0.442</td>
+<td>—</td></tr>
+</table>
+<p>总体 MAE 为 0.442 个百分点，RMSE 为 0.618 个百分点；BYD 的月度相关性 0.951，Tesla 为 0.761。这些数值前必须带上“校准后重建”：KBA 观测参与事后校准，包含 pseudo-count 30、指数平滑 \(\alpha=0.45\) 和逐单元 0.03 份额残差上限。参照进入了输出处理，误差小就不能作为未见数据预测能力的证据。</p>
+<p>这不使整个案例失去意义。它演示了如何把消费者进入市场、购买、信念与社交暴露组织成可追踪记录，以及怎样将微观行动汇总到市场份额。但“这个系统能解释出一套与历史相符的购买故事”与“它会提前预测下一轮市场变化”之间仍有验证缺口。</p>
+<p>另外，较小品牌的绝对份额误差往往自然更小：BYD 平均真实份额仅 0.508%，VW 为 18.970%。低 MAE 不应脱离基准份额解释；同时检查相关性、相对误差与简单持久性基线，才知道系统是否抓住了新品牌上升速度。真正的下一步，应冻结全部校准参数，在未进入校准的新月份评价原始输出，并单列事后校准版本，避免两者混用。</p>
+
+<h2 id="extensions-and-identification">十二、从两篇论文继续推：怎样知道模拟器究竟错在哪里？</h2>
+<h3 id="population-versus-response-error">推导一：人口对齐与行为对齐，是两个可相加的误差源</h3>
+<p>以下是本文的分析，不是论文已证明的结论。先考虑单步、离散群体 \(x\) 的简化情形：真实群体比例为 \(p(x)\)，真实平均反应为 \(\mu(x)\)，模拟器使用 \(q(x)\) 和 \(\widehat\mu(x)\)。真实与模拟总体均值之差可以精确分解为：</p>
+\[
+\widehat Y-Y
+=\sum_x[q(x)-p(x)]\mu(x)
++\sum_xq(x)[\widehat\mu(x)-\mu(x)].
+\]
+<p>第一项是人口混合比例错误，第二项是群体内反应错误。一代的分布采样主要针对第一项，行为模型与个性化背景主要针对第二项。即使 IPF 完美匹配所有目标群体，若模型让所有收入层都过度乐观，第二项仍然存在；反过来，单个角色反应很像真人，但抽样过多高收入用户，第一项仍会扭曲总量。</p>
+<p>更麻烦的是两项可以相互抵消：错误人群配上错误行为，可能恰好得到正确总体均值。这就是为什么只用一条 CCI 曲线无法验证微观机制。一个有区分力的后续实验，应同时报告真实分组反应与总体结果，并在不同人口混合比例的地区测试同一行为函数。若依靠错误抵消，换一个地区后误差往往重新出现。</p>
+<p>在动态场景中，\(p\) 与 \(\mu\) 还受到此前状态和干预影响，上述单步分解不能直接充当全程误差界。它提供的是诊断顺序：先查代表谁，再查组内反应，最后查环境反馈与指标映射，不要把所有偏差都归因于“模型不够大”。</p>
+
+<h3 id="scale-and-correlated-errors">推导二：为什么增加同一种 LLM 代理会很快碰到平台期？</h3>
+<p>假设 \(N\) 个代理误差同方差为 \(\sigma^2\)，任意两者相关系数均为 \(\rho\)，且这里仅讨论等权平均误差。直接展开方差得到：</p>
+\[
+\operatorname{Var}(\bar\epsilon)
+=\frac{\sigma^2}{N}[1+(N-1)\rho],\qquad
+N_{\mathrm{eff}}=\frac{N}{1+(N-1)\rho}.
+\]
+<p>独立时 \(\rho=0\)，人数增加可以持续降低方差；若共同模型和提示造成正相关，误差存在平台。假设 \(\rho=0.01\)，10,000 个代理的有效样本量仅约 99。这个数值是示意计算，不是对 SocioVerse 相关性的估计；真实权重、不等方差和网络依赖都需要更一般的处理。</p>
+<p>它解释了一个重要研究方向：增加多样性不只意味着换名字和年龄，还应检查模型族、提示结构和行为机制是否共享同一种误差。扩展合成人口可以改善覆盖，不能被解释成获得了同样数量的独立真实调查。CCI 的扩展平台期与这一问题相容，但论文没有直接估计 \(\rho\)，所以不能把上述推导宣称为已验证的实验原因。</p>
+
+<h3 id="paired-counterfactual-estimation">推导三：共享历史能降低噪声，却不创造现实识别</h3>
+<p>对第 \(r\) 次独立运行，把同一初始条件下的干预与对照结果记为 \(Y_r(1),Y_r(0)\)，用配对差 \(D_r=Y_r(1)-Y_r(0)\) 估计模型内效应。若各运行对独立：</p>
+\[
+\operatorname{Var}(\bar D)=\frac1R\left[\operatorname{Var}(Y(1))+\operatorname{Var}(Y(0))-2\operatorname{Cov}(Y(1),Y(0))\right].
+\]
+<p>若共享前史与随机性让两条路径正相关，配对比较比毫无关联地跑两组实验更稳定；若相关性不为正，降低方差并无保证。无论哪种情形，这都只是蒙特卡洛估计精度，不能减少错误行为规则造成的结构偏差。给一个错误世界反复运行一万次，可能得到非常窄、但离现实很远的置信区间。</p>
+<p>因此不确定性单位应是独立运行、情境或合理的时间块，而不是把同一模拟中的几万个相互影响代理全部当作独立重复。药品案例的 1,000 个固定策略 episode、芝加哥的 5 个独立扰动种子、PMI 的单次长时序，各自对应不同的不确定性来源，不能只看“样本数”就排序可信度。</p>
+
+<h3 id="what-would-falsify-the-framework">最值得做的后续实验：冻结以后，再让世界改变</h3>
+<p>如果继续这条研究线，我会优先做一个规模适中但真正盲测的实验，而不是立即把代理数加十倍。先选存在真实分组调查、明确政策时间和可观测行动的场景，冻结人口、环境构造、行为模型、所有校准系数和评价指标，再记录政策出台前的预测。政策之后同时检查总量、分组响应、路径和不确定性，保留所有未命中的预测。</p>
+<p>对照应包括简单持久性 / 回归、完全规则、完全 LLM、混合架构，以及固定预算下的模型规模变化。若混合架构已达到同样效果，就没有必要宣称全 LLM 社会必不可少；若简单模型在总量相当，但模拟器能准确预测真实分组异质性，微观建模才展示了独特价值。</p>
+<p>还应测试机制错配：保留人口边际但打乱关键联合关系，保留新闻长度但替换为无关事件，冻结人群却换行为模型，再比较哪些结果受影响。这样的实验可以区分真实信息作用、格式作用和模型已有记忆。对研究者编辑循环，则随机安排“允许编辑 / 冻结自动流程”，匹配运行预算并记录全部版本；只展示最后成功的一版，无法估计编辑的价值，也容易掩盖反复查看测试集带来的选择偏差。</p>
+<p>在数据治理上，本文只据论文说明其去标识化、访问控制与使用条件，没有独立审计源平台授权。丰富属性组合仍可能带来再识别风险；更重要的是，不应把模型生成的群体偏好当成某类真实人的本质。尤其涉及种族、收入或政治立场时，报告应保留不确定性与校准来源，避免把提示中的假设包装成社会事实。</p>
+
+<h2 id="conclusion">结语：社会模拟的进步，是让假设变得可以被检验</h2>
+<p>SocioVerse 将人口选择与个体背景带入 LLM 社会模拟，说明“谁来回答”本身就是方法的一部分；SocioVerse2 则让人群、环境、行为、时间和研究修改进入可追踪的实验结构。两者最有价值的共同点，是把一个貌似自然的生成结果拆成可以分别核验的假设。</p>
+<p>现有证据已经展示了跨任务的组织能力、一些有用的统计对齐，以及局部预测增益。但可信的社会模拟不能只靠角色丰富、用户池大或曲线贴合。真正需要跨过的门槛，是在未见的人群、时间与干预下，既预测对总量，也预测对组成这个总量的行为变化，并清楚知道自己何时不可靠。</p>
+
+<h2 id="references">原文与核对位置</h2>
+<p>[1] Zhang 等，<a href="https://arxiv.org/abs/2504.10157v3">SocioVerse: A World Model for Social Simulation Powered by LLM Agents and A Pool of 10 Million Real-World Users</a>。方法见 §2–3；三场景及主表见 §4、表 1–5；标注、IPF、收入先验与问卷见附录 A–D。<a href="https://arxiv.org/html/2504.10157v3">HTML 全文</a> · <a href="https://arxiv.org/src/2504.10157v3">TeX 源码</a>。</p>
+<p>[2] Zhang 等，<a href="https://arxiv.org/abs/2609.24911v1">SocioVerse2: A Longitudinal Dynamic Social Simulation Framework under a Human-AI Co-evolutionary Paradigm</a>。双循环与分支见 §3；基础设施见 §4；七案例见 §5；限制见 §6；重复方式、完整 PMI 对照及汽车校准见附录 A，尤其表 11、16–19。<a href="https://arxiv.org/html/2609.24911v1">HTML 全文</a> · <a href="https://arxiv.org/src/2609.24911v1">TeX 源码</a>。</p>
+<p>表格以注明版本的论文为准，英文表头保留时附有中文解释；图 1–2 由二代论文源文件转换。本文的误差分解、有效样本量与配对方差推导是解释性延伸，不是作者报告的额外实验。对报告引用的底层子研究，本文仅转述该报告披露的设置与结果，没有将其未披露数值补成“完整复现”。</p>
+
+<h2 id="contact">Contact</h2>
+<div class="contact-section"><p>There may be some errors present. If you find any, please feel free to contact me at <code>wangqiyao25@mails.ucas.ac.cn</code>. I would appreciate it!</p></div>
+        </div>
+        <nav class="blog-post-navigation" aria-label="文章导航"><a class="blog-return-link" href="/blogs/?category=learning" target="_self">← 返回 Blog 目录</a></nav>
+      </section></div>
+    </article>
+  </div>
+  <button id="blog-back-to-top" class="blog-back-to-top" type="button" aria-label="Back to top" hidden>↑</button>
+  {% include analytics.html %}
+  <script src="/assets/js/blog-enhancements.js?v=20261011-5" defer></script>
+</body>
+</html>
