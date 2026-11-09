@@ -1,28 +1,35 @@
 {
   "scholar_id": "STze0QgAAAAJ",
-  "citedby": 452,
-  "updated": "2026-11-03T06:20:09.319129+00:00",
+  "citedby": 474,
+  "updated": "2026-11-09T03:06:12.019253+00:00",
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "bib": {
         "title": "SuperGPQA: Scaling LLM Evaluation Across 285 Graduate Disciplines"
       },
-      "num_citations": 302,
+      "num_citations": 311,
       "author_pub_id": "STze0QgAAAAJ:9yKSN-GCB0IC"
     },
     "STze0QgAAAAJ:zYLM7Y9cAGgC": {
       "bib": {
         "title": "A Survey on Large Language Model Benchmarks"
       },
-      "num_citations": 84,
+      "num_citations": 85,
       "author_pub_id": "STze0QgAAAAJ:zYLM7Y9cAGgC"
     },
     "STze0QgAAAAJ:u-x6o8ySG0sC": {
       "bib": {
         "title": "AutoPatent: A Multi-Agent Framework for Automatic Patent Generation"
       },
-      "num_citations": 34,
+      "num_citations": 43,
       "author_pub_id": "STze0QgAAAAJ:u-x6o8ySG0sC"
+    },
+    "STze0QgAAAAJ:3fE2CSJIrl8C": {
+      "bib": {
+        "title": "Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice"
+      },
+      "num_citations": 8,
+      "author_pub_id": "STze0QgAAAAJ:3fE2CSJIrl8C"
     },
     "STze0QgAAAAJ:u5HHmVD_uO8C": {
       "bib": {
@@ -31,18 +38,11 @@
       "num_citations": 8,
       "author_pub_id": "STze0QgAAAAJ:u5HHmVD_uO8C"
     },
-    "STze0QgAAAAJ:3fE2CSJIrl8C": {
-      "bib": {
-        "title": "Towards IP Intelligence: Benchmarking Large Language Models on Intellectual Property Knowledge and Practice"
-      },
-      "num_citations": 7,
-      "author_pub_id": "STze0QgAAAAJ:3fE2CSJIrl8C"
-    },
     "STze0QgAAAAJ:UebtZRa9Y70C": {
       "bib": {
         "title": "Beyond Quantity: Trajectory Diversity Scaling for Code Agents"
       },
-      "num_citations": 5,
+      "num_citations": 6,
       "author_pub_id": "STze0QgAAAAJ:UebtZRa9Y70C"
     },
     "STze0QgAAAAJ:hqOjcs7Dif8C": {
@@ -58,6 +58,13 @@
       },
       "num_citations": 2,
       "author_pub_id": "STze0QgAAAAJ:MXK_kJrjxJIC"
+    },
+    "STze0QgAAAAJ:8k81kl-MbHgC": {
+      "bib": {
+        "title": "InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?"
+      },
+      "num_citations": 2,
+      "author_pub_id": "STze0QgAAAAJ:8k81kl-MbHgC"
     },
     "STze0QgAAAAJ:5nxA0vEk-isC": {
       "bib": {
@@ -79,13 +86,6 @@
       },
       "num_citations": 1,
       "author_pub_id": "STze0QgAAAAJ:_kc_bZDykSQC"
-    },
-    "STze0QgAAAAJ:8k81kl-MbHgC": {
-      "bib": {
-        "title": "InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?"
-      },
-      "num_citations": 1,
-      "author_pub_id": "STze0QgAAAAJ:8k81kl-MbHgC"
     },
     "STze0QgAAAAJ:QIV2ME_5wuYC": {
       "bib": {
