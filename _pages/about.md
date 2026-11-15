@@ -716,7 +716,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 <p><strong>Reviewer</strong></p>
 <ul>
 <li>
-Conference Reviewer: NeurIPS 2026, ARR Oct 2026, ICLR 2027, WWW 2027, COLING 2027, NAACL 2027.
+Conference Reviewer: NeurIPS 2026, ARR Oct 2026, ICLR 2027, WWW 2027, COLING 2027, NAACL 2027, CVPR 2027.
 </li>
 <li>
 Journal Reviewer: Expert Systems. 
@@ -730,7 +730,10 @@ Journal Reviewer: Expert Systems.
 
 <p><strong>Mentees & Advisees</strong></p>
 
-- ***2026:*** Hongbo Wang (王宏波), 攻读硕士研究生, 中国科学院深圳先进技术研究院, SIAT-NLP; Xinyi Chen (陈欣宜), 攻读硕士研究生, 中国科学院软件研究所, 中文信息处理实验室; Haoran Hu (胡浩然), 攻读硕士研究生, 中国科学技术大学。
+- ***2026***: Three students.
+  - Hongbo Wang (王宏波), 攻读硕士研究生；去向：中国科学院深圳先进技术研究院, SIAT-NLP
+  - Xinyi Chen (陈欣宜), 攻读硕士研究生；去向：中国科学院软件研究所, 中文信息处理实验室
+  - Haoran Hu (胡浩然), 攻读硕士研究生；去向：中国科学技术大学
 
 # 💻 Internships
 - ***2026.06 - now***: Ubiquant, iQuest, Beijing
