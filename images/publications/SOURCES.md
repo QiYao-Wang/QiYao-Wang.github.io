@@ -27,6 +27,7 @@ PNG is a title-page crop and is intentionally not used.
 ## Maintaining the paper list
 
 Additional author-supplied PDFs:
+- `technology-opportunity-overview.png`: 202609439融合动态检索与迭代优化的技术机会识别——以人形机器人领域为例初投稿.pdf, page 4, Figure 1 (overall dynamic retrieval and iterative optimization framework). Original embedded image extracted at 1046 × 835 without upscaling. Added on 2026-11-16; the paper is accepted by 情报杂志 (CSSCI), with November 2026 used for acceptance-order sorting rather than a publication date.
 - `ipservice-overview.webp`: 基于大语言模型的知识产权信息服务模型构建及应用_林原.pdf, page 4, Figure 1 (operating mechanism).
 - `ipagents-overview.webp`: 大语言模型驱动知识产权服务智能体研究_林原.pdf, page 4, Figure 1 (overall service architecture). Journal issue: July 2026, 70(14).
 

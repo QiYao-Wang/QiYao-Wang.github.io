@@ -438,6 +438,11 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 </div></li>
 </ul></div>
 <div class="paper-group"><h3>Co-author</h3><ul class="paper-list">
+<li class="paper-card" data-date="2026-11" id="paper-technology-opportunity" data-topics="ip social-science"><a class="paper-figure" href="{{ "/images/publications/technology-opportunity-overview.png" | relative_url }}"><img src="{{ "/images/publications/technology-opportunity-overview.png" | relative_url }}" alt="融合动态检索与迭代优化的技术机会识别整体研究框架" loading="lazy" decoding="async"></a><div class="paper-content">
+<div class="paper-title">融合动态检索与迭代优化的技术机会识别——以人形机器人领域为例.</div>
+<div class="paper-authors"><em>Yuan Lin, Hongbo Wang, Chenxi Xu<sup>†</sup>, <strong>Qiyao Wang</strong>.</em></div>
+<div class="paper-venue"><strong>情报杂志 (CSSCI)</strong>. Accepted. 2026. DUT-IR, Fudan University and SIAT-NLP.</div>
+</div></li>
 <li class="paper-card" data-date="2026-07" id="paper-ipagents" data-topics="agents working-agent ip social-science"><a class="paper-figure" href="{{ "/images/publications/ipagents-overview.webp" | relative_url }}"><img src="{{ "/images/publications/ipagents-overview.webp" | relative_url }}" alt="知识产权智能体服务体系整体架构" loading="lazy" decoding="async"></a><div class="paper-content">
 <div class="paper-title"><span>大语言模型驱动知识产权服务智能体研究.</span></div>
 <div class="paper-authors"><em>Yuan Lin<sup>†</sup>, Chenxi Xu, <strong>Qiyao Wang</strong> and Huaren Liu.</em></div>
