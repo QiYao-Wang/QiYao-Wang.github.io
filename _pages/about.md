@@ -345,7 +345,7 @@ I am currently leading the Taibao-IP team, focusing on developing advanced IP in
 
 <div style="max-height: 200px; overflow-y: auto;">
 <ul>
-  <li><em><strong>2026.11.21:</strong></em> &nbsp;🎤 I gave a talk titled “Towards IP Intelligence: 面向知识产权全生命周期的大模型与智能体研究” at 中国科学院大学2026研究生论坛 · 磐石AI4S学科交叉分论坛.</li>
+  <li><em><strong>2026.11.21:</strong></em> &nbsp;🎤 I gave a talk titled “Towards IP Intelligence: 面向知识产权全生命周期的大模型与智能体研究” at <a href="https://panshi-forum.tashan.ac.cn/">中国科学院大学2026研究生论坛 · 磐石AI4S学科交叉分论坛</a>. <a href="https://aais.nankai.edu.cn/2026/1120/c37171a607146/page.htm">Announcement</a></li>
   <li><em><strong>2026.11:</strong></em> &nbsp;🎉 As the Team Supervisor, I successfully guided my team to win the First Prize at the national level in the 15th “Challenge Cup” China College Students’ Entrepreneurship Plan Competition!</li>
   <li><em><strong>2026.10.22:</strong></em> &nbsp;🧠 The <a href="https://arxiv.org/abs/2610.30949">IQuest-Q1 technical report</a> is now available on arXiv.</li>
   <li><em><strong>2026.10.10:</strong></em> &nbsp;🧠 <a href="https://iquestlab.github.io/">IQuest-Q1</a>, an open-source agentic foundation model for CLI systems, is now available.</li>
@@ -731,7 +731,7 @@ Journal Reviewer: Expert Systems.
 
 <p><strong>Talks</strong></p>
 
-- ***2026.11.21***: 中国科学院大学2026研究生论坛 · 磐石AI4S学科交叉分论坛. **Towards IP Intelligence: 面向知识产权全生命周期的大模型与智能体研究**.
+- ***2026.11.21***: <a href="https://panshi-forum.tashan.ac.cn/">中国科学院大学2026研究生论坛 · 磐石AI4S学科交叉分论坛</a>. **Towards IP Intelligence: 面向知识产权全生命周期的大模型与智能体研究**. <a href="https://aais.nankai.edu.cn/2026/1120/c37171a607146/page.htm">Announcement</a>
 - ***2024.12.09***: 大连理工大学厚德书院科创座谈会. <a href="https://mp.weixin.qq.com/s/fuMAmP7zYZMMlxLAlxJx0w">Link</a>
 - ***2024.11.20***: 大连理工大学“挑战杯“经验分享会. <a href="https://mp.weixin.qq.com/s/r1-7V-a5C7FR-fPE6hJNQQ">Link</a>
 
