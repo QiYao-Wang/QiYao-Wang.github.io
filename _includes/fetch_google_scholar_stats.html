@@ -40,6 +40,7 @@
         const publications = data.publications || {};
         document.querySelectorAll('.paper-citation-badge[data-scholar-id]').forEach(element => {
           const publication = publications[element.dataset.scholarId];
+          element.hidden = !publication || !Number.isInteger(publication.num_citations) || publication.num_citations <= 0;
           if (publication && Number.isInteger(publication.num_citations) && publication.num_citations >= 0) {
             element.querySelector('.paper-citation-count').textContent = publication.num_citations.toLocaleString('en-US');
             element.title = 'Google Scholar citations' + (typeof data.updated === 'string' ? ' · updated ' + data.updated.slice(0, 10) : '');

@@ -39,7 +39,8 @@ Edit the single paper card in `_pages/about.md`; do not duplicate cards across t
 Add `{% include paper_citations.html id="SCHOLAR_AUTHOR_ID:PAPER_ID" %}` inside
 the card's `.paper-links` row using the exact ID in `_data/google_scholar.json`.
 The badge renders the saved count and refreshes from the existing Scholar snapshot.
-Omit `id` for papers not yet matched; these show an em dash, not a zero count.
+Omit `id` for papers not yet matched. Badges with missing or zero counts are hidden;
+matched badges automatically appear when a later snapshot reports a positive count.
 AutoPatent is displayed and sorted under 2026 at the author's request.
 Use space-separated `data-topics` values: `agents`, `post-training`,
 `working-agent`, `ip`, `science`, `social-science`, `reports`.
