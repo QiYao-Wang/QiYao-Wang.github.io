@@ -36,6 +36,11 @@ Author-supplied Word document: `cage-overview.png` is the original embedded
 The original resolution is preserved without upscaling.
 
 Edit the single paper card in `_pages/about.md`; do not duplicate cards across topics.
+Add `{% include paper_citations.html id="SCHOLAR_AUTHOR_ID:PAPER_ID" %}` inside
+the card's `.paper-links` row using the exact ID in `_data/google_scholar.json`.
+The badge renders the saved count and refreshes from the existing Scholar snapshot.
+Omit `id` for papers not yet matched; these show an em dash, not a zero count.
+AutoPatent is displayed and sorted under 2026 at the author's request.
 Use space-separated `data-topics` values: `agents`, `post-training`,
 `working-agent`, `ip`, `science`, `social-science`, `reports`.
 Technical Reports has its own top-level topic; its secondary status filters are hidden.

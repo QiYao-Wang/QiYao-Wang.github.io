@@ -23,6 +23,10 @@
 #research-papers .paper-links { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .65rem; font-size: .88em; line-height: 1.5; }
 #research-papers .paper-links a { color: #28619b; display: inline-flex; align-items: center; gap: 4px; min-height: 24px; margin: 0; text-decoration: none; }
 #research-papers .paper-links a:hover { color: #164675; text-decoration: underline; }
+#research-papers .paper-links .paper-citation-badge { gap: 0; min-height: 24px; border-radius: 6px; overflow: hidden; background: #dceafa; color: #285581; font-size: 12px; line-height: 24px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+#research-papers .paper-citation-badge > span { padding: 0 7px; }
+#research-papers .paper-citation-badge > strong { padding: 0 7px; background: #285581; color: #fff; font-weight: 700; }
+#research-papers .paper-links .paper-citation-badge:hover { background: #ccdef3; text-decoration: none; }
 #research-papers .paper-content img { display: inline-block; vertical-align: middle; }
 #research-papers .paper-links .paper-brand-link { white-space: nowrap; }
 #research-papers .paper-links a > img { display: block; margin: 0; }
