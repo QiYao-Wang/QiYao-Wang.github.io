@@ -1,20 +1,20 @@
 {
   "scholar_id": "STze0QgAAAAJ",
-  "citedby": 487,
-  "updated": "2026-11-20T11:17:57.161960+00:00",
+  "citedby": 493,
+  "updated": "2026-11-24T04:38:49.140900+00:00",
   "publications": {
     "STze0QgAAAAJ:9yKSN-GCB0IC": {
       "bib": {
         "title": "SuperGPQA: Scaling LLM Evaluation Across 285 Graduate Disciplines"
       },
-      "num_citations": 317,
+      "num_citations": 320,
       "author_pub_id": "STze0QgAAAAJ:9yKSN-GCB0IC"
     },
     "STze0QgAAAAJ:zYLM7Y9cAGgC": {
       "bib": {
         "title": "A Survey on Large Language Model Benchmarks"
       },
-      "num_citations": 87,
+      "num_citations": 88,
       "author_pub_id": "STze0QgAAAAJ:zYLM7Y9cAGgC"
     },
     "STze0QgAAAAJ:u-x6o8ySG0sC": {
@@ -52,6 +52,13 @@
       "num_citations": 4,
       "author_pub_id": "STze0QgAAAAJ:hqOjcs7Dif8C"
     },
+    "STze0QgAAAAJ:8k81kl-MbHgC": {
+      "bib": {
+        "title": "InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?"
+      },
+      "num_citations": 3,
+      "author_pub_id": "STze0QgAAAAJ:8k81kl-MbHgC"
+    },
     "STze0QgAAAAJ:5nxA0vEk-isC": {
       "bib": {
         "title": "FlowPIE: Test-Time Scientific Idea Evolution with Flow-Guided Literature Exploration"
@@ -73,13 +80,6 @@
       "num_citations": 2,
       "author_pub_id": "STze0QgAAAAJ:MXK_kJrjxJIC"
     },
-    "STze0QgAAAAJ:8k81kl-MbHgC": {
-      "bib": {
-        "title": "InteractWeb-Bench: Can Multimodal Agent Escape Blind Execution in Interactive Website Generation?"
-      },
-      "num_citations": 2,
-      "author_pub_id": "STze0QgAAAAJ:8k81kl-MbHgC"
-    },
     "STze0QgAAAAJ:qxL8FJ1GzNcC": {
       "bib": {
         "title": "基于大语言模型的知识产权信息服务模型构建及应用"
@@ -94,6 +94,13 @@
       "num_citations": 1,
       "author_pub_id": "STze0QgAAAAJ:7PzlFSSx8tAC"
     },
+    "STze0QgAAAAJ:ZeXyd9-uunAC": {
+      "bib": {
+        "title": "IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems"
+      },
+      "num_citations": 1,
+      "author_pub_id": "STze0QgAAAAJ:ZeXyd9-uunAC"
+    },
     "STze0QgAAAAJ:QIV2ME_5wuYC": {
       "bib": {
         "title": "WorkFactory: Turning Professional Intents into Executable Work for Scalable Agent Training"
@@ -107,13 +114,6 @@
       },
       "num_citations": 0,
       "author_pub_id": "STze0QgAAAAJ:dhFuZR0502QC"
-    },
-    "STze0QgAAAAJ:ZeXyd9-uunAC": {
-      "bib": {
-        "title": "IQuest-Q1: Advancing Foundation Capabilities for Agentic CLI Systems"
-      },
-      "num_citations": 0,
-      "author_pub_id": "STze0QgAAAAJ:ZeXyd9-uunAC"
     },
     "STze0QgAAAAJ:W7OEmFMy1HYC": {
       "bib": {
